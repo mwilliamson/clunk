@@ -43,4 +43,17 @@ public class ParseRecordTests {
             hasRecordComponent("name", equalTo("emailAddress"))
         ))));
     }
+
+    @Test
+    public void fieldsCanHaveTrailingComma() {
+        var source = "record User(name: String, emailAddress: String,)";
+
+        var tokens = Tokeniser.tokenise(source);
+        var node = Parser.parseNamespaceStatement(tokens);
+
+        assertThat(node, isRecordNode(hasRecordComponent("fields", contains(
+            hasRecordComponent("name", equalTo("name")),
+            hasRecordComponent("name", equalTo("emailAddress"))
+        ))));
+    }
 }

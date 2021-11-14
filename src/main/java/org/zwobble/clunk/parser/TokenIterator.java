@@ -3,13 +3,10 @@ package org.zwobble.clunk.parser;
 import java.util.List;
 
 public class TokenIterator<TTokenType> {
-    private final List<Token<TTokenType>> tokens;
-    private final Token<TTokenType> end;
-    private int index = 0;
+    private final InfinitelyPaddedIterator<Token<TTokenType>> tokens;
 
     public TokenIterator(List<Token<TTokenType>> tokens, Token<TTokenType> end) {
-        this.tokens = tokens;
-        this.end = end;
+        this.tokens = new InfinitelyPaddedIterator<>(tokens, end);
     }
 
     public void skip(TTokenType tokenType) {
@@ -17,9 +14,9 @@ public class TokenIterator<TTokenType> {
     }
 
     public String nextValue(TTokenType tokenType) {
-        var token = getToken();
+        var token = tokens.get();
         if (token.tokenType().equals(tokenType)) {
-            index++;
+            tokens.moveNext();
             return token.value();
         } else {
             throw new UnexpectedTokenException(
@@ -30,23 +27,15 @@ public class TokenIterator<TTokenType> {
     }
 
     public boolean isNext(TTokenType tokenType) {
-        return getToken().tokenType().equals(tokenType);
+        return tokens.get().tokenType().equals(tokenType);
     }
 
     public boolean trySkip(TTokenType tokenType) {
         if (isNext(tokenType)) {
-            index++;
+            tokens.moveNext();
             return true;
         } else {
             return false;
-        }
-    }
-
-    private Token<TTokenType> getToken() {
-        if (index < tokens.size()) {
-            return tokens.get(index);
-        } else {
-            return end;
         }
     }
 }

@@ -7,7 +7,7 @@ import org.zwobble.clunk.ast.StaticExpressionNode;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.parser.CastMatcher.cast;
-import static org.zwobble.clunk.parser.HasRecordComponentWithValue.hasRecordComponent;
+import static org.zwobble.clunk.parser.HasRecordComponentWithValue.has;
 
 public class NodeMatchers {
     public static Matcher<NamespaceStatementNode> isRecordNode(Matcher<RecordNode> matcher) {
@@ -15,6 +15,6 @@ public class NodeMatchers {
     }
 
     public static Matcher<StaticExpressionNode> isStaticReferenceNode(String value) {
-        return cast(StaticExpressionNode.class, hasRecordComponent("value", equalTo(value)));
+        return cast(StaticExpressionNode.class, has("value", equalTo(value)));
     }
 }

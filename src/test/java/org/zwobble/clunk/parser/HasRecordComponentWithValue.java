@@ -81,7 +81,7 @@ public class HasRecordComponentWithValue<T> extends TypeSafeDiagnosingMatcher<T>
         };
     }
 
-    public static <T> Matcher<T> hasRecordComponent(String componentName, Matcher<?> valueMatcher) {
+    public static <T> Matcher<T> has(String componentName, Matcher<?> valueMatcher) {
         return new HasRecordComponentWithValue<T>(componentName, valueMatcher);
     }
 }

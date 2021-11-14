@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.zwobble.clunk.parser.HasRecordComponentWithValue.hasRecordComponent;
+import static org.zwobble.clunk.parser.HasRecordComponentWithValue.has;
 import static org.zwobble.clunk.parser.NodeMatchers.isRecordNode;
 import static org.zwobble.clunk.parser.NodeMatchers.isStaticReferenceNode;
 
@@ -16,7 +16,7 @@ public class ParseRecordTests {
         var tokens = Tokeniser.tokenise(source);
         var node = Parser.parseNamespaceStatement(tokens);
 
-        assertThat(node, isRecordNode(hasRecordComponent("name", equalTo("User"))));
+        assertThat(node, isRecordNode(has("name", equalTo("User"))));
     }
 
     @Test
@@ -26,8 +26,8 @@ public class ParseRecordTests {
         var tokens = Tokeniser.tokenise(source);
         var node = Parser.parseNamespaceStatement(tokens);
 
-        assertThat(node, isRecordNode(hasRecordComponent("fields", contains(
-            allOf(hasRecordComponent("name", equalTo("name")), hasRecordComponent("type", isStaticReferenceNode("String")))
+        assertThat(node, isRecordNode(has("fields", contains(
+            allOf(has("name", equalTo("name")), has("type", isStaticReferenceNode("String")))
         ))));
     }
 
@@ -38,9 +38,9 @@ public class ParseRecordTests {
         var tokens = Tokeniser.tokenise(source);
         var node = Parser.parseNamespaceStatement(tokens);
 
-        assertThat(node, isRecordNode(hasRecordComponent("fields", contains(
-            hasRecordComponent("name", equalTo("name")),
-            hasRecordComponent("name", equalTo("emailAddress"))
+        assertThat(node, isRecordNode(has("fields", contains(
+            has("name", equalTo("name")),
+            has("name", equalTo("emailAddress"))
         ))));
     }
 
@@ -51,9 +51,9 @@ public class ParseRecordTests {
         var tokens = Tokeniser.tokenise(source);
         var node = Parser.parseNamespaceStatement(tokens);
 
-        assertThat(node, isRecordNode(hasRecordComponent("fields", contains(
-            hasRecordComponent("name", equalTo("name")),
-            hasRecordComponent("name", equalTo("emailAddress"))
+        assertThat(node, isRecordNode(has("fields", contains(
+            has("name", equalTo("name")),
+            has("name", equalTo("emailAddress"))
         ))));
     }
 }

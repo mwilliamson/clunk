@@ -157,4 +157,21 @@ public class TokenIteratorTests {
 
         assertThat(tokens.isNext(TokenType.SYMBOL), equalTo(false));
     }
+
+    @Test
+    public void peekReturnsNextTokenWithoutAdvancing() {
+        var tokens = new TokenIterator<>(
+            List.of(
+                token(0, TokenType.SYMBOL, "!"),
+                token(1, TokenType.IDENTIFIER, "x"),
+                token(2, TokenType.SYMBOL, "!")
+            ),
+            token(3, TokenType.END, "")
+        );
+
+        assertThat(tokens.peek(), equalTo(token(0, TokenType.SYMBOL, "!")));
+        assertThat(tokens.peek(), equalTo(token(0, TokenType.SYMBOL, "!")));
+        tokens.skip(TokenType.SYMBOL);
+        assertThat(tokens.peek(), equalTo(token(1, TokenType.IDENTIFIER, "x")));
+    }
 }

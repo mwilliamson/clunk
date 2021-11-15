@@ -1,4 +1,6 @@
 package org.zwobble.clunk.ast;
 
-public record StaticReferenceNode(String value) implements StaticExpressionNode {
+import org.zwobble.clunk.sources.Source;
+
+public record StaticReferenceNode(String value, Source source) implements StaticExpressionNode {
 }

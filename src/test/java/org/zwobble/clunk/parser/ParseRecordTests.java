@@ -14,7 +14,7 @@ public class ParseRecordTests {
         var source = "record User(name: String)";
 
         var tokens = Tokeniser.tokenise(source);
-        var node = Parser.parseNamespaceStatement(tokens);
+        var node = parser().parseNamespaceStatement(tokens);
 
         assertThat(node, isRecordNode(has("name", equalTo("User"))));
     }
@@ -24,7 +24,7 @@ public class ParseRecordTests {
         var source = "record User(name: String)";
 
         var tokens = Tokeniser.tokenise(source);
-        var node = Parser.parseNamespaceStatement(tokens);
+        var node = parser().parseNamespaceStatement(tokens);
 
         assertThat(node, isRecordNode(has("fields", contains(
             allOf(has("name", equalTo("name")), has("type", isStaticReferenceNode("String")))
@@ -36,7 +36,7 @@ public class ParseRecordTests {
         var source = "record User(name: String, emailAddress: String)";
 
         var tokens = Tokeniser.tokenise(source);
-        var node = Parser.parseNamespaceStatement(tokens);
+        var node = parser().parseNamespaceStatement(tokens);
 
         assertThat(node, isRecordNode(has("fields", contains(
             has("name", equalTo("name")),
@@ -49,11 +49,15 @@ public class ParseRecordTests {
         var source = "record User(name: String, emailAddress: String,)";
 
         var tokens = Tokeniser.tokenise(source);
-        var node = Parser.parseNamespaceStatement(tokens);
+        var node = parser().parseNamespaceStatement(tokens);
 
         assertThat(node, isRecordNode(has("fields", contains(
             has("name", equalTo("name")),
             has("name", equalTo("emailAddress"))
         ))));
+    }
+
+    private Parser parser() {
+        return new Parser("<filename>", "<contents>");
     }
 }

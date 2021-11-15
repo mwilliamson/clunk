@@ -38,4 +38,8 @@ public class TokenIterator<TTokenType> {
             return false;
         }
     }
+
+    public Token<TTokenType> peek() {
+        return tokens.get();
+    }
 }

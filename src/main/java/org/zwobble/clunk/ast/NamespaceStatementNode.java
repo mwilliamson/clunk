@@ -1,4 +1,4 @@
 package org.zwobble.clunk.ast;
 
-public interface NamespaceStatementNode {
+public interface NamespaceStatementNode extends Node {
 }

@@ -28,20 +28,22 @@ public class Parser {
         tokens.skip(TokenType.SYMBOL_PAREN_OPEN);
         var fieldNodes = parseMany(
             () -> tokens.isNext(TokenType.SYMBOL_PAREN_CLOSE),
-            () -> {
-                var fieldSource = source(tokens);
-
-                var fieldName = tokens.nextValue(TokenType.IDENTIFIER);
-                tokens.skip(TokenType.SYMBOL_COLON);
-                var fieldType = parseType(tokens);
-
-                return new RecordFieldNode(fieldName, fieldType, fieldSource);
-            },
+            () -> parseRecordField(tokens),
             () -> tokens.trySkip(TokenType.SYMBOL_COMMA)
         );
         tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
 
         return new RecordNode(name, fieldNodes, recordSource);
+    }
+
+    private RecordFieldNode parseRecordField(TokenIterator<TokenType> tokens) {
+        var fieldSource = source(tokens);
+
+        var fieldName = tokens.nextValue(TokenType.IDENTIFIER);
+        tokens.skip(TokenType.SYMBOL_COLON);
+        var fieldType = parseType(tokens);
+
+        return new RecordFieldNode(fieldName, fieldType, fieldSource);
     }
 
     private StaticExpressionNode parseType(TokenIterator<TokenType> tokens) {

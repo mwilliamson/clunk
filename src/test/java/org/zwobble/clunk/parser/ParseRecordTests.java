@@ -4,9 +4,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.zwobble.clunk.parser.HasRecordComponentWithValue.has;
-import static org.zwobble.clunk.parser.NodeMatchers.isRecordNode;
-import static org.zwobble.clunk.parser.NodeMatchers.isStaticReferenceNode;
+import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
+import static org.zwobble.clunk.ast.NodeMatchers.isRecordNode;
+import static org.zwobble.clunk.ast.NodeMatchers.isStaticReferenceNode;
 
 public class ParseRecordTests {
     @Test

@@ -1,4 +1,4 @@
-package org.zwobble.clunk.parser;
+package org.zwobble.clunk.matchers;
 
 import org.hamcrest.Description;
 import org.hamcrest.DiagnosingMatcher;

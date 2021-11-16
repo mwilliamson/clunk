@@ -15,6 +15,8 @@ public class InfinitelyPaddedIteratorTests {
             "end"
         );
 
+        var x = (tokens::get);
+
         assertThat(tokens.get(), equalTo("one"));
         tokens.moveNext();
         assertThat(tokens.get(), equalTo("two"));

@@ -1,8 +1,6 @@
 package org.zwobble.clunk.tokeniser;
 
 import org.junit.jupiter.api.Test;
-import org.zwobble.clunk.tokeniser.RegexTokeniser;
-import org.zwobble.clunk.tokeniser.Token;
 
 import java.util.List;
 

@@ -1,8 +1,6 @@
 package org.zwobble.clunk.tokeniser;
 
 import org.junit.jupiter.api.Test;
-import org.zwobble.clunk.tokeniser.TokenIterator;
-import org.zwobble.clunk.tokeniser.UnexpectedTokenException;
 
 import java.util.List;
 

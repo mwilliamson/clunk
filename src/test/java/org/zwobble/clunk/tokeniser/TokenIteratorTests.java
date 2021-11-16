@@ -1,13 +1,15 @@
-package org.zwobble.clunk.parser;
+package org.zwobble.clunk.tokeniser;
 
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.tokeniser.TokenIterator;
+import org.zwobble.clunk.tokeniser.UnexpectedTokenException;
 
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.zwobble.clunk.parser.Token.token;
+import static org.zwobble.clunk.tokeniser.Token.token;
 
 public class TokenIteratorTests {
     enum TokenType {

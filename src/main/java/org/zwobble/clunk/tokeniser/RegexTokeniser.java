@@ -1,4 +1,4 @@
-package org.zwobble.clunk.parser;
+package org.zwobble.clunk.tokeniser;
 
 import java.util.ArrayList;
 import java.util.List;

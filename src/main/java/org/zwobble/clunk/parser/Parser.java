@@ -3,6 +3,7 @@ package org.zwobble.clunk.parser;
 import org.zwobble.clunk.ast.*;
 import org.zwobble.clunk.sources.FileFragmentSource;
 import org.zwobble.clunk.sources.Source;
+import org.zwobble.clunk.tokeniser.TokenIterator;
 
 import java.util.ArrayList;
 import java.util.List;

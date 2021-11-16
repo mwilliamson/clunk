@@ -1,9 +1,12 @@
 package org.zwobble.clunk.parser;
 
+import org.zwobble.clunk.tokeniser.RegexTokeniser;
+import org.zwobble.clunk.tokeniser.TokenIterator;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.zwobble.clunk.parser.Token.token;
+import static org.zwobble.clunk.tokeniser.Token.token;
 
 public class Tokeniser {
     private static final RegexTokeniser<TokenType> tokeniser = new RegexTokeniser<>(

@@ -1,4 +1,4 @@
-package org.zwobble.clunk.parser;
+package org.zwobble.clunk.tokeniser;
 
 import org.junit.jupiter.api.Test;
 

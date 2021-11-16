@@ -9,9 +9,7 @@ import static org.zwobble.clunk.backends.java.ast.JavaSerialiser.serialiseRecord
 public class JavaRecordDeclarationNodeSerialisationTests {
     @Test
     public void emptyRecord() {
-        var node = new JavaRecordDeclarationNode(
-            "Example"
-        );
+        var node = JavaRecordDeclarationNode.builder("Example").build();
 
         var stringBuilder = new StringBuilder();
         serialiseRecordDeclaration(node, stringBuilder);
@@ -19,6 +17,39 @@ public class JavaRecordDeclarationNodeSerialisationTests {
         assertThat(stringBuilder.toString(), equalTo(
             """
             public record Example() {
+            }"""
+        ));
+    }
+
+    @Test
+    public void recordWithOneComponent() {
+        var node = JavaRecordDeclarationNode.builder("Example")
+            .addComponent(new JavaRecordComponentNode("String", "first"))
+            .build();
+
+        var stringBuilder = new StringBuilder();
+        serialiseRecordDeclaration(node, stringBuilder);
+
+        assertThat(stringBuilder.toString(), equalTo(
+            """
+            public record Example(String first) {
+            }"""
+        ));
+    }
+
+    @Test
+    public void recordWithMultipleComponents() {
+        var node = JavaRecordDeclarationNode.builder("Example")
+            .addComponent(new JavaRecordComponentNode("String", "first"))
+            .addComponent(new JavaRecordComponentNode("int", "second"))
+            .build();
+
+        var stringBuilder = new StringBuilder();
+        serialiseRecordDeclaration(node, stringBuilder);
+
+        assertThat(stringBuilder.toString(), equalTo(
+            """
+            public record Example(String first, int second) {
             }"""
         ));
     }

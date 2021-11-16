@@ -11,9 +11,7 @@ public class JavaOrdinaryCompilationUnitNodeSerialisationTests {
     public void includesPackageAndDeclaration() {
         var node = new JavaOrdinaryCompilationUnitNode(
             "com.example",
-            new JavaRecordDeclarationNode(
-                "Example"
-            )
+            JavaRecordDeclarationNode.builder("Example").build()
         );
 
         var stringBuilder = new StringBuilder();

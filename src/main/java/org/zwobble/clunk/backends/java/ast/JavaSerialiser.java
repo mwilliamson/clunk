@@ -16,6 +16,20 @@ public class JavaSerialiser {
     public static void serialiseRecordDeclaration(JavaRecordDeclarationNode node, StringBuilder builder) {
         builder.append("public record ");
         builder.append(node.name());
-        builder.append("() {\n}");
+        builder.append("(");
+
+        var first = true;
+        for (var component : node.components()) {
+            if (!first) {
+                builder.append(", ");
+            }
+            builder.append(component.type());
+            builder.append(" ");
+            builder.append(component.name());
+
+            first = false;
+        }
+
+        builder.append(") {\n}");
     }
 }

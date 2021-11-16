@@ -23,7 +23,7 @@ public class JavaSerialiser {
             if (!first) {
                 builder.append(", ");
             }
-            builder.append(component.type());
+            serialiseTypeReference(component.type(), builder);
             builder.append(" ");
             builder.append(component.name());
 
@@ -31,5 +31,9 @@ public class JavaSerialiser {
         }
 
         builder.append(") {\n}");
+    }
+
+    public static void serialiseTypeReference(JavaTypeReferenceNode node, StringBuilder builder) {
+        builder.append(node.name());
     }
 }

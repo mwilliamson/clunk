@@ -1,4 +1,4 @@
 package org.zwobble.clunk.backends.java.ast;
 
-public record JavaRecordComponentNode(String type, String name) {
+public record JavaRecordComponentNode(JavaTypeReferenceNode type, String name) {
 }

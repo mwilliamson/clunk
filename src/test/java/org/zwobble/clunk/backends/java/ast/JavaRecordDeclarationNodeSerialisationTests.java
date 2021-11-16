@@ -24,7 +24,7 @@ public class JavaRecordDeclarationNodeSerialisationTests {
     @Test
     public void recordWithOneComponent() {
         var node = JavaRecordDeclarationNode.builder("Example")
-            .addComponent(new JavaRecordComponentNode("String", "first"))
+            .addComponent(new JavaRecordComponentNode(Java.typeReference("String"), "first"))
             .build();
 
         var stringBuilder = new StringBuilder();
@@ -40,8 +40,8 @@ public class JavaRecordDeclarationNodeSerialisationTests {
     @Test
     public void recordWithMultipleComponents() {
         var node = JavaRecordDeclarationNode.builder("Example")
-            .addComponent(new JavaRecordComponentNode("String", "first"))
-            .addComponent(new JavaRecordComponentNode("int", "second"))
+            .addComponent(new JavaRecordComponentNode(Java.typeReference("String"), "first"))
+            .addComponent(new JavaRecordComponentNode(Java.typeReference("int"), "second"))
             .build();
 
         var stringBuilder = new StringBuilder();

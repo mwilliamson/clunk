@@ -19,6 +19,18 @@ public class Parser {
         this.sourceContents = sourceContents;
     }
 
+    public NamespaceNode parseNamespace(TokenIterator<TokenType> tokens, List<String> name) {
+        var source = source(tokens);
+
+        var statements = parseMany(
+            () -> tokens.isNext(TokenType.END),
+            () -> parseNamespaceStatement(tokens),
+            () -> true
+        );
+
+        return new NamespaceNode(name, statements, source);
+    }
+
     public NamespaceStatementNode parseNamespaceStatement(TokenIterator<TokenType> tokens) {
         var recordSource = source(tokens);
 

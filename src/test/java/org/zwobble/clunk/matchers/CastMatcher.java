@@ -35,7 +35,8 @@ public class CastMatcher<TActual, TExpected> extends DiagnosingMatcher<TActual> 
 
     @Override
     public void describeTo(Description description) {
-        description.appendText("an instance of ").appendText(expectedClass.getName());
+        description.appendText("an instance of ").appendText(expectedClass.getName())
+            .appendText(" and ").appendDescriptionOf(matcher);
     }
 
     public static <TActual, TExpected> Matcher<TActual> cast(Class<TExpected> type, Matcher<TExpected> matcher) {

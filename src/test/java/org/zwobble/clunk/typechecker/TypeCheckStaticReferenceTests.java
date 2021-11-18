@@ -9,7 +9,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
 
-public class TypeCheckerTests {
+public class TypeCheckStaticReferenceTests {
     @Test
     public void staticReferenceToIntHasIntType() {
         var untypedNode = Untyped.staticReference("Int");

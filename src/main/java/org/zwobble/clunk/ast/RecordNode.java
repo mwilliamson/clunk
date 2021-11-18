@@ -7,6 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public record RecordNode(String name, List<RecordFieldNode> fields, Source source) implements NamespaceStatementNode {
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
     public static Builder builder(String name) {
         return new Builder(name, List.of(), NullSource.INSTANCE);
     }

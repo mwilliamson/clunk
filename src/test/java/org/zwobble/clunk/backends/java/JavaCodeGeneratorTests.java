@@ -1,10 +1,10 @@
 package org.zwobble.clunk.backends.java;
 
 import org.junit.jupiter.api.Test;
-import org.zwobble.clunk.ast.NamespaceNode;
-import org.zwobble.clunk.ast.RecordFieldNode;
-import org.zwobble.clunk.ast.RecordNode;
-import org.zwobble.clunk.ast.StaticReferenceNode;
+import org.zwobble.clunk.ast.untyped.UntypedNamespaceNode;
+import org.zwobble.clunk.ast.untyped.UntypedRecordFieldNode;
+import org.zwobble.clunk.ast.untyped.UntypedRecordNode;
+import org.zwobble.clunk.ast.untyped.UntypedStaticReferenceNode;
 import org.zwobble.clunk.backends.java.ast.JavaSerialiser;
 import org.zwobble.clunk.sources.NullSource;
 
@@ -18,9 +18,9 @@ import static org.hamcrest.Matchers.equalTo;
 public class JavaCodeGeneratorTests {
     @Test
     public void recordsInNamespaceAreCompiledToSeparateJavaCompilationUnits() {
-        var node = NamespaceNode.builder(List.of("example", "project"))
-            .addStatement(RecordNode.builder("First").build())
-            .addStatement(RecordNode.builder("Second").build())
+        var node = UntypedNamespaceNode.builder(List.of("example", "project"))
+            .addStatement(UntypedRecordNode.builder("First").build())
+            .addStatement(UntypedRecordNode.builder("Second").build())
             .build();
 
         var result = JavaCodeGenerator.compileNamespace(node)
@@ -52,9 +52,9 @@ public class JavaCodeGeneratorTests {
 
     @Test
     public void recordIsCompiledToJavaRecord() {
-        var node = RecordNode.builder("Example")
-            .addField(new RecordFieldNode("first", new StaticReferenceNode("String", NullSource.INSTANCE), NullSource.INSTANCE))
-            .addField(new RecordFieldNode("second", new StaticReferenceNode("Int", NullSource.INSTANCE), NullSource.INSTANCE))
+        var node = UntypedRecordNode.builder("Example")
+            .addField(new UntypedRecordFieldNode("first", new UntypedStaticReferenceNode("String", NullSource.INSTANCE), NullSource.INSTANCE))
+            .addField(new UntypedRecordFieldNode("second", new UntypedStaticReferenceNode("Int", NullSource.INSTANCE), NullSource.INSTANCE))
             .build();
 
         var result = JavaCodeGenerator.compileRecord(node);

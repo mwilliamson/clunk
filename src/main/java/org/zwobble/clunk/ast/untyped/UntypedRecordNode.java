@@ -1,4 +1,4 @@
-package org.zwobble.clunk.ast;
+package org.zwobble.clunk.ast.untyped;
 
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.sources.Source;
@@ -6,7 +6,7 @@ import org.zwobble.clunk.sources.Source;
 import java.util.ArrayList;
 import java.util.List;
 
-public record RecordNode(String name, List<RecordFieldNode> fields, Source source) implements NamespaceStatementNode {
+public record UntypedRecordNode(String name, List<UntypedRecordFieldNode> fields, Source source) implements UntypedNamespaceStatementNode {
     @Override
     public <T> T accept(Visitor<T> visitor) {
         return visitor.visit(this);
@@ -16,12 +16,12 @@ public record RecordNode(String name, List<RecordFieldNode> fields, Source sourc
         return new Builder(name, List.of(), NullSource.INSTANCE);
     }
 
-    public static record Builder(String name, List<RecordFieldNode> fields, Source source) {
-        public RecordNode build() {
-            return new RecordNode(name, fields, source);
+    public static record Builder(String name, List<UntypedRecordFieldNode> fields, Source source) {
+        public UntypedRecordNode build() {
+            return new UntypedRecordNode(name, fields, source);
         }
 
-        public Builder addField(RecordFieldNode field) {
+        public Builder addField(UntypedRecordFieldNode field) {
             var fields = new ArrayList<>(this.fields);
             fields.add(field);
             return new Builder(name, fields, source);

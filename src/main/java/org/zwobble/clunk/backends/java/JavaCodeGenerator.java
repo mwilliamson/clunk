@@ -1,6 +1,6 @@
 package org.zwobble.clunk.backends.java;
 
-import org.zwobble.clunk.ast.*;
+import org.zwobble.clunk.ast.untyped.*;
 import org.zwobble.clunk.backends.java.ast.JavaOrdinaryCompilationUnitNode;
 import org.zwobble.clunk.backends.java.ast.JavaRecordComponentNode;
 import org.zwobble.clunk.backends.java.ast.JavaRecordDeclarationNode;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class JavaCodeGenerator {
-    public static JavaRecordDeclarationNode compileRecord(RecordNode node) {
+    public static JavaRecordDeclarationNode compileRecord(UntypedRecordNode node) {
         var components = node.fields().stream()
             .map(field -> new JavaRecordComponentNode(compileStaticExpression(field.type()), field.name()))
             .collect(Collectors.toList());
@@ -21,10 +21,10 @@ public class JavaCodeGenerator {
         );
     }
 
-    private static JavaTypeReferenceNode compileStaticExpression(StaticExpressionNode node) {
-        return node.accept(new StaticExpressionNode.Visitor<JavaTypeReferenceNode>() {
+    private static JavaTypeReferenceNode compileStaticExpression(UntypedStaticExpressionNode node) {
+        return node.accept(new UntypedStaticExpressionNode.Visitor<JavaTypeReferenceNode>() {
             @Override
-            public JavaTypeReferenceNode visit(StaticReferenceNode node) {
+            public JavaTypeReferenceNode visit(UntypedStaticReferenceNode node) {
                 return new JavaTypeReferenceNode(compileType(node.value()));
             }
         });
@@ -37,18 +37,18 @@ public class JavaCodeGenerator {
         };
     }
 
-    public static List<JavaOrdinaryCompilationUnitNode> compileNamespace(NamespaceNode node) {
+    public static List<JavaOrdinaryCompilationUnitNode> compileNamespace(UntypedNamespaceNode node) {
         return node.statements().stream()
             .map(statement -> compileNamespaceStatement(node, statement))
             .collect(Collectors.toList());
     }
 
-    private static JavaOrdinaryCompilationUnitNode compileNamespaceStatement(NamespaceNode namespace, NamespaceStatementNode statement) {
+    private static JavaOrdinaryCompilationUnitNode compileNamespaceStatement(UntypedNamespaceNode namespace, UntypedNamespaceStatementNode statement) {
         return new JavaOrdinaryCompilationUnitNode(
             String.join(".", namespace.name()),
-            statement.accept(new NamespaceStatementNode.Visitor<JavaRecordDeclarationNode>() {
+            statement.accept(new UntypedNamespaceStatementNode.Visitor<JavaRecordDeclarationNode>() {
                 @Override
-                public JavaRecordDeclarationNode visit(RecordNode node) {
+                public JavaRecordDeclarationNode visit(UntypedRecordNode node) {
                     return compileRecord(node);
                 }
             })

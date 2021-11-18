@@ -1,6 +1,6 @@
 package org.zwobble.clunk.parser;
 
-import org.zwobble.clunk.ast.*;
+import org.zwobble.clunk.ast.untyped.*;
 import org.zwobble.clunk.sources.FileFragmentSource;
 import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.tokeniser.TokenIterator;
@@ -19,7 +19,7 @@ public class Parser {
         this.sourceContents = sourceContents;
     }
 
-    public NamespaceNode parseNamespace(TokenIterator<TokenType> tokens, List<String> name) {
+    public UntypedNamespaceNode parseNamespace(TokenIterator<TokenType> tokens, List<String> name) {
         var source = source(tokens);
 
         var statements = parseMany(
@@ -28,10 +28,10 @@ public class Parser {
             () -> true
         );
 
-        return new NamespaceNode(name, statements, source);
+        return new UntypedNamespaceNode(name, statements, source);
     }
 
-    public NamespaceStatementNode parseNamespaceStatement(TokenIterator<TokenType> tokens) {
+    public UntypedNamespaceStatementNode parseNamespaceStatement(TokenIterator<TokenType> tokens) {
         var recordSource = source(tokens);
 
         tokens.skip(TokenType.KEYWORD_RECORD);
@@ -46,23 +46,23 @@ public class Parser {
         );
         tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
 
-        return new RecordNode(name, fieldNodes, recordSource);
+        return new UntypedRecordNode(name, fieldNodes, recordSource);
     }
 
-    private RecordFieldNode parseRecordField(TokenIterator<TokenType> tokens) {
+    private UntypedRecordFieldNode parseRecordField(TokenIterator<TokenType> tokens) {
         var fieldSource = source(tokens);
 
         var fieldName = tokens.nextValue(TokenType.IDENTIFIER);
         tokens.skip(TokenType.SYMBOL_COLON);
         var fieldType = parseType(tokens);
 
-        return new RecordFieldNode(fieldName, fieldType, fieldSource);
+        return new UntypedRecordFieldNode(fieldName, fieldType, fieldSource);
     }
 
-    private StaticExpressionNode parseType(TokenIterator<TokenType> tokens) {
+    private UntypedStaticExpressionNode parseType(TokenIterator<TokenType> tokens) {
         var referenceSource = source(tokens);
         var identifier = tokens.nextValue(TokenType.IDENTIFIER);
-        return new StaticReferenceNode(identifier, referenceSource);
+        return new UntypedStaticReferenceNode(identifier, referenceSource);
     }
 
     private <T> List<T> parseMany(BooleanSupplier stop, Supplier<T> parseElement, BooleanSupplier parseSeparator) {

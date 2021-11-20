@@ -1,10 +1,7 @@
 package org.zwobble.clunk.backends.java;
 
 import org.junit.jupiter.api.Test;
-import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
-import org.zwobble.clunk.ast.typed.TypedRecordFieldNode;
-import org.zwobble.clunk.ast.typed.TypedRecordNode;
-import org.zwobble.clunk.ast.typed.TypedStaticExpressionNode;
+import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.java.ast.JavaSerialiser;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.IntType;
@@ -55,8 +52,8 @@ public class JavaCodeGeneratorTests {
     @Test
     public void recordIsCompiledToJavaRecord() {
         var node = TypedRecordNode.builder("Example")
-            .addField(new TypedRecordFieldNode("first", new TypedStaticExpressionNode(StringType.INSTANCE, NullSource.INSTANCE), NullSource.INSTANCE))
-            .addField(new TypedRecordFieldNode("second", new TypedStaticExpressionNode(IntType.INSTANCE, NullSource.INSTANCE), NullSource.INSTANCE))
+            .addField(new TypedRecordFieldNode("first", Typed.staticExpression(StringType.INSTANCE), NullSource.INSTANCE))
+            .addField(new TypedRecordFieldNode("second", Typed.staticExpression(IntType.INSTANCE), NullSource.INSTANCE))
             .build();
 
         var result = JavaCodeGenerator.compileRecord(node);

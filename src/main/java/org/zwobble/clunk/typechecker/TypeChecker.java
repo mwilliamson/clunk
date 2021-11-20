@@ -1,12 +1,7 @@
 package org.zwobble.clunk.typechecker;
 
-import org.zwobble.clunk.ast.typed.TypedRecordFieldNode;
-import org.zwobble.clunk.ast.typed.TypedRecordNode;
-import org.zwobble.clunk.ast.typed.TypedStaticExpressionNode;
-import org.zwobble.clunk.ast.untyped.UntypedRecordFieldNode;
-import org.zwobble.clunk.ast.untyped.UntypedRecordNode;
-import org.zwobble.clunk.ast.untyped.UntypedStaticExpressionNode;
-import org.zwobble.clunk.ast.untyped.UntypedStaticReferenceNode;
+import org.zwobble.clunk.ast.typed.*;
+import org.zwobble.clunk.ast.untyped.*;
 import org.zwobble.clunk.types.IntType;
 import org.zwobble.clunk.types.StringType;
 import org.zwobble.clunk.types.Type;
@@ -14,6 +9,25 @@ import org.zwobble.clunk.types.Type;
 import java.util.stream.Collectors;
 
 public class TypeChecker {
+    public static TypedNamespaceNode typeCheckNamespace(UntypedNamespaceNode node) {
+        return new TypedNamespaceNode(
+            node.name(),
+            node.statements().stream()
+                .map(statement -> typeCheckNamespaceStatement(statement))
+                .collect(Collectors.toList()),
+            node.source()
+        );
+    }
+
+    private static TypedNamespaceStatementNode typeCheckNamespaceStatement(UntypedNamespaceStatementNode node) {
+        return node.accept(new UntypedNamespaceStatementNode.Visitor<TypedNamespaceStatementNode>() {
+            @Override
+            public TypedNamespaceStatementNode visit(UntypedRecordNode node) {
+                return typeCheckRecord(node);
+            }
+        });
+    }
+
     public static TypedRecordNode typeCheckRecord(UntypedRecordNode node) {
         return new TypedRecordNode(
             node.name(),

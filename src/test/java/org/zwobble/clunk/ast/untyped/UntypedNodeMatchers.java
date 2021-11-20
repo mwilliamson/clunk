@@ -6,12 +6,12 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.matchers.CastMatcher.cast;
 import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
 
-public class NodeMatchers {
-    public static Matcher<UntypedNamespaceStatementNode> isRecordNode(Matcher<UntypedRecordNode> matcher) {
+public class UntypedNodeMatchers {
+    public static Matcher<UntypedNamespaceStatementNode> isUntypedRecordNode(Matcher<UntypedRecordNode> matcher) {
         return cast(UntypedRecordNode.class, matcher);
     }
 
-    public static Matcher<UntypedStaticExpressionNode> isStaticReferenceNode(String value) {
+    public static Matcher<UntypedStaticExpressionNode> isUntypedStaticReferenceNode(String value) {
         return cast(UntypedStaticExpressionNode.class, has("value", equalTo(value)));
     }
 }

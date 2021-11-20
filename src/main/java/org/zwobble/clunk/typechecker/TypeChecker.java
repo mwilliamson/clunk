@@ -2,6 +2,7 @@ package org.zwobble.clunk.typechecker;
 
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.ast.untyped.*;
+import org.zwobble.clunk.types.BoolType;
 import org.zwobble.clunk.types.IntType;
 import org.zwobble.clunk.types.StringType;
 import org.zwobble.clunk.types.Type;
@@ -62,6 +63,7 @@ public class TypeChecker {
 
     private static Type resolveType(String value) {
         return switch (value) {
+            case "Bool" -> BoolType.INSTANCE;
             case "Int" -> IntType.INSTANCE;
             case "String" -> StringType.INSTANCE;
             default -> throw new RuntimeException("TODO");

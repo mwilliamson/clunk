@@ -8,6 +8,7 @@ import org.zwobble.clunk.backends.java.ast.JavaOrdinaryCompilationUnitNode;
 import org.zwobble.clunk.backends.java.ast.JavaRecordComponentNode;
 import org.zwobble.clunk.backends.java.ast.JavaRecordDeclarationNode;
 import org.zwobble.clunk.backends.java.ast.JavaTypeReferenceNode;
+import org.zwobble.clunk.types.BoolType;
 import org.zwobble.clunk.types.IntType;
 import org.zwobble.clunk.types.StringType;
 import org.zwobble.clunk.types.Type;
@@ -32,7 +33,9 @@ public class JavaCodeGenerator {
     }
 
     private static String compileType(Type type) {
-        if (type == IntType.INSTANCE) {
+        if (type == BoolType.INSTANCE) {
+            return "boolean";
+        } else if (type == IntType.INSTANCE) {
             return "int";
         } else if (type == StringType.INSTANCE) {
             return "String";

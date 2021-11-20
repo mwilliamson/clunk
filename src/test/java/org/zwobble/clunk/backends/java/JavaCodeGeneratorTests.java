@@ -1,12 +1,14 @@
 package org.zwobble.clunk.backends.java;
 
 import org.junit.jupiter.api.Test;
-import org.zwobble.clunk.ast.untyped.UntypedNamespaceNode;
-import org.zwobble.clunk.ast.untyped.UntypedRecordFieldNode;
-import org.zwobble.clunk.ast.untyped.UntypedRecordNode;
-import org.zwobble.clunk.ast.untyped.UntypedStaticReferenceNode;
+import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
+import org.zwobble.clunk.ast.typed.TypedRecordFieldNode;
+import org.zwobble.clunk.ast.typed.TypedRecordNode;
+import org.zwobble.clunk.ast.typed.TypedStaticExpressionNode;
 import org.zwobble.clunk.backends.java.ast.JavaSerialiser;
 import org.zwobble.clunk.sources.NullSource;
+import org.zwobble.clunk.types.IntType;
+import org.zwobble.clunk.types.StringType;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,9 +20,9 @@ import static org.hamcrest.Matchers.equalTo;
 public class JavaCodeGeneratorTests {
     @Test
     public void recordsInNamespaceAreCompiledToSeparateJavaCompilationUnits() {
-        var node = UntypedNamespaceNode.builder(List.of("example", "project"))
-            .addStatement(UntypedRecordNode.builder("First").build())
-            .addStatement(UntypedRecordNode.builder("Second").build())
+        var node = TypedNamespaceNode.builder(List.of("example", "project"))
+            .addStatement(TypedRecordNode.builder("First").build())
+            .addStatement(TypedRecordNode.builder("Second").build())
             .build();
 
         var result = JavaCodeGenerator.compileNamespace(node)
@@ -52,9 +54,9 @@ public class JavaCodeGeneratorTests {
 
     @Test
     public void recordIsCompiledToJavaRecord() {
-        var node = UntypedRecordNode.builder("Example")
-            .addField(new UntypedRecordFieldNode("first", new UntypedStaticReferenceNode("String", NullSource.INSTANCE), NullSource.INSTANCE))
-            .addField(new UntypedRecordFieldNode("second", new UntypedStaticReferenceNode("Int", NullSource.INSTANCE), NullSource.INSTANCE))
+        var node = TypedRecordNode.builder("Example")
+            .addField(new TypedRecordFieldNode("first", new TypedStaticExpressionNode(StringType.INSTANCE, NullSource.INSTANCE), NullSource.INSTANCE))
+            .addField(new TypedRecordFieldNode("second", new TypedStaticExpressionNode(IntType.INSTANCE, NullSource.INSTANCE), NullSource.INSTANCE))
             .build();
 
         var result = JavaCodeGenerator.compileRecord(node);

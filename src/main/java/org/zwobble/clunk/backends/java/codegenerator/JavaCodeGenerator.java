@@ -1,4 +1,4 @@
-package org.zwobble.clunk.backends.java;
+package org.zwobble.clunk.backends.java.codegenerator;
 
 import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
 import org.zwobble.clunk.ast.typed.TypedNamespaceStatementNode;

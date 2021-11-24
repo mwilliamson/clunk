@@ -1,10 +1,13 @@
-package org.zwobble.clunk.backends.java.ast;
+package org.zwobble.clunk.backends.java.serialiser;
 
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.backends.java.ast.Java;
+import org.zwobble.clunk.backends.java.ast.JavaRecordComponentNode;
+import org.zwobble.clunk.backends.java.ast.JavaRecordDeclarationNode;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.zwobble.clunk.backends.java.ast.JavaSerialiser.serialiseRecordDeclaration;
+import static org.zwobble.clunk.backends.java.serialiser.JavaSerialiser.serialiseRecordDeclaration;
 
 public class JavaRecordDeclarationNodeSerialisationTests {
     @Test

@@ -1,10 +1,10 @@
-package org.zwobble.clunk.backends.java;
+package org.zwobble.clunk.backends.java.codegenerator;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
-import org.zwobble.clunk.backends.java.ast.JavaSerialiser;
+import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
 import org.zwobble.clunk.types.IntType;
 import org.zwobble.clunk.types.StringType;
 

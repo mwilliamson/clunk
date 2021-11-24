@@ -1,4 +1,8 @@
-package org.zwobble.clunk.backends.java.ast;
+package org.zwobble.clunk.backends.java.serialiser;
+
+import org.zwobble.clunk.backends.java.ast.JavaOrdinaryCompilationUnitNode;
+import org.zwobble.clunk.backends.java.ast.JavaRecordDeclarationNode;
+import org.zwobble.clunk.backends.java.ast.JavaTypeReferenceNode;
 
 public class JavaSerialiser {
     public static void serialiseOrdinaryCompilationUnit(JavaOrdinaryCompilationUnitNode node, StringBuilder builder) {

@@ -15,7 +15,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 
-public class JavaCodeGeneratorTests {
+public class JavaCodeGeneratorNamespaceTests {
     @Test
     public void recordsInNamespaceAreCompiledToSeparateJavaCompilationUnits() {
         var node = TypedNamespaceNode.builder(List.of("example", "project"))

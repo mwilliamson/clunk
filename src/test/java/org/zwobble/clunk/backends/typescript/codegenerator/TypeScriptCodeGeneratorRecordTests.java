@@ -10,7 +10,7 @@ import org.zwobble.clunk.types.StringType;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-public class TypeScriptCodeGeneratorTests {
+public class TypeScriptCodeGeneratorRecordTests {
     @Test
     public void recordIsCompiledToTypeScriptInterface() {
         var node = TypedRecordNode.builder("Example")

@@ -8,7 +8,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser.serialiseInterfaceDeclaration;
 
-public class TypeScriptInterfaceDeclarationNodeSerialisationTests {
+public class TypeScriptSerialiserInterfaceDeclarationNodeTests {
 
     @Test
     public void emptyInterface() {

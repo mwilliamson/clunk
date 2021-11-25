@@ -9,7 +9,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.backends.java.serialiser.JavaSerialiser.serialiseRecordDeclaration;
 
-public class JavaRecordDeclarationNodeSerialisationTests {
+public class JavaSerialiserRecordDeclarationNodeTests {
     @Test
     public void emptyRecord() {
         var node = JavaRecordDeclarationNode.builder("Example").build();

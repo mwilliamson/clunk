@@ -10,7 +10,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser.serialiseModule;
 
-public class TypeScriptModuleNodeSerialisationTests {
+public class TypeScriptSerialiserModuleNodeTests {
     @Test
     public void includesStatementsInModule() {
         var node = TypeScript.module(

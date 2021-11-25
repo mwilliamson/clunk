@@ -8,7 +8,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.backends.java.serialiser.JavaSerialiser.serialiseOrdinaryCompilationUnit;
 
-public class JavaOrdinaryCompilationUnitNodeSerialisationTests {
+public class JavaSerialiserOrdinaryCompilationUnitNodeTests {
     @Test
     public void includesPackageAndDeclaration() {
         var node = new JavaOrdinaryCompilationUnitNode(

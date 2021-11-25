@@ -7,7 +7,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.backends.java.serialiser.JavaSerialiser.serialiseTypeReference;
 
-public class JavaTypeReferenceNodeSerialisationTests {
+public class JavaSerialiserTypeReferenceNodeTests {
     @Test
     public void isSerialisedToName() {
         var node = new JavaTypeReferenceNode("Example");

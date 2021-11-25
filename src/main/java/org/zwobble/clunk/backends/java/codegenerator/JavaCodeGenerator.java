@@ -28,7 +28,7 @@ public class JavaCodeGenerator {
         );
     }
 
-    private static JavaTypeReferenceNode compileStaticExpression(TypedStaticExpressionNode node) {
+    public static JavaTypeReferenceNode compileStaticExpression(TypedStaticExpressionNode node) {
         return new JavaTypeReferenceNode(compileType(node.type()));
     }
 

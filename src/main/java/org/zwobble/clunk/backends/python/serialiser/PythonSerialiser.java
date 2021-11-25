@@ -1,10 +1,14 @@
 package org.zwobble.clunk.backends.python.serialiser;
 
-import org.zwobble.clunk.backends.python.ast.PythonClassDeclarationNode;
-import org.zwobble.clunk.backends.python.ast.PythonExpressionNode;
-import org.zwobble.clunk.backends.python.ast.PythonReferenceNode;
+import org.zwobble.clunk.backends.python.ast.*;
 
 public class PythonSerialiser {
+    private static void serialiseAssignment(PythonAssignmentNode node, StringBuilder builder) {
+        builder.append(node.name());
+        builder.append(": ");
+        serialiseExpression(node.type(), builder);
+    }
+
     public static void serialiseClassDeclaration(PythonClassDeclarationNode node, StringBuilder builder) {
         for (var decorator : node.decorators()) {
             builder.append("@");
@@ -29,5 +33,15 @@ public class PythonSerialiser {
 
     public static void serialiseReference(PythonReferenceNode node, StringBuilder builder) {
         builder.append(node.name());
+    }
+
+    public static void serialiseStatement(PythonAssignmentNode node, StringBuilder builder) {
+        node.accept(new PythonStatementNode.Visitor<Void>() {
+            @Override
+            public Void visit(PythonAssignmentNode node) {
+                serialiseAssignment(node, builder);
+                return null;
+            }
+        });
     }
 }

@@ -11,14 +11,15 @@ public class TypeScriptSerialiser {
         builder.append(node.name());
         builder.append(" {");
         builder.newLine();
+        builder.indent();
         for (var field : node.fields()) {
-            builder.append("    ");
             builder.append(field.name());
             builder.append(": ");
             serialiseReference(field.type(), builder);
             builder.append(";");
             builder.newLine();
         }
+        builder.dedent();
         builder.append("}");
     }
 

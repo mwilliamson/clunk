@@ -43,7 +43,7 @@ public class TypeScriptCodeGenerator {
         return new TypeScriptInterfaceDeclarationNode(node.name(), fields);
     }
 
-    private static TypeScriptReferenceNode compileStaticExpression(TypedStaticExpressionNode node) {
+    public static TypeScriptReferenceNode compileStaticExpression(TypedStaticExpressionNode node) {
         return new TypeScriptReferenceNode(compileType(node.type()));
     }
 

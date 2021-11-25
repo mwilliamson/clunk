@@ -1,6 +1,7 @@
 package org.zwobble.clunk.backends.java.serialiser;
 
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.backends.CodeBuilder;
 import org.zwobble.clunk.backends.java.ast.Java;
 import org.zwobble.clunk.backends.java.ast.JavaRecordComponentNode;
 import org.zwobble.clunk.backends.java.ast.JavaRecordDeclarationNode;
@@ -14,10 +15,10 @@ public class JavaSerialiserRecordDeclarationNodeTests {
     public void emptyRecord() {
         var node = JavaRecordDeclarationNode.builder("Example").build();
 
-        var stringBuilder = new StringBuilder();
-        serialiseRecordDeclaration(node, stringBuilder);
+        var builder = new CodeBuilder();
+        serialiseRecordDeclaration(node, builder);
 
-        assertThat(stringBuilder.toString(), equalTo(
+        assertThat(builder.toString(), equalTo(
             """
             public record Example() {
             }"""
@@ -30,10 +31,10 @@ public class JavaSerialiserRecordDeclarationNodeTests {
             .addComponent(new JavaRecordComponentNode(Java.typeReference("String"), "first"))
             .build();
 
-        var stringBuilder = new StringBuilder();
-        serialiseRecordDeclaration(node, stringBuilder);
+        var builder = new CodeBuilder();
+        serialiseRecordDeclaration(node, builder);
 
-        assertThat(stringBuilder.toString(), equalTo(
+        assertThat(builder.toString(), equalTo(
             """
             public record Example(String first) {
             }"""
@@ -47,10 +48,10 @@ public class JavaSerialiserRecordDeclarationNodeTests {
             .addComponent(new JavaRecordComponentNode(Java.typeReference("int"), "second"))
             .build();
 
-        var stringBuilder = new StringBuilder();
-        serialiseRecordDeclaration(node, stringBuilder);
+        var builder = new CodeBuilder();
+        serialiseRecordDeclaration(node, builder);
 
-        assertThat(stringBuilder.toString(), equalTo(
+        assertThat(builder.toString(), equalTo(
             """
             public record Example(String first, int second) {
             }"""

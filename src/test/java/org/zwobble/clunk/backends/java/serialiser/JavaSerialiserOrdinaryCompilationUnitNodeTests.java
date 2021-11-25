@@ -1,6 +1,7 @@
 package org.zwobble.clunk.backends.java.serialiser;
 
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.backends.CodeBuilder;
 import org.zwobble.clunk.backends.java.ast.JavaOrdinaryCompilationUnitNode;
 import org.zwobble.clunk.backends.java.ast.JavaRecordDeclarationNode;
 
@@ -16,10 +17,10 @@ public class JavaSerialiserOrdinaryCompilationUnitNodeTests {
             JavaRecordDeclarationNode.builder("Example").build()
         );
 
-        var stringBuilder = new StringBuilder();
-        serialiseOrdinaryCompilationUnit(node, stringBuilder);
+        var builder = new CodeBuilder();
+        serialiseOrdinaryCompilationUnit(node, builder);
 
-        assertThat(stringBuilder.toString(), equalTo(
+        assertThat(builder.toString(), equalTo(
             """
             package com.example;
             

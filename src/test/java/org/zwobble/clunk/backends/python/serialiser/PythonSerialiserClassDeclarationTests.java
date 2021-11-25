@@ -1,6 +1,7 @@
 package org.zwobble.clunk.backends.python.serialiser;
 
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.backends.CodeBuilder;
 import org.zwobble.clunk.backends.python.ast.Python;
 import org.zwobble.clunk.backends.python.ast.PythonClassDeclarationNode;
 
@@ -13,10 +14,10 @@ public class PythonSerialiserClassDeclarationTests {
     public void emptyClass() {
         var node = PythonClassDeclarationNode.builder("Example").build();
 
-        var stringBuilder = new StringBuilder();
-        serialiseClassDeclaration(node, stringBuilder);
+        var builder = new CodeBuilder();
+        serialiseClassDeclaration(node, builder);
 
-        assertThat(stringBuilder.toString(), equalTo("""
+        assertThat(builder.toString(), equalTo("""
             class Example:
                 pass"""));
     }
@@ -27,10 +28,10 @@ public class PythonSerialiserClassDeclarationTests {
             .addDecorator(Python.reference("dataclass"))
             .build();
 
-        var stringBuilder = new StringBuilder();
-        serialiseClassDeclaration(node, stringBuilder);
+        var builder = new CodeBuilder();
+        serialiseClassDeclaration(node, builder);
 
-        assertThat(stringBuilder.toString(), equalTo("""
+        assertThat(builder.toString(), equalTo("""
             @dataclass
             class Example:
                 pass"""));
@@ -43,10 +44,10 @@ public class PythonSerialiserClassDeclarationTests {
             .addDecorator(Python.reference("second"))
             .build();
 
-        var stringBuilder = new StringBuilder();
-        serialiseClassDeclaration(node, stringBuilder);
+        var builder = new CodeBuilder();
+        serialiseClassDeclaration(node, builder);
 
-        assertThat(stringBuilder.toString(), equalTo("""
+        assertThat(builder.toString(), equalTo("""
             @first
             @second
             class Example:

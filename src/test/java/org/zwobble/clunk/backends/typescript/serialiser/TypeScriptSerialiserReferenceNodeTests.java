@@ -1,6 +1,7 @@
 package org.zwobble.clunk.backends.typescript.serialiser;
 
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.backends.CodeBuilder;
 import org.zwobble.clunk.backends.typescript.ast.TypeScript;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -12,9 +13,9 @@ public class TypeScriptSerialiserReferenceNodeTests {
     public void isSerialisedToName() {
         var node = TypeScript.reference("Example");
 
-        var stringBuilder = new StringBuilder();
-        serialiseReference(node, stringBuilder);
+        var builder = new CodeBuilder();
+        serialiseReference(node, builder);
 
-        assertThat(stringBuilder.toString(), equalTo("Example"));
+        assertThat(builder.toString(), equalTo("Example"));
     }
 }

@@ -1,6 +1,7 @@
 package org.zwobble.clunk.backends.typescript.serialiser;
 
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.backends.CodeBuilder;
 import org.zwobble.clunk.backends.typescript.ast.TypeScript;
 import org.zwobble.clunk.backends.typescript.ast.TypeScriptInterfaceDeclarationNode;
 
@@ -21,10 +22,10 @@ public class TypeScriptSerialiserModuleNodeTests {
             )
         );
 
-        var stringBuilder = new StringBuilder();
-        serialiseModule(node, stringBuilder);
+        var builder = new CodeBuilder();
+        serialiseModule(node, builder);
 
-        assertThat(stringBuilder.toString(), equalTo("""
+        assertThat(builder.toString(), equalTo("""
             interface First {
             }
             

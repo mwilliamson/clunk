@@ -1,6 +1,7 @@
 package org.zwobble.clunk.backends.python.serialiser;
 
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.backends.CodeBuilder;
 import org.zwobble.clunk.backends.python.ast.Python;
 import org.zwobble.clunk.backends.python.ast.PythonAssignmentNode;
 
@@ -12,9 +13,9 @@ public class PythonSerialiserAssignmentTests {
     public void assignmentWithTypeAndNoExpressionIsSerialised() {
         var node = new PythonAssignmentNode("message", Python.reference("str"));
 
-        var stringBuilder = new StringBuilder();
-        PythonSerialiser.serialiseStatement(node, stringBuilder);
+        var builder = new CodeBuilder();
+        PythonSerialiser.serialiseStatement(node, builder);
 
-        assertThat(stringBuilder.toString(), equalTo("message: str"));
+        assertThat(builder.toString(), equalTo("message: str"));
     }
 }

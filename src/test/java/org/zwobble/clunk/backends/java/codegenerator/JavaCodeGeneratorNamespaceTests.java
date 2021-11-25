@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
+import org.zwobble.clunk.backends.CodeBuilder;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
 import org.zwobble.clunk.types.IntType;
 import org.zwobble.clunk.types.StringType;
@@ -59,10 +60,10 @@ public class JavaCodeGeneratorNamespaceTests {
             .build();
 
         var result = JavaCodeGenerator.compileRecord(node);
-        var stringBuilder = new StringBuilder();
-        JavaSerialiser.serialiseRecordDeclaration(result, stringBuilder);
+        var builder = new CodeBuilder();
+        JavaSerialiser.serialiseRecordDeclaration(result, builder);
 
-        assertThat(stringBuilder.toString(), equalTo(
+        assertThat(builder.toString(), equalTo(
             """
                 public record Example(String first, int second) {
                 }"""

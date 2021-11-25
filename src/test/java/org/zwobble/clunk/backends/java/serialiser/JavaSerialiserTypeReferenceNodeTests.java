@@ -1,6 +1,7 @@
 package org.zwobble.clunk.backends.java.serialiser;
 
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.backends.CodeBuilder;
 import org.zwobble.clunk.backends.java.ast.JavaTypeReferenceNode;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -12,9 +13,9 @@ public class JavaSerialiserTypeReferenceNodeTests {
     public void isSerialisedToName() {
         var node = new JavaTypeReferenceNode("Example");
 
-        var stringBuilder = new StringBuilder();
-        serialiseTypeReference(node, stringBuilder);
+        var builder = new CodeBuilder();
+        serialiseTypeReference(node, builder);
 
-        assertThat(stringBuilder.toString(), equalTo("Example"));
+        assertThat(builder.toString(), equalTo("Example"));
     }
 }

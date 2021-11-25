@@ -1,6 +1,7 @@
 package org.zwobble.clunk.backends.typescript.serialiser;
 
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.backends.CodeBuilder;
 import org.zwobble.clunk.backends.typescript.ast.TypeScript;
 import org.zwobble.clunk.backends.typescript.ast.TypeScriptInterfaceDeclarationNode;
 
@@ -14,10 +15,10 @@ public class TypeScriptSerialiserInterfaceDeclarationNodeTests {
     public void emptyInterface() {
         var node = TypeScriptInterfaceDeclarationNode.builder("Example").build();
 
-        var stringBuilder = new StringBuilder();
-        serialiseInterfaceDeclaration(node, stringBuilder);
+        var builder = new CodeBuilder();
+        serialiseInterfaceDeclaration(node, builder);
 
-        assertThat(stringBuilder.toString(), equalTo(
+        assertThat(builder.toString(), equalTo(
             """
             interface Example {
             }"""
@@ -30,10 +31,10 @@ public class TypeScriptSerialiserInterfaceDeclarationNodeTests {
             .addField(TypeScript.interfaceField("first", TypeScript.reference("string")))
             .build();
 
-        var stringBuilder = new StringBuilder();
-        serialiseInterfaceDeclaration(node, stringBuilder);
+        var builder = new CodeBuilder();
+        serialiseInterfaceDeclaration(node, builder);
 
-        assertThat(stringBuilder.toString(), equalTo(
+        assertThat(builder.toString(), equalTo(
             """
             interface Example {
                 first: string;
@@ -48,10 +49,10 @@ public class TypeScriptSerialiserInterfaceDeclarationNodeTests {
             .addField(TypeScript.interfaceField("second", TypeScript.reference("number")))
             .build();
 
-        var stringBuilder = new StringBuilder();
-        serialiseInterfaceDeclaration(node, stringBuilder);
+        var builder = new CodeBuilder();
+        serialiseInterfaceDeclaration(node, builder);
 
-        assertThat(stringBuilder.toString(), equalTo(
+        assertThat(builder.toString(), equalTo(
             """
             interface Example {
                 first: string;

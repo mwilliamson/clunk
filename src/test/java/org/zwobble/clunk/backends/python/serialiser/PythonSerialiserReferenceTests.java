@@ -7,7 +7,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.backends.python.serialiser.PythonSerialiser.serialiseReference;
 
-public class PythonSerialisationReferenceTests {
+public class PythonSerialiserReferenceTests {
     @Test
     public void isSerialisedToName() {
         var node = Python.reference("Example");

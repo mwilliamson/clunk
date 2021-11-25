@@ -9,6 +9,7 @@ import org.zwobble.clunk.types.StringType;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class JavaCodeGeneratorStaticExpressionTests {
     @Test
@@ -17,9 +18,8 @@ public class JavaCodeGeneratorStaticExpressionTests {
 
         var result = JavaCodeGenerator.compileStaticExpression(node);
 
-        var stringBuilder = new StringBuilder();
-        JavaSerialiser.serialiseTypeReference(result, stringBuilder);
-        assertThat(stringBuilder.toString(), equalTo("boolean"));
+        var string = serialiseToString(result, JavaSerialiser::serialiseTypeReference);
+        assertThat(string, equalTo("boolean"));
     }
 
     @Test
@@ -28,9 +28,8 @@ public class JavaCodeGeneratorStaticExpressionTests {
 
         var result = JavaCodeGenerator.compileStaticExpression(node);
 
-        var stringBuilder = new StringBuilder();
-        JavaSerialiser.serialiseTypeReference(result, stringBuilder);
-        assertThat(stringBuilder.toString(), equalTo("int"));
+        var string = serialiseToString(result, JavaSerialiser::serialiseTypeReference);
+        assertThat(string, equalTo("int"));
     }
 
     @Test
@@ -39,8 +38,7 @@ public class JavaCodeGeneratorStaticExpressionTests {
 
         var result = JavaCodeGenerator.compileStaticExpression(node);
 
-        var stringBuilder = new StringBuilder();
-        JavaSerialiser.serialiseTypeReference(result, stringBuilder);
-        assertThat(stringBuilder.toString(), equalTo("String"));
+        var string = serialiseToString(result, JavaSerialiser::serialiseTypeReference);
+        assertThat(string, equalTo("String"));
     }
 }

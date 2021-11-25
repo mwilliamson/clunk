@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class JavaCodeGeneratorNamespaceTests {
     @Test
@@ -23,16 +24,16 @@ public class JavaCodeGeneratorNamespaceTests {
             .addStatement(TypedRecordNode.builder("Second").build())
             .build();
 
-        var result = JavaCodeGenerator.compileNamespace(node)
-            .stream()
-            .map(compilationUnit -> {
-                var stringBuilder = new StringBuilder();
-                JavaSerialiser.serialiseOrdinaryCompilationUnit(compilationUnit, stringBuilder);
-                return stringBuilder.toString();
-            })
-            .collect(Collectors.toList());
+        var result = JavaCodeGenerator.compileNamespace(node);
 
-        assertThat(result, contains(
+        var strings = result
+            .stream()
+            .map(compilationUnit -> serialiseToString(
+                compilationUnit,
+                JavaSerialiser::serialiseOrdinaryCompilationUnit)
+            )
+            .collect(Collectors.toList());
+        assertThat(strings, contains(
             equalTo(
                 """
                     package example.project; 

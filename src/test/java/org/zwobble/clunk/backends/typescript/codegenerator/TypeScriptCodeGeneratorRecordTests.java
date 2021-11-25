@@ -9,6 +9,7 @@ import org.zwobble.clunk.types.StringType;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class TypeScriptCodeGeneratorRecordTests {
     @Test
@@ -19,10 +20,9 @@ public class TypeScriptCodeGeneratorRecordTests {
             .build();
 
         var result = TypeScriptCodeGenerator.compileRecord(node);
-        var stringBuilder = new StringBuilder();
-        TypeScriptSerialiser.serialiseInterfaceDeclaration(result, stringBuilder);
 
-        assertThat(stringBuilder.toString(), equalTo(
+        var string = serialiseToString(result, TypeScriptSerialiser::serialiseInterfaceDeclaration);
+        assertThat(string, equalTo(
             """
                 interface Example {
                     first: string;

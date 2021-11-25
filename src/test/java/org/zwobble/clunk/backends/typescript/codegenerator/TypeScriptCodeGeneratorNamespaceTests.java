@@ -9,6 +9,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class TypeScriptCodeGeneratorNamespaceTests {
     @Test
@@ -21,9 +22,8 @@ public class TypeScriptCodeGeneratorNamespaceTests {
         var result = TypeScriptCodeGenerator.compileNamespace(node);
 
         assertThat(result.path(), equalTo("example/project"));
-        var stringBuilder = new StringBuilder();
-        TypeScriptSerialiser.serialiseModule(result, stringBuilder);
-        assertThat(stringBuilder.toString(), equalTo(
+        var string = serialiseToString(result, TypeScriptSerialiser::serialiseModule);
+        assertThat(string, equalTo(
             """
                 interface First {
                 }

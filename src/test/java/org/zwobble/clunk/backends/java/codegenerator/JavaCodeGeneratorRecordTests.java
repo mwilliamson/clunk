@@ -9,6 +9,7 @@ import org.zwobble.clunk.types.StringType;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class JavaCodeGeneratorRecordTests {
     @Test
@@ -19,10 +20,9 @@ public class JavaCodeGeneratorRecordTests {
             .build();
 
         var result = JavaCodeGenerator.compileRecord(node);
-        var stringBuilder = new StringBuilder();
-        JavaSerialiser.serialiseRecordDeclaration(result, stringBuilder);
 
-        assertThat(stringBuilder.toString(), equalTo(
+        var string = serialiseToString(result, JavaSerialiser::serialiseRecordDeclaration);
+        assertThat(string, equalTo(
             """
                 public record Example(String first, int second) {
                 }"""

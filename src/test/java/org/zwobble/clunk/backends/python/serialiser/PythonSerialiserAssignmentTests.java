@@ -16,6 +16,6 @@ public class PythonSerialiserAssignmentTests {
         var builder = new CodeBuilder();
         PythonSerialiser.serialiseStatement(node, builder);
 
-        assertThat(builder.toString(), equalTo("message: str"));
+        assertThat(builder.toString(), equalTo("message: str\n"));
     }
 }

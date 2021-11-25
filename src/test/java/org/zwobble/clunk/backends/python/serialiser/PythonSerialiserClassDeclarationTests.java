@@ -19,7 +19,8 @@ public class PythonSerialiserClassDeclarationTests {
 
         assertThat(builder.toString(), equalTo("""
             class Example:
-                pass"""));
+                pass
+            """));
     }
 
     @Test
@@ -34,7 +35,8 @@ public class PythonSerialiserClassDeclarationTests {
         assertThat(builder.toString(), equalTo("""
             @dataclass
             class Example:
-                pass"""));
+                pass
+            """));
     }
 
     @Test
@@ -51,6 +53,39 @@ public class PythonSerialiserClassDeclarationTests {
             @first
             @second
             class Example:
-                pass"""));
+                pass
+            """));
+    }
+
+    @Test
+    public void oneStatement() {
+        var node = PythonClassDeclarationNode.builder("Example")
+            .addStatement(Python.variableType("first", Python.reference("str")))
+            .build();
+
+        var builder = new CodeBuilder();
+        serialiseClassDeclaration(node, builder);
+
+        assertThat(builder.toString(), equalTo("""
+            class Example:
+                first: str
+            """));
+    }
+
+    @Test
+    public void manyStatements() {
+        var node = PythonClassDeclarationNode.builder("Example")
+            .addStatement(Python.variableType("first", Python.reference("str")))
+            .addStatement(Python.variableType("second", Python.reference("int")))
+            .build();
+
+        var builder = new CodeBuilder();
+        serialiseClassDeclaration(node, builder);
+
+        assertThat(builder.toString(), equalTo("""
+            class Example:
+                first: str
+                second: int
+            """));
     }
 }

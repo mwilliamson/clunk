@@ -8,4 +8,8 @@ public class Python {
     public static PythonReferenceNode reference(String name) {
         return new PythonReferenceNode(name);
     }
+
+    public static PythonAssignmentNode variableType(String name, PythonExpressionNode type) {
+        return new PythonAssignmentNode(name, type);
+    }
 }

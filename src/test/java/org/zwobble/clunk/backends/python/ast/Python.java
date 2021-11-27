@@ -5,6 +5,10 @@ public class Python {
 
     }
 
+    public static PythonAttrAccessNode attr(PythonExpressionNode receiver, String attrName) {
+        return new PythonAttrAccessNode(receiver, attrName);
+    }
+
     public static PythonReferenceNode reference(String name) {
         return new PythonReferenceNode(name);
     }

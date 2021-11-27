@@ -13,6 +13,13 @@ public class PythonSerialiser {
         builder.newLine();
     }
 
+    private static void serialiseAttrAccess(PythonAttrAccessNode node, CodeBuilder builder) {
+        builder.append("(");
+        serialiseExpression(node.receiver(), builder);
+        builder.append(").");
+        builder.append(node.attrName());
+    }
+
     private static void serialiseBlock(List<PythonStatementNode> statements, CodeBuilder builder) {
         builder.indent();
         if (statements.isEmpty()) {
@@ -39,8 +46,14 @@ public class PythonSerialiser {
         serialiseBlock(node.statements(), builder);
     }
 
-    private static void serialiseExpression(PythonExpressionNode node, CodeBuilder builder) {
+    public static void serialiseExpression(PythonExpressionNode node, CodeBuilder builder) {
         node.accept(new PythonExpressionNode.Visitor<Void>() {
+            @Override
+            public Void visit(PythonAttrAccessNode node) {
+                serialiseAttrAccess(node, builder);
+                return null;
+            }
+
             @Override
             public Void visit(PythonReferenceNode node) {
                 serialiseReference(node, builder);

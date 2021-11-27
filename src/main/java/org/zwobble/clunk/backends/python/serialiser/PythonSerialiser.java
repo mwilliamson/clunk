@@ -68,6 +68,12 @@ public class PythonSerialiser {
         builder.newLine();
     }
 
+    public static void serialiseModule(PythonModuleNode node, CodeBuilder builder) {
+        for (var statement : node.statements()) {
+            serialiseStatement(statement, builder);
+        }
+    }
+
     private static void serialiseReference(PythonReferenceNode node, CodeBuilder builder) {
         builder.append(node.name());
     }

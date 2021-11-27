@@ -6,7 +6,7 @@ import org.zwobble.clunk.backends.python.ast.Python;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.zwobble.clunk.backends.python.serialiser.PythonSerialiser.serialiseReference;
+import static org.zwobble.clunk.backends.python.serialiser.PythonSerialiser.serialiseExpression;
 
 public class PythonSerialiserReferenceTests {
     @Test
@@ -14,7 +14,7 @@ public class PythonSerialiserReferenceTests {
         var node = Python.reference("Example");
 
         var builder = new CodeBuilder();
-        serialiseReference(node, builder);
+        serialiseExpression(node, builder);
 
         assertThat(builder.toString(), equalTo("Example"));
     }

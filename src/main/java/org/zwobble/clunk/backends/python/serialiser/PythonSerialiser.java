@@ -33,7 +33,7 @@ public class PythonSerialiser {
         builder.dedent();
     }
 
-    public static void serialiseClassDeclaration(PythonClassDeclarationNode node, CodeBuilder builder) {
+    private static void serialiseClassDeclaration(PythonClassDeclarationNode node, CodeBuilder builder) {
         for (var decorator : node.decorators()) {
             builder.append("@");
             serialiseExpression(decorator, builder);
@@ -62,7 +62,7 @@ public class PythonSerialiser {
         });
     }
 
-    public static void serialiseReference(PythonReferenceNode node, CodeBuilder builder) {
+    private static void serialiseReference(PythonReferenceNode node, CodeBuilder builder) {
         builder.append(node.name());
     }
 

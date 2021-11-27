@@ -18,7 +18,7 @@ public class PythonCodeGeneratorStaticExpressionTests {
 
         var result = PythonCodeGenerator.compileStaticExpression(node);
 
-        var string = serialiseToString(result, PythonSerialiser::serialiseReference);
+        var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
         assertThat(string, equalTo("bool"));
     }
 
@@ -28,7 +28,7 @@ public class PythonCodeGeneratorStaticExpressionTests {
 
         var result = PythonCodeGenerator.compileStaticExpression(node);
 
-        var string = serialiseToString(result, PythonSerialiser::serialiseReference);
+        var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
         assertThat(string, equalTo("int"));
     }
 
@@ -38,7 +38,7 @@ public class PythonCodeGeneratorStaticExpressionTests {
 
         var result = PythonCodeGenerator.compileStaticExpression(node);
 
-        var string = serialiseToString(result, PythonSerialiser::serialiseReference);
+        var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
         assertThat(string, equalTo("str"));
     }
 }

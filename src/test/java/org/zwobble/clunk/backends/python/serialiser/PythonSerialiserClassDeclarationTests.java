@@ -7,7 +7,7 @@ import org.zwobble.clunk.backends.python.ast.PythonClassDeclarationNode;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.zwobble.clunk.backends.python.serialiser.PythonSerialiser.serialiseClassDeclaration;
+import static org.zwobble.clunk.backends.python.serialiser.PythonSerialiser.serialiseStatement;
 
 public class PythonSerialiserClassDeclarationTests {
     @Test
@@ -15,7 +15,7 @@ public class PythonSerialiserClassDeclarationTests {
         var node = PythonClassDeclarationNode.builder("Example").build();
 
         var builder = new CodeBuilder();
-        serialiseClassDeclaration(node, builder);
+        serialiseStatement(node, builder);
 
         assertThat(builder.toString(), equalTo("""
             class Example:
@@ -30,7 +30,7 @@ public class PythonSerialiserClassDeclarationTests {
             .build();
 
         var builder = new CodeBuilder();
-        serialiseClassDeclaration(node, builder);
+        serialiseStatement(node, builder);
 
         assertThat(builder.toString(), equalTo("""
             @dataclass
@@ -47,7 +47,7 @@ public class PythonSerialiserClassDeclarationTests {
             .build();
 
         var builder = new CodeBuilder();
-        serialiseClassDeclaration(node, builder);
+        serialiseStatement(node, builder);
 
         assertThat(builder.toString(), equalTo("""
             @first
@@ -64,7 +64,7 @@ public class PythonSerialiserClassDeclarationTests {
             .build();
 
         var builder = new CodeBuilder();
-        serialiseClassDeclaration(node, builder);
+        serialiseStatement(node, builder);
 
         assertThat(builder.toString(), equalTo("""
             class Example:
@@ -80,7 +80,7 @@ public class PythonSerialiserClassDeclarationTests {
             .build();
 
         var builder = new CodeBuilder();
-        serialiseClassDeclaration(node, builder);
+        serialiseStatement(node, builder);
 
         assertThat(builder.toString(), equalTo("""
             class Example:

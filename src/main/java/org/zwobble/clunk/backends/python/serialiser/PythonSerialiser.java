@@ -20,7 +20,7 @@ public class PythonSerialiser {
         builder.append(node.attrName());
     }
 
-    private static void serialiseBlock(List<PythonStatementNode> statements, CodeBuilder builder) {
+    private static void serialiseBlock(List<? extends PythonStatementNode> statements, CodeBuilder builder) {
         builder.indent();
         if (statements.isEmpty()) {
             builder.append("pass");

@@ -5,8 +5,8 @@ import java.util.List;
 
 public record PythonClassDeclarationNode(
     String name,
-    List<PythonExpressionNode> decorators,
-    List<PythonStatementNode> statements
+    List<? extends PythonExpressionNode> decorators,
+    List<? extends PythonStatementNode> statements
 ) implements PythonStatementNode {
     @Override
     public <T> T accept(Visitor<T> visitor) {

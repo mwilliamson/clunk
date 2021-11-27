@@ -73,6 +73,12 @@ public class PythonSerialiser {
                 serialiseAssignment(node, builder);
                 return null;
             }
+
+            @Override
+            public Void visit(PythonClassDeclarationNode node) {
+                serialiseClassDeclaration(node, builder);
+                return null;
+            }
         });
     }
 }

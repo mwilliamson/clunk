@@ -7,7 +7,12 @@ public record PythonClassDeclarationNode(
     String name,
     List<PythonExpressionNode> decorators,
     List<PythonStatementNode> statements
-) implements PythonNode {
+) implements PythonStatementNode {
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
     public static Builder builder(String name) {
         return new Builder(name, List.of(), List.of());
     }

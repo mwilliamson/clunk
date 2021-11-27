@@ -5,6 +5,7 @@ public interface PythonExpressionNode extends PythonNode {
 
     interface Visitor<T> {
         T visit(PythonAttrAccessNode node);
+        T visit(PythonBoolLiteralNode node);
         T visit(PythonCallNode node);
         T visit(PythonReferenceNode node);
     }

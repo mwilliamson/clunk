@@ -33,6 +33,10 @@ public class PythonSerialiser {
         builder.dedent();
     }
 
+    private static void serialiseBoolLiteral(PythonBoolLiteralNode node, CodeBuilder builder) {
+        builder.append(node.value() ? "True" : "False");
+    }
+
     private static void serialiseCall(PythonCallNode node, CodeBuilder builder) {
         builder.append("(");
         serialiseExpression(node.receiver(), builder);
@@ -68,6 +72,12 @@ public class PythonSerialiser {
             @Override
             public Void visit(PythonAttrAccessNode node) {
                 serialiseAttrAccess(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(PythonBoolLiteralNode node) {
+                serialiseBoolLiteral(node, builder);
                 return null;
             }
 

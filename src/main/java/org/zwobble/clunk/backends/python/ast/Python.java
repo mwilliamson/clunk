@@ -3,6 +3,9 @@ package org.zwobble.clunk.backends.python.ast;
 import java.util.List;
 
 public class Python {
+    public static final PythonExpressionNode FALSE = new PythonBoolLiteralNode(false);
+    public static final PythonExpressionNode TRUE = new PythonBoolLiteralNode(true);
+
     private Python() {
 
     }

@@ -1,7 +1,6 @@
 package org.zwobble.clunk.backends.typescript.serialiser;
 
 import org.junit.jupiter.api.Test;
-import org.zwobble.clunk.backends.CodeBuilder;
 import org.zwobble.clunk.backends.typescript.ast.TypeScript;
 import org.zwobble.clunk.backends.typescript.ast.TypeScriptInterfaceDeclarationNode;
 
@@ -9,7 +8,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser.serialiseModule;
+import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class TypeScriptSerialiserModuleNodeTests {
     @Test
@@ -22,10 +21,9 @@ public class TypeScriptSerialiserModuleNodeTests {
             )
         );
 
-        var builder = new CodeBuilder();
-        serialiseModule(node, builder);
+        var result = serialiseToString(node, TypeScriptSerialiser::serialiseModule);
 
-        assertThat(builder.toString(), equalTo("""
+        assertThat(result, equalTo("""
             interface First {
             }
             

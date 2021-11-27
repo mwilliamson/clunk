@@ -1,24 +1,22 @@
 package org.zwobble.clunk.backends.java.serialiser;
 
 import org.junit.jupiter.api.Test;
-import org.zwobble.clunk.backends.CodeBuilder;
 import org.zwobble.clunk.backends.java.ast.Java;
 import org.zwobble.clunk.backends.java.ast.JavaRecordComponentNode;
 import org.zwobble.clunk.backends.java.ast.JavaRecordDeclarationNode;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.zwobble.clunk.backends.java.serialiser.JavaSerialiser.serialiseRecordDeclaration;
+import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class JavaSerialiserRecordDeclarationNodeTests {
     @Test
     public void emptyRecord() {
         var node = JavaRecordDeclarationNode.builder("Example").build();
 
-        var builder = new CodeBuilder();
-        serialiseRecordDeclaration(node, builder);
+        var result = serialiseToString(node, JavaSerialiser::serialiseRecordDeclaration);
 
-        assertThat(builder.toString(), equalTo(
+        assertThat(result, equalTo(
             """
             public record Example() {
             }"""
@@ -31,10 +29,9 @@ public class JavaSerialiserRecordDeclarationNodeTests {
             .addComponent(new JavaRecordComponentNode(Java.typeReference("String"), "first"))
             .build();
 
-        var builder = new CodeBuilder();
-        serialiseRecordDeclaration(node, builder);
+        var result = serialiseToString(node, JavaSerialiser::serialiseRecordDeclaration);
 
-        assertThat(builder.toString(), equalTo(
+        assertThat(result, equalTo(
             """
             public record Example(String first) {
             }"""
@@ -48,10 +45,9 @@ public class JavaSerialiserRecordDeclarationNodeTests {
             .addComponent(new JavaRecordComponentNode(Java.typeReference("int"), "second"))
             .build();
 
-        var builder = new CodeBuilder();
-        serialiseRecordDeclaration(node, builder);
+        var result = serialiseToString(node, JavaSerialiser::serialiseRecordDeclaration);
 
-        assertThat(builder.toString(), equalTo(
+        assertThat(result, equalTo(
             """
             public record Example(String first, int second) {
             }"""

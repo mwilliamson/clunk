@@ -1,13 +1,12 @@
 package org.zwobble.clunk.backends.java.serialiser;
 
 import org.junit.jupiter.api.Test;
-import org.zwobble.clunk.backends.CodeBuilder;
 import org.zwobble.clunk.backends.java.ast.JavaOrdinaryCompilationUnitNode;
 import org.zwobble.clunk.backends.java.ast.JavaRecordDeclarationNode;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.zwobble.clunk.backends.java.serialiser.JavaSerialiser.serialiseOrdinaryCompilationUnit;
+import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class JavaSerialiserOrdinaryCompilationUnitNodeTests {
     @Test
@@ -17,10 +16,9 @@ public class JavaSerialiserOrdinaryCompilationUnitNodeTests {
             JavaRecordDeclarationNode.builder("Example").build()
         );
 
-        var builder = new CodeBuilder();
-        serialiseOrdinaryCompilationUnit(node, builder);
+        var result = serialiseToString(node, JavaSerialiser::serialiseOrdinaryCompilationUnit);
 
-        assertThat(builder.toString(), equalTo(
+        assertThat(result, equalTo(
             """
             package com.example;
             

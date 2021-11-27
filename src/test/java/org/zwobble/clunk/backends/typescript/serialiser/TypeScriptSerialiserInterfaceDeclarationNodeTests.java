@@ -1,13 +1,12 @@
 package org.zwobble.clunk.backends.typescript.serialiser;
 
 import org.junit.jupiter.api.Test;
-import org.zwobble.clunk.backends.CodeBuilder;
 import org.zwobble.clunk.backends.typescript.ast.TypeScript;
 import org.zwobble.clunk.backends.typescript.ast.TypeScriptInterfaceDeclarationNode;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser.serialiseInterfaceDeclaration;
+import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class TypeScriptSerialiserInterfaceDeclarationNodeTests {
 
@@ -15,10 +14,9 @@ public class TypeScriptSerialiserInterfaceDeclarationNodeTests {
     public void emptyInterface() {
         var node = TypeScriptInterfaceDeclarationNode.builder("Example").build();
 
-        var builder = new CodeBuilder();
-        serialiseInterfaceDeclaration(node, builder);
+        var result = serialiseToString(node, TypeScriptSerialiser::serialiseInterfaceDeclaration);
 
-        assertThat(builder.toString(), equalTo(
+        assertThat(result, equalTo(
             """
             interface Example {
             }"""
@@ -31,10 +29,9 @@ public class TypeScriptSerialiserInterfaceDeclarationNodeTests {
             .addField(TypeScript.interfaceField("first", TypeScript.reference("string")))
             .build();
 
-        var builder = new CodeBuilder();
-        serialiseInterfaceDeclaration(node, builder);
+        var result = serialiseToString(node, TypeScriptSerialiser::serialiseInterfaceDeclaration);
 
-        assertThat(builder.toString(), equalTo(
+        assertThat(result, equalTo(
             """
             interface Example {
                 first: string;
@@ -49,10 +46,9 @@ public class TypeScriptSerialiserInterfaceDeclarationNodeTests {
             .addField(TypeScript.interfaceField("second", TypeScript.reference("number")))
             .build();
 
-        var builder = new CodeBuilder();
-        serialiseInterfaceDeclaration(node, builder);
+        var result = serialiseToString(node, TypeScriptSerialiser::serialiseInterfaceDeclaration);
 
-        assertThat(builder.toString(), equalTo(
+        assertThat(result, equalTo(
             """
             interface Example {
                 first: string;

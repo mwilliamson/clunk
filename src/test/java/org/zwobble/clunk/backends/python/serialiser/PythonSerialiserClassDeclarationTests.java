@@ -1,23 +1,21 @@
 package org.zwobble.clunk.backends.python.serialiser;
 
 import org.junit.jupiter.api.Test;
-import org.zwobble.clunk.backends.CodeBuilder;
 import org.zwobble.clunk.backends.python.ast.Python;
 import org.zwobble.clunk.backends.python.ast.PythonClassDeclarationNode;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.zwobble.clunk.backends.python.serialiser.PythonSerialiser.serialiseStatement;
+import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class PythonSerialiserClassDeclarationTests {
     @Test
     public void emptyClass() {
         var node = PythonClassDeclarationNode.builder("Example").build();
 
-        var builder = new CodeBuilder();
-        serialiseStatement(node, builder);
+        var result = serialiseToString(node, PythonSerialiser::serialiseStatement);
 
-        assertThat(builder.toString(), equalTo("""
+        assertThat(result, equalTo("""
             class Example:
                 pass
             """));
@@ -29,10 +27,9 @@ public class PythonSerialiserClassDeclarationTests {
             .addDecorator(Python.reference("dataclass"))
             .build();
 
-        var builder = new CodeBuilder();
-        serialiseStatement(node, builder);
+        var result = serialiseToString(node, PythonSerialiser::serialiseStatement);
 
-        assertThat(builder.toString(), equalTo("""
+        assertThat(result, equalTo("""
             @dataclass
             class Example:
                 pass
@@ -46,10 +43,9 @@ public class PythonSerialiserClassDeclarationTests {
             .addDecorator(Python.reference("second"))
             .build();
 
-        var builder = new CodeBuilder();
-        serialiseStatement(node, builder);
+        var result = serialiseToString(node, PythonSerialiser::serialiseStatement);
 
-        assertThat(builder.toString(), equalTo("""
+        assertThat(result, equalTo("""
             @first
             @second
             class Example:
@@ -63,10 +59,9 @@ public class PythonSerialiserClassDeclarationTests {
             .addStatement(Python.variableType("first", Python.reference("str")))
             .build();
 
-        var builder = new CodeBuilder();
-        serialiseStatement(node, builder);
+        var result = serialiseToString(node, PythonSerialiser::serialiseStatement);
 
-        assertThat(builder.toString(), equalTo("""
+        assertThat(result, equalTo("""
             class Example:
                 first: str
             """));
@@ -79,10 +74,9 @@ public class PythonSerialiserClassDeclarationTests {
             .addStatement(Python.variableType("second", Python.reference("int")))
             .build();
 
-        var builder = new CodeBuilder();
-        serialiseStatement(node, builder);
+        var result = serialiseToString(node, PythonSerialiser::serialiseStatement);
 
-        assertThat(builder.toString(), equalTo("""
+        assertThat(result, equalTo("""
             class Example:
                 first: str
                 second: int

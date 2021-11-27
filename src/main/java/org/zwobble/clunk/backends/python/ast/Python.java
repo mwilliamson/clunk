@@ -1,5 +1,7 @@
 package org.zwobble.clunk.backends.python.ast;
 
+import java.util.List;
+
 public class Python {
     private Python() {
 
@@ -7,6 +9,14 @@ public class Python {
 
     public static PythonAttrAccessNode attr(PythonExpressionNode receiver, String attrName) {
         return new PythonAttrAccessNode(receiver, attrName);
+    }
+
+    public static PythonCallNode call(PythonReferenceNode receiver, List<PythonKeywordArgumentNode> kwargs) {
+        return new PythonCallNode(receiver, kwargs);
+    }
+
+    public static PythonKeywordArgumentNode kwarg(String name, PythonExpressionNode expression) {
+        return new PythonKeywordArgumentNode(name, expression);
     }
 
     public static PythonReferenceNode reference(String name) {

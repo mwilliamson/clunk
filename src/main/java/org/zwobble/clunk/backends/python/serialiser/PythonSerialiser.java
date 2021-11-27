@@ -33,6 +33,23 @@ public class PythonSerialiser {
         builder.dedent();
     }
 
+    private static void serialiseCall(PythonCallNode node, CodeBuilder builder) {
+        builder.append("(");
+        serialiseExpression(node.receiver(), builder);
+        builder.append(")(");
+        var first = true;
+        for (var kwarg : node.kwargs()) {
+            if (!first) {
+                builder.append(", ");
+            }
+            builder.append(kwarg.name());
+            builder.append("=");
+            serialiseExpression(kwarg.expression(), builder);
+            first = false;
+        }
+        builder.append(")");
+    }
+
     private static void serialiseClassDeclaration(PythonClassDeclarationNode node, CodeBuilder builder) {
         for (var decorator : node.decorators()) {
             builder.append("@");
@@ -51,6 +68,12 @@ public class PythonSerialiser {
             @Override
             public Void visit(PythonAttrAccessNode node) {
                 serialiseAttrAccess(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(PythonCallNode node) {
+                serialiseCall(node, builder);
                 return null;
             }
 

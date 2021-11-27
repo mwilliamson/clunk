@@ -14,7 +14,7 @@ public class Python {
         return new PythonAttrAccessNode(receiver, attrName);
     }
 
-    public static PythonCallNode call(PythonReferenceNode receiver, List<PythonKeywordArgumentNode> kwargs) {
+    public static PythonCallNode call(PythonExpressionNode receiver, List<PythonKeywordArgumentNode> kwargs) {
         return new PythonCallNode(receiver, kwargs);
     }
 

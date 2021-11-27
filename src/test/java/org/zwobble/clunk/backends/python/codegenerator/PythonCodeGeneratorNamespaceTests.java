@@ -25,10 +25,10 @@ public class PythonCodeGeneratorNamespaceTests {
         var string = serialiseToString(result, PythonSerialiser::serialiseModule);
         assertThat(string, equalTo("""
             import dataclasses
-            @(dataclasses).dataclass
+            @((dataclasses).dataclass)(frozen=True)
             class First:
                 pass
-            @(dataclasses).dataclass
+            @((dataclasses).dataclass)(frozen=True)
             class Second:
                 pass
             """

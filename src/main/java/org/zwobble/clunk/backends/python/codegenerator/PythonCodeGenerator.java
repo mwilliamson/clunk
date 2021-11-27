@@ -45,7 +45,10 @@ public class PythonCodeGenerator {
 
     public static PythonClassDeclarationNode compileRecord(TypedRecordNode node) {
         var decorators = List.of(
-            Python.attr(Python.reference("dataclasses"), "dataclass")
+            Python.call(
+                Python.attr(Python.reference("dataclasses"), "dataclass"),
+                List.of(Python.kwarg("frozen", Python.TRUE))
+            )
         );
 
         var statements = node.fields().stream()

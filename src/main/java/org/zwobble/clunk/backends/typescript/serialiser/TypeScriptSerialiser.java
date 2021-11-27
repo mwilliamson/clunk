@@ -13,6 +13,7 @@ public class TypeScriptSerialiser {
         builder.newLine();
         builder.indent();
         for (var field : node.fields()) {
+            builder.append("readonly ");
             builder.append(field.name());
             builder.append(": ");
             serialiseReference(field.type(), builder);

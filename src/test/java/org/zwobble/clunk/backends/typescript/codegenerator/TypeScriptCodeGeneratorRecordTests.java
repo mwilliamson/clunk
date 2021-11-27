@@ -25,8 +25,8 @@ public class TypeScriptCodeGeneratorRecordTests {
         assertThat(string, equalTo(
             """
                 interface Example {
-                    first: string;
-                    second: number;
+                    readonly first: string;
+                    readonly second: number;
                 }"""
         ));
     }

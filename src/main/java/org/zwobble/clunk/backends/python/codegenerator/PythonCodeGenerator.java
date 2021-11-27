@@ -1,5 +1,7 @@
 package org.zwobble.clunk.backends.python.codegenerator;
 
+import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
+import org.zwobble.clunk.ast.typed.TypedNamespaceStatementNode;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.ast.typed.TypedStaticExpressionNode;
 import org.zwobble.clunk.backends.python.ast.*;
@@ -8,6 +10,7 @@ import org.zwobble.clunk.types.IntType;
 import org.zwobble.clunk.types.StringType;
 import org.zwobble.clunk.types.Type;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PythonCodeGenerator {
@@ -27,6 +30,19 @@ public class PythonCodeGenerator {
         }
     }
 
+    public static PythonModuleNode compileNamespace(TypedNamespaceNode node) {
+        var moduleName = String.join(".", node.name());
+
+        var statements = new ArrayList<PythonStatementNode>();
+        statements.add(new PythonImportNode("dataclasses"));
+
+        node.statements().stream()
+            .map(statement -> compileStatement(statement))
+            .forEachOrdered(statements::add);
+
+        return new PythonModuleNode(moduleName, statements);
+    }
+
     public static PythonClassDeclarationNode compileRecord(TypedRecordNode node) {
         var decorators = List.of(
             Python.attr(Python.reference("dataclasses"), "dataclass")
@@ -37,5 +53,14 @@ public class PythonCodeGenerator {
             .toList();
 
         return new PythonClassDeclarationNode(node.name(), decorators, statements);
+    }
+
+    public static PythonStatementNode compileStatement(TypedNamespaceStatementNode node) {
+        return node.accept(new TypedNamespaceStatementNode.Visitor<PythonStatementNode>() {
+            @Override
+            public PythonStatementNode visit(TypedRecordNode node) {
+                return compileRecord(node);
+            }
+        });
     }
 }

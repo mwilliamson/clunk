@@ -62,6 +62,12 @@ public class PythonSerialiser {
         });
     }
 
+    private static void serialiseImport(PythonImportNode node, CodeBuilder builder) {
+        builder.append("import ");
+        builder.append(node.moduleName());
+        builder.newLine();
+    }
+
     private static void serialiseReference(PythonReferenceNode node, CodeBuilder builder) {
         builder.append(node.name());
     }
@@ -77,6 +83,12 @@ public class PythonSerialiser {
             @Override
             public Void visit(PythonClassDeclarationNode node) {
                 serialiseClassDeclaration(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(PythonImportNode node) {
+                serialiseImport(node, builder);
                 return null;
             }
         });

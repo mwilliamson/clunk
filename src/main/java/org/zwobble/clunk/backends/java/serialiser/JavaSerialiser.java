@@ -52,7 +52,6 @@ public class JavaSerialiser {
         var escapedValue = node.value()
             .replace("\\", "\\\\")
             .replace("\b", "\\b")
-            .replace("\s", "\\s")
             .replace("\t", "\\t")
             .replace("\n", "\\n")
             .replace("\f", "\\f")

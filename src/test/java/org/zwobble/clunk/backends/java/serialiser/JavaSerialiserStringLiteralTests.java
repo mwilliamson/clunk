@@ -28,10 +28,10 @@ public class JavaSerialiserStringLiteralTests {
 
     @Test
     public void specialCharactersAreEscaped() {
-        var node = Java.string("\b\s\t\n\f\r\"\\");
+        var node = Java.string("\b\t\n\f\r\"\\");
 
         var result = serialiseToString(node, JavaSerialiser::serialiseExpression);
 
-        assertThat(result, equalTo("\"\\b\\s\\t\\n\\f\\r\\\"\\\\\""));
+        assertThat(result, equalTo("\"\\b\\t\\n\\f\\r\\\"\\\\\""));
     }
 }

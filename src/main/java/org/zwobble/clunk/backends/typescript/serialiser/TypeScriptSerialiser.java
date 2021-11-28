@@ -1,11 +1,19 @@
 package org.zwobble.clunk.backends.typescript.serialiser;
 
 import org.zwobble.clunk.backends.CodeBuilder;
-import org.zwobble.clunk.backends.typescript.ast.TypeScriptInterfaceDeclarationNode;
-import org.zwobble.clunk.backends.typescript.ast.TypeScriptModuleNode;
-import org.zwobble.clunk.backends.typescript.ast.TypeScriptReferenceNode;
+import org.zwobble.clunk.backends.typescript.ast.*;
 
 public class TypeScriptSerialiser {
+    public static void serialiseExpression(TypeScriptExpressionNode node, CodeBuilder builder) {
+        node.accept(new TypeScriptExpressionNode.Visitor<Void>() {
+            @Override
+            public Void visit(TypeScriptStringLiteralNode node) {
+                serialiseStringLiteral(node, builder);
+                return null;
+            }
+        });
+    }
+
     public static void serialiseInterfaceDeclaration(TypeScriptInterfaceDeclarationNode node, CodeBuilder builder) {
         builder.append("interface ");
         builder.append(node.name());
@@ -40,5 +48,20 @@ public class TypeScriptSerialiser {
 
     public static void serialiseReference(TypeScriptReferenceNode node, CodeBuilder builder) {
         builder.append(node.name());
+    }
+
+    private static void serialiseStringLiteral(TypeScriptStringLiteralNode node, CodeBuilder builder) {
+        builder.append("\"");
+        var escapedValue = node.value()
+            .replace("\\", "\\\\")
+            .replace("\b", "\\b")
+            .replace("\t", "\\t")
+            .replace("\n", "\\n")
+            .replace("\013", "\\v")
+            .replace("\f", "\\f")
+            .replace("\r", "\\r")
+            .replace("\"", "\\\"");
+        builder.append(escapedValue);
+        builder.append("\"");
     }
 }

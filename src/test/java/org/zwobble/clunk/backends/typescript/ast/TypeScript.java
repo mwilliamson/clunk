@@ -18,4 +18,8 @@ public class TypeScript {
     public static TypeScriptReferenceNode reference(String name) {
         return new TypeScriptReferenceNode(name);
     }
+
+    public static TypeScriptStringLiteralNode string(String value) {
+        return new TypeScriptStringLiteralNode(value);
+    }
 }

@@ -1,18 +1,18 @@
-package org.zwobble.clunk.backends.typescript.serialiser;
+package org.zwobble.clunk.backends.java.serialiser;
 
 import org.junit.jupiter.api.Test;
-import org.zwobble.clunk.backends.typescript.ast.TypeScript;
+import org.zwobble.clunk.backends.java.ast.JavaTypeReferenceNode;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
-public class TypeScriptSerialiserReferenceNodeTests {
+public class JavaSerialiserTypeReferenceTests {
     @Test
     public void isSerialisedToName() {
-        var node = TypeScript.reference("Example");
+        var node = new JavaTypeReferenceNode("Example");
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseReference);
+        var result = serialiseToString(node, JavaSerialiser::serialiseTypeReference);
 
         assertThat(result, equalTo("Example"));
     }

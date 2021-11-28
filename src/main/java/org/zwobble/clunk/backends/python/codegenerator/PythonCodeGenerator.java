@@ -1,9 +1,6 @@
 package org.zwobble.clunk.backends.python.codegenerator;
 
-import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
-import org.zwobble.clunk.ast.typed.TypedNamespaceStatementNode;
-import org.zwobble.clunk.ast.typed.TypedRecordNode;
-import org.zwobble.clunk.ast.typed.TypedStaticExpressionNode;
+import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.python.ast.*;
 import org.zwobble.clunk.types.BoolType;
 import org.zwobble.clunk.types.IntType;
@@ -14,6 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PythonCodeGenerator {
+    public static PythonExpressionNode compileExpression(TypedExpressionNode node) {
+        return node.accept(new TypedExpressionNode.Visitor<PythonExpressionNode>() {
+            @Override
+            public PythonExpressionNode visit(TypedStringLiteralNode node) {
+                return compileStringLiteral(node);
+            }
+        });
+    }
+
     public static PythonReferenceNode compileStaticExpression(TypedStaticExpressionNode node) {
         return new PythonReferenceNode(compileType(node.type()));
     }
@@ -65,5 +71,9 @@ public class PythonCodeGenerator {
                 return compileRecord(node);
             }
         });
+    }
+
+    private static PythonExpressionNode compileStringLiteral(TypedStringLiteralNode node) {
+        return new PythonStringLiteralNode(node.value());
     }
 }

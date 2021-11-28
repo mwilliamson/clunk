@@ -11,4 +11,8 @@ public class Typed {
     public static TypedStaticExpressionNode staticExpression(Type type) {
         return new TypedStaticExpressionNode(type, NullSource.INSTANCE);
     }
+
+    public static TypedStringLiteralNode string(String value) {
+        return new TypedStringLiteralNode(value, NullSource.INSTANCE);
+    }
 }

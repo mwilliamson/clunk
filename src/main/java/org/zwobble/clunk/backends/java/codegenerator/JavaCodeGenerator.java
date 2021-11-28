@@ -1,13 +1,7 @@
 package org.zwobble.clunk.backends.java.codegenerator;
 
-import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
-import org.zwobble.clunk.ast.typed.TypedNamespaceStatementNode;
-import org.zwobble.clunk.ast.typed.TypedRecordNode;
-import org.zwobble.clunk.ast.typed.TypedStaticExpressionNode;
-import org.zwobble.clunk.backends.java.ast.JavaOrdinaryCompilationUnitNode;
-import org.zwobble.clunk.backends.java.ast.JavaRecordComponentNode;
-import org.zwobble.clunk.backends.java.ast.JavaRecordDeclarationNode;
-import org.zwobble.clunk.backends.java.ast.JavaTypeReferenceNode;
+import org.zwobble.clunk.ast.typed.*;
+import org.zwobble.clunk.backends.java.ast.*;
 import org.zwobble.clunk.types.BoolType;
 import org.zwobble.clunk.types.IntType;
 import org.zwobble.clunk.types.StringType;
@@ -17,6 +11,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class JavaCodeGenerator {
+    public static JavaStringLiteralNode compileExpression(TypedExpressionNode node) {
+        return node.accept(new TypedExpressionNode.Visitor<JavaStringLiteralNode>() {
+            @Override
+            public JavaStringLiteralNode visit(TypedStringLiteralNode node) {
+                return compileStringLiteral(node);
+            }
+        });
+    }
+
     public static JavaRecordDeclarationNode compileRecord(TypedRecordNode node) {
         var components = node.fields().stream()
             .map(field -> new JavaRecordComponentNode(compileStaticExpression(field.type()), field.name()))
@@ -60,5 +63,9 @@ public class JavaCodeGenerator {
                 }
             })
         );
+    }
+
+    private static JavaStringLiteralNode compileStringLiteral(TypedStringLiteralNode node) {
+        return new JavaStringLiteralNode(node.value());
     }
 }

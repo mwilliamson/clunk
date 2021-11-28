@@ -1,13 +1,7 @@
 package org.zwobble.clunk.backends.typescript.codegenerator;
 
-import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
-import org.zwobble.clunk.ast.typed.TypedNamespaceStatementNode;
-import org.zwobble.clunk.ast.typed.TypedRecordNode;
-import org.zwobble.clunk.ast.typed.TypedStaticExpressionNode;
-import org.zwobble.clunk.backends.typescript.ast.TypeScriptInterfaceDeclarationNode;
-import org.zwobble.clunk.backends.typescript.ast.TypeScriptInterfaceFieldNode;
-import org.zwobble.clunk.backends.typescript.ast.TypeScriptModuleNode;
-import org.zwobble.clunk.backends.typescript.ast.TypeScriptReferenceNode;
+import org.zwobble.clunk.ast.typed.*;
+import org.zwobble.clunk.backends.typescript.ast.*;
 import org.zwobble.clunk.types.BoolType;
 import org.zwobble.clunk.types.IntType;
 import org.zwobble.clunk.types.StringType;
@@ -16,6 +10,15 @@ import org.zwobble.clunk.types.Type;
 import java.util.stream.Collectors;
 
 public class TypeScriptCodeGenerator {
+    public static TypeScriptExpressionNode compileExpression(TypedExpressionNode node) {
+        return node.accept(new TypedExpressionNode.Visitor<TypeScriptExpressionNode>() {
+            @Override
+            public TypeScriptExpressionNode visit(TypedStringLiteralNode node) {
+                return compileStringLiteral(node);
+            }
+        });
+    }
+
     public static TypeScriptModuleNode compileNamespace(TypedNamespaceNode node) {
         var name = String.join("/", node.name());
 
@@ -45,6 +48,10 @@ public class TypeScriptCodeGenerator {
 
     public static TypeScriptReferenceNode compileStaticExpression(TypedStaticExpressionNode node) {
         return new TypeScriptReferenceNode(compileType(node.type()));
+    }
+
+    private static TypeScriptExpressionNode compileStringLiteral(TypedStringLiteralNode node) {
+        return new TypeScriptStringLiteralNode(node.value());
     }
 
     private static String compileType(Type type) {

@@ -20,22 +20,6 @@ public class PythonCodeGenerator {
         });
     }
 
-    public static PythonReferenceNode compileStaticExpression(TypedStaticExpressionNode node) {
-        return new PythonReferenceNode(compileType(node.type()));
-    }
-
-    private static String compileType(Type type) {
-        if (type == BoolType.INSTANCE) {
-            return "bool";
-        } else if (type == IntType.INSTANCE) {
-            return "int";
-        } else if (type == StringType.INSTANCE) {
-            return "str";
-        } else {
-            throw new RuntimeException("TODO");
-        }
-    }
-
     public static PythonModuleNode compileNamespace(TypedNamespaceNode node) {
         var moduleName = String.join(".", node.name());
 
@@ -73,7 +57,23 @@ public class PythonCodeGenerator {
         });
     }
 
+    public static PythonReferenceNode compileStaticExpression(TypedStaticExpressionNode node) {
+        return new PythonReferenceNode(compileType(node.type()));
+    }
+
     private static PythonExpressionNode compileStringLiteral(TypedStringLiteralNode node) {
         return new PythonStringLiteralNode(node.value());
+    }
+
+    private static String compileType(Type type) {
+        if (type == BoolType.INSTANCE) {
+            return "bool";
+        } else if (type == IntType.INSTANCE) {
+            return "int";
+        } else if (type == StringType.INSTANCE) {
+            return "str";
+        } else {
+            throw new RuntimeException("TODO");
+        }
     }
 }

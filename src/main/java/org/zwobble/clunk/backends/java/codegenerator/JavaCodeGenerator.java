@@ -31,22 +31,6 @@ public class JavaCodeGenerator {
         );
     }
 
-    public static JavaTypeReferenceNode compileStaticExpression(TypedStaticExpressionNode node) {
-        return new JavaTypeReferenceNode(compileType(node.type()));
-    }
-
-    private static String compileType(Type type) {
-        if (type == BoolType.INSTANCE) {
-            return "boolean";
-        } else if (type == IntType.INSTANCE) {
-            return "int";
-        } else if (type == StringType.INSTANCE) {
-            return "String";
-        } else {
-            throw new RuntimeException("TODO");
-        }
-    }
-
     public static List<JavaOrdinaryCompilationUnitNode> compileNamespace(TypedNamespaceNode node) {
         return node.statements().stream()
             .map(statement -> compileNamespaceStatement(node, statement))
@@ -65,7 +49,23 @@ public class JavaCodeGenerator {
         );
     }
 
+    public static JavaTypeReferenceNode compileStaticExpression(TypedStaticExpressionNode node) {
+        return new JavaTypeReferenceNode(compileType(node.type()));
+    }
+
     private static JavaStringLiteralNode compileStringLiteral(TypedStringLiteralNode node) {
         return new JavaStringLiteralNode(node.value());
+    }
+
+    private static String compileType(Type type) {
+        if (type == BoolType.INSTANCE) {
+            return "boolean";
+        } else if (type == IntType.INSTANCE) {
+            return "int";
+        } else if (type == StringType.INSTANCE) {
+            return "String";
+        } else {
+            throw new RuntimeException("TODO");
+        }
     }
 }

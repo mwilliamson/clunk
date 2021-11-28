@@ -8,5 +8,6 @@ public interface PythonExpressionNode extends PythonNode {
         T visit(PythonBoolLiteralNode node);
         T visit(PythonCallNode node);
         T visit(PythonReferenceNode node);
+        T visit(PythonStringLiteralNode node);
     }
 }

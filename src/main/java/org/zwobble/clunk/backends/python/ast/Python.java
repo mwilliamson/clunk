@@ -22,6 +22,10 @@ public class Python {
         return new PythonKeywordArgumentNode(name, expression);
     }
 
+    public static PythonStringLiteralNode string(String value) {
+        return new PythonStringLiteralNode(value);
+    }
+
     public static PythonReferenceNode reference(String name) {
         return new PythonReferenceNode(name);
     }

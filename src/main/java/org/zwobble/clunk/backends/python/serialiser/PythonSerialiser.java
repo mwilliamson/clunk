@@ -92,6 +92,12 @@ public class PythonSerialiser {
                 serialiseReference(node, builder);
                 return null;
             }
+
+            @Override
+            public Void visit(PythonStringLiteralNode node) {
+                serialiseStringLiteral(node, builder);
+                return null;
+            }
         });
     }
 
@@ -131,5 +137,20 @@ public class PythonSerialiser {
                 return null;
             }
         });
+    }
+
+    private static void serialiseStringLiteral(PythonStringLiteralNode node, CodeBuilder builder) {
+        builder.append("\"");
+        var escapedValue = node.value()
+            .replace("\\", "\\\\")
+            .replace("\b", "\\b")
+            .replace("\t", "\\t")
+            .replace("\n", "\\n")
+            .replace("\013", "\\v")
+            .replace("\f", "\\f")
+            .replace("\r", "\\r")
+            .replace("\"", "\\\"");
+        builder.append(escapedValue);
+        builder.append("\"");
     }
 }

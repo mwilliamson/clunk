@@ -10,6 +10,15 @@ import org.zwobble.clunk.types.Type;
 import java.util.stream.Collectors;
 
 public class TypeChecker {
+    public static TypedExpressionNode typeCheckExpression(UntypedExpressionNode node) {
+        return node.accept(new UntypedExpressionNode.Visitor<TypedExpressionNode>() {
+            @Override
+            public TypedExpressionNode visit(UntypedStringLiteralNode node) {
+                return typeCheckStringLiteral(node);
+            }
+        });
+    }
+
     public static TypedNamespaceNode typeCheckNamespace(UntypedNamespaceNode node) {
         return new TypedNamespaceNode(
             node.name(),
@@ -59,6 +68,10 @@ public class TypeChecker {
     public static TypedStaticExpressionNode typeCheckStaticReferenceNode(UntypedStaticReferenceNode node) {
         var type = resolveType(node.value());
         return new TypedStaticExpressionNode(type, node.source());
+    }
+
+    private static TypedExpressionNode typeCheckStringLiteral(UntypedStringLiteralNode node) {
+        return new TypedStringLiteralNode(node.value(), node.source());
     }
 
     private static Type resolveType(String value) {

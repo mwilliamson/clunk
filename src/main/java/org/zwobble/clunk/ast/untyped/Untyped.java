@@ -10,4 +10,8 @@ public class Untyped {
     public static UntypedStaticReferenceNode staticReference(String value) {
         return new UntypedStaticReferenceNode(value, NullSource.INSTANCE);
     }
+
+    public static UntypedStringLiteralNode string(String value) {
+        return new UntypedStringLiteralNode(value, NullSource.INSTANCE);
+    }
 }

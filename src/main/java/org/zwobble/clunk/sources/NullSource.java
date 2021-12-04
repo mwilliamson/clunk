@@ -11,4 +11,9 @@ public class NullSource implements Source {
     public String describe() {
         return "(null)";
     }
+
+    @Override
+    public Source at(int characterIndex) {
+        return this;
+    }
 }

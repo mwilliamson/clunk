@@ -14,4 +14,8 @@ public class UntypedNodeMatchers {
     public static Matcher<UntypedStaticExpressionNode> isUntypedStaticReferenceNode(String value) {
         return cast(UntypedStaticExpressionNode.class, has("value", equalTo(value)));
     }
+
+    public static Matcher<UntypedExpressionNode> isUntypedStringLiteralNode(Matcher<UntypedStringLiteralNode> matcher) {
+        return cast(UntypedStringLiteralNode.class, matcher);
+    }
 }

@@ -9,6 +9,7 @@ public enum TokenType {
     SYMBOL_PAREN_CLOSE,
 
     IDENTIFIER,
+    STRING,
 
     WHITESPACE,
     UNKNOWN,

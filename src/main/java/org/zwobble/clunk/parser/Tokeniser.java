@@ -20,6 +20,7 @@ public class Tokeniser {
             RegexTokeniser.rule(TokenType.SYMBOL_PAREN_CLOSE, "\\)"),
 
             RegexTokeniser.rule(TokenType.IDENTIFIER, "[A-Za-z][A-Za-z0-9]*"),
+            RegexTokeniser.rule(TokenType.STRING, "\"(?:[^\\\\\"\n\r]|\\\\.)*\""),
             RegexTokeniser.rule(TokenType.WHITESPACE, "[\r\n\t ]+")
         )
     );

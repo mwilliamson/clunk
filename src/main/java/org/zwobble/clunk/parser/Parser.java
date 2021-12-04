@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 public class Parser {
     private final String sourceFilename;
@@ -17,6 +18,45 @@ public class Parser {
     public Parser(String sourceFilename, String sourceContents) {
         this.sourceFilename = sourceFilename;
         this.sourceContents = sourceContents;
+    }
+
+    public UntypedExpressionNode parseExpression(TokenIterator<TokenType> tokens) {
+        return parseStringLiteral(tokens);
+    }
+
+    private UntypedExpressionNode parseStringLiteral(TokenIterator<TokenType> tokens) {
+        var source = source(tokens);
+        var tokenValue = tokens.nextValue(TokenType.STRING);
+        var escapedValue = tokenValue.substring(1, tokenValue.length() - 1);
+        var unescapedValue = unescape(escapedValue, source);
+        return new UntypedStringLiteralNode(unescapedValue, source);
+    }
+
+    private Pattern STRING_ESCAPE_PATTERN = Pattern.compile("\\\\(.)");
+
+    private String unescape(String value, Source source) {
+        var matcher = STRING_ESCAPE_PATTERN.matcher(value);
+        var result = new StringBuilder();
+        var lastIndex = 0;
+        while (matcher.find()) {
+            result.append(value.subSequence(lastIndex, matcher.start()));
+            var code = matcher.group(1);
+            result.append(unescapeCharacter(code, source.at(matcher.start())));
+            lastIndex = matcher.end();
+        }
+        result.append(value.subSequence(lastIndex, value.length()));
+        return result.toString();
+    }
+
+    private char unescapeCharacter(String code, Source source) {
+        return switch (code) {
+            case "n" -> '\n';
+            case "r" -> '\r';
+            case "t" -> '\t';
+            case "\"" -> '"';
+            case "\\" -> '\\';
+            default -> throw new UnrecognisedEscapeSequenceError("\\" + code, source);
+        };
     }
 
     public UntypedNamespaceNode parseNamespace(TokenIterator<TokenType> tokens, List<String> name) {

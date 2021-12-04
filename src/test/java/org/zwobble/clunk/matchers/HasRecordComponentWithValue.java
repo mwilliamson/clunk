@@ -52,6 +52,11 @@ public class HasRecordComponentWithValue<T> extends TypeSafeDiagnosingMatcher<T>
 
     private Condition<RecordComponent> recordComponentOn(T bean, Description mismatch) {
         RecordComponent[] recordComponents = bean.getClass().getRecordComponents();
+        if (recordComponents == null) {
+            mismatch.appendValue(bean);
+            mismatch.appendText(" is not a record");
+            return notMatched();
+        }
         for(RecordComponent comp : recordComponents) {
             if(comp.getName().equals(componentName)) {
                 return matched(comp, mismatch);

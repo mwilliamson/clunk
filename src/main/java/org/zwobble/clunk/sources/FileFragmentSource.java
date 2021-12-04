@@ -25,6 +25,11 @@ public record FileFragmentSource(
         throw new RuntimeException("should be impossible (but evidently isn't)");
     }
 
+    @Override
+    public Source at(int characterIndex) {
+        return new FileFragmentSource(filename, contents, this.characterIndex + characterIndex);
+    }
+
     private String context(String line, int lineIndex, int columnIndex) {
         var lineNumber = lineIndex + 1;
         var columnNumber = columnIndex + 1;

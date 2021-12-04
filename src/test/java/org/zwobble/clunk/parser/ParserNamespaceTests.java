@@ -9,22 +9,18 @@ import static org.hamcrest.Matchers.*;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.isUntypedRecordNode;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.isUntypedStaticReferenceNode;
 import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
+import static org.zwobble.clunk.parser.Parsing.parseString;
 
 public class ParserNamespaceTests {
     @Test
     public void canParseNamespace() {
         var source = "record First(name: String)\nrecord Second(name: String)";
 
-        var tokens = Tokeniser.tokenise(source);
-        var node = parser().parseNamespace(tokens, List.of("example", "project"));
+        var node = parseString(source, (parser, tokens) -> parser.parseNamespace(tokens, List.of("example", "project")));
 
         assertThat(node, has("statements", contains(
             isUntypedRecordNode(has("name", equalTo("First"))),
             isUntypedRecordNode(has("name", equalTo("Second")))
         )));
-    }
-
-    private Parser parser() {
-        return new Parser("<filename>", "<contents>");
     }
 }

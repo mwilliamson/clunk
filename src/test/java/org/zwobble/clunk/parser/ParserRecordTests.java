@@ -2,26 +2,21 @@ package org.zwobble.clunk.parser;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.isUntypedRecordNode;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.isUntypedStaticReferenceNode;
-import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
 
-public class ParseNamespaceTests {
+public class ParserRecordTests {
     @Test
-    public void canParseNamespace() {
-        var source = "record First(name: String)\nrecord Second(name: String)";
+    public void canParseRecordName() {
+        var source = "record User(name: String)";
 
         var tokens = Tokeniser.tokenise(source);
-        var node = parser().parseNamespace(tokens, List.of("example", "project"));
+        var node = parser().parseNamespaceStatement(tokens);
 
-        assertThat(node, has("statements", contains(
-            isUntypedRecordNode(has("name", equalTo("First"))),
-            isUntypedRecordNode(has("name", equalTo("Second")))
-        )));
+        assertThat(node, isUntypedRecordNode(has("name", equalTo("User"))));
     }
 
     @Test

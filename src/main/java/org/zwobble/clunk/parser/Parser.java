@@ -32,7 +32,7 @@ public class Parser {
         return new UntypedStringLiteralNode(unescapedValue, source);
     }
 
-    private Pattern STRING_ESCAPE_PATTERN = Pattern.compile("\\\\(.)");
+    private static final Pattern STRING_ESCAPE_PATTERN = Pattern.compile("\\\\(.)");
 
     private String unescape(String value, Source source) {
         var matcher = STRING_ESCAPE_PATTERN.matcher(value);

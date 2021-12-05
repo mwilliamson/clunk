@@ -4,8 +4,18 @@ import org.zwobble.clunk.backends.CodeBuilder;
 import org.zwobble.clunk.backends.java.ast.*;
 
 public class JavaSerialiser {
+    private static void serialiseBoolLiteral(JavaBoolLiteralNode node, CodeBuilder builder) {
+        builder.append(node.value() ? "true" : "false");
+    }
+
     public static void serialiseExpression(JavaExpressionNode node, CodeBuilder builder) {
         node.accept(new JavaExpressionNode.Visitor<Void>() {
+            @Override
+            public Void visit(JavaBoolLiteralNode node) {
+                serialiseBoolLiteral(node, builder);
+                return null;
+            }
+
             @Override
             public Void visit(JavaStringLiteralNode node) {
                 serialiseStringLiteral(node, builder);

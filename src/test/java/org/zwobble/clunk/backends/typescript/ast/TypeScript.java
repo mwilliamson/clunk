@@ -7,6 +7,14 @@ public class TypeScript {
 
     }
 
+    public static TypeScriptBoolLiteralNode boolFalse() {
+        return new TypeScriptBoolLiteralNode(false);
+    }
+
+    public static TypeScriptBoolLiteralNode boolTrue() {
+        return new TypeScriptBoolLiteralNode(true);
+    }
+
     public static TypeScriptInterfaceFieldNode interfaceField(String name, TypeScriptReferenceNode type) {
         return new TypeScriptInterfaceFieldNode(name, type);
     }

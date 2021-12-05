@@ -4,8 +4,18 @@ import org.zwobble.clunk.backends.CodeBuilder;
 import org.zwobble.clunk.backends.typescript.ast.*;
 
 public class TypeScriptSerialiser {
+    private static void serialiseBoolLiteral(TypeScriptBoolLiteralNode node, CodeBuilder builder) {
+        builder.append(node.value() ? "true" : "false");
+    }
+
     public static void serialiseExpression(TypeScriptExpressionNode node, CodeBuilder builder) {
         node.accept(new TypeScriptExpressionNode.Visitor<Void>() {
+            @Override
+            public Void visit(TypeScriptBoolLiteralNode node) {
+                serialiseBoolLiteral(node, builder);
+                return null;
+            }
+
             @Override
             public Void visit(TypeScriptStringLiteralNode node) {
                 serialiseStringLiteral(node, builder);

@@ -40,7 +40,7 @@ public class RegexTokeniserTests {
         var result = tokeniser.tokenise(source);
 
         assertThat(result, contains(
-            new Token<>(source.at(0), TokenType.IDENTIFIER, "count")
+            new Token<>(source.at(0, 5), TokenType.IDENTIFIER, "count")
         ));
     }
 
@@ -55,7 +55,7 @@ public class RegexTokeniserTests {
         var result = tokeniser.tokenise(source);
 
         assertThat(result, contains(
-            new Token<>(source.at(0), TokenType.KEYWORD, "if")
+            new Token<>(source.at(0, 2), TokenType.KEYWORD, "if")
         ));
     }
 
@@ -70,9 +70,9 @@ public class RegexTokeniserTests {
         var result = tokeniser.tokenise(source);
 
         assertThat(result, contains(
-            new Token<>(source.at(0), TokenType.IDENTIFIER, "one"),
-            new Token<>(source.at(3), TokenType.WHITESPACE, " "),
-            new Token<>(source.at(4), TokenType.IDENTIFIER, "two")
+            new Token<>(source.at(0, 3), TokenType.IDENTIFIER, "one"),
+            new Token<>(source.at(3, 4), TokenType.WHITESPACE, " "),
+            new Token<>(source.at(4, 7), TokenType.IDENTIFIER, "two")
         ));
     }
 
@@ -86,10 +86,10 @@ public class RegexTokeniserTests {
         var result = tokeniser.tokenise(source);
 
         assertThat(result, contains(
-            new Token<>(source.at(0), TokenType.UNKNOWN, "!"),
-            new Token<>(source.at(1), TokenType.UNKNOWN, "!"),
-            new Token<>(source.at(2), TokenType.IDENTIFIER, "a"),
-            new Token<>(source.at(3), TokenType.UNKNOWN, "!")
+            new Token<>(source.at(0, 1), TokenType.UNKNOWN, "!"),
+            new Token<>(source.at(1, 2), TokenType.UNKNOWN, "!"),
+            new Token<>(source.at(2, 3), TokenType.IDENTIFIER, "a"),
+            new Token<>(source.at(3, 4), TokenType.UNKNOWN, "!")
         ));
     }
 

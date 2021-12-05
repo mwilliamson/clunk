@@ -14,9 +14,13 @@ public class FileFragmentSourceTests {
     private record TestCase(
         String name,
         String contents,
-        int characterIndex,
+        int characterIndexStart,
         String expectedContext
-    ) {}
+    ) {
+        public int characterIndexEnd() {
+            return characterIndexStart;
+        }
+    }
 
     @TestFactory
     public List<DynamicTest> sourceContextIsSourceLineWithPointer() {
@@ -96,7 +100,8 @@ public class FileFragmentSourceTests {
             var source = new FileFragmentSource(
                 "<filename>",
                 testCase.contents,
-                testCase.characterIndex
+                testCase.characterIndexStart,
+                testCase.characterIndexEnd()
             );
 
             assertThat(source.describe(), equalTo(testCase.expectedContext));

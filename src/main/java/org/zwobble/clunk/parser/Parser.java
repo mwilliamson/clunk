@@ -39,7 +39,7 @@ public class Parser {
         while (matcher.find()) {
             result.append(value.subSequence(lastIndex, matcher.start()));
             var code = matcher.group(1);
-            result.append(unescapeCharacter(code, source.at(matcher.start())));
+            result.append(unescapeCharacter(code, source.at(matcher.start(), matcher.end())));
             lastIndex = matcher.end();
         }
         result.append(value.subSequence(lastIndex, value.length()));

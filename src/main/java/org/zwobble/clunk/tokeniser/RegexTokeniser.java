@@ -58,7 +58,11 @@ public class RegexTokeniser<T> {
                 .getAsInt();
 
             var tokenType = this.rules.get(groupIndex - 1);
-            tokens.add(new Token<>(source.at(matcher.regionStart()), tokenType, matcher.group()));
+            tokens.add(new Token<>(
+                source.at(matcher.regionStart(), matcher.end()),
+                tokenType,
+                matcher.group()
+            ));
             matcher.region(matcher.end(), source.contents().length());
         }
 

@@ -3,6 +3,7 @@ package org.zwobble.clunk.parser;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.isUntypedStringLiteralNode;
@@ -48,6 +49,9 @@ public class ParserStringLiteralTests {
         );
 
         assertThat(error.getMessage(), equalTo("Unrecognised escape sequence: \\a"));
-        assertThat(error.getSource(), isFileFragmentSource(has("characterIndex", equalTo(1))));
+        assertThat(error.getSource(), isFileFragmentSource(allOf(
+            has("characterIndexStart", equalTo(1)),
+            has("characterIndexEnd", equalTo(3))
+        )));
     }
 }

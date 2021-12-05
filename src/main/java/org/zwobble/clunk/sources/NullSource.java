@@ -13,7 +13,7 @@ public class NullSource implements Source {
     }
 
     @Override
-    public Source at(int characterIndex) {
+    public Source at(int characterIndexStart, int characterIndexEnd) {
         return this;
     }
 }

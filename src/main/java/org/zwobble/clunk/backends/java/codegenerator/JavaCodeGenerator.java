@@ -11,10 +11,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class JavaCodeGenerator {
-    public static JavaStringLiteralNode compileExpression(TypedExpressionNode node) {
-        return node.accept(new TypedExpressionNode.Visitor<JavaStringLiteralNode>() {
+    private static JavaExpressionNode compileBoolLiteral(TypedBoolLiteralNode node) {
+        return new JavaBoolLiteralNode(node.value());
+    }
+
+    public static JavaExpressionNode compileExpression(TypedExpressionNode node) {
+        return node.accept(new TypedExpressionNode.Visitor<JavaExpressionNode>() {
             @Override
-            public JavaStringLiteralNode visit(TypedStringLiteralNode node) {
+            public JavaExpressionNode visit(TypedBoolLiteralNode node) {
+                return compileBoolLiteral(node);
+            }
+
+            @Override
+            public JavaExpressionNode visit(TypedStringLiteralNode node) {
                 return compileStringLiteral(node);
             }
         });

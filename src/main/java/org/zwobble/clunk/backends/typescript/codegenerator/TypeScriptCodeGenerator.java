@@ -10,8 +10,17 @@ import org.zwobble.clunk.types.Type;
 import java.util.stream.Collectors;
 
 public class TypeScriptCodeGenerator {
+    private static TypeScriptExpressionNode compileBoolLiteral(TypedBoolLiteralNode node) {
+        return new TypeScriptBoolLiteralNode(node.value());
+    }
+
     public static TypeScriptExpressionNode compileExpression(TypedExpressionNode node) {
         return node.accept(new TypedExpressionNode.Visitor<TypeScriptExpressionNode>() {
+            @Override
+            public TypeScriptExpressionNode visit(TypedBoolLiteralNode node) {
+                return compileBoolLiteral(node);
+            }
+
             @Override
             public TypeScriptExpressionNode visit(TypedStringLiteralNode node) {
                 return compileStringLiteral(node);

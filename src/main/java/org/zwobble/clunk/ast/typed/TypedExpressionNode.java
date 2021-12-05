@@ -4,6 +4,7 @@ public interface TypedExpressionNode extends TypedNode {
     <T> T accept(Visitor<T> visitor);
 
     interface Visitor<T> {
+        T visit(TypedBoolLiteralNode node);
         T visit(TypedStringLiteralNode node);
     }
 }

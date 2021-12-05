@@ -11,8 +11,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PythonCodeGenerator {
+    private static PythonExpressionNode compileBoolLiteral(TypedBoolLiteralNode node) {
+        return new PythonBoolLiteralNode(node.value());
+    }
+
     public static PythonExpressionNode compileExpression(TypedExpressionNode node) {
         return node.accept(new TypedExpressionNode.Visitor<PythonExpressionNode>() {
+            @Override
+            public PythonExpressionNode visit(TypedBoolLiteralNode node) {
+                return compileBoolLiteral(node);
+            }
+
             @Override
             public PythonExpressionNode visit(TypedStringLiteralNode node) {
                 return compileStringLiteral(node);

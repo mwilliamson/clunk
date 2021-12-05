@@ -1,8 +1,10 @@
 package org.zwobble.clunk.tokeniser;
 
-public record Token<T>(int characterIndex, T tokenType, String value) {
-    public static <T> Token<T> token(int characterIndex, T tokenType, String value) {
-        return new Token<T>(characterIndex, tokenType, value);
+import org.zwobble.clunk.sources.Source;
+
+public record Token<T>(Source source, T tokenType, String value) {
+    public static <T> Token<T> token(Source source, T tokenType, String value) {
+        return new Token<T>(source, tokenType, value);
     }
 
     public String describe() {

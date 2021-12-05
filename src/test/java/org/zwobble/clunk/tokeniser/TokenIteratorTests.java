@@ -1,6 +1,7 @@
 package org.zwobble.clunk.tokeniser;
 
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.sources.NullSource;
 
 import java.util.List;
 
@@ -173,5 +174,10 @@ public class TokenIteratorTests {
         assertThat(tokens.peek(), equalTo(token(0, TokenType.SYMBOL, "!")));
         tokens.skip(TokenType.SYMBOL);
         assertThat(tokens.peek(), equalTo(token(1, TokenType.IDENTIFIER, "x")));
+    }
+
+    private Token<TokenType> token(int characterIndex, TokenType tokenType, String value) {
+        var source = NullSource.INSTANCE;
+        return new Token<>(source, tokenType, value);
     }
 }

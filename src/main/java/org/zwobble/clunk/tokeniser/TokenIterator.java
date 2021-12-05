@@ -21,7 +21,8 @@ public class TokenIterator<TTokenType> {
         } else {
             throw new UnexpectedTokenException(
                 tokenType.toString(),
-                token.tokenType() + " \"" + token.value() + "\""
+                token.tokenType() + " \"" + token.value() + "\"",
+                token.source()
             );
         }
     }

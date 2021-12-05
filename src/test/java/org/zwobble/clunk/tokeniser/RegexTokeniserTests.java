@@ -1,12 +1,16 @@
 package org.zwobble.clunk.tokeniser;
 
+import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.sources.FileFragmentSource;
+import org.zwobble.clunk.sources.Source;
 
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
+import static org.zwobble.clunk.tokeniser.Token.token;
 
 public class RegexTokeniserTests {
     enum TokenType {
@@ -19,8 +23,9 @@ public class RegexTokeniserTests {
     @Test
     public void emptyStringIsTokenisedToNoTokens() {
         var tokeniser = new RegexTokeniser<>(TokenType.UNKNOWN, List.of());
+        var source = source("");
 
-        var result = tokeniser.tokenise("");
+        var result = tokeniser.tokenise(source);
 
         assertThat(result, empty());
     }
@@ -30,11 +35,12 @@ public class RegexTokeniserTests {
         var tokeniser = new RegexTokeniser<>(TokenType.UNKNOWN, List.of(
             RegexTokeniser.rule(TokenType.IDENTIFIER, "[A-Za-z0-9]+")
         ));
+        var source = source("count");
 
-        var result = tokeniser.tokenise("count");
+        var result = tokeniser.tokenise(source);
 
         assertThat(result, contains(
-            new Token<>(0, TokenType.IDENTIFIER, "count")
+            new Token<>(source.at(0), TokenType.IDENTIFIER, "count")
         ));
     }
 
@@ -44,11 +50,12 @@ public class RegexTokeniserTests {
             RegexTokeniser.rule(TokenType.KEYWORD, "if"),
             RegexTokeniser.rule(TokenType.IDENTIFIER, "[A-Za-z0-9]+")
         ));
+        var source = source("if");
 
-        var result = tokeniser.tokenise("if");
+        var result = tokeniser.tokenise(source);
 
         assertThat(result, contains(
-            new Token<>(0, TokenType.KEYWORD, "if")
+            new Token<>(source.at(0), TokenType.KEYWORD, "if")
         ));
     }
 
@@ -58,13 +65,14 @@ public class RegexTokeniserTests {
             RegexTokeniser.rule(TokenType.IDENTIFIER, "[A-Za-z0-9]+"),
             RegexTokeniser.rule(TokenType.WHITESPACE, "\\s")
         ));
+        var source = source("one two");
 
-        var result = tokeniser.tokenise("one two");
+        var result = tokeniser.tokenise(source);
 
         assertThat(result, contains(
-            new Token<>(0, TokenType.IDENTIFIER, "one"),
-            new Token<>(3, TokenType.WHITESPACE, " "),
-            new Token<>(4, TokenType.IDENTIFIER, "two")
+            new Token<>(source.at(0), TokenType.IDENTIFIER, "one"),
+            new Token<>(source.at(3), TokenType.WHITESPACE, " "),
+            new Token<>(source.at(4), TokenType.IDENTIFIER, "two")
         ));
     }
 
@@ -73,14 +81,19 @@ public class RegexTokeniserTests {
         var tokeniser = new RegexTokeniser<>(TokenType.UNKNOWN, List.of(
             RegexTokeniser.rule(TokenType.IDENTIFIER, "[A-Za-z0-9]+")
         ));
+        var source = source("!!a!");
 
-        var result = tokeniser.tokenise("!!a!");
+        var result = tokeniser.tokenise(source);
 
         assertThat(result, contains(
-            new Token<>(0, TokenType.UNKNOWN, "!"),
-            new Token<>(1, TokenType.UNKNOWN, "!"),
-            new Token<>(2, TokenType.IDENTIFIER, "a"),
-            new Token<>(3, TokenType.UNKNOWN, "!")
+            new Token<>(source.at(0), TokenType.UNKNOWN, "!"),
+            new Token<>(source.at(1), TokenType.UNKNOWN, "!"),
+            new Token<>(source.at(2), TokenType.IDENTIFIER, "a"),
+            new Token<>(source.at(3), TokenType.UNKNOWN, "!")
         ));
+    }
+
+    private FileFragmentSource source(String sourceContents) {
+        return FileFragmentSource.create("<filename>", sourceContents);
     }
 }

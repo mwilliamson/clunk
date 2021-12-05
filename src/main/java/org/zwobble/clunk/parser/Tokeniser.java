@@ -1,5 +1,6 @@
 package org.zwobble.clunk.parser;
 
+import org.zwobble.clunk.sources.FileFragmentSource;
 import org.zwobble.clunk.tokeniser.RegexTokeniser;
 import org.zwobble.clunk.tokeniser.TokenIterator;
 
@@ -25,11 +26,11 @@ public class Tokeniser {
         )
     );
 
-    public static TokenIterator<TokenType> tokenise(String source) {
+    public static TokenIterator<TokenType> tokenise(FileFragmentSource source) {
         var tokens = tokeniser.tokenise(source).stream()
             .filter(token -> token.tokenType() != TokenType.WHITESPACE)
             .collect(Collectors.toList());
 
-        return new TokenIterator<>(tokens, token(source.length(), TokenType.END, ""));
+        return new TokenIterator<>(tokens, token(source.end(), TokenType.END, ""));
     }
 }

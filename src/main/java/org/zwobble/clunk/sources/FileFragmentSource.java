@@ -5,6 +5,10 @@ public record FileFragmentSource(
     String contents,
     int characterIndex
 ) implements Source {
+    public static FileFragmentSource create(String filename, String contents) {
+        return new FileFragmentSource(filename, contents, 0);
+    }
+
     @Override
     public String describe() {
         var lines = contents.split("\n");
@@ -28,6 +32,10 @@ public record FileFragmentSource(
     @Override
     public Source at(int characterIndex) {
         return new FileFragmentSource(filename, contents, this.characterIndex + characterIndex);
+    }
+
+    public Source end() {
+        return at(contents.length());
     }
 
     private String context(String line, int lineIndex, int columnIndex) {

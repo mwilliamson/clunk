@@ -1,5 +1,7 @@
 package org.zwobble.clunk.tokeniser;
 
+import org.zwobble.clunk.sources.FileFragmentSource;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -45,8 +47,8 @@ public class RegexTokeniser<T> {
             .collect(Collectors.toList());
     }
 
-    public List<Token<T>> tokenise(String value) {
-        var matcher = pattern.matcher(value);
+    public List<Token<T>> tokenise(FileFragmentSource source) {
+        var matcher = pattern.matcher(source.contents());
         var tokens = new ArrayList<Token<T>>();
 
         while (matcher.lookingAt()) {
@@ -56,8 +58,8 @@ public class RegexTokeniser<T> {
                 .getAsInt();
 
             var tokenType = this.rules.get(groupIndex - 1);
-            tokens.add(new Token<>(matcher.regionStart(), tokenType, matcher.group()));
-            matcher.region(matcher.end(), value.length());
+            tokens.add(new Token<>(source.at(matcher.regionStart()), tokenType, matcher.group()));
+            matcher.region(matcher.end(), source.contents().length());
         }
 
         return tokens;

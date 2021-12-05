@@ -12,12 +12,10 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 public class Parser {
-    private final String sourceFilename;
-    private final String sourceContents;
+    private final Source fullSource;
 
-    public Parser(String sourceFilename, String sourceContents) {
-        this.sourceFilename = sourceFilename;
-        this.sourceContents = sourceContents;
+    public Parser(Source fullSource) {
+        this.fullSource = fullSource;
     }
 
     public UntypedExpressionNode parseExpression(TokenIterator<TokenType> tokens) {
@@ -121,8 +119,7 @@ public class Parser {
         }
     }
 
-    private Source source(TokenIterator<?> tokens) {
-        var characterIndex = tokens.peek().characterIndex();
-        return new FileFragmentSource(sourceFilename, sourceContents, characterIndex);
+    private Source source(TokenIterator<TokenType> tokens) {
+        return tokens.peek().source();
     }
 }

@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.isUntypedRecordNode;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.isUntypedStringLiteralNode;
 import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
 import static org.zwobble.clunk.parser.Parsing.parseString;

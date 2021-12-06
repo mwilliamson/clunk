@@ -6,6 +6,7 @@ public enum TokenType {
     KEYWORD_RECORD,
     KEYWORD_TRUE,
 
+    SYMBOL_ARROW,
     SYMBOL_BRACE_OPEN,
     SYMBOL_BRACE_CLOSE,
     SYMBOL_COLON,

@@ -18,6 +18,7 @@ public class Tokeniser {
             RegexTokeniser.rule(TokenType.KEYWORD_RECORD, "record"),
             RegexTokeniser.rule(TokenType.KEYWORD_TRUE, "true"),
 
+            RegexTokeniser.rule(TokenType.SYMBOL_ARROW, "->"),
             RegexTokeniser.rule(TokenType.SYMBOL_BRACE_OPEN, "\\{"),
             RegexTokeniser.rule(TokenType.SYMBOL_BRACE_CLOSE, "\\}"),
             RegexTokeniser.rule(TokenType.SYMBOL_COLON, ":"),

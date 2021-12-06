@@ -85,10 +85,12 @@ public class Parser {
         var name = tokens.nextValue(TokenType.IDENTIFIER);
         tokens.skip(TokenType.SYMBOL_PAREN_OPEN);
         tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
+        tokens.skip(TokenType.SYMBOL_ARROW);
+        var returnType = parseType(tokens);
         tokens.skip(TokenType.SYMBOL_BRACE_OPEN);
         tokens.skip(TokenType.SYMBOL_BRACE_CLOSE);
 
-        return new UntypedFunctionNode(name, source);
+        return new UntypedFunctionNode(name, returnType, source);
     }
 
     public UntypedNamespaceStatementNode parseNamespaceStatement(TokenIterator<TokenType> tokens) {

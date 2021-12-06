@@ -1,7 +1,9 @@
 package org.zwobble.clunk.parser;
 
 public enum TokenType {
+    KEYWORD_FALSE,
     KEYWORD_RECORD,
+    KEYWORD_TRUE,
 
     SYMBOL_COLON,
     SYMBOL_COMMA,

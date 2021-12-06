@@ -13,7 +13,9 @@ public class Tokeniser {
     private static final RegexTokeniser<TokenType> tokeniser = new RegexTokeniser<>(
         TokenType.UNKNOWN,
         List.of(
+            RegexTokeniser.rule(TokenType.KEYWORD_FALSE, "false"),
             RegexTokeniser.rule(TokenType.KEYWORD_RECORD, "record"),
+            RegexTokeniser.rule(TokenType.KEYWORD_TRUE, "true"),
 
             RegexTokeniser.rule(TokenType.SYMBOL_COLON, ":"),
             RegexTokeniser.rule(TokenType.SYMBOL_COMMA, ","),

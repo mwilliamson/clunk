@@ -19,7 +19,16 @@ public class Parser {
     }
 
     public UntypedExpressionNode parseExpression(TokenIterator<TokenType> tokens) {
-        return parseStringLiteral(tokens);
+        var source = tokens.peek().source();
+        if (tokens.isNext(TokenType.KEYWORD_FALSE)) {
+            return new UntypedBoolLiteralNode(false, source);
+        } else if (tokens.isNext(TokenType.KEYWORD_TRUE)) {
+            return new UntypedBoolLiteralNode(true, source);
+        } else if (tokens.isNext(TokenType.STRING)) {
+            return parseStringLiteral(tokens);
+        } else {
+            throw new RuntimeException("TODO");
+        }
     }
 
     private UntypedExpressionNode parseStringLiteral(TokenIterator<TokenType> tokens) {

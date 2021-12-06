@@ -41,6 +41,11 @@ public class TypeChecker {
     private static TypedNamespaceStatementNode typeCheckNamespaceStatement(UntypedNamespaceStatementNode node) {
         return node.accept(new UntypedNamespaceStatementNode.Visitor<TypedNamespaceStatementNode>() {
             @Override
+            public TypedNamespaceStatementNode visit(UntypedFunctionNode node) {
+                throw new RuntimeException("TODO");
+            }
+
+            @Override
             public TypedNamespaceStatementNode visit(UntypedRecordNode node) {
                 return typeCheckRecord(node);
             }

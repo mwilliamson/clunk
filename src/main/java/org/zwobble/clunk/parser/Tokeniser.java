@@ -14,9 +14,12 @@ public class Tokeniser {
         TokenType.UNKNOWN,
         List.of(
             RegexTokeniser.rule(TokenType.KEYWORD_FALSE, "false"),
+            RegexTokeniser.rule(TokenType.KEYWORD_FUN, "fun"),
             RegexTokeniser.rule(TokenType.KEYWORD_RECORD, "record"),
             RegexTokeniser.rule(TokenType.KEYWORD_TRUE, "true"),
 
+            RegexTokeniser.rule(TokenType.SYMBOL_BRACE_OPEN, "\\{"),
+            RegexTokeniser.rule(TokenType.SYMBOL_BRACE_CLOSE, "\\}"),
             RegexTokeniser.rule(TokenType.SYMBOL_COLON, ":"),
             RegexTokeniser.rule(TokenType.SYMBOL_COMMA, ","),
             RegexTokeniser.rule(TokenType.SYMBOL_PAREN_OPEN, "\\("),

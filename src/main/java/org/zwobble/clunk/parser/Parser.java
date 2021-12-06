@@ -78,7 +78,30 @@ public class Parser {
         return new UntypedNamespaceNode(name, statements, source);
     }
 
+    private UntypedNamespaceStatementNode parseFunction(TokenIterator<TokenType> tokens) {
+        var source = tokens.peek().source();
+
+        tokens.skip(TokenType.KEYWORD_FUN);
+        var name = tokens.nextValue(TokenType.IDENTIFIER);
+        tokens.skip(TokenType.SYMBOL_PAREN_OPEN);
+        tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
+        tokens.skip(TokenType.SYMBOL_BRACE_OPEN);
+        tokens.skip(TokenType.SYMBOL_BRACE_CLOSE);
+
+        return new UntypedFunctionNode(name, source);
+    }
+
     public UntypedNamespaceStatementNode parseNamespaceStatement(TokenIterator<TokenType> tokens) {
+        if (tokens.isNext(TokenType.KEYWORD_FUN)) {
+            return parseFunction(tokens);
+        } else if (tokens.isNext(TokenType.KEYWORD_RECORD)) {
+            return parseRecord(tokens);
+        } else {
+            throw new RuntimeException("TODO");
+        }
+    }
+
+    private UntypedRecordNode parseRecord(TokenIterator<TokenType> tokens) {
         var recordSource = source(tokens);
 
         tokens.skip(TokenType.KEYWORD_RECORD);

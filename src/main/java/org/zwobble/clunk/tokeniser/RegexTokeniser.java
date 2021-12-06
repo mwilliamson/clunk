@@ -19,7 +19,7 @@ public class RegexTokeniser<T> {
         return new TokenRule<T>(type, pattern);
     }
 
-    static class TokenRule<T> {
+    public static class TokenRule<T> {
         private final T type;
         private final Pattern regex;
 

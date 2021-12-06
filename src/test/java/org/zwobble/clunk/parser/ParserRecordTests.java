@@ -25,7 +25,7 @@ public class ParserRecordTests {
         var node = parseString(source, Parser::parseNamespaceStatement);
 
         assertThat(node, isUntypedRecordNode(untypedRecordNodeHasFields(contains(
-            allOf(has("name", equalTo("name")), has("type", isUntypedStaticReferenceNode("String")))
+            allOf(untypedRecordFieldNodeHasName("name"), has("type", isUntypedStaticReferenceNode("String")))
         ))));
     }
 
@@ -36,8 +36,8 @@ public class ParserRecordTests {
         var node = parseString(source, Parser::parseNamespaceStatement);
 
         assertThat(node, isUntypedRecordNode(untypedRecordNodeHasFields(contains(
-            has("name", equalTo("name")),
-            has("name", equalTo("emailAddress"))
+            untypedRecordFieldNodeHasName("name"),
+            untypedRecordFieldNodeHasName("emailAddress")
         ))));
     }
 
@@ -48,8 +48,8 @@ public class ParserRecordTests {
         var node = parseString(source, Parser::parseNamespaceStatement);
 
         assertThat(node, isUntypedRecordNode(untypedRecordNodeHasFields(contains(
-            has("name", equalTo("name")),
-            has("name", equalTo("emailAddress"))
+            untypedRecordFieldNodeHasName("name"),
+            untypedRecordFieldNodeHasName("emailAddress")
         ))));
     }
 }

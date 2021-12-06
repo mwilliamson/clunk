@@ -26,6 +26,10 @@ public class UntypedNodeMatchers {
         return cast(UntypedRecordNode.class, matcher);
     }
 
+    public static Matcher<UntypedRecordNode> untypedRecordNodeHasName(String name) {
+        return has("name", equalTo(name));
+    }
+
     public static Matcher<UntypedStaticExpressionNode> isUntypedStaticReferenceNode(String value) {
         return cast(UntypedStaticExpressionNode.class, has("value", equalTo(value)));
     }

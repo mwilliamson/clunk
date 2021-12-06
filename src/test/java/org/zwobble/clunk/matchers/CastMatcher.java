@@ -4,6 +4,8 @@ import org.hamcrest.Description;
 import org.hamcrest.DiagnosingMatcher;
 import org.hamcrest.Matcher;
 
+import static org.hamcrest.Matchers.allOf;
+
 public class CastMatcher<TActual, TExpected> extends DiagnosingMatcher<TActual> {
     private final Class<TExpected> expectedClass;
     private final Matcher<TExpected> matcher;
@@ -39,7 +41,8 @@ public class CastMatcher<TActual, TExpected> extends DiagnosingMatcher<TActual> 
             .appendText(" and ").appendDescriptionOf(matcher);
     }
 
-    public static <TActual, TExpected> Matcher<TActual> cast(Class<TExpected> type, Matcher<TExpected> matcher) {
+    public static <TActual, TExpected> Matcher<TActual> cast(Class<TExpected> type, Matcher<TExpected>... matchers) {
+        var matcher = matchers.length == 1 ? matchers[0] : allOf(matchers);
         return new CastMatcher<TActual, TExpected>(type, matcher);
     }
 }

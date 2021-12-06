@@ -10,7 +10,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class PythonCodeGeneratorStringLiteralTests {
     @Test
-    public void stringIsSerialised() {
+    public void stringIsCompiledToString() {
         var node = Typed.string("hello");
 
         var result = PythonCodeGenerator.compileExpression(node);

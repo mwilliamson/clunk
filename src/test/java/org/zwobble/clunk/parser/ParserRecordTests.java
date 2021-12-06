@@ -25,7 +25,10 @@ public class ParserRecordTests {
         var node = parseString(source, Parser::parseNamespaceStatement);
 
         assertThat(node, isUntypedRecordNode(untypedRecordNodeHasFields(contains(
-            allOf(untypedRecordFieldNodeHasName("name"), has("type", isUntypedStaticReferenceNode("String")))
+            allOf(
+                untypedRecordFieldNodeHasName("name"),
+                untypedRecordFieldNodeHasType(isUntypedStaticReferenceNode("String"))
+            )
         ))));
     }
 

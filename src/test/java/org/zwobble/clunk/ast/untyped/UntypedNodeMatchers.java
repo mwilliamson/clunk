@@ -2,10 +2,6 @@ package org.zwobble.clunk.ast.untyped;
 
 import org.hamcrest.Matcher;
 
-import java.util.List;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.matchers.CastMatcher.cast;
 import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
@@ -51,6 +47,12 @@ public class UntypedNodeMatchers {
 
     public static Matcher<UntypedRecordFieldNode> untypedRecordFieldNodeHasName(String name) {
         return has("name", equalTo(name));
+    }
+
+    public static Matcher<UntypedRecordFieldNode> untypedRecordFieldNodeHasType(
+        Matcher<UntypedStaticExpressionNode> matcher
+    ) {
+        return has("type", matcher);
     }
 
     public static Matcher<UntypedStaticExpressionNode> isUntypedStaticReferenceNode(String value) {

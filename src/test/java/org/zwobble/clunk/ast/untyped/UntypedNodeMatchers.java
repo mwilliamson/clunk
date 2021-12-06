@@ -2,6 +2,8 @@ package org.zwobble.clunk.ast.untyped;
 
 import org.hamcrest.Matcher;
 
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
@@ -25,6 +27,12 @@ public class UntypedNodeMatchers {
         Matcher<UntypedStaticExpressionNode> matcher
     ) {
         return has("returnType", matcher);
+    }
+
+    public static Matcher<UntypedNamespaceNode> untypedNamespaceNodeHasStatements(
+        Matcher<Iterable<? extends UntypedNamespaceStatementNode>> matcher
+    ) {
+        return has("statements", matcher);
     }
 
     public static Matcher<UntypedNamespaceStatementNode> isUntypedRecordNode(Matcher<UntypedRecordNode> matcher) {

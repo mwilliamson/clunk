@@ -39,6 +39,12 @@ public class UntypedNodeMatchers {
         return cast(UntypedRecordNode.class, matcher);
     }
 
+    public static Matcher<UntypedRecordNode> untypedRecordNodeHasFields(
+        Matcher<Iterable<? extends UntypedRecordFieldNode>> matcher
+    ) {
+        return has("fields", matcher);
+    }
+
     public static Matcher<UntypedRecordNode> untypedRecordNodeHasName(String name) {
         return has("name", equalTo(name));
     }

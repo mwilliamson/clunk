@@ -41,6 +41,7 @@ public class CastMatcher<TActual, TExpected> extends DiagnosingMatcher<TActual> 
             .appendText(" and ").appendDescriptionOf(matcher);
     }
 
+    @SafeVarargs
     public static <TActual, TExpected> Matcher<TActual> cast(Class<TExpected> type, Matcher<TExpected>... matchers) {
         var matcher = matchers.length == 1 ? matchers[0] : allOf(matchers);
         return new CastMatcher<TActual, TExpected>(type, matcher);

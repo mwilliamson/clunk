@@ -10,8 +10,17 @@ import org.zwobble.clunk.types.Type;
 import java.util.stream.Collectors;
 
 public class TypeChecker {
+    private static TypedExpressionNode typeCheckBoolLiteral(UntypedBoolLiteralNode node) {
+        return new TypedBoolLiteralNode(node.value(), node.source());
+    }
+
     public static TypedExpressionNode typeCheckExpression(UntypedExpressionNode node) {
         return node.accept(new UntypedExpressionNode.Visitor<TypedExpressionNode>() {
+            @Override
+            public TypedExpressionNode visit(UntypedBoolLiteralNode node) {
+                return typeCheckBoolLiteral(node);
+            }
+
             @Override
             public TypedExpressionNode visit(UntypedStringLiteralNode node) {
                 return typeCheckStringLiteral(node);

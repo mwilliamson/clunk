@@ -6,6 +6,7 @@ public interface PythonStatementNode extends PythonNode {
     interface Visitor<T> {
         T visit(PythonAssignmentNode node);
         T visit(PythonClassDeclarationNode node);
+        T visit(PythonFunctionNode node);
         T visit(PythonImportNode node);
     }
 }

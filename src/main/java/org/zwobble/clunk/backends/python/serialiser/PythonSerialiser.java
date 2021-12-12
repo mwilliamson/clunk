@@ -102,6 +102,20 @@ public class PythonSerialiser {
         });
     }
 
+    private static void serialiseFunction(PythonFunctionNode node, CodeBuilder builder) {
+        builder.append("def ");
+        builder.append(node.name());
+        builder.append("(");
+        serialiseWithSeparator(
+            node.args(),
+            arg -> builder.append(arg),
+            () -> builder.append(", ")
+        );
+        builder.append("):");
+        builder.newLine();
+        serialiseBlock(List.of(), builder);
+    }
+
     private static void serialiseImport(PythonImportNode node, CodeBuilder builder) {
         builder.append("import ");
         builder.append(node.moduleName());
@@ -129,6 +143,12 @@ public class PythonSerialiser {
             @Override
             public Void visit(PythonClassDeclarationNode node) {
                 serialiseClassDeclaration(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(PythonFunctionNode node) {
+                serialiseFunction(node, builder);
                 return null;
             }
 

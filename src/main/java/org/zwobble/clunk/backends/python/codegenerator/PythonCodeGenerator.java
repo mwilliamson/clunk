@@ -60,6 +60,11 @@ public class PythonCodeGenerator {
     public static PythonStatementNode compileStatement(TypedNamespaceStatementNode node) {
         return node.accept(new TypedNamespaceStatementNode.Visitor<PythonStatementNode>() {
             @Override
+            public PythonStatementNode visit(TypedFunctionNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public PythonStatementNode visit(TypedRecordNode node) {
                 return compileRecord(node);
             }

@@ -3,6 +3,10 @@ package org.zwobble.clunk.ast.untyped;
 import org.zwobble.clunk.sources.NullSource;
 
 public class Untyped {
+    public static UntypedArgNode arg(String name, UntypedStaticExpressionNode type) {
+        return new UntypedArgNode(name, type, NullSource.INSTANCE);
+    }
+
     public static UntypedBoolLiteralNode boolFalse() {
         return new UntypedBoolLiteralNode(false, NullSource.INSTANCE);
     }

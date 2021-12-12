@@ -51,6 +51,11 @@ public class JavaCodeGenerator {
             String.join(".", namespace.name()),
             statement.accept(new TypedNamespaceStatementNode.Visitor<JavaRecordDeclarationNode>() {
                 @Override
+                public JavaRecordDeclarationNode visit(TypedFunctionNode node) {
+                    throw new UnsupportedOperationException("TODO");
+                }
+
+                @Override
                 public JavaRecordDeclarationNode visit(TypedRecordNode node) {
                     return compileRecord(node);
                 }

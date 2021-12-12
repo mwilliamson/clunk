@@ -10,6 +10,14 @@ import org.zwobble.clunk.types.Type;
 import java.util.stream.Collectors;
 
 public class TypeChecker {
+    private static TypedArgNode typeCheckArg(UntypedArgNode node) {
+        return new TypedArgNode(
+            node.name(),
+            typeCheckStaticExpressionNode(node.type()),
+            node.source()
+        );
+    }
+
     private static TypedExpressionNode typeCheckBoolLiteral(UntypedBoolLiteralNode node) {
         return new TypedBoolLiteralNode(node.value(), node.source());
     }
@@ -28,6 +36,15 @@ public class TypeChecker {
         });
     }
 
+    private static TypedNamespaceStatementNode typeCheckFunction(UntypedFunctionNode node) {
+        return new TypedFunctionNode(
+            node.name(),
+            node.args().stream().map(arg -> typeCheckArg(arg)).toList(),
+            typeCheckStaticExpressionNode(node.returnType()),
+            node.source()
+        );
+    }
+
     public static TypedNamespaceNode typeCheckNamespace(UntypedNamespaceNode node) {
         return new TypedNamespaceNode(
             node.name(),
@@ -38,11 +55,11 @@ public class TypeChecker {
         );
     }
 
-    private static TypedNamespaceStatementNode typeCheckNamespaceStatement(UntypedNamespaceStatementNode node) {
+    public static TypedNamespaceStatementNode typeCheckNamespaceStatement(UntypedNamespaceStatementNode node) {
         return node.accept(new UntypedNamespaceStatementNode.Visitor<TypedNamespaceStatementNode>() {
             @Override
             public TypedNamespaceStatementNode visit(UntypedFunctionNode node) {
-                throw new RuntimeException("TODO");
+                return typeCheckFunction(node);
             }
 
             @Override

@@ -41,6 +41,11 @@ public class TypeScriptCodeGenerator {
     private static TypeScriptInterfaceDeclarationNode compileNamespaceStatement(TypedNamespaceStatementNode node) {
         return node.accept(new TypedNamespaceStatementNode.Visitor<TypeScriptInterfaceDeclarationNode>() {
             @Override
+            public TypeScriptInterfaceDeclarationNode visit(TypedFunctionNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public TypeScriptInterfaceDeclarationNode visit(TypedRecordNode node) {
                 return compileRecord(node);
             }

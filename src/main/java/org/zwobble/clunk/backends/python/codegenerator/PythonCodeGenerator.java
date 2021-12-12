@@ -10,7 +10,13 @@ import org.zwobble.clunk.types.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.zwobble.clunk.backends.python.codegenerator.CaseConverter.camelCaseToSnakeCase;
+
 public class PythonCodeGenerator {
+    private static String compileArg(TypedArgNode node) {
+        return camelCaseToSnakeCase(node.name());
+    }
+
     private static PythonExpressionNode compileBoolLiteral(TypedBoolLiteralNode node) {
         return new PythonBoolLiteralNode(node.value());
     }
@@ -27,6 +33,13 @@ public class PythonCodeGenerator {
                 return compileStringLiteral(node);
             }
         });
+    }
+
+    private static PythonStatementNode compileFunction(TypedFunctionNode node) {
+        return new PythonFunctionNode(
+            camelCaseToSnakeCase(node.name()),
+            node.args().stream().map(arg -> compileArg(arg)).toList()
+        );
     }
 
     public static PythonModuleNode compileNamespace(TypedNamespaceNode node) {
@@ -46,7 +59,7 @@ public class PythonCodeGenerator {
         return node.accept(new TypedNamespaceStatementNode.Visitor<PythonStatementNode>() {
             @Override
             public PythonStatementNode visit(TypedFunctionNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileFunction(node);
             }
 
             @Override

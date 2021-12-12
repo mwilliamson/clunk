@@ -36,10 +36,24 @@ public class PythonCodeGenerator {
         statements.add(new PythonImportNode("dataclasses"));
 
         node.statements().stream()
-            .map(statement -> compileStatement(statement))
+            .map(statement -> compileNamespaceStatement(statement))
             .forEachOrdered(statements::add);
 
         return new PythonModuleNode(moduleName, statements);
+    }
+
+    public static PythonStatementNode compileNamespaceStatement(TypedNamespaceStatementNode node) {
+        return node.accept(new TypedNamespaceStatementNode.Visitor<PythonStatementNode>() {
+            @Override
+            public PythonStatementNode visit(TypedFunctionNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
+            public PythonStatementNode visit(TypedRecordNode node) {
+                return compileRecord(node);
+            }
+        });
     }
 
     public static PythonClassDeclarationNode compileRecord(TypedRecordNode node) {
@@ -55,20 +69,6 @@ public class PythonCodeGenerator {
             .toList();
 
         return new PythonClassDeclarationNode(node.name(), decorators, statements);
-    }
-
-    public static PythonStatementNode compileStatement(TypedNamespaceStatementNode node) {
-        return node.accept(new TypedNamespaceStatementNode.Visitor<PythonStatementNode>() {
-            @Override
-            public PythonStatementNode visit(TypedFunctionNode node) {
-                throw new UnsupportedOperationException("TODO");
-            }
-
-            @Override
-            public PythonStatementNode visit(TypedRecordNode node) {
-                return compileRecord(node);
-            }
-        });
     }
 
     public static PythonReferenceNode compileStaticExpression(TypedStaticExpressionNode node) {

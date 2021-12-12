@@ -2,11 +2,25 @@ package org.zwobble.clunk.ast.untyped;
 
 import org.hamcrest.Matcher;
 
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.matchers.CastMatcher.cast;
 import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
 
 public class UntypedNodeMatchers {
+    @SafeVarargs
+    public static Matcher<UntypedArgNode> isUntypedArgNode(Matcher<UntypedArgNode>... matchers) {
+        return allOf(matchers);
+    }
+
+    public static Matcher<UntypedArgNode> untypedArgNodeHasName(String name) {
+        return has("name", equalTo(name));
+    }
+
+    public static Matcher<UntypedArgNode> untypedArgNodeHasType(Matcher<UntypedStaticExpressionNode> type) {
+        return has("type", type);
+    }
+
     public static Matcher<UntypedExpressionNode> isUntypedBoolLiteralNode(boolean value) {
         return cast(UntypedBoolLiteralNode.class, has("value", equalTo(value)));
     }

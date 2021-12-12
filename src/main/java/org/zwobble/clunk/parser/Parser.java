@@ -1,7 +1,6 @@
 package org.zwobble.clunk.parser;
 
 import org.zwobble.clunk.ast.untyped.*;
-import org.zwobble.clunk.sources.FileFragmentSource;
 import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.tokeniser.TokenIterator;
 
@@ -90,7 +89,7 @@ public class Parser {
         tokens.skip(TokenType.SYMBOL_BRACE_OPEN);
         tokens.skip(TokenType.SYMBOL_BRACE_CLOSE);
 
-        return new UntypedFunctionNode(name, returnType, source);
+        return new UntypedFunctionNode(name, List.of(), returnType, source);
     }
 
     public UntypedNamespaceStatementNode parseNamespaceStatement(TokenIterator<TokenType> tokens) {

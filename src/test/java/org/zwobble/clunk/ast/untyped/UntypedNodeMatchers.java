@@ -16,6 +16,10 @@ public class UntypedNodeMatchers {
         return cast(UntypedFunctionNode.class, matchers);
     }
 
+    public static Matcher<UntypedFunctionNode> untypedFunctionNodeHasArgs(Matcher<? extends Iterable<? extends UntypedArgNode>> matcher) {
+        return has("args", matcher);
+    }
+
     public static Matcher<UntypedFunctionNode> untypedFunctionNodeHasName(String name) {
         return has("name", equalTo(name));
     }

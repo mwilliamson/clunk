@@ -11,6 +11,7 @@ public class UntypedNodeMatchers {
         return cast(UntypedBoolLiteralNode.class, has("value", equalTo(value)));
     }
 
+    @SafeVarargs
     public static Matcher<UntypedNamespaceStatementNode> isUntypedFunctionNode(Matcher<UntypedFunctionNode>... matchers) {
         return cast(UntypedFunctionNode.class, matchers);
     }

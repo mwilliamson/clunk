@@ -2,8 +2,10 @@ package org.zwobble.clunk.backends.python.serialiser;
 
 import org.zwobble.clunk.backends.CodeBuilder;
 import org.zwobble.clunk.backends.python.ast.*;
+import org.zwobble.clunk.util.Action;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class PythonSerialiser {
     private static void serialiseAssignment(PythonAssignmentNode node, CodeBuilder builder) {
@@ -41,16 +43,15 @@ public class PythonSerialiser {
         builder.append("(");
         serialiseExpression(node.receiver(), builder);
         builder.append(")(");
-        var first = true;
-        for (var kwarg : node.kwargs()) {
-            if (!first) {
-                builder.append(", ");
-            }
-            builder.append(kwarg.name());
-            builder.append("=");
-            serialiseExpression(kwarg.expression(), builder);
-            first = false;
-        }
+        serialiseWithSeparator(
+            node.kwargs(),
+            kwarg -> {
+                builder.append(kwarg.name());
+                builder.append("=");
+                serialiseExpression(kwarg.expression(), builder);
+            },
+            () -> builder.append(", ")
+        );
         builder.append(")");
     }
 
@@ -152,5 +153,16 @@ public class PythonSerialiser {
             .replace("\"", "\\\"");
         builder.append(escapedValue);
         builder.append("\"");
+    }
+
+    private static <T> void serialiseWithSeparator(List<T> values, Consumer<T> serialise, Action serialiseSeparator) {
+        var first = true;
+        for (var value : values) {
+            if (!first) {
+                serialiseSeparator.call();
+            }
+            serialise.accept(value);
+            first = false;
+        }
     }
 }

@@ -38,7 +38,7 @@ public class TypeScriptCodeGenerator {
         return new TypeScriptModuleNode(name, statements);
     }
 
-    private static TypeScriptStatementNode compileNamespaceStatement(TypedNamespaceStatementNode node) {
+    public static TypeScriptStatementNode compileNamespaceStatement(TypedNamespaceStatementNode node) {
         return node.accept(new TypedNamespaceStatementNode.Visitor<TypeScriptInterfaceDeclarationNode>() {
             @Override
             public TypeScriptInterfaceDeclarationNode visit(TypedFunctionNode node) {
@@ -52,7 +52,7 @@ public class TypeScriptCodeGenerator {
         });
     }
 
-    public static TypeScriptInterfaceDeclarationNode compileRecord(TypedRecordNode node) {
+    private static TypeScriptInterfaceDeclarationNode compileRecord(TypedRecordNode node) {
         var fields = node.fields().stream()
             .map(field -> new TypeScriptInterfaceFieldNode(field.name(), compileStaticExpression(field.type())))
             .collect(Collectors.toList());

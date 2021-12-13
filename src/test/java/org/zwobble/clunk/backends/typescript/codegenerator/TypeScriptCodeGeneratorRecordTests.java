@@ -19,7 +19,7 @@ public class TypeScriptCodeGeneratorRecordTests {
             .addField(Typed.recordField("second", IntType.INSTANCE))
             .build();
 
-        var result = TypeScriptCodeGenerator.compileRecord(node);
+        var result = TypeScriptCodeGenerator.compileNamespaceStatement(node);
 
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseStatement);
         assertThat(string, equalTo(

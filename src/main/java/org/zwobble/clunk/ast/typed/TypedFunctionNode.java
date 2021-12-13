@@ -3,6 +3,7 @@ package org.zwobble.clunk.ast.typed;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.types.IntType;
+import org.zwobble.clunk.types.Type;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,10 @@ public record TypedFunctionNode(
 
         public Builder name(String name) {
             return new Builder(name, params, returnType);
+        }
+
+        public Builder returnType(Type returnType) {
+            return new Builder(name, params, Typed.staticExpression(returnType));
         }
     }
 }

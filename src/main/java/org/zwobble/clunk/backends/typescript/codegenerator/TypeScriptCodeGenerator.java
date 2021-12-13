@@ -28,6 +28,18 @@ public class TypeScriptCodeGenerator {
         });
     }
 
+    private static TypeScriptStatementNode compileFunction(TypedFunctionNode node) {
+        return new TypeScriptFunctionDeclarationNode(
+            node.name(),
+            node.params().stream().map(param -> compileParam(param)).toList(),
+            compileStaticExpression(node.returnType())
+        );
+    }
+
+    private static TypeScriptParamNode compileParam(TypedParamNode node) {
+        return new TypeScriptParamNode(node.name(), compileStaticExpression(node.type()));
+    }
+
     public static TypeScriptModuleNode compileNamespace(TypedNamespaceNode node) {
         var name = String.join("/", node.name());
 
@@ -39,14 +51,14 @@ public class TypeScriptCodeGenerator {
     }
 
     public static TypeScriptStatementNode compileNamespaceStatement(TypedNamespaceStatementNode node) {
-        return node.accept(new TypedNamespaceStatementNode.Visitor<TypeScriptInterfaceDeclarationNode>() {
+        return node.accept(new TypedNamespaceStatementNode.Visitor<TypeScriptStatementNode>() {
             @Override
-            public TypeScriptInterfaceDeclarationNode visit(TypedFunctionNode node) {
-                throw new UnsupportedOperationException("TODO");
+            public TypeScriptStatementNode visit(TypedFunctionNode node) {
+                return compileFunction(node);
             }
 
             @Override
-            public TypeScriptInterfaceDeclarationNode visit(TypedRecordNode node) {
+            public TypeScriptStatementNode visit(TypedRecordNode node) {
                 return compileRecord(node);
             }
         });

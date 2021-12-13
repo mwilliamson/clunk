@@ -3,6 +3,8 @@ package org.zwobble.clunk.backends.java.serialiser;
 import org.zwobble.clunk.backends.CodeBuilder;
 import org.zwobble.clunk.backends.java.ast.*;
 
+import static org.zwobble.clunk.util.Iterables.forEachInterspersed;
+
 public class JavaSerialiser {
     private static void serialiseBoolLiteral(JavaBoolLiteralNode node, CodeBuilder builder) {
         builder.append(node.value() ? "true" : "false");
@@ -42,17 +44,15 @@ public class JavaSerialiser {
         builder.append(node.name());
         builder.append("(");
 
-        var first = true;
-        for (var component : node.components()) {
-            if (!first) {
-                builder.append(", ");
-            }
-            serialiseTypeReference(component.type(), builder);
-            builder.append(" ");
-            builder.append(component.name());
-
-            first = false;
-        }
+        forEachInterspersed(
+            node.components(),
+            component -> {
+                serialiseTypeReference(component.type(), builder);
+                builder.append(" ");
+                builder.append(component.name());
+            },
+            () -> builder.append(", ")
+        );
 
         builder.append(") {\n}");
     }

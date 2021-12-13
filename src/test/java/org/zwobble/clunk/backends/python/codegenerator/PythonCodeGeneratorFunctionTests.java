@@ -29,11 +29,11 @@ public class PythonCodeGeneratorFunctionTests {
     }
 
     @Test
-    public void argNamesAreConvertedToSnakeCase() {
+    public void paramNamesAreConvertedToSnakeCase() {
         var node = TypedFunctionNode.builder()
             .name("f")
-            .addArg(Typed.arg("maxWidth", IntType.INSTANCE))
-            .addArg(Typed.arg("maxHeight", IntType.INSTANCE))
+            .addParam(Typed.param("maxWidth", IntType.INSTANCE))
+            .addParam(Typed.param("maxHeight", IntType.INSTANCE))
             .build();
 
         var result = PythonCodeGenerator.compileNamespaceStatement(node);

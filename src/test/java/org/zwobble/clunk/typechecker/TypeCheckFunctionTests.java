@@ -25,23 +25,23 @@ public class TypeCheckFunctionTests {
     }
 
     @Test
-    public void argsAreTyped() {
+    public void paramsAreTyped() {
         var untypedNode = UntypedFunctionNode.builder()
-            .addArg(Untyped.arg("x", Untyped.staticReference("Int")))
-            .addArg(Untyped.arg("y", Untyped.staticReference("String")))
+            .addParam(Untyped.param("x", Untyped.staticReference("Int")))
+            .addParam(Untyped.param("y", Untyped.staticReference("String")))
             .build();
 
         var result = TypeChecker.typeCheckNamespaceStatement(untypedNode);
 
         assertThat(result, isTypedFunctionNode(
-            typedFunctionNodeHasArgs(contains(
-                isTypedArgNode(
-                    typedArgNodeHasName("x"),
-                    typedArgNodeHasType(isTypedStaticExpressionNode(IntType.INSTANCE))
+            typedFunctionNodeHasParams(contains(
+                isTypedParamNode(
+                    typedParamNodeHasName("x"),
+                    typedParamNodeHasType(isTypedStaticExpressionNode(IntType.INSTANCE))
                 ),
-                isTypedArgNode(
-                    typedArgNodeHasName("y"),
-                    typedArgNodeHasType(isTypedStaticExpressionNode(StringType.INSTANCE))
+                isTypedParamNode(
+                    typedParamNodeHasName("y"),
+                    typedParamNodeHasType(isTypedStaticExpressionNode(StringType.INSTANCE))
                 )
             ))
         ));

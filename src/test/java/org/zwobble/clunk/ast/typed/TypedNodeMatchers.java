@@ -10,25 +10,12 @@ import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
 
 public class TypedNodeMatchers {
     @SafeVarargs
-    public static Matcher<TypedArgNode> isTypedArgNode(Matcher<TypedArgNode>... matchers) {
-        return allOf(matchers);
-    }
-
-    public static Matcher<TypedArgNode> typedArgNodeHasName(String name) {
-        return has("name", equalTo(name));
-    }
-
-    public static Matcher<TypedArgNode> typedArgNodeHasType(Matcher<TypedStaticExpressionNode> type) {
-        return has("type", type);
-    }
-
-    @SafeVarargs
     public static Matcher<TypedNamespaceStatementNode> isTypedFunctionNode(Matcher<TypedFunctionNode>... matchers) {
         return cast(TypedFunctionNode.class, matchers);
     }
 
-    public static Matcher<TypedFunctionNode> typedFunctionNodeHasArgs(Matcher<? extends Iterable<? extends TypedArgNode>> args) {
-        return has("args", args);
+    public static Matcher<TypedFunctionNode> typedFunctionNodeHasParams(Matcher<? extends Iterable<? extends TypedParamNode>> params) {
+        return has("params", params);
     }
 
     public static Matcher<TypedFunctionNode> typedFunctionNodeHasName(String name) {
@@ -38,6 +25,20 @@ public class TypedNodeMatchers {
     public static Matcher<TypedFunctionNode> typedFunctionNodeHasReturnType(Matcher<TypedStaticExpressionNode> type) {
         return has("returnType", type);
     }
+
+    @SafeVarargs
+    public static Matcher<TypedParamNode> isTypedParamNode(Matcher<TypedParamNode>... matchers) {
+        return allOf(matchers);
+    }
+
+    public static Matcher<TypedParamNode> typedParamNodeHasName(String name) {
+        return has("name", equalTo(name));
+    }
+
+    public static Matcher<TypedParamNode> typedParamNodeHasType(Matcher<TypedStaticExpressionNode> type) {
+        return has("type", type);
+    }
+
 
     public static Matcher<TypedNamespaceStatementNode> isTypedRecordNode(Matcher<TypedRecordNode> matcher) {
         return cast(TypedRecordNode.class, matcher);

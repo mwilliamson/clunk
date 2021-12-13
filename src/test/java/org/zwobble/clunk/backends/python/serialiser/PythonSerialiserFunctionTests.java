@@ -21,11 +21,11 @@ public class PythonSerialiserFunctionTests {
     }
 
     @Test
-    public void functionWithArgs() {
+    public void functionWithParams() {
         var node = PythonFunctionNode.builder()
             .name("make_it_so")
-            .addArg("x")
-            .addArg("y")
+            .addParam("x")
+            .addParam("y")
             .build();
 
         var result = serialiseToString(node, PythonSerialiser::serialiseStatement);

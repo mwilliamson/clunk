@@ -107,8 +107,8 @@ public class PythonSerialiser {
         builder.append(node.name());
         builder.append("(");
         forEachInterspersed(
-            node.args(),
-            arg -> builder.append(arg),
+            node.params(),
+            param -> builder.append(param),
             () -> builder.append(", ")
         );
         builder.append("):");

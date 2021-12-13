@@ -8,19 +8,6 @@ import static org.zwobble.clunk.matchers.CastMatcher.cast;
 import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
 
 public class UntypedNodeMatchers {
-    @SafeVarargs
-    public static Matcher<UntypedArgNode> isUntypedArgNode(Matcher<UntypedArgNode>... matchers) {
-        return allOf(matchers);
-    }
-
-    public static Matcher<UntypedArgNode> untypedArgNodeHasName(String name) {
-        return has("name", equalTo(name));
-    }
-
-    public static Matcher<UntypedArgNode> untypedArgNodeHasType(Matcher<UntypedStaticExpressionNode> type) {
-        return has("type", type);
-    }
-
     public static Matcher<UntypedExpressionNode> isUntypedBoolLiteralNode(boolean value) {
         return cast(UntypedBoolLiteralNode.class, has("value", equalTo(value)));
     }
@@ -30,8 +17,8 @@ public class UntypedNodeMatchers {
         return cast(UntypedFunctionNode.class, matchers);
     }
 
-    public static Matcher<UntypedFunctionNode> untypedFunctionNodeHasArgs(Matcher<? extends Iterable<? extends UntypedArgNode>> matcher) {
-        return has("args", matcher);
+    public static Matcher<UntypedFunctionNode> untypedFunctionNodeHasParams(Matcher<? extends Iterable<? extends UntypedParamNode>> matcher) {
+        return has("params", matcher);
     }
 
     public static Matcher<UntypedFunctionNode> untypedFunctionNodeHasName(String name) {
@@ -48,6 +35,19 @@ public class UntypedNodeMatchers {
         Matcher<Iterable<? extends UntypedNamespaceStatementNode>> matcher
     ) {
         return has("statements", matcher);
+    }
+
+    @SafeVarargs
+    public static Matcher<UntypedParamNode> isUntypedParamNode(Matcher<UntypedParamNode>... matchers) {
+        return allOf(matchers);
+    }
+
+    public static Matcher<UntypedParamNode> untypedParamNodeHasName(String name) {
+        return has("name", equalTo(name));
+    }
+
+    public static Matcher<UntypedParamNode> untypedParamNodeHasType(Matcher<UntypedStaticExpressionNode> type) {
+        return has("type", type);
     }
 
     public static Matcher<UntypedNamespaceStatementNode> isUntypedRecordNode(Matcher<UntypedRecordNode> matcher) {

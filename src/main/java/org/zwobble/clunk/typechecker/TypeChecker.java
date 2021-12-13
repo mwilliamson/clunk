@@ -10,8 +10,8 @@ import org.zwobble.clunk.types.Type;
 import java.util.stream.Collectors;
 
 public class TypeChecker {
-    private static TypedArgNode typeCheckArg(UntypedArgNode node) {
-        return new TypedArgNode(
+    private static TypedParamNode typeCheckParam(UntypedParamNode node) {
+        return new TypedParamNode(
             node.name(),
             typeCheckStaticExpressionNode(node.type()),
             node.source()
@@ -39,7 +39,7 @@ public class TypeChecker {
     private static TypedNamespaceStatementNode typeCheckFunction(UntypedFunctionNode node) {
         return new TypedFunctionNode(
             node.name(),
-            node.args().stream().map(arg -> typeCheckArg(arg)).toList(),
+            node.params().stream().map(param -> typeCheckParam(param)).toList(),
             typeCheckStaticExpressionNode(node.returnType()),
             node.source()
         );

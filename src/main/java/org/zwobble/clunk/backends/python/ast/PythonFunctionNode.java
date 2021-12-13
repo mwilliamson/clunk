@@ -3,7 +3,7 @@ package org.zwobble.clunk.backends.python.ast;
 import java.util.ArrayList;
 import java.util.List;
 
-public record PythonFunctionNode(String name, List<String> args) implements PythonStatementNode {
+public record PythonFunctionNode(String name, List<String> params) implements PythonStatementNode {
     @Override
     public <T> T accept(Visitor<T> visitor) {
         return visitor.visit(this);
@@ -13,19 +13,19 @@ public record PythonFunctionNode(String name, List<String> args) implements Pyth
         return new Builder("f", List.of());
     }
 
-    public static record Builder(String name, List<String> args) {
+    public static record Builder(String name, List<String> params) {
         public PythonFunctionNode build() {
-            return new PythonFunctionNode(name, args);
+            return new PythonFunctionNode(name, params);
         }
 
-        public PythonFunctionNode.Builder addArg(String arg) {
-            var args = new ArrayList<>(this.args);
-            args.add(arg);
-            return new Builder(name, args);
+        public PythonFunctionNode.Builder addParam(String param) {
+            var params = new ArrayList<>(this.params);
+            params.add(param);
+            return new Builder(name, params);
         }
 
         public PythonFunctionNode.Builder name(String name) {
-            return new Builder(name, args);
+            return new Builder(name, params);
         }
     }
 }

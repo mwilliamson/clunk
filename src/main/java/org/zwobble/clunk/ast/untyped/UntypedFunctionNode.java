@@ -8,7 +8,7 @@ import java.util.List;
 
 public record UntypedFunctionNode(
     String name,
-    List<UntypedArgNode> args,
+    List<UntypedParamNode> params,
     UntypedStaticExpressionNode returnType,
     Source source
 ) implements UntypedNamespaceStatementNode {
@@ -23,26 +23,26 @@ public record UntypedFunctionNode(
 
     public static record Builder(
         String name,
-        List<UntypedArgNode> args,
+        List<UntypedParamNode> params,
         UntypedStaticExpressionNode returnType,
         Source source
     ) {
         public UntypedFunctionNode build() {
-            return new UntypedFunctionNode(name, args, returnType, source);
+            return new UntypedFunctionNode(name, params, returnType, source);
         }
 
-        public UntypedFunctionNode.Builder addArg(UntypedArgNode arg) {
-            var args = new ArrayList<>(this.args);
-            args.add(arg);
-            return new UntypedFunctionNode.Builder(name, args, returnType, source);
+        public UntypedFunctionNode.Builder addParam(UntypedParamNode param) {
+            var params = new ArrayList<>(this.params);
+            params.add(param);
+            return new UntypedFunctionNode.Builder(name, params, returnType, source);
         }
 
         public UntypedFunctionNode.Builder name(String name) {
-            return new UntypedFunctionNode.Builder(name, args, returnType, source);
+            return new UntypedFunctionNode.Builder(name, params, returnType, source);
         }
 
         public UntypedFunctionNode.Builder returnType(UntypedStaticExpressionNode returnType) {
-            return new UntypedFunctionNode.Builder(name, args, returnType, source);
+            return new UntypedFunctionNode.Builder(name, params, returnType, source);
         }
     }
 

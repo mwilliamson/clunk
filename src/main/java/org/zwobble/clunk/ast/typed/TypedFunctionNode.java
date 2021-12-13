@@ -9,7 +9,7 @@ import java.util.List;
 
 public record TypedFunctionNode(
     String name,
-    List<TypedArgNode> args,
+    List<TypedParamNode> params,
     TypedStaticExpressionNode returnType,
     Source source
 ) implements TypedNamespaceStatementNode {
@@ -25,21 +25,21 @@ public record TypedFunctionNode(
 
     public static record Builder(
         String name,
-        List<TypedArgNode> args,
+        List<TypedParamNode> params,
         TypedStaticExpressionNode returnType
     ) {
         public TypedFunctionNode build() {
-            return new TypedFunctionNode(name, args, returnType, NullSource.INSTANCE);
+            return new TypedFunctionNode(name, params, returnType, NullSource.INSTANCE);
         }
 
-        public Builder addArg(TypedArgNode arg) {
-            var args = new ArrayList<>(this.args);
-            args.add(arg);
-            return new Builder(name, args, returnType);
+        public Builder addParam(TypedParamNode param) {
+            var params = new ArrayList<>(this.params);
+            params.add(param);
+            return new Builder(name, params, returnType);
         }
 
         public Builder name(String name) {
-            return new Builder(name, args, returnType);
+            return new Builder(name, params, returnType);
         }
     }
 }

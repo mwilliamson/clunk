@@ -22,47 +22,47 @@ public class ParserFunctionTests {
     }
 
     @Test
-    public void canParseFunctionWithNoArgs() {
+    public void canParseFunctionWithNoParams() {
         var source = "fun f() -> String { }";
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
         assertThat(node, isUntypedFunctionNode(
-            untypedFunctionNodeHasArgs(empty())
+            untypedFunctionNodeHasParams(empty())
         ));
     }
 
     @Test
-    public void canParseFunctionWithSingleArg() {
+    public void canParseFunctionWithSingleParam() {
         var source = "fun f(x: Int) -> String { }";
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
         assertThat(node, isUntypedFunctionNode(
-            untypedFunctionNodeHasArgs(contains(
-                isUntypedArgNode(
-                    untypedArgNodeHasName("x"),
-                    untypedArgNodeHasType(isUntypedStaticReferenceNode("Int"))
+            untypedFunctionNodeHasParams(contains(
+                isUntypedParamNode(
+                    untypedParamNodeHasName("x"),
+                    untypedParamNodeHasType(isUntypedStaticReferenceNode("Int"))
                 )
             ))
         ));
     }
 
     @Test
-    public void canParseFunctionWithMultipleArgs() {
+    public void canParseFunctionWithMultipleParams() {
         var source = "fun f(x: Int, y: String) -> String { }";
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
         assertThat(node, isUntypedFunctionNode(
-            untypedFunctionNodeHasArgs(contains(
-                isUntypedArgNode(
-                    untypedArgNodeHasName("x"),
-                    untypedArgNodeHasType(isUntypedStaticReferenceNode("Int"))
+            untypedFunctionNodeHasParams(contains(
+                isUntypedParamNode(
+                    untypedParamNodeHasName("x"),
+                    untypedParamNodeHasType(isUntypedStaticReferenceNode("Int"))
                 ),
-                isUntypedArgNode(
-                    untypedArgNodeHasName("y"),
-                    untypedArgNodeHasType(isUntypedStaticReferenceNode("String"))
+                isUntypedParamNode(
+                    untypedParamNodeHasName("y"),
+                    untypedParamNodeHasType(isUntypedStaticReferenceNode("String"))
                 )
             ))
         ));

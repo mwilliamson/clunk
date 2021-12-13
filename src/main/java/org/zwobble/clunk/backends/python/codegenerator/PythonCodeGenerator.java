@@ -13,7 +13,7 @@ import java.util.List;
 import static org.zwobble.clunk.backends.python.codegenerator.CaseConverter.camelCaseToSnakeCase;
 
 public class PythonCodeGenerator {
-    private static String compileArg(TypedArgNode node) {
+    private static String compileParam(TypedParamNode node) {
         return camelCaseToSnakeCase(node.name());
     }
 
@@ -38,7 +38,7 @@ public class PythonCodeGenerator {
     private static PythonStatementNode compileFunction(TypedFunctionNode node) {
         return new PythonFunctionNode(
             camelCaseToSnakeCase(node.name()),
-            node.args().stream().map(arg -> compileArg(arg)).toList()
+            node.params().stream().map(param -> compileParam(param)).toList()
         );
     }
 

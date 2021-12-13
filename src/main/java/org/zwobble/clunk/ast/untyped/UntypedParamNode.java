@@ -2,7 +2,7 @@ package org.zwobble.clunk.ast.untyped;
 
 import org.zwobble.clunk.sources.Source;
 
-public record UntypedArgNode(
+public record UntypedParamNode(
     String name,
     UntypedStaticExpressionNode type,
     Source source

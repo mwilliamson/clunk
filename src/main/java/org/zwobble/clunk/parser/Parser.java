@@ -83,9 +83,9 @@ public class Parser {
         tokens.skip(TokenType.KEYWORD_FUN);
         var name = tokens.nextValue(TokenType.IDENTIFIER);
         tokens.skip(TokenType.SYMBOL_PAREN_OPEN);
-        var args = parseMany(
+        var params = parseMany(
             () -> tokens.isNext(TokenType.SYMBOL_PAREN_CLOSE),
-            () -> parseArg(tokens),
+            () -> paramParam(tokens),
             () -> tokens.trySkip(TokenType.SYMBOL_COMMA)
         );
         tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
@@ -94,17 +94,17 @@ public class Parser {
         tokens.skip(TokenType.SYMBOL_BRACE_OPEN);
         tokens.skip(TokenType.SYMBOL_BRACE_CLOSE);
 
-        return new UntypedFunctionNode(name, args, returnType, source);
+        return new UntypedFunctionNode(name, params, returnType, source);
     }
 
-    private UntypedArgNode parseArg(TokenIterator<TokenType> tokens) {
+    private UntypedParamNode paramParam(TokenIterator<TokenType> tokens) {
         var source = tokens.peek().source();
 
         var name = tokens.nextValue(TokenType.IDENTIFIER);
         tokens.skip(TokenType.SYMBOL_COLON);
         var type = parseType(tokens);
 
-        return new UntypedArgNode(name, type, source);
+        return new UntypedParamNode(name, type, source);
     }
 
     public UntypedNamespaceStatementNode parseNamespaceStatement(TokenIterator<TokenType> tokens) {

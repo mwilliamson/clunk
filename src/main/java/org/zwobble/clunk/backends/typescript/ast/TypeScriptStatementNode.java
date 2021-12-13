@@ -4,6 +4,7 @@ public interface TypeScriptStatementNode extends TypeScriptNode {
     <T> T accept(Visitor<T> visitor);
 
     interface Visitor<T> {
+        T visit(TypeScriptFunctionDeclarationNode node);
         T visit(TypeScriptInterfaceDeclarationNode node);
     }
 }

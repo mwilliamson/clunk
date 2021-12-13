@@ -23,6 +23,10 @@ public class TypeScript {
         return new TypeScriptModuleNode(name, statements);
     }
 
+    public static TypeScriptParamNode param(String name, TypeScriptReferenceNode type) {
+        return new TypeScriptParamNode(name, type);
+    }
+
     public static TypeScriptReferenceNode reference(String name) {
         return new TypeScriptReferenceNode(name);
     }

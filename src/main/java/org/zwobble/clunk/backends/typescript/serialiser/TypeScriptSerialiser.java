@@ -3,6 +3,8 @@ package org.zwobble.clunk.backends.typescript.serialiser;
 import org.zwobble.clunk.backends.CodeBuilder;
 import org.zwobble.clunk.backends.typescript.ast.*;
 
+import static org.zwobble.clunk.util.Iterables.forEachInterspersed;
+
 public class TypeScriptSerialiser {
     private static void serialiseBoolLiteral(TypeScriptBoolLiteralNode node, CodeBuilder builder) {
         builder.append(node.value() ? "true" : "false");
@@ -28,6 +30,28 @@ public class TypeScriptSerialiser {
                 return null;
             }
         });
+    }
+
+    private static void serialiseFunctionDeclaration(TypeScriptFunctionDeclarationNode node, CodeBuilder builder) {
+        builder.append("function ");
+        builder.append(node.name());
+        builder.append("(");
+        forEachInterspersed(
+            node.params(),
+            param -> serialiseParam(param, builder),
+            () -> builder.append(", ")
+        );
+        builder.append("): ");
+        serialiseExpression(node.returnType(), builder);
+        builder.append(" {");
+        builder.newLine();
+        builder.append("}");
+    }
+
+    private static void serialiseParam(TypeScriptParamNode node, CodeBuilder builder) {
+        builder.append(node.name());
+        builder.append(": ");
+        serialiseExpression(node.type(), builder);
     }
 
     private static void serialiseInterfaceDeclaration(TypeScriptInterfaceDeclarationNode node, CodeBuilder builder) {
@@ -66,8 +90,14 @@ public class TypeScriptSerialiser {
         builder.append(node.name());
     }
 
-    public static void serialiseStatement(TypeScriptInterfaceDeclarationNode node, CodeBuilder builder) {
+    public static void serialiseStatement(TypeScriptStatementNode node, CodeBuilder builder) {
         node.accept(new TypeScriptStatementNode.Visitor<Void>() {
+            @Override
+            public Void visit(TypeScriptFunctionDeclarationNode node) {
+                serialiseFunctionDeclaration(node, builder);
+                return null;
+            }
+
             @Override
             public Void visit(TypeScriptInterfaceDeclarationNode node) {
                 serialiseInterfaceDeclaration(node, builder);

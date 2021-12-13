@@ -38,7 +38,7 @@ public class TypeScriptCodeGenerator {
         return new TypeScriptModuleNode(name, statements);
     }
 
-    private static TypeScriptInterfaceDeclarationNode compileNamespaceStatement(TypedNamespaceStatementNode node) {
+    private static TypeScriptStatementNode compileNamespaceStatement(TypedNamespaceStatementNode node) {
         return node.accept(new TypedNamespaceStatementNode.Visitor<TypeScriptInterfaceDeclarationNode>() {
             @Override
             public TypeScriptInterfaceDeclarationNode visit(TypedFunctionNode node) {

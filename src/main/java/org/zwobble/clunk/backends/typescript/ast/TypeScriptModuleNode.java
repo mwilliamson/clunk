@@ -4,6 +4,6 @@ import java.util.List;
 
 public record TypeScriptModuleNode(
     String path,
-    List<TypeScriptInterfaceDeclarationNode> statements
+    List<TypeScriptStatementNode> statements
 ) implements TypeScriptNode {
 }

@@ -19,7 +19,7 @@ public class TypeScript {
         return new TypeScriptInterfaceFieldNode(name, type);
     }
 
-    public static TypeScriptModuleNode module(String name, List<TypeScriptInterfaceDeclarationNode> statements) {
+    public static TypeScriptModuleNode module(String name, List<TypeScriptStatementNode> statements) {
         return new TypeScriptModuleNode(name, statements);
     }
 

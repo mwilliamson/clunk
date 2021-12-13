@@ -14,7 +14,7 @@ public class TypeScriptSerialiserInterfaceDeclarationTests {
     public void emptyInterface() {
         var node = TypeScriptInterfaceDeclarationNode.builder("Example").build();
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseInterfaceDeclaration);
+        var result = serialiseToString(node, TypeScriptSerialiser::serialiseStatement);
 
         assertThat(result, equalTo(
             """
@@ -29,7 +29,7 @@ public class TypeScriptSerialiserInterfaceDeclarationTests {
             .addField(TypeScript.interfaceField("first", TypeScript.reference("string")))
             .build();
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseInterfaceDeclaration);
+        var result = serialiseToString(node, TypeScriptSerialiser::serialiseStatement);
 
         assertThat(result, equalTo(
             """
@@ -46,7 +46,7 @@ public class TypeScriptSerialiserInterfaceDeclarationTests {
             .addField(TypeScript.interfaceField("second", TypeScript.reference("number")))
             .build();
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseInterfaceDeclaration);
+        var result = serialiseToString(node, TypeScriptSerialiser::serialiseStatement);
 
         assertThat(result, equalTo(
             """

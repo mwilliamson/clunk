@@ -24,7 +24,7 @@ public class TypeScriptSerialiser {
         });
     }
 
-    public static void serialiseInterfaceDeclaration(TypeScriptInterfaceDeclarationNode node, CodeBuilder builder) {
+    private static void serialiseInterfaceDeclaration(TypeScriptInterfaceDeclarationNode node, CodeBuilder builder) {
         builder.append("interface ");
         builder.append(node.name());
         builder.append(" {");
@@ -50,7 +50,7 @@ public class TypeScriptSerialiser {
                 builder.newLine();
             }
 
-            serialiseInterfaceDeclaration(statement, builder);
+            serialiseStatement(statement, builder);
 
             isFirst = false;
         }
@@ -58,6 +58,16 @@ public class TypeScriptSerialiser {
 
     public static void serialiseReference(TypeScriptReferenceNode node, CodeBuilder builder) {
         builder.append(node.name());
+    }
+
+    public static void serialiseStatement(TypeScriptInterfaceDeclarationNode node, CodeBuilder builder) {
+        node.accept(new TypeScriptStatementNode.Visitor<Void>() {
+            @Override
+            public Void visit(TypeScriptInterfaceDeclarationNode node) {
+                serialiseInterfaceDeclaration(node, builder);
+                return null;
+            }
+        });
     }
 
     private static void serialiseStringLiteral(TypeScriptStringLiteralNode node, CodeBuilder builder) {

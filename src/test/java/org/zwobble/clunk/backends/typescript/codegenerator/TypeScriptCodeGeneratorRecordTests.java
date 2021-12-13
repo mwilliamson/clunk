@@ -21,7 +21,7 @@ public class TypeScriptCodeGeneratorRecordTests {
 
         var result = TypeScriptCodeGenerator.compileRecord(node);
 
-        var string = serialiseToString(result, TypeScriptSerialiser::serialiseInterfaceDeclaration);
+        var string = serialiseToString(result, TypeScriptSerialiser::serialiseStatement);
         assertThat(string, equalTo(
             """
                 interface Example {

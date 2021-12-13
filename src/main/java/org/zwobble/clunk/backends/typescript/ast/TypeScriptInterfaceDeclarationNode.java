@@ -6,7 +6,12 @@ import java.util.List;
 public record TypeScriptInterfaceDeclarationNode(
     String name,
     List<TypeScriptInterfaceFieldNode> fields
-) implements TypeScriptNode {
+) implements TypeScriptStatementNode {
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
     public static Builder builder(String name) {
         return new Builder(name, List.of());
     }

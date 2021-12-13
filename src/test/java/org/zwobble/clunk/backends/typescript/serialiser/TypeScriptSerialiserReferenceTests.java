@@ -12,7 +12,7 @@ public class TypeScriptSerialiserReferenceTests {
     public void isSerialisedToName() {
         var node = TypeScript.reference("Example");
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseReference);
+        var result = serialiseToString(node, TypeScriptSerialiser::serialiseExpression);
 
         assertThat(result, equalTo("Example"));
     }

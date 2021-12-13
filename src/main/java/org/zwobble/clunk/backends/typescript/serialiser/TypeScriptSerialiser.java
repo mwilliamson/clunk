@@ -17,6 +17,12 @@ public class TypeScriptSerialiser {
             }
 
             @Override
+            public Void visit(TypeScriptReferenceNode node) {
+                serialiseReference(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(TypeScriptStringLiteralNode node) {
                 serialiseStringLiteral(node, builder);
                 return null;
@@ -56,7 +62,7 @@ public class TypeScriptSerialiser {
         }
     }
 
-    public static void serialiseReference(TypeScriptReferenceNode node, CodeBuilder builder) {
+    private static void serialiseReference(TypeScriptReferenceNode node, CodeBuilder builder) {
         builder.append(node.name());
     }
 

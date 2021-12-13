@@ -18,7 +18,7 @@ public class TypeScriptCodeGeneratorStaticExpressionTests {
 
         var result = TypeScriptCodeGenerator.compileStaticExpression(node);
 
-        var string = serialiseToString(result, TypeScriptSerialiser::serialiseReference);
+        var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
         assertThat(string, equalTo("boolean"));
     }
 
@@ -28,7 +28,7 @@ public class TypeScriptCodeGeneratorStaticExpressionTests {
 
         var result = TypeScriptCodeGenerator.compileStaticExpression(node);
 
-        var string = serialiseToString(result, TypeScriptSerialiser::serialiseReference);
+        var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
         assertThat(string, equalTo("number"));
     }
 
@@ -38,7 +38,7 @@ public class TypeScriptCodeGeneratorStaticExpressionTests {
 
         var result = TypeScriptCodeGenerator.compileStaticExpression(node);
 
-        var string = serialiseToString(result, TypeScriptSerialiser::serialiseReference);
+        var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
         assertThat(string, equalTo("string"));
     }
 }

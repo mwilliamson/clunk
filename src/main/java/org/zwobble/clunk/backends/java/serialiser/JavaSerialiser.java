@@ -15,7 +15,22 @@ public class JavaSerialiser {
         builder.append(node.name());
         builder.append(" {");
         builder.newLine();
+        builder.indent();
+        for (var bodyDeclaration : node.body()) {
+            serialiseClassBodyDeclaration(bodyDeclaration, builder);
+        }
+        builder.dedent();
         builder.append("}");
+    }
+
+    private static void serialiseClassBodyDeclaration(JavaClassBodyDeclarationNode node, CodeBuilder builder) {
+        node.accept(new JavaClassBodyDeclarationNode.Visitor<Void>() {
+            @Override
+            public Void visit(JavaMethodDeclarationNode node) {
+                serialiseMethodDeclaration(node, builder);
+                return null;
+            }
+        });
     }
 
     public static void serialiseExpression(JavaExpressionNode node, CodeBuilder builder) {
@@ -32,6 +47,17 @@ public class JavaSerialiser {
                 return null;
             }
         });
+    }
+
+    private static void serialiseMethodDeclaration(JavaMethodDeclarationNode node, CodeBuilder builder) {
+        builder.append("public ");
+        serialiseTypeExpression(node.returnType(), builder);
+        builder.append(" ");
+        builder.append(node.name());
+        builder.append("() {");
+        builder.newLine();
+        builder.append("}");
+        builder.newLine();
     }
 
     public static void serialiseOrdinaryCompilationUnit(JavaOrdinaryCompilationUnitNode node, CodeBuilder builder) {

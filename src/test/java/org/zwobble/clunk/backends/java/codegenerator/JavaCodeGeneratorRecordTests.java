@@ -21,7 +21,7 @@ public class JavaCodeGeneratorRecordTests {
 
         var result = JavaCodeGenerator.compileRecord(node);
 
-        var string = serialiseToString(result, JavaSerialiser::serialiseRecordDeclaration);
+        var string = serialiseToString(result, JavaSerialiser::serialiseTypeDeclaration);
         assertThat(string, equalTo(
             """
                 public record Example(String first, int second) {

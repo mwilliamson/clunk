@@ -61,7 +61,7 @@ public class JavaCodeGeneratorNamespaceTests {
 
         var result = JavaCodeGenerator.compileRecord(node);
         var builder = new CodeBuilder();
-        JavaSerialiser.serialiseRecordDeclaration(result, builder);
+        JavaSerialiser.serialiseTypeDeclaration(result, builder);
 
         assertThat(builder.toString(), equalTo(
             """

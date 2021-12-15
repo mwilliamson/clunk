@@ -39,7 +39,7 @@ public class JavaSerialiser {
         builder.append(";");
     }
 
-    public static void serialiseRecordDeclaration(JavaRecordDeclarationNode node, CodeBuilder builder) {
+    private static void serialiseRecordDeclaration(JavaRecordDeclarationNode node, CodeBuilder builder) {
         builder.append("public record ");
         builder.append(node.name());
         builder.append("(");
@@ -71,7 +71,7 @@ public class JavaSerialiser {
         builder.append("\"");
     }
 
-    private static void serialiseTypeDeclaration(JavaTypeDeclarationNode node, CodeBuilder builder) {
+    public static void serialiseTypeDeclaration(JavaTypeDeclarationNode node, CodeBuilder builder) {
         node.accept(new JavaTypeDeclarationNode.Visitor<Void>() {
             @Override
             public Void visit(JavaRecordDeclarationNode node) {

@@ -14,7 +14,7 @@ public class JavaSerialiserRecordDeclarationTests {
     public void emptyRecord() {
         var node = JavaRecordDeclarationNode.builder("Example").build();
 
-        var result = serialiseToString(node, JavaSerialiser::serialiseRecordDeclaration);
+        var result = serialiseToString(node, JavaSerialiser::serialiseTypeDeclaration);
 
         assertThat(result, equalTo(
             """
@@ -29,7 +29,7 @@ public class JavaSerialiserRecordDeclarationTests {
             .addComponent(new JavaRecordComponentNode(Java.typeReference("String"), "first"))
             .build();
 
-        var result = serialiseToString(node, JavaSerialiser::serialiseRecordDeclaration);
+        var result = serialiseToString(node, JavaSerialiser::serialiseTypeDeclaration);
 
         assertThat(result, equalTo(
             """
@@ -45,7 +45,7 @@ public class JavaSerialiserRecordDeclarationTests {
             .addComponent(new JavaRecordComponentNode(Java.typeReference("int"), "second"))
             .build();
 
-        var result = serialiseToString(node, JavaSerialiser::serialiseRecordDeclaration);
+        var result = serialiseToString(node, JavaSerialiser::serialiseTypeDeclaration);
 
         assertThat(result, equalTo(
             """

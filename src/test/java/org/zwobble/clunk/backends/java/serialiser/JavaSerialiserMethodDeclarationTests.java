@@ -12,14 +12,32 @@ public class JavaSerialiserMethodDeclarationTests {
     @Test
     public void canSerialiseEmptyMethod() {
         var node = JavaMethodDeclarationNode.builder()
-            .name("f")
             .returnType(Java.typeReference("void"))
+            .name("f")
             .build();
 
         var result = serialiseToString(node, JavaSerialiser::serialiseMethodDeclaration);
 
         assertThat(result, equalTo("""
             public void f() {
+            }
+            """
+        ));
+    }
+
+    @Test
+    public void canSerialiseMethodWithParams() {
+        var node = JavaMethodDeclarationNode.builder()
+            .returnType(Java.typeReference("void"))
+            .name("f")
+            .addParam(Java.param(Java.typeReference("int"), "x"))
+            .addParam(Java.param(Java.typeReference("String"), "y"))
+            .build();
+
+        var result = serialiseToString(node, JavaSerialiser::serialiseMethodDeclaration);
+
+        assertThat(result, equalTo("""
+            public void f(int x, String y) {
             }
             """
         ));

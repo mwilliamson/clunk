@@ -54,7 +54,13 @@ public class JavaSerialiser {
         serialiseTypeExpression(node.returnType(), builder);
         builder.append(" ");
         builder.append(node.name());
-        builder.append("() {");
+        builder.append("(");
+        forEachInterspersed(
+            node.params(),
+            param -> serialiseParam(param, builder),
+            () -> builder.append(", ")
+        );
+        builder.append(") {");
         builder.newLine();
         builder.append("}");
         builder.newLine();
@@ -71,6 +77,12 @@ public class JavaSerialiser {
         builder.append("package ");
         builder.append(packageDeclaration);
         builder.append(";");
+    }
+
+    private static void serialiseParam(JavaParamNode param, CodeBuilder builder) {
+        serialiseTypeExpression(param.type(), builder);
+        builder.append(" ");
+        builder.append(param.name());
     }
 
     private static void serialiseRecordDeclaration(JavaRecordDeclarationNode node, CodeBuilder builder) {

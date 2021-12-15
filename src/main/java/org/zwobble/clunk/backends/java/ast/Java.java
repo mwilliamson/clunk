@@ -16,4 +16,8 @@ public class Java {
     public static JavaTypeReferenceNode typeReference(String name) {
         return new JavaTypeReferenceNode(name);
     }
+
+    public static JavaParamNode param(JavaTypeExpressionNode type, String name) {
+        return new JavaParamNode(type, name);
+    }
 }

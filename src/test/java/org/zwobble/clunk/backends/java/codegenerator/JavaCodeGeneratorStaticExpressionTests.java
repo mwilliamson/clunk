@@ -18,7 +18,7 @@ public class JavaCodeGeneratorStaticExpressionTests {
 
         var result = JavaCodeGenerator.compileStaticExpression(node);
 
-        var string = serialiseToString(result, JavaSerialiser::serialiseTypeReference);
+        var string = serialiseToString(result, JavaSerialiser::serialiseTypeExpression);
         assertThat(string, equalTo("boolean"));
     }
 
@@ -28,7 +28,7 @@ public class JavaCodeGeneratorStaticExpressionTests {
 
         var result = JavaCodeGenerator.compileStaticExpression(node);
 
-        var string = serialiseToString(result, JavaSerialiser::serialiseTypeReference);
+        var string = serialiseToString(result, JavaSerialiser::serialiseTypeExpression);
         assertThat(string, equalTo("int"));
     }
 
@@ -38,7 +38,7 @@ public class JavaCodeGeneratorStaticExpressionTests {
 
         var result = JavaCodeGenerator.compileStaticExpression(node);
 
-        var string = serialiseToString(result, JavaSerialiser::serialiseTypeReference);
+        var string = serialiseToString(result, JavaSerialiser::serialiseTypeExpression);
         assertThat(string, equalTo("String"));
     }
 }

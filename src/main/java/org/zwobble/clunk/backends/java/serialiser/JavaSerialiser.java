@@ -55,7 +55,7 @@ public class JavaSerialiser {
         forEachInterspersed(
             node.components(),
             component -> {
-                serialiseTypeReference(component.type(), builder);
+                serialiseTypeExpression(component.type(), builder);
                 builder.append(" ");
                 builder.append(component.name());
             },
@@ -95,7 +95,17 @@ public class JavaSerialiser {
         });
     }
 
-    public static void serialiseTypeReference(JavaTypeReferenceNode node, CodeBuilder builder) {
+    public static void serialiseTypeExpression(JavaTypeExpressionNode node, CodeBuilder builder) {
+        node.accept(new JavaTypeExpressionNode.Visitor<Void>() {
+            @Override
+            public Void visit(JavaTypeReferenceNode node) {
+                serialiseTypeReference(node, builder);
+                return null;
+            }
+        });
+    }
+
+    private static void serialiseTypeReference(JavaTypeReferenceNode node, CodeBuilder builder) {
         builder.append(node.name());
     }
 }

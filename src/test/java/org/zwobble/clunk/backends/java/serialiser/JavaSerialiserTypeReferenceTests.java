@@ -12,7 +12,7 @@ public class JavaSerialiserTypeReferenceTests {
     public void isSerialisedToName() {
         var node = new JavaTypeReferenceNode("Example");
 
-        var result = serialiseToString(node, JavaSerialiser::serialiseTypeReference);
+        var result = serialiseToString(node, JavaSerialiser::serialiseTypeExpression);
 
         assertThat(result, equalTo("Example"));
     }

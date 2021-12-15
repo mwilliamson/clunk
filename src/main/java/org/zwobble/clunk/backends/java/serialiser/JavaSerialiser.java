@@ -10,6 +10,14 @@ public class JavaSerialiser {
         builder.append(node.value() ? "true" : "false");
     }
 
+    private static void serialiseClassDeclaration(JavaClassDeclarationNode node, CodeBuilder builder) {
+        builder.append("public class ");
+        builder.append(node.name());
+        builder.append(" {");
+        builder.newLine();
+        builder.append("}");
+    }
+
     public static void serialiseExpression(JavaExpressionNode node, CodeBuilder builder) {
         node.accept(new JavaExpressionNode.Visitor<Void>() {
             @Override
@@ -73,6 +81,12 @@ public class JavaSerialiser {
 
     public static void serialiseTypeDeclaration(JavaTypeDeclarationNode node, CodeBuilder builder) {
         node.accept(new JavaTypeDeclarationNode.Visitor<Void>() {
+            @Override
+            public Void visit(JavaClassDeclarationNode node) {
+                serialiseClassDeclaration(node, builder);
+                return null;
+            }
+
             @Override
             public Void visit(JavaRecordDeclarationNode node) {
                 serialiseRecordDeclaration(node, builder);

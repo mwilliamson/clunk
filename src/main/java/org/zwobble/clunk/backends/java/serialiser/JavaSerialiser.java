@@ -49,7 +49,7 @@ public class JavaSerialiser {
         });
     }
 
-    private static void serialiseMethodDeclaration(JavaMethodDeclarationNode node, CodeBuilder builder) {
+    public static void serialiseMethodDeclaration(JavaMethodDeclarationNode node, CodeBuilder builder) {
         builder.append("public ");
         serialiseTypeExpression(node.returnType(), builder);
         builder.append(" ");

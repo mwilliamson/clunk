@@ -3,7 +3,15 @@ package org.zwobble.clunk.backends.java.ast;
 import java.util.ArrayList;
 import java.util.List;
 
-public record JavaRecordDeclarationNode(String name, List<JavaRecordComponentNode> components) {
+public record JavaRecordDeclarationNode(
+    String name,
+    List<JavaRecordComponentNode> components
+) implements JavaTypeDeclarationNode {
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
     public static Builder builder(String name) {
         return new Builder(name, List.of());
     }

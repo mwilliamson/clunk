@@ -30,7 +30,7 @@ public class JavaSerialiser {
         serialisePackageDeclaration(node.packageDeclaration(), builder);
         builder.newLine();
         builder.newLine();
-        serialiseRecordDeclaration(node.typeDeclaration(), builder);
+        serialiseTypeDeclaration(node.typeDeclaration(), builder);
     }
 
     private static void serialisePackageDeclaration(String packageDeclaration, CodeBuilder builder) {
@@ -69,6 +69,16 @@ public class JavaSerialiser {
             .replace("\"", "\\\"");
         builder.append(escapedValue);
         builder.append("\"");
+    }
+
+    private static void serialiseTypeDeclaration(JavaTypeDeclarationNode node, CodeBuilder builder) {
+        node.accept(new JavaTypeDeclarationNode.Visitor<Void>() {
+            @Override
+            public Void visit(JavaRecordDeclarationNode node) {
+                serialiseRecordDeclaration(node, builder);
+                return null;
+            }
+        });
     }
 
     public static void serialiseTypeReference(JavaTypeReferenceNode node, CodeBuilder builder) {

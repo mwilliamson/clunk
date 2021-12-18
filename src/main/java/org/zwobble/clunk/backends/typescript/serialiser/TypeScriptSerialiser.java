@@ -90,6 +90,13 @@ public class TypeScriptSerialiser {
         builder.append(node.name());
     }
 
+    private static void serialiseReturn(TypeScriptReturnNode node, CodeBuilder builder) {
+        builder.append("return ");
+        serialiseExpression(node.expression(), builder);
+        builder.append(";");
+        builder.newLine();
+    }
+
     public static void serialiseStatement(TypeScriptStatementNode node, CodeBuilder builder) {
         node.accept(new TypeScriptStatementNode.Visitor<Void>() {
             @Override
@@ -101,6 +108,12 @@ public class TypeScriptSerialiser {
             @Override
             public Void visit(TypeScriptInterfaceDeclarationNode node) {
                 serialiseInterfaceDeclaration(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(TypeScriptReturnNode node) {
+                serialiseReturn(node, builder);
                 return null;
             }
         });

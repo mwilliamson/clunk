@@ -31,6 +31,10 @@ public class TypeScript {
         return new TypeScriptReferenceNode(name);
     }
 
+    public static TypeScriptReturnNode returnStatement(TypeScriptExpressionNode expression) {
+        return new TypeScriptReturnNode(expression);
+    }
+
     public static TypeScriptStringLiteralNode string(String value) {
         return new TypeScriptStringLiteralNode(value);
     }

@@ -30,6 +30,10 @@ public class TypedNodeMatchers {
         return has("returnType", type);
     }
 
+    public static Matcher<TypedFunctionNode> typedFunctionNodeHasBody(Matcher<Iterable<? extends TypedFunctionStatementNode>> body) {
+        return has("body", body);
+    }
+
     @SafeVarargs
     public static Matcher<TypedParamNode> isTypedParamNode(Matcher<TypedParamNode>... matchers) {
         return allOf(matchers);

@@ -59,4 +59,21 @@ public class TypeCheckFunctionTests {
             typedFunctionNodeHasReturnType(isTypedStaticExpressionNode(IntType.INSTANCE))
         ));
     }
+
+    @Test
+    public void bodyIsTypeChecked() {
+        var untypedNode = UntypedFunctionNode.builder()
+            .addBodyStatement(Untyped.returnStatement(Untyped.boolFalse()))
+            .build();
+
+        var result = TypeChecker.typeCheckNamespaceStatement(untypedNode);
+
+        assertThat(result, isTypedFunctionNode(
+            typedFunctionNodeHasBody(contains(
+                isTypedReturnNode(
+                    typedReturnNodeHasExpression(isTypedBoolLiteral(false))
+                )
+            ))
+        ));
+    }
 }

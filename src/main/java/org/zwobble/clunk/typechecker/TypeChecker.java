@@ -7,7 +7,6 @@ import org.zwobble.clunk.types.IntType;
 import org.zwobble.clunk.types.StringType;
 import org.zwobble.clunk.types.Type;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class TypeChecker {
@@ -42,7 +41,7 @@ public class TypeChecker {
             node.name(),
             node.params().stream().map(param -> typeCheckParam(param)).toList(),
             typeCheckStaticExpressionNode(node.returnType()),
-            List.of(),
+            node.body().stream().map(statement -> typeCheckFunctionStatement(statement)).toList(),
             node.source()
         );
     }

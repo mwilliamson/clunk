@@ -94,7 +94,7 @@ public class Parser {
         tokens.skip(TokenType.SYMBOL_BRACE_OPEN);
         tokens.skip(TokenType.SYMBOL_BRACE_CLOSE);
 
-        return new UntypedFunctionNode(name, params, returnType, source);
+        return new UntypedFunctionNode(name, params, returnType, List.of(), source);
     }
 
     private UntypedParamNode paramParam(TokenIterator<TokenType> tokens) {

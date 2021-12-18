@@ -42,6 +42,15 @@ public class PythonCodeGenerator {
         );
     }
 
+    public static PythonStatementNode compileFunctionStatement(TypedFunctionStatementNode node) {
+        return node.accept(new TypedFunctionStatementNode.Visitor<PythonStatementNode>() {
+            @Override
+            public PythonStatementNode visit(TypedReturnNode node) {
+                return compileReturn(node);
+            }
+        });
+    }
+
     public static PythonModuleNode compileNamespace(TypedNamespaceNode node) {
         var moduleName = String.join(".", node.name());
 
@@ -82,6 +91,10 @@ public class PythonCodeGenerator {
             .toList();
 
         return new PythonClassDeclarationNode(node.name(), decorators, statements);
+    }
+
+    private static PythonStatementNode compileReturn(TypedReturnNode node) {
+        return new PythonReturnNode(compileExpression(node.expression()));
     }
 
     public static PythonReferenceNode compileStaticExpression(TypedStaticExpressionNode node) {

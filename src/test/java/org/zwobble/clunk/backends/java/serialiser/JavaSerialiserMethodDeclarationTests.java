@@ -24,6 +24,7 @@ public class JavaSerialiserMethodDeclarationTests {
             """
         ));
     }
+
     @Test
     public void canSerialiseStaticMethod() {
         var node = JavaMethodDeclarationNode.builder()
@@ -54,6 +55,23 @@ public class JavaSerialiserMethodDeclarationTests {
 
         assertThat(result, equalTo("""
             public void f(int x, String y) {
+            }
+            """
+        ));
+    }
+    @Test
+    public void canSerialiseMethodWithBody() {
+        var node = JavaMethodDeclarationNode.builder()
+            .returnType(Java.typeReference("void"))
+            .name("f")
+            .addBodyStatement(Java.returnStatement(Java.boolFalse()))
+            .build();
+
+        var result = serialiseToString(node, JavaSerialiser::serialiseMethodDeclaration);
+
+        assertThat(result, equalTo("""
+            public void f() {
+                return false;
             }
             """
         ));

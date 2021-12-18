@@ -65,6 +65,11 @@ public class JavaSerialiser {
         );
         builder.append(") {");
         builder.newLine();
+        builder.indent();
+        for (var bodyStatement : node.body()) {
+            serialiseStatement(bodyStatement, builder);
+        }
+        builder.dedent();
         builder.append("}");
         builder.newLine();
     }

@@ -12,6 +12,7 @@ public record TypedFunctionNode(
     String name,
     List<TypedParamNode> params,
     TypedStaticExpressionNode returnType,
+    List<TypedFunctionStatementNode> body,
     Source source
 ) implements TypedNamespaceStatementNode {
     @Override
@@ -21,30 +22,31 @@ public record TypedFunctionNode(
 
 
     public static Builder builder() {
-        return new Builder("f", List.of(), Typed.staticExpression(IntType.INSTANCE));
+        return new Builder("f", List.of(), Typed.staticExpression(IntType.INSTANCE), List.of());
     }
 
     public static record Builder(
         String name,
         List<TypedParamNode> params,
-        TypedStaticExpressionNode returnType
+        TypedStaticExpressionNode returnType,
+        List<TypedFunctionStatementNode> body
     ) {
         public TypedFunctionNode build() {
-            return new TypedFunctionNode(name, params, returnType, NullSource.INSTANCE);
+            return new TypedFunctionNode(name, params, returnType, body, NullSource.INSTANCE);
         }
 
         public Builder addParam(TypedParamNode param) {
             var params = new ArrayList<>(this.params);
             params.add(param);
-            return new Builder(name, params, returnType);
+            return new Builder(name, params, returnType, body);
         }
 
         public Builder name(String name) {
-            return new Builder(name, params, returnType);
+            return new Builder(name, params, returnType, body);
         }
 
         public Builder returnType(Type returnType) {
-            return new Builder(name, params, Typed.staticExpression(returnType));
+            return new Builder(name, params, Typed.staticExpression(returnType), body);
         }
     }
 }

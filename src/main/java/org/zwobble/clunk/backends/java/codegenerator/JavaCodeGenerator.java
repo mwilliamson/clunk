@@ -42,6 +42,15 @@ public class JavaCodeGenerator {
         );
     }
 
+    public static JavaStatementNode compileFunctionStatement(TypedFunctionStatementNode node) {
+        return node.accept(new TypedFunctionStatementNode.Visitor<JavaStatementNode>() {
+            @Override
+            public JavaStatementNode visit(TypedReturnNode node) {
+                return compileReturn(node);
+            }
+        });
+    }
+
     public static JavaOrdinaryCompilationUnitNode compileRecord(List<String> namespace, TypedRecordNode node) {
         var components = node.fields().stream()
             .map(field -> new JavaRecordComponentNode(compileStaticExpression(field.type()), field.name()))
@@ -88,6 +97,10 @@ public class JavaCodeGenerator {
 
     private static JavaParamNode compileParam(TypedParamNode node) {
         return new JavaParamNode(compileStaticExpression(node.type()), node.name());
+    }
+
+    private static JavaStatementNode compileReturn(TypedReturnNode node) {
+        return new JavaReturnNode(compileExpression(node.expression()));
     }
 
     public static JavaTypeReferenceNode compileStaticExpression(TypedStaticExpressionNode node) {

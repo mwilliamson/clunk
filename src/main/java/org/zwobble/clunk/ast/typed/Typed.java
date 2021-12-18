@@ -20,6 +20,10 @@ public class Typed {
         return new TypedRecordFieldNode(name, staticExpression(type), NullSource.INSTANCE);
     }
 
+    public static TypedReturnNode returnStatement(TypedExpressionNode expression) {
+        return new TypedReturnNode(expression, NullSource.INSTANCE);
+    }
+
     public static TypedStaticExpressionNode staticExpression(Type type) {
         return new TypedStaticExpressionNode(type, NullSource.INSTANCE);
     }

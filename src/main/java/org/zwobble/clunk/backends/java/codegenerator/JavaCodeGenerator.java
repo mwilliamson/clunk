@@ -29,14 +29,17 @@ public class JavaCodeGenerator {
         });
     }
 
-    public static JavaRecordDeclarationNode compileRecord(TypedRecordNode node) {
+    public static JavaOrdinaryCompilationUnitNode compileRecord(List<String> namespace, TypedRecordNode node) {
         var components = node.fields().stream()
             .map(field -> new JavaRecordComponentNode(compileStaticExpression(field.type()), field.name()))
             .collect(Collectors.toList());
 
-        return new JavaRecordDeclarationNode(
-            node.name(),
-            components
+        return new JavaOrdinaryCompilationUnitNode(
+            String.join(".", namespace),
+            new JavaRecordDeclarationNode(
+                node.name(),
+                components
+            )
         );
     }
 
@@ -47,20 +50,17 @@ public class JavaCodeGenerator {
     }
 
     private static JavaOrdinaryCompilationUnitNode compileNamespaceStatement(TypedNamespaceNode namespace, TypedNamespaceStatementNode statement) {
-        return new JavaOrdinaryCompilationUnitNode(
-            String.join(".", namespace.name()),
-            statement.accept(new TypedNamespaceStatementNode.Visitor<JavaRecordDeclarationNode>() {
-                @Override
-                public JavaRecordDeclarationNode visit(TypedFunctionNode node) {
-                    throw new UnsupportedOperationException("TODO");
-                }
+        return statement.accept(new TypedNamespaceStatementNode.Visitor<JavaOrdinaryCompilationUnitNode>() {
+            @Override
+            public JavaOrdinaryCompilationUnitNode visit(TypedFunctionNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
 
-                @Override
-                public JavaRecordDeclarationNode visit(TypedRecordNode node) {
-                    return compileRecord(node);
-                }
-            })
-        );
+            @Override
+            public JavaOrdinaryCompilationUnitNode visit(TypedRecordNode node) {
+                return compileRecord(namespace.name(), node);
+            }
+        });
     }
 
     public static JavaTypeReferenceNode compileStaticExpression(TypedStaticExpressionNode node) {

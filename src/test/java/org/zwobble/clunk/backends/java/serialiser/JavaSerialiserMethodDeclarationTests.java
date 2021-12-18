@@ -24,6 +24,22 @@ public class JavaSerialiserMethodDeclarationTests {
             """
         ));
     }
+    @Test
+    public void canSerialiseStaticMethod() {
+        var node = JavaMethodDeclarationNode.builder()
+            .returnType(Java.typeReference("void"))
+            .name("f")
+            .isStatic(true)
+            .build();
+
+        var result = serialiseToString(node, JavaSerialiser::serialiseMethodDeclaration);
+
+        assertThat(result, equalTo("""
+            public static void f() {
+            }
+            """
+        ));
+    }
 
     @Test
     public void canSerialiseMethodWithParams() {

@@ -51,6 +51,9 @@ public class JavaSerialiser {
 
     public static void serialiseMethodDeclaration(JavaMethodDeclarationNode node, CodeBuilder builder) {
         builder.append("public ");
+        if (node.isStatic()) {
+            builder.append("static ");
+        }
         serialiseTypeExpression(node.returnType(), builder);
         builder.append(" ");
         builder.append(node.name());

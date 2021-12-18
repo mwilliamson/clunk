@@ -47,6 +47,15 @@ public class TypeChecker {
         );
     }
 
+    public static TypedFunctionStatementNode typeCheckFunctionStatement(UntypedFunctionStatementNode node) {
+        return node.accept(new UntypedFunctionStatementNode.Visitor<TypedFunctionStatementNode>() {
+            @Override
+            public TypedFunctionStatementNode visit(UntypedReturnNode node) {
+                return typeCheckReturn(node);
+            }
+        });
+    }
+
     public static TypedNamespaceNode typeCheckNamespace(UntypedNamespaceNode node) {
         return new TypedNamespaceNode(
             node.name(),
@@ -87,6 +96,10 @@ public class TypeChecker {
             typeCheckStaticExpressionNode(node.type()),
             node.source()
         );
+    }
+
+    private static TypedFunctionStatementNode typeCheckReturn(UntypedReturnNode node) {
+        return new TypedReturnNode(typeCheckExpression(node.expression()), node.source());
     }
 
     private static TypedStaticExpressionNode typeCheckStaticExpressionNode(UntypedStaticExpressionNode node) {

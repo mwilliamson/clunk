@@ -19,6 +19,10 @@ public class Untyped {
         return new UntypedRecordFieldNode(name, type, NullSource.INSTANCE);
     }
 
+    public static UntypedReturnNode returnStatement(UntypedExpressionNode expression) {
+        return new UntypedReturnNode(expression, NullSource.INSTANCE);
+    }
+
     public static UntypedStaticReferenceNode staticReference(String value) {
         return new UntypedStaticReferenceNode(value, NullSource.INSTANCE);
     }

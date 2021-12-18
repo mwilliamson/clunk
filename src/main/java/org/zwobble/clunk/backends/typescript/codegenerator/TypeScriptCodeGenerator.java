@@ -36,6 +36,15 @@ public class TypeScriptCodeGenerator {
         );
     }
 
+    public static TypeScriptStatementNode compileFunctionStatement(TypedFunctionStatementNode node) {
+        return node.accept(new TypedFunctionStatementNode.Visitor<TypeScriptStatementNode>() {
+            @Override
+            public TypeScriptStatementNode visit(TypedReturnNode node) {
+                return compileReturn(node);
+            }
+        });
+    }
+
     private static TypeScriptParamNode compileParam(TypedParamNode node) {
         return new TypeScriptParamNode(node.name(), compileStaticExpression(node.type()));
     }
@@ -70,6 +79,10 @@ public class TypeScriptCodeGenerator {
             .collect(Collectors.toList());
 
         return new TypeScriptInterfaceDeclarationNode(node.name(), fields);
+    }
+
+    private static TypeScriptStatementNode compileReturn(TypedReturnNode node) {
+        return new TypeScriptReturnNode(compileExpression(node.expression()));
     }
 
     public static TypeScriptReferenceNode compileStaticExpression(TypedStaticExpressionNode node) {

@@ -48,5 +48,11 @@ public record TypedFunctionNode(
         public Builder returnType(Type returnType) {
             return new Builder(name, params, Typed.staticExpression(returnType), body);
         }
+
+        public Builder addBodyStatement(TypedFunctionStatementNode statement) {
+            var body = new ArrayList<>(this.body);
+            body.add(statement);
+            return new Builder(name, params, returnType, body);
+        }
     }
 }

@@ -20,6 +20,7 @@ public class JavaCodeGeneratorFunctionTests {
             .addParam(Typed.param("x", StringType.INSTANCE))
             .addParam(Typed.param("y", IntType.INSTANCE))
             .returnType(BoolType.INSTANCE)
+            .addBodyStatement(Typed.returnStatement(Typed.boolFalse()))
             .build();
 
         var result = JavaCodeGenerator.compileFunction(node);
@@ -28,6 +29,7 @@ public class JavaCodeGeneratorFunctionTests {
         assertThat(string, equalTo(
             """
                 public static boolean f(String x, int y) {
+                    return false;
                 }
                 """
         ));

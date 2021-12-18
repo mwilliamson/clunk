@@ -132,6 +132,12 @@ public class PythonSerialiser {
         builder.append(node.name());
     }
 
+    private static void serialiseReturn(PythonReturnNode node, CodeBuilder builder) {
+        builder.append("return ");
+        serialiseExpression(node.expression(), builder);
+        builder.newLine();
+    }
+
     public static void serialiseStatement(PythonStatementNode node, CodeBuilder builder) {
         node.accept(new PythonStatementNode.Visitor<Void>() {
             @Override
@@ -155,6 +161,12 @@ public class PythonSerialiser {
             @Override
             public Void visit(PythonImportNode node) {
                 serialiseImport(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(PythonReturnNode node) {
+                serialiseReturn(node, builder);
                 return null;
             }
         });

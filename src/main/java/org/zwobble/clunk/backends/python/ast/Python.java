@@ -30,6 +30,10 @@ public class Python {
         return new PythonReferenceNode(name);
     }
 
+    public static PythonReturnNode returnStatement(PythonExpressionNode expression) {
+        return new PythonReturnNode(expression);
+    }
+
     public static PythonAssignmentNode variableType(String name, PythonExpressionNode type) {
         return new PythonAssignmentNode(name, type);
     }

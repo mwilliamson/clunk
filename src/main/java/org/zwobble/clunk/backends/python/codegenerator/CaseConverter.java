@@ -1,5 +1,7 @@
 package org.zwobble.clunk.backends.python.codegenerator;
 
+import java.util.Locale;
+
 public class CaseConverter {
     public static String camelCaseToSnakeCase(String name) {
         var builder = new StringBuilder();
@@ -15,5 +17,9 @@ public class CaseConverter {
         });
 
         return builder.toString();
+    }
+
+    public static String lowerCamelCaseToUpperCamelCase(String name) {
+        return name.substring(0, 1).toUpperCase(Locale.ROOT) + name.substring(1);
     }
 }

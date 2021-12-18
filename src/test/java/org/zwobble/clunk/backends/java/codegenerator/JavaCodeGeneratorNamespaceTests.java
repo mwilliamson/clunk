@@ -1,9 +1,11 @@
 package org.zwobble.clunk.backends.java.codegenerator;
 
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.ast.typed.TypedFunctionNode;
 import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
+import org.zwobble.clunk.types.StringType;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,6 +45,37 @@ public class JavaCodeGeneratorNamespaceTests {
                     package example.project;
                     
                     public record Second() {
+                    }"""
+            )
+        ));
+    }
+
+    @Test
+    public void functionsAreGroupedIntoSingleClassNamedAfterNamespace() {
+        var node = TypedNamespaceNode.builder(List.of("example", "project"))
+            .addStatement(TypedFunctionNode.builder().name("f").returnType(StringType.INSTANCE).build())
+            .addStatement(TypedFunctionNode.builder().name("g").returnType(StringType.INSTANCE).build())
+            .build();
+
+        var result = JavaCodeGenerator.compileNamespace(node);
+
+        var strings = result
+            .stream()
+            .map(compilationUnit -> serialiseToString(
+                compilationUnit,
+                JavaSerialiser::serialiseOrdinaryCompilationUnit)
+            )
+            .collect(Collectors.toList());
+        assertThat(strings, contains(
+            equalTo(
+                """
+                    package example.project;
+                    
+                    public class Project {
+                        public static String f() {
+                        }
+                        public static String g() {
+                        }
                     }"""
             )
         ));

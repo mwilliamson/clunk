@@ -23,7 +23,7 @@ public class JavaSerialiser {
         builder.append("}");
     }
 
-    private static void serialiseClassBodyDeclaration(JavaClassBodyDeclarationNode node, CodeBuilder builder) {
+    public static void serialiseClassBodyDeclaration(JavaClassBodyDeclarationNode node, CodeBuilder builder) {
         node.accept(new JavaClassBodyDeclarationNode.Visitor<Void>() {
             @Override
             public Void visit(JavaMethodDeclarationNode node) {

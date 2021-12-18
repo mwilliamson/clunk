@@ -7,8 +7,12 @@ import org.zwobble.clunk.types.IntType;
 import org.zwobble.clunk.types.StringType;
 import org.zwobble.clunk.types.Type;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.zwobble.clunk.backends.python.codegenerator.CaseConverter.lowerCamelCaseToUpperCamelCase;
+import static org.zwobble.clunk.util.Lists.last;
 
 public class JavaCodeGenerator {
     private static JavaExpressionNode compileBoolLiteral(TypedBoolLiteralNode node) {
@@ -29,13 +33,22 @@ public class JavaCodeGenerator {
         });
     }
 
+    public static JavaClassBodyDeclarationNode compileFunction(TypedFunctionNode node) {
+        return new JavaMethodDeclarationNode(
+            true,
+            compileStaticExpression(node.returnType()),
+            node.name(),
+            node.params().stream().map(param -> compileParam(param)).toList()
+        );
+    }
+
     public static JavaOrdinaryCompilationUnitNode compileRecord(List<String> namespace, TypedRecordNode node) {
         var components = node.fields().stream()
             .map(field -> new JavaRecordComponentNode(compileStaticExpression(field.type()), field.name()))
             .collect(Collectors.toList());
 
         return new JavaOrdinaryCompilationUnitNode(
-            String.join(".", namespace),
+            namespaceToPackage(namespace),
             new JavaRecordDeclarationNode(
                 node.name(),
                 components
@@ -44,23 +57,37 @@ public class JavaCodeGenerator {
     }
 
     public static List<JavaOrdinaryCompilationUnitNode> compileNamespace(TypedNamespaceNode node) {
-        return node.statements().stream()
-            .map(statement -> compileNamespaceStatement(node, statement))
-            .collect(Collectors.toList());
+        var compilationUnits = new ArrayList<JavaOrdinaryCompilationUnitNode>();
+        var functions = new ArrayList<JavaClassBodyDeclarationNode>();
+
+        for (var statement : node.statements()) {
+            statement.accept(new TypedNamespaceStatementNode.Visitor<Void>() {
+                @Override
+                public Void visit(TypedFunctionNode functionNode) {
+                    functions.add(compileFunction(functionNode));
+                    return null;
+                }
+
+                @Override
+                public Void visit(TypedRecordNode recordNode) {
+                    compilationUnits.add(compileRecord(node.name(), recordNode));
+                    return null;
+                }
+            });
+        }
+
+        if (!functions.isEmpty()) {
+            compilationUnits.add(new JavaOrdinaryCompilationUnitNode(
+                namespaceToPackage(node.name()),
+                new JavaClassDeclarationNode(lowerCamelCaseToUpperCamelCase(last(node.name())), functions)
+            ));
+        }
+
+        return compilationUnits;
     }
 
-    private static JavaOrdinaryCompilationUnitNode compileNamespaceStatement(TypedNamespaceNode namespace, TypedNamespaceStatementNode statement) {
-        return statement.accept(new TypedNamespaceStatementNode.Visitor<JavaOrdinaryCompilationUnitNode>() {
-            @Override
-            public JavaOrdinaryCompilationUnitNode visit(TypedFunctionNode node) {
-                throw new UnsupportedOperationException("TODO");
-            }
-
-            @Override
-            public JavaOrdinaryCompilationUnitNode visit(TypedRecordNode node) {
-                return compileRecord(namespace.name(), node);
-            }
-        });
+    private static JavaParamNode compileParam(TypedParamNode node) {
+        return new JavaParamNode(compileStaticExpression(node.type()), node.name());
     }
 
     public static JavaTypeReferenceNode compileStaticExpression(TypedStaticExpressionNode node) {
@@ -81,5 +108,9 @@ public class JavaCodeGenerator {
         } else {
             throw new RuntimeException("TODO");
         }
+    }
+
+    private static String namespaceToPackage(List<String> namespace) {
+        return String.join(".", namespace);
     }
 }

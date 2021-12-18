@@ -38,7 +38,8 @@ public class PythonCodeGenerator {
     private static PythonStatementNode compileFunction(TypedFunctionNode node) {
         return new PythonFunctionNode(
             camelCaseToSnakeCase(node.name()),
-            node.params().stream().map(param -> compileParam(param)).toList()
+            node.params().stream().map(param -> compileParam(param)).toList(),
+            List.of()
         );
     }
 

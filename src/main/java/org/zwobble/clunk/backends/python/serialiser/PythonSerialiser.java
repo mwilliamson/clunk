@@ -113,7 +113,7 @@ public class PythonSerialiser {
         );
         builder.append("):");
         builder.newLine();
-        serialiseBlock(List.of(), builder);
+        serialiseBlock(node.body(), builder);
     }
 
     private static void serialiseImport(PythonImportNode node, CodeBuilder builder) {

@@ -1,6 +1,7 @@
 package org.zwobble.clunk.backends.python.serialiser;
 
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.backends.python.ast.Python;
 import org.zwobble.clunk.backends.python.ast.PythonFunctionNode;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -33,6 +34,21 @@ public class PythonSerialiserFunctionTests {
         assertThat(result, equalTo("""
             def make_it_so(x, y):
                 pass
+            """));
+    }
+
+    @Test
+    public void functionWithBody() {
+        var node = PythonFunctionNode.builder()
+            .name("make_it_so")
+            .addBodyStatement(Python.returnStatement(Python.FALSE))
+            .build();
+
+        var result = serialiseToString(node, PythonSerialiser::serialiseStatement);
+
+        assertThat(result, equalTo("""
+            def make_it_so():
+                return False
             """));
     }
 }

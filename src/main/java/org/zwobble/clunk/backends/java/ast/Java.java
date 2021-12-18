@@ -20,4 +20,8 @@ public class Java {
     public static JavaParamNode param(JavaTypeExpressionNode type, String name) {
         return new JavaParamNode(type, name);
     }
+
+    public static JavaReturnNode returnStatement(JavaExpressionNode expression) {
+        return new JavaReturnNode(expression);
+    }
 }

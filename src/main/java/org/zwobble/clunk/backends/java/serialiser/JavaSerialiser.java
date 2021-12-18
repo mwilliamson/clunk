@@ -106,6 +106,23 @@ public class JavaSerialiser {
         builder.append(") {\n}");
     }
 
+    private static void serialiseReturn(JavaReturnNode node, CodeBuilder builder) {
+        builder.append("return ");
+        serialiseExpression(node.expression(), builder);
+        builder.append(";");
+        builder.newLine();
+    }
+
+    public static void serialiseStatement(JavaStatementNode node, CodeBuilder builder) {
+        node.accept(new JavaStatementNode.Visitor<Void>() {
+            @Override
+            public Void visit(JavaReturnNode node) {
+                serialiseReturn(node, builder);
+                return null;
+            }
+        });
+    }
+
     private static void serialiseStringLiteral(JavaStringLiteralNode node, CodeBuilder builder) {
         builder.append("\"");
         var escapedValue = node.value()

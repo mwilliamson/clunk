@@ -56,4 +56,21 @@ public class TypeScriptSerialiserFunctionDeclarationTests {
             }"""
         ));
     }
+
+    @Test
+    public void canSerialiseFunctionWithBody() {
+        var node = TypeScriptFunctionDeclarationNode.builder()
+            .name("f")
+            .returnType(TypeScript.reference("string"))
+            .addBodyStatement(TypeScript.returnStatement(TypeScript.boolFalse()))
+            .build();
+
+        var result = serialiseToString(node, TypeScriptSerialiser::serialiseStatement);
+
+        assertThat(result, equalTo("""
+            function f(): string {
+                return false;
+            }"""
+        ));
+    }
 }

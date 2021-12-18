@@ -7,6 +7,7 @@ import org.zwobble.clunk.types.IntType;
 import org.zwobble.clunk.types.StringType;
 import org.zwobble.clunk.types.Type;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class TypeScriptCodeGenerator {
@@ -32,7 +33,8 @@ public class TypeScriptCodeGenerator {
         return new TypeScriptFunctionDeclarationNode(
             node.name(),
             node.params().stream().map(param -> compileParam(param)).toList(),
-            compileStaticExpression(node.returnType())
+            compileStaticExpression(node.returnType()),
+            List.of()
         );
     }
 

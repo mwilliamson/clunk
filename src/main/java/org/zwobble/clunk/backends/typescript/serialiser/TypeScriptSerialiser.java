@@ -45,6 +45,11 @@ public class TypeScriptSerialiser {
         serialiseExpression(node.returnType(), builder);
         builder.append(" {");
         builder.newLine();
+        builder.indent();
+        for (var statement : node.body()) {
+            serialiseStatement(statement, builder);
+        }
+        builder.dedent();
         builder.append("}");
     }
 

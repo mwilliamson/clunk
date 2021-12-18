@@ -20,6 +20,7 @@ public class TypeScriptCodeGeneratorFunctionTests {
             .addParam(Typed.param("x", StringType.INSTANCE))
             .addParam(Typed.param("y", IntType.INSTANCE))
             .returnType(BoolType.INSTANCE)
+            .addBodyStatement(Typed.returnStatement(Typed.boolFalse()))
             .build();
 
         var result = TypeScriptCodeGenerator.compileNamespaceStatement(node);
@@ -28,6 +29,7 @@ public class TypeScriptCodeGeneratorFunctionTests {
         assertThat(string, equalTo(
             """
                 function f(x: string, y: number): boolean {
+                    return false;
                 }"""
         ));
     }

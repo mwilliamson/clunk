@@ -24,4 +24,8 @@ public class Java {
     public static JavaReturnNode returnStatement(JavaExpressionNode expression) {
         return new JavaReturnNode(expression);
     }
+
+    public static JavaAssignmentNode assign(String name, JavaExpressionNode expression) {
+        return new JavaAssignmentNode(name, expression);
+    }
 }

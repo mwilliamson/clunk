@@ -6,6 +6,15 @@ import org.zwobble.clunk.backends.java.ast.*;
 import static org.zwobble.clunk.util.Iterables.forEachInterspersed;
 
 public class JavaSerialiser {
+    private static void serialiseAssignment(JavaAssignmentNode node, CodeBuilder builder) {
+        builder.append("var ");
+        builder.append(node.name());
+        builder.append(" = ");
+        serialiseExpression(node.expression(), builder);
+        builder.append(";");
+        builder.newLine();
+    }
+
     private static void serialiseBoolLiteral(JavaBoolLiteralNode node, CodeBuilder builder) {
         builder.append(node.value() ? "true" : "false");
     }
@@ -120,6 +129,12 @@ public class JavaSerialiser {
 
     public static void serialiseStatement(JavaStatementNode node, CodeBuilder builder) {
         node.accept(new JavaStatementNode.Visitor<Void>() {
+            @Override
+            public Void visit(JavaAssignmentNode node) {
+                serialiseAssignment(node, builder);
+                return null;
+            }
+
             @Override
             public Void visit(JavaReturnNode node) {
                 serialiseReturn(node, builder);

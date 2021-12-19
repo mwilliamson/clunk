@@ -18,10 +18,8 @@ public class UntypedNodeMatchers {
         return new UntypedFunctionNodeMatcher(List.of());
     }
 
-    public static Matcher<UntypedNamespaceNode> untypedNamespaceNodeHasStatements(
-        Matcher<Iterable<? extends UntypedNamespaceStatementNode>> matcher
-    ) {
-        return has("statements", matcher);
+    public static UntypedNamespaceNodeMatcher isUntypedNamespaceNode() {
+        return new UntypedNamespaceNodeMatcher(List.of());
     }
 
     @SafeVarargs

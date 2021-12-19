@@ -5,9 +5,8 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.*;
-import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
 import static org.zwobble.clunk.parser.Parsing.parseString;
 
 public class ParserNamespaceTests {
@@ -17,7 +16,7 @@ public class ParserNamespaceTests {
 
         var node = parseString(source, (parser, tokens) -> parser.parseNamespace(tokens, List.of("example", "project")));
 
-        assertThat(node, untypedNamespaceNodeHasStatements(contains(
+        assertThat(node, isUntypedNamespaceNode().withStatements(contains(
             isUntypedRecordNode(untypedRecordNodeHasName("First")),
             isUntypedRecordNode(untypedRecordNodeHasName("Second"))
         )));

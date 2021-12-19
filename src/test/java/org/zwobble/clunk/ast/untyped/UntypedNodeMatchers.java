@@ -33,12 +33,8 @@ public class UntypedNodeMatchers {
         return new UntypedRecordFieldNodeMatcher(List.of());
     }
 
-    public static Matcher<UntypedFunctionStatementNode> isUntypedReturnNode(Matcher<UntypedReturnNode> matcher) {
-        return cast(UntypedReturnNode.class, matcher);
-    }
-
-    public static Matcher<UntypedReturnNode> untypedReturnNodeHasExpression(Matcher<UntypedExpressionNode> expression) {
-        return has("expression", expression);
+    public static UntypedReturnNodeMatcher isUntypedReturnNode() {
+        return new UntypedReturnNodeMatcher(List.of());
     }
 
     public static Matcher<UntypedStaticExpressionNode> isUntypedStaticReferenceNode(String value) {

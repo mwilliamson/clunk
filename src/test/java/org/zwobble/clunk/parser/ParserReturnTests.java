@@ -13,8 +13,6 @@ public class ParserReturnTests {
 
         var node = parseString(source, Parser::parseFunctionStatement);
 
-        assertThat(node, isUntypedReturnNode(
-            untypedReturnNodeHasExpression(isUntypedBoolLiteralNode(false))
-        ));
+        assertThat(node, isUntypedReturnNode().withExpression((isUntypedBoolLiteralNode(false))));
     }
 }

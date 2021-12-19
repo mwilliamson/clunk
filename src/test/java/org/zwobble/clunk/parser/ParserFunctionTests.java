@@ -60,8 +60,8 @@ public class ParserFunctionTests {
         var node = parseString(source, Parser::parseNamespaceStatement);
 
         assertThat(node, isUntypedFunctionNode().withBody(contains(
-            isUntypedReturnNode(untypedReturnNodeHasExpression(isUntypedBoolLiteralNode(true))),
-            isUntypedReturnNode(untypedReturnNodeHasExpression(isUntypedBoolLiteralNode(false)))
+            isUntypedReturnNode().withExpression(isUntypedBoolLiteralNode(true)),
+            isUntypedReturnNode().withExpression(isUntypedBoolLiteralNode(false))
         )));
     }
 }

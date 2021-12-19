@@ -58,7 +58,7 @@ public class TypeCheckFunctionTests {
         var result = TypeChecker.typeCheckNamespaceStatement(untypedNode);
 
         assertThat(result, isTypedFunctionNode().withBody(contains(
-            isTypedReturnNode().withExpression(isTypedBoolLiteral(false))
+            isTypedReturnNode().withExpression(isTypedBoolLiteralNode(false))
         )));
     }
 }

@@ -10,7 +10,7 @@ import static org.zwobble.clunk.matchers.CastMatcher.cast;
 import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
 
 public class TypedNodeMatchers {
-    public static Matcher<TypedExpressionNode> isTypedBoolLiteral(boolean value) {
+    public static Matcher<TypedExpressionNode> isTypedBoolLiteralNode(boolean value) {
         return cast(TypedBoolLiteralNode.class, has("value", equalTo(value)));
     }
 

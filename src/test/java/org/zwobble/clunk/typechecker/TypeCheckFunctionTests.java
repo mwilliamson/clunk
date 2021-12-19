@@ -63,6 +63,7 @@ public class TypeCheckFunctionTests {
     @Test
     public void bodyIsTypeChecked() {
         var untypedNode = UntypedFunctionNode.builder()
+            .returnType(Untyped.staticReference("Bool"))
             .addBodyStatement(Untyped.returnStatement(Untyped.boolFalse()))
             .build();
 

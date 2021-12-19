@@ -9,6 +9,8 @@ import org.zwobble.clunk.types.Type;
 
 import java.util.stream.Collectors;
 
+import static org.zwobble.clunk.types.Types.isSubType;
+
 public class TypeChecker {
     private static TypedParamNode typeCheckParam(UntypedParamNode node) {
         return new TypedParamNode(
@@ -37,20 +39,27 @@ public class TypeChecker {
     }
 
     private static TypedNamespaceStatementNode typeCheckFunction(UntypedFunctionNode node) {
+        var returnType = typeCheckStaticExpressionNode(node.returnType());
+
+        var context = new TypeCheckerFunctionContext(returnType.type());
+
         return new TypedFunctionNode(
             node.name(),
             node.params().stream().map(param -> typeCheckParam(param)).toList(),
-            typeCheckStaticExpressionNode(node.returnType()),
-            node.body().stream().map(statement -> typeCheckFunctionStatement(statement)).toList(),
+            returnType,
+            node.body().stream().map(statement -> typeCheckFunctionStatement(statement, context)).toList(),
             node.source()
         );
     }
 
-    public static TypedFunctionStatementNode typeCheckFunctionStatement(UntypedFunctionStatementNode node) {
+    public static TypedFunctionStatementNode typeCheckFunctionStatement(
+        UntypedFunctionStatementNode node,
+        TypeCheckerFunctionContext context
+    ) {
         return node.accept(new UntypedFunctionStatementNode.Visitor<TypedFunctionStatementNode>() {
             @Override
             public TypedFunctionStatementNode visit(UntypedReturnNode node) {
-                return typeCheckReturn(node);
+                return typeCheckReturn(node, context);
             }
         });
     }
@@ -97,8 +106,14 @@ public class TypeChecker {
         );
     }
 
-    private static TypedFunctionStatementNode typeCheckReturn(UntypedReturnNode node) {
-        return new TypedReturnNode(typeCheckExpression(node.expression()), node.source());
+    private static TypedFunctionStatementNode typeCheckReturn(UntypedReturnNode node, TypeCheckerFunctionContext context) {
+        var expression = typeCheckExpression(node.expression());
+
+        if (!isSubType(expression.type(), context.returnType())) {
+            throw new UnexpectedTypeError(context.returnType(), expression.type(), node.expression().source());
+        }
+
+        return new TypedReturnNode(expression, node.source());
     }
 
     private static TypedStaticExpressionNode typeCheckStaticExpressionNode(UntypedStaticExpressionNode node) {

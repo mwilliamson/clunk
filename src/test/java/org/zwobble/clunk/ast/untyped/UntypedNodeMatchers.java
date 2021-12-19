@@ -29,14 +29,8 @@ public class UntypedNodeMatchers {
         return new UntypedRecordNodeMatcher(List.of());
     }
 
-    public static Matcher<UntypedRecordFieldNode> untypedRecordFieldNodeHasName(String name) {
-        return has("name", equalTo(name));
-    }
-
-    public static Matcher<UntypedRecordFieldNode> untypedRecordFieldNodeHasType(
-        Matcher<UntypedStaticExpressionNode> matcher
-    ) {
-        return has("type", matcher);
+    public static UntypedRecordFieldNodeMatcher isUntypedRecordFieldNode() {
+        return new UntypedRecordFieldNodeMatcher(List.of());
     }
 
     public static Matcher<UntypedFunctionStatementNode> isUntypedReturnNode(Matcher<UntypedReturnNode> matcher) {

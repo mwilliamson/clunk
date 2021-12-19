@@ -16,6 +16,7 @@ public class Tokeniser {
             RegexTokeniser.rule(TokenType.KEYWORD_FALSE, "false"),
             RegexTokeniser.rule(TokenType.KEYWORD_FUN, "fun"),
             RegexTokeniser.rule(TokenType.KEYWORD_RECORD, "record"),
+            RegexTokeniser.rule(TokenType.KEYWORD_RETURN, "return"),
             RegexTokeniser.rule(TokenType.KEYWORD_TRUE, "true"),
 
             RegexTokeniser.rule(TokenType.SYMBOL_ARROW, "->"),

@@ -4,6 +4,7 @@ public enum TokenType {
     KEYWORD_FALSE,
     KEYWORD_FUN,
     KEYWORD_RECORD,
+    KEYWORD_RETURN,
     KEYWORD_TRUE,
 
     SYMBOL_ARROW,

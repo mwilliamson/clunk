@@ -74,6 +74,14 @@ public class UntypedNodeMatchers {
         return has("type", matcher);
     }
 
+    public static Matcher<UntypedFunctionStatementNode> isUntypedReturnNode(Matcher<UntypedReturnNode> matcher) {
+        return cast(UntypedReturnNode.class, matcher);
+    }
+
+    public static Matcher<UntypedReturnNode> untypedReturnNodeHasExpression(Matcher<UntypedExpressionNode> expression) {
+        return has("expression", expression);
+    }
+
     public static Matcher<UntypedStaticExpressionNode> isUntypedStaticReferenceNode(String value) {
         return cast(UntypedStaticExpressionNode.class, has("value", equalTo(value)));
     }

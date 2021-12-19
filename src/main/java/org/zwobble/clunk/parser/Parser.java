@@ -97,6 +97,15 @@ public class Parser {
         return new UntypedFunctionNode(name, params, returnType, List.of(), source);
     }
 
+    public UntypedFunctionStatementNode parseFunctionStatement(TokenIterator<TokenType> tokens) {
+        var source = tokens.peek().source();
+
+        tokens.skip(TokenType.KEYWORD_RETURN);
+        var expression = parseExpression(tokens);
+
+        return new UntypedReturnNode(expression, source);
+    }
+
     private UntypedParamNode paramParam(TokenIterator<TokenType> tokens) {
         var source = tokens.peek().source();
 

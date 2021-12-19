@@ -18,9 +18,7 @@ public class TypeCheckReturnTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
-        assertThat(result, isTypedReturnNode(
-            typedReturnNodeHasExpression(isTypedBoolLiteral(false))
-        ));
+        assertThat(result, isTypedReturnNode().withExpression(isTypedBoolLiteral(false)));
     }
 
     @Test

@@ -26,12 +26,8 @@ public class TypedNodeMatchers {
         return cast(TypedRecordNode.class, matcher);
     }
 
-    public static Matcher<TypedFunctionStatementNode> isTypedReturnNode(Matcher<TypedReturnNode> matcher) {
-        return cast(TypedReturnNode.class, matcher);
-    }
-
-    public static Matcher<TypedReturnNode> typedReturnNodeHasExpression(Matcher<TypedExpressionNode> matcher) {
-        return has("expression", matcher);
+    public static TypedReturnNodeMatcher isTypedReturnNode() {
+        return new TypedReturnNodeMatcher(List.of());
     }
 
     public static Matcher<TypedStaticExpressionNode> isTypedStaticExpressionNode(Type type) {

@@ -17,8 +17,8 @@ public class ParserNamespaceTests {
         var node = parseString(source, (parser, tokens) -> parser.parseNamespace(tokens, List.of("example", "project")));
 
         assertThat(node, isUntypedNamespaceNode().withStatements(contains(
-            isUntypedRecordNode(untypedRecordNodeHasName("First")),
-            isUntypedRecordNode(untypedRecordNodeHasName("Second"))
+            isUntypedRecordNode().withName("First"),
+            isUntypedRecordNode().withName("Second")
         )));
     }
 }

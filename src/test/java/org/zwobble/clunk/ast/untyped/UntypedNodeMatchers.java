@@ -25,18 +25,8 @@ public class UntypedNodeMatchers {
         return new UntypedParamNodeMatcher(List.of());
     }
 
-    public static Matcher<UntypedNamespaceStatementNode> isUntypedRecordNode(Matcher<UntypedRecordNode> matcher) {
-        return cast(UntypedRecordNode.class, matcher);
-    }
-
-    public static Matcher<UntypedRecordNode> untypedRecordNodeHasFields(
-        Matcher<Iterable<? extends UntypedRecordFieldNode>> matcher
-    ) {
-        return has("fields", matcher);
-    }
-
-    public static Matcher<UntypedRecordNode> untypedRecordNodeHasName(String name) {
-        return has("name", equalTo(name));
+    public static UntypedRecordNodeMatcher isUntypedRecordNode() {
+        return new UntypedRecordNodeMatcher(List.of());
     }
 
     public static Matcher<UntypedRecordFieldNode> untypedRecordFieldNodeHasName(String name) {

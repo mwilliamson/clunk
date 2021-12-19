@@ -10,8 +10,17 @@ import static org.zwobble.clunk.util.Iterables.forEachInterspersed;
 public class PythonSerialiser {
     private static void serialiseAssignment(PythonAssignmentNode node, CodeBuilder builder) {
         builder.append(node.name());
-        builder.append(": ");
-        serialiseExpression(node.type(), builder);
+
+        if (node.type().isPresent()) {
+            builder.append(": ");
+            serialiseExpression(node.type().get(), builder);
+        }
+
+        if (node.expression().isPresent()) {
+            builder.append(" = ");
+            serialiseExpression(node.expression().get(), builder);
+        }
+
         builder.newLine();
     }
 

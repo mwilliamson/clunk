@@ -1,8 +1,11 @@
 package org.zwobble.clunk.backends.python.ast;
 
+import java.util.Optional;
+
 public record PythonAssignmentNode(
     String name,
-    PythonExpressionNode type
+    Optional<PythonExpressionNode> type,
+    Optional<PythonExpressionNode> expression
 ) implements PythonStatementNode {
     @Override
     public <T> T accept(Visitor<T> visitor) {

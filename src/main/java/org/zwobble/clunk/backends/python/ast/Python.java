@@ -1,6 +1,7 @@
 package org.zwobble.clunk.backends.python.ast;
 
 import java.util.List;
+import java.util.Optional;
 
 public class Python {
     public static final PythonExpressionNode FALSE = new PythonBoolLiteralNode(false);
@@ -35,6 +36,6 @@ public class Python {
     }
 
     public static PythonAssignmentNode variableType(String name, PythonExpressionNode type) {
-        return new PythonAssignmentNode(name, type);
+        return new PythonAssignmentNode(name, Optional.of(type), Optional.empty());
     }
 }

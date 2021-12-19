@@ -32,14 +32,8 @@ public class TypeCheckFunctionTests {
         var result = TypeChecker.typeCheckNamespaceStatement(untypedNode);
 
         assertThat(result, isTypedFunctionNode().withParams(contains(
-            isTypedParamNode(
-                typedParamNodeHasName("x"),
-                typedParamNodeHasType(isTypedStaticExpressionNode(IntType.INSTANCE))
-            ),
-            isTypedParamNode(
-                typedParamNodeHasName("y"),
-                typedParamNodeHasType(isTypedStaticExpressionNode(StringType.INSTANCE))
-            )
+            isTypedParamNode().withName("x").withType(IntType.INSTANCE),
+            isTypedParamNode().withName("y").withType(StringType.INSTANCE)
         )));
     }
 

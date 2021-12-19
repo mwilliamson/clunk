@@ -19,9 +19,7 @@ public class TypeCheckFunctionTests {
 
         var result = TypeChecker.typeCheckNamespaceStatement(untypedNode);
 
-        assertThat(result, isTypedFunctionNode(
-            typedFunctionNodeHasName("f")
-        ));
+        assertThat(result, isTypedFunctionNode().withName("f"));
     }
 
     @Test
@@ -33,18 +31,16 @@ public class TypeCheckFunctionTests {
 
         var result = TypeChecker.typeCheckNamespaceStatement(untypedNode);
 
-        assertThat(result, isTypedFunctionNode(
-            typedFunctionNodeHasParams(contains(
-                isTypedParamNode(
-                    typedParamNodeHasName("x"),
-                    typedParamNodeHasType(isTypedStaticExpressionNode(IntType.INSTANCE))
-                ),
-                isTypedParamNode(
-                    typedParamNodeHasName("y"),
-                    typedParamNodeHasType(isTypedStaticExpressionNode(StringType.INSTANCE))
-                )
-            ))
-        ));
+        assertThat(result, isTypedFunctionNode().withParams(contains(
+            isTypedParamNode(
+                typedParamNodeHasName("x"),
+                typedParamNodeHasType(isTypedStaticExpressionNode(IntType.INSTANCE))
+            ),
+            isTypedParamNode(
+                typedParamNodeHasName("y"),
+                typedParamNodeHasType(isTypedStaticExpressionNode(StringType.INSTANCE))
+            )
+        )));
     }
 
     @Test
@@ -55,9 +51,7 @@ public class TypeCheckFunctionTests {
 
         var result = TypeChecker.typeCheckNamespaceStatement(untypedNode);
 
-        assertThat(result, isTypedFunctionNode(
-            typedFunctionNodeHasReturnType(isTypedStaticExpressionNode(IntType.INSTANCE))
-        ));
+        assertThat(result, isTypedFunctionNode().withReturnType(isTypedStaticExpressionNode(IntType.INSTANCE)));
     }
 
     @Test
@@ -69,12 +63,10 @@ public class TypeCheckFunctionTests {
 
         var result = TypeChecker.typeCheckNamespaceStatement(untypedNode);
 
-        assertThat(result, isTypedFunctionNode(
-            typedFunctionNodeHasBody(contains(
-                isTypedReturnNode(
-                    typedReturnNodeHasExpression(isTypedBoolLiteral(false))
-                )
-            ))
-        ));
+        assertThat(result, isTypedFunctionNode().withBody(contains(
+            isTypedReturnNode(
+                typedReturnNodeHasExpression(isTypedBoolLiteral(false))
+            )
+        )));
     }
 }

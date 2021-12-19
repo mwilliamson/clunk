@@ -3,6 +3,8 @@ package org.zwobble.clunk.ast.typed;
 import org.hamcrest.Matcher;
 import org.zwobble.clunk.types.Type;
 
+import java.util.List;
+
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.matchers.CastMatcher.cast;
@@ -13,25 +15,8 @@ public class TypedNodeMatchers {
         return cast(TypedBoolLiteralNode.class, has("value", equalTo(value)));
     }
 
-    @SafeVarargs
-    public static Matcher<TypedNamespaceStatementNode> isTypedFunctionNode(Matcher<TypedFunctionNode>... matchers) {
-        return cast(TypedFunctionNode.class, matchers);
-    }
-
-    public static Matcher<TypedFunctionNode> typedFunctionNodeHasParams(Matcher<? extends Iterable<? extends TypedParamNode>> params) {
-        return has("params", params);
-    }
-
-    public static Matcher<TypedFunctionNode> typedFunctionNodeHasName(String name) {
-        return has("name", equalTo(name));
-    }
-
-    public static Matcher<TypedFunctionNode> typedFunctionNodeHasReturnType(Matcher<TypedStaticExpressionNode> type) {
-        return has("returnType", type);
-    }
-
-    public static Matcher<TypedFunctionNode> typedFunctionNodeHasBody(Matcher<Iterable<? extends TypedFunctionStatementNode>> body) {
-        return has("body", body);
+    public static TypedFunctionNodeMatcher isTypedFunctionNode() {
+        return new TypedFunctionNodeMatcher(List.of());
     }
 
     @SafeVarargs

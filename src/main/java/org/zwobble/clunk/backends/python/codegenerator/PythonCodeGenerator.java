@@ -80,7 +80,7 @@ public class PythonCodeGenerator {
             }
         });
     }
-    
+
     private static String compileParam(TypedParamNode node) {
         return camelCaseToSnakeCase(node.name());
     }

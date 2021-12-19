@@ -2,6 +2,8 @@ package org.zwobble.clunk.ast.untyped;
 
 import org.hamcrest.Matcher;
 
+import java.util.List;
+
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.matchers.CastMatcher.cast;
@@ -12,27 +14,8 @@ public class UntypedNodeMatchers {
         return cast(UntypedBoolLiteralNode.class, has("value", equalTo(value)));
     }
 
-    @SafeVarargs
-    public static Matcher<UntypedNamespaceStatementNode> isUntypedFunctionNode(Matcher<UntypedFunctionNode>... matchers) {
-        return cast(UntypedFunctionNode.class, matchers);
-    }
-
-    public static Matcher<UntypedFunctionNode> untypedFunctionNodeHasParams(Matcher<? extends Iterable<? extends UntypedParamNode>> matcher) {
-        return has("params", matcher);
-    }
-
-    public static Matcher<UntypedFunctionNode> untypedFunctionNodeHasName(String name) {
-        return has("name", equalTo(name));
-    }
-
-    public static Matcher<UntypedFunctionNode> untypedFunctionNodeHasReturnType(
-        Matcher<UntypedStaticExpressionNode> matcher
-    ) {
-        return has("returnType", matcher);
-    }
-
-    public static Matcher<UntypedFunctionNode> untypedFunctionNodeHasBody(Matcher<Iterable<? extends UntypedFunctionStatementNode>> body) {
-        return has("body", body);
+    public static UntypedFunctionNodeMatcher isUntypedFunctionNode() {
+        return new UntypedFunctionNodeMatcher(List.of());
     }
 
     public static Matcher<UntypedNamespaceNode> untypedNamespaceNodeHasStatements(

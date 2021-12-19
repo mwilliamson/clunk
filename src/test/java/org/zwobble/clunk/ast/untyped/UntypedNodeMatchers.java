@@ -4,7 +4,6 @@ import org.hamcrest.Matcher;
 
 import java.util.List;
 
-import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.matchers.CastMatcher.cast;
 import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
@@ -22,17 +21,8 @@ public class UntypedNodeMatchers {
         return new UntypedNamespaceNodeMatcher(List.of());
     }
 
-    @SafeVarargs
-    public static Matcher<UntypedParamNode> isUntypedParamNode(Matcher<UntypedParamNode>... matchers) {
-        return allOf(matchers);
-    }
-
-    public static Matcher<UntypedParamNode> untypedParamNodeHasName(String name) {
-        return has("name", equalTo(name));
-    }
-
-    public static Matcher<UntypedParamNode> untypedParamNodeHasType(Matcher<UntypedStaticExpressionNode> type) {
-        return has("type", type);
+    public static UntypedParamNodeMatcher isUntypedParamNode() {
+        return new UntypedParamNodeMatcher(List.of());
     }
 
     public static Matcher<UntypedNamespaceStatementNode> isUntypedRecordNode(Matcher<UntypedRecordNode> matcher) {

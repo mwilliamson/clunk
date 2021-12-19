@@ -19,6 +19,10 @@ public class TypeScript {
         return new TypeScriptInterfaceFieldNode(name, type);
     }
 
+    public static TypeScriptStatementNode let(String name, TypeScriptExpressionNode expression) {
+        return new TypeScriptLetNode(name, expression);
+    }
+
     public static TypeScriptModuleNode module(String name, List<TypeScriptStatementNode> statements) {
         return new TypeScriptModuleNode(name, statements);
     }

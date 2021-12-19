@@ -77,6 +77,15 @@ public class TypeScriptSerialiser {
         builder.append("}");
     }
 
+    private static void serialiseLet(TypeScriptLetNode node, CodeBuilder builder) {
+        builder.append("let ");
+        builder.append(node.name());
+        builder.append(" = ");
+        serialiseExpression(node.expression(), builder);
+        builder.append(";");
+        builder.newLine();
+    }
+
     public static void serialiseModule(TypeScriptModuleNode node, CodeBuilder builder) {
         var isFirst = true;
         for (var statement : node.statements()) {
@@ -113,6 +122,12 @@ public class TypeScriptSerialiser {
             @Override
             public Void visit(TypeScriptInterfaceDeclarationNode node) {
                 serialiseInterfaceDeclaration(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(TypeScriptLetNode node) {
+                serialiseLet(node, builder);
                 return null;
             }
 

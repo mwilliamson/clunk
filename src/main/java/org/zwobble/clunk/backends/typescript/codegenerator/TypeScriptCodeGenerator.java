@@ -43,6 +43,11 @@ public class TypeScriptCodeGenerator {
             public TypeScriptStatementNode visit(TypedReturnNode node) {
                 return compileReturn(node);
             }
+
+            @Override
+            public TypeScriptStatementNode visit(TypedVarNode node) {
+                return compileVar(node);
+            }
         });
     }
 
@@ -92,6 +97,10 @@ public class TypeScriptCodeGenerator {
 
     private static TypeScriptExpressionNode compileStringLiteral(TypedStringLiteralNode node) {
         return new TypeScriptStringLiteralNode(node.value());
+    }
+
+    private static TypeScriptStatementNode compileVar(TypedVarNode node) {
+        return new TypeScriptLetNode(node.name(), compileExpression(node.expression()));
     }
 
     private static String compileType(Type type) {

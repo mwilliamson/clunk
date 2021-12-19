@@ -5,5 +5,6 @@ public interface TypedFunctionStatementNode extends TypedNode {
 
     interface Visitor<T> {
         T visit(TypedReturnNode node);
+        T visit(TypedVarNode node);
     }
 }

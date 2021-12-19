@@ -49,6 +49,11 @@ public class JavaCodeGenerator {
             public JavaStatementNode visit(TypedReturnNode node) {
                 return compileReturn(node);
             }
+
+            @Override
+            public JavaStatementNode visit(TypedVarNode node) {
+                return compileVar(node);
+            }
         });
     }
 
@@ -110,6 +115,10 @@ public class JavaCodeGenerator {
 
     private static JavaStringLiteralNode compileStringLiteral(TypedStringLiteralNode node) {
         return new JavaStringLiteralNode(node.value());
+    }
+
+    private static JavaStatementNode compileVar(TypedVarNode node) {
+        return new JavaVariableDeclarationNode(node.name(), compileExpression(node.expression()));
     }
 
     private static String compileType(Type type) {

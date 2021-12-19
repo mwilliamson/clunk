@@ -9,6 +9,7 @@ import org.zwobble.clunk.types.Type;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.zwobble.clunk.backends.python.codegenerator.CaseConverter.camelCaseToSnakeCase;
 
@@ -48,6 +49,11 @@ public class PythonCodeGenerator {
             @Override
             public PythonStatementNode visit(TypedReturnNode node) {
                 return compileReturn(node);
+            }
+
+            @Override
+            public PythonStatementNode visit(TypedVarNode node) {
+                return compileVar(node);
             }
         });
     }
@@ -104,6 +110,14 @@ public class PythonCodeGenerator {
 
     private static PythonExpressionNode compileStringLiteral(TypedStringLiteralNode node) {
         return new PythonStringLiteralNode(node.value());
+    }
+
+    private static PythonStatementNode compileVar(TypedVarNode node) {
+        return new PythonAssignmentNode(
+            node.name(),
+            Optional.empty(),
+            Optional.of(compileExpression(node.expression()))
+        );
     }
 
     private static String compileType(Type type) {

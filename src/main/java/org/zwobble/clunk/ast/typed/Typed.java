@@ -31,4 +31,8 @@ public class Typed {
     public static TypedStringLiteralNode string(String value) {
         return new TypedStringLiteralNode(value, NullSource.INSTANCE);
     }
+
+    public static TypedVarNode var(String name, TypedExpressionNode expression) {
+        return new TypedVarNode(name, expression, NullSource.INSTANCE);
+    }
 }

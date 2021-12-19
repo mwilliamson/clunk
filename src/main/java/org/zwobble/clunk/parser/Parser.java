@@ -102,13 +102,13 @@ public class Parser {
     }
 
     public UntypedFunctionStatementNode parseFunctionStatement(TokenIterator<TokenType> tokens) {
-        var source = tokens.peek().source();
-
-        tokens.skip(TokenType.KEYWORD_RETURN);
-        var expression = parseExpression(tokens);
-        tokens.skip(TokenType.SYMBOL_SEMICOLON);
-
-        return new UntypedReturnNode(expression, source);
+        if (tokens.isNext(TokenType.KEYWORD_RETURN)) {
+            return parseReturn(tokens);
+        } else if (tokens.isNext(TokenType.KEYWORD_VAR)) {
+            return parseVar(tokens);
+        } else {
+            throw new RuntimeException("TODO");
+        }
     }
 
     private UntypedParamNode paramParam(TokenIterator<TokenType> tokens) {
@@ -159,10 +159,32 @@ public class Parser {
         return new UntypedRecordFieldNode(fieldName, fieldType, fieldSource);
     }
 
+    private UntypedReturnNode parseReturn(TokenIterator<TokenType> tokens) {
+        var source = tokens.peek().source();
+
+        tokens.skip(TokenType.KEYWORD_RETURN);
+        var expression = parseExpression(tokens);
+        tokens.skip(TokenType.SYMBOL_SEMICOLON);
+
+        return new UntypedReturnNode(expression, source);
+    }
+
     private UntypedStaticExpressionNode parseType(TokenIterator<TokenType> tokens) {
         var referenceSource = source(tokens);
         var identifier = tokens.nextValue(TokenType.IDENTIFIER);
         return new UntypedStaticReferenceNode(identifier, referenceSource);
+    }
+
+    private UntypedFunctionStatementNode parseVar(TokenIterator<TokenType> tokens) {
+        var source = source(tokens);
+
+        tokens.skip(TokenType.KEYWORD_VAR);
+        var name = tokens.nextValue(TokenType.IDENTIFIER);
+        tokens.skip(TokenType.SYMBOL_EQUALS);
+        var expression = parseExpression(tokens);
+        tokens.skip(TokenType.SYMBOL_SEMICOLON);
+
+        return new UntypedVarNode(name, expression, source);
     }
 
     private <T> List<T> parseRepeated(BooleanSupplier stop, Supplier<T> parseElement) {

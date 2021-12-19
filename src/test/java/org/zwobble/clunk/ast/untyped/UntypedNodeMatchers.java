@@ -44,4 +44,8 @@ public class UntypedNodeMatchers {
     public static Matcher<UntypedExpressionNode> isUntypedStringLiteralNode(String value) {
         return cast(UntypedStringLiteralNode.class, has("value", equalTo(value)));
     }
+
+    public static UntypedVarNodeMatcher isUntypedVarNode() {
+        return new UntypedVarNodeMatcher(List.of());
+    }
 }

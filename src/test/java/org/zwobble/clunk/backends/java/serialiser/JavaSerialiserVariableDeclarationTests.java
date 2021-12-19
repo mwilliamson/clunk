@@ -7,10 +7,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
-public class JavaSerialiserAssignmentTests {
+public class JavaSerialiserVariableDeclarationTests {
     @Test
     public void assignmentIsSerialisedWithVar() {
-        var node = Java.assign("x", Java.boolFalse());
+        var node = Java.variableDeclaration("x", Java.boolFalse());
 
         var result = serialiseToString(node, JavaSerialiser::serialiseStatement);
 

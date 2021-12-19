@@ -45,7 +45,7 @@ public class TypeCheckFunctionTests {
 
         var result = TypeChecker.typeCheckNamespaceStatement(untypedNode);
 
-        assertThat(result, isTypedFunctionNode().withReturnType(isTypedStaticExpressionNode(IntType.INSTANCE)));
+        assertThat(result, isTypedFunctionNode().withReturnType(IntType.INSTANCE));
     }
 
     @Test

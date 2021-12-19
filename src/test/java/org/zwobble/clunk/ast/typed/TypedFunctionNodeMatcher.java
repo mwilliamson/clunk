@@ -2,12 +2,14 @@ package org.zwobble.clunk.ast.typed;
 
 import org.hamcrest.Matcher;
 import org.zwobble.clunk.matchers.CastMatcher;
+import org.zwobble.clunk.types.Type;
 import org.zwobble.clunk.util.Lists;
 
 import java.util.List;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedStaticExpressionNode;
 import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
 
 public class TypedFunctionNodeMatcher extends CastMatcher<Object, TypedFunctionNode> {
@@ -26,8 +28,8 @@ public class TypedFunctionNodeMatcher extends CastMatcher<Object, TypedFunctionN
         return addMatcher(has("name", equalTo(name)));
     }
 
-    public TypedFunctionNodeMatcher withReturnType(Matcher<TypedStaticExpressionNode> type) {
-        return addMatcher(has("returnType", type));
+    public TypedFunctionNodeMatcher withReturnType(Type type) {
+        return addMatcher(has("returnType", isTypedStaticExpressionNode(type)));
     }
 
     public TypedFunctionNodeMatcher withBody(Matcher<Iterable<? extends TypedFunctionStatementNode>> body) {

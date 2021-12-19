@@ -14,10 +14,6 @@ import java.util.Optional;
 import static org.zwobble.clunk.backends.python.codegenerator.CaseConverter.camelCaseToSnakeCase;
 
 public class PythonCodeGenerator {
-    private static String compileParam(TypedParamNode node) {
-        return camelCaseToSnakeCase(node.name());
-    }
-
     private static PythonExpressionNode compileBoolLiteral(TypedBoolLiteralNode node) {
         return new PythonBoolLiteralNode(node.value());
     }
@@ -83,6 +79,10 @@ public class PythonCodeGenerator {
                 return compileRecord(node);
             }
         });
+    }
+    
+    private static String compileParam(TypedParamNode node) {
+        return camelCaseToSnakeCase(node.name());
     }
 
     public static PythonClassDeclarationNode compileRecord(TypedRecordNode node) {

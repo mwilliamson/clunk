@@ -51,10 +51,6 @@ public class TypeScriptCodeGenerator {
         });
     }
 
-    private static TypeScriptParamNode compileParam(TypedParamNode node) {
-        return new TypeScriptParamNode(node.name(), compileStaticExpression(node.type()));
-    }
-
     public static TypeScriptModuleNode compileNamespace(TypedNamespaceNode node) {
         var name = String.join("/", node.name());
 
@@ -77,6 +73,10 @@ public class TypeScriptCodeGenerator {
                 return compileRecord(node);
             }
         });
+    }
+
+    private static TypeScriptParamNode compileParam(TypedParamNode node) {
+        return new TypeScriptParamNode(node.name(), compileStaticExpression(node.type()));
     }
 
     private static TypeScriptInterfaceDeclarationNode compileRecord(TypedRecordNode node) {

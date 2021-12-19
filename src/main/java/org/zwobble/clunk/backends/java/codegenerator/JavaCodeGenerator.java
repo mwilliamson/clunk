@@ -57,20 +57,6 @@ public class JavaCodeGenerator {
         });
     }
 
-    public static JavaOrdinaryCompilationUnitNode compileRecord(List<String> namespace, TypedRecordNode node) {
-        var components = node.fields().stream()
-            .map(field -> new JavaRecordComponentNode(compileStaticExpression(field.type()), field.name()))
-            .collect(Collectors.toList());
-
-        return new JavaOrdinaryCompilationUnitNode(
-            namespaceToPackage(namespace),
-            new JavaRecordDeclarationNode(
-                node.name(),
-                components
-            )
-        );
-    }
-
     public static List<JavaOrdinaryCompilationUnitNode> compileNamespace(TypedNamespaceNode node) {
         var compilationUnits = new ArrayList<JavaOrdinaryCompilationUnitNode>();
         var functions = new ArrayList<JavaClassBodyDeclarationNode>();
@@ -103,6 +89,20 @@ public class JavaCodeGenerator {
 
     private static JavaParamNode compileParam(TypedParamNode node) {
         return new JavaParamNode(compileStaticExpression(node.type()), node.name());
+    }
+
+    public static JavaOrdinaryCompilationUnitNode compileRecord(List<String> namespace, TypedRecordNode node) {
+        var components = node.fields().stream()
+            .map(field -> new JavaRecordComponentNode(compileStaticExpression(field.type()), field.name()))
+            .collect(Collectors.toList());
+
+        return new JavaOrdinaryCompilationUnitNode(
+            namespaceToPackage(namespace),
+            new JavaRecordDeclarationNode(
+                node.name(),
+                components
+            )
+        );
     }
 
     private static JavaStatementNode compileReturn(TypedReturnNode node) {

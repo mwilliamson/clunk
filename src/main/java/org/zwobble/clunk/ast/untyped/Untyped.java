@@ -30,4 +30,8 @@ public class Untyped {
     public static UntypedStringLiteralNode string(String value) {
         return new UntypedStringLiteralNode(value, NullSource.INSTANCE);
     }
+
+    public static UntypedVarNode var(String name, UntypedExpressionNode expression) {
+        return new UntypedVarNode(name, expression, NullSource.INSTANCE);
+    }
 }

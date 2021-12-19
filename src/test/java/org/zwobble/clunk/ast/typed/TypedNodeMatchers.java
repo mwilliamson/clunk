@@ -33,4 +33,8 @@ public class TypedNodeMatchers {
     public static Matcher<TypedStaticExpressionNode> isTypedStaticExpressionNode(Type type) {
         return has("type", equalTo(type));
     }
+
+    public static TypedVarNodeMatcher isTypedVarNode() {
+        return new TypedVarNodeMatcher(List.of());
+    }
 }

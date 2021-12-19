@@ -61,6 +61,11 @@ public class TypeChecker {
             public TypedFunctionStatementNode visit(UntypedReturnNode node) {
                 return typeCheckReturn(node, context);
             }
+
+            @Override
+            public TypedFunctionStatementNode visit(UntypedVarNode node) {
+                return typeCheckVar(node);
+            }
         });
     }
 
@@ -132,6 +137,14 @@ public class TypeChecker {
 
     private static TypedExpressionNode typeCheckStringLiteral(UntypedStringLiteralNode node) {
         return new TypedStringLiteralNode(node.value(), node.source());
+    }
+
+    private static TypedFunctionStatementNode typeCheckVar(UntypedVarNode node) {
+        return new TypedVarNode(
+            node.name(),
+            typeCheckExpression(node.expression()),
+            node.source()
+        );
     }
 
     private static Type resolveType(String value) {

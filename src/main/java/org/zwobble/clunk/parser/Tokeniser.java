@@ -26,6 +26,7 @@ public class Tokeniser {
             RegexTokeniser.rule(TokenType.SYMBOL_COMMA, ","),
             RegexTokeniser.rule(TokenType.SYMBOL_PAREN_OPEN, "\\("),
             RegexTokeniser.rule(TokenType.SYMBOL_PAREN_CLOSE, "\\)"),
+            RegexTokeniser.rule(TokenType.SYMBOL_SEMICOLON, ";"),
 
             RegexTokeniser.rule(TokenType.IDENTIFIER, "[A-Za-z][A-Za-z0-9]*"),
             RegexTokeniser.rule(TokenType.STRING, "\"(?:[^\\\\\"\n\r]|\\\\.)*\""),

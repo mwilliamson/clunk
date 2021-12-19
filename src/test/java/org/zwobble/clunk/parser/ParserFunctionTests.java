@@ -67,4 +67,18 @@ public class ParserFunctionTests {
             ))
         ));
     }
+
+    @Test
+    public void canParseFunctionWithBody() {
+        var source = "fun f() -> Bool { return true; return false; }";
+
+        var node = parseString(source, Parser::parseNamespaceStatement);
+
+        assertThat(node, isUntypedFunctionNode(
+            untypedFunctionNodeHasBody(contains(
+                isUntypedReturnNode(untypedReturnNodeHasExpression(isUntypedBoolLiteralNode(true))),
+                isUntypedReturnNode(untypedReturnNodeHasExpression(isUntypedBoolLiteralNode(false)))
+            ))
+        ));
+    }
 }

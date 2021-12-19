@@ -19,9 +19,9 @@ public class Parser {
 
     public UntypedExpressionNode parseExpression(TokenIterator<TokenType> tokens) {
         var source = tokens.peek().source();
-        if (tokens.isNext(TokenType.KEYWORD_FALSE)) {
+        if (tokens.trySkip(TokenType.KEYWORD_FALSE)) {
             return new UntypedBoolLiteralNode(false, source);
-        } else if (tokens.isNext(TokenType.KEYWORD_TRUE)) {
+        } else if (tokens.trySkip(TokenType.KEYWORD_TRUE)) {
             return new UntypedBoolLiteralNode(true, source);
         } else if (tokens.isNext(TokenType.STRING)) {
             return parseStringLiteral(tokens);
@@ -92,9 +92,13 @@ public class Parser {
         tokens.skip(TokenType.SYMBOL_ARROW);
         var returnType = parseType(tokens);
         tokens.skip(TokenType.SYMBOL_BRACE_OPEN);
+        var body = parseRepeated(
+            () -> tokens.isNext(TokenType.SYMBOL_BRACE_CLOSE),
+            () -> parseFunctionStatement(tokens)
+        );
         tokens.skip(TokenType.SYMBOL_BRACE_CLOSE);
 
-        return new UntypedFunctionNode(name, params, returnType, List.of(), source);
+        return new UntypedFunctionNode(name, params, returnType, body, source);
     }
 
     public UntypedFunctionStatementNode parseFunctionStatement(TokenIterator<TokenType> tokens) {
@@ -102,6 +106,7 @@ public class Parser {
 
         tokens.skip(TokenType.KEYWORD_RETURN);
         var expression = parseExpression(tokens);
+        tokens.skip(TokenType.SYMBOL_SEMICOLON);
 
         return new UntypedReturnNode(expression, source);
     }
@@ -158,6 +163,10 @@ public class Parser {
         var referenceSource = source(tokens);
         var identifier = tokens.nextValue(TokenType.IDENTIFIER);
         return new UntypedStaticReferenceNode(identifier, referenceSource);
+    }
+
+    private <T> List<T> parseRepeated(BooleanSupplier stop, Supplier<T> parseElement) {
+        return parseMany(stop, parseElement, () -> true);
     }
 
     private <T> List<T> parseMany(BooleanSupplier stop, Supplier<T> parseElement, BooleanSupplier parseSeparator) {

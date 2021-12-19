@@ -31,6 +31,10 @@ public class UntypedNodeMatchers {
         return has("returnType", matcher);
     }
 
+    public static Matcher<UntypedFunctionNode> untypedFunctionNodeHasBody(Matcher<Iterable<? extends UntypedFunctionStatementNode>> body) {
+        return has("body", body);
+    }
+
     public static Matcher<UntypedNamespaceNode> untypedNamespaceNodeHasStatements(
         Matcher<Iterable<? extends UntypedNamespaceStatementNode>> matcher
     ) {

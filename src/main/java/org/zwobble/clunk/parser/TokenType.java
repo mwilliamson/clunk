@@ -14,6 +14,7 @@ public enum TokenType {
     SYMBOL_COMMA,
     SYMBOL_PAREN_OPEN,
     SYMBOL_PAREN_CLOSE,
+    SYMBOL_SEMICOLON,
 
     IDENTIFIER,
     STRING,

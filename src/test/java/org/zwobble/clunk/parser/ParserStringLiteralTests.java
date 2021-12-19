@@ -18,7 +18,7 @@ public class ParserStringLiteralTests {
 
         var node = parseString(source, Parser::parseExpression);
 
-        assertThat(node, isUntypedStringLiteralNode(has("value", equalTo(""))));
+        assertThat(node, isUntypedStringLiteralNode(""));
     }
 
     @Test
@@ -27,7 +27,7 @@ public class ParserStringLiteralTests {
 
         var node = parseString(source, Parser::parseExpression);
 
-        assertThat(node, isUntypedStringLiteralNode(has("value", equalTo("abc 123 XYZ"))));
+        assertThat(node, isUntypedStringLiteralNode("abc 123 XYZ"));
     }
 
     @Test
@@ -36,7 +36,7 @@ public class ParserStringLiteralTests {
 
         var node = parseString(source, Parser::parseExpression);
 
-        assertThat(node, isUntypedStringLiteralNode(has("value", equalTo("\n\r\t\\\""))));
+        assertThat(node, isUntypedStringLiteralNode("\n\r\t\\\""));
     }
 
     @Test

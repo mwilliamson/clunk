@@ -26,6 +26,11 @@ public class PythonCodeGenerator {
             }
 
             @Override
+            public PythonExpressionNode visit(TypedReferenceNode node) {
+                return compileReference(node);
+            }
+
+            @Override
             public PythonExpressionNode visit(TypedStringLiteralNode node) {
                 return compileStringLiteral(node);
             }
@@ -98,6 +103,10 @@ public class PythonCodeGenerator {
             .toList();
 
         return new PythonClassDeclarationNode(node.name(), decorators, statements);
+    }
+
+    private static PythonExpressionNode compileReference(TypedReferenceNode node) {
+        return new PythonReferenceNode(node.name());
     }
 
     private static PythonStatementNode compileReturn(TypedReturnNode node) {

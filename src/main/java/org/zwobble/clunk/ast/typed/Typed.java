@@ -35,4 +35,8 @@ public class Typed {
     public static TypedVarNode var(String name, TypedExpressionNode expression) {
         return new TypedVarNode(name, expression, NullSource.INSTANCE);
     }
+
+    public static TypedReferenceNode reference(String name, Type type) {
+        return new TypedReferenceNode(name, type, NullSource.INSTANCE);
+    }
 }

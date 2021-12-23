@@ -27,6 +27,11 @@ public class JavaCodeGenerator {
             }
 
             @Override
+            public JavaExpressionNode visit(TypedReferenceNode node) {
+                return compileReference(node);
+            }
+
+            @Override
             public JavaExpressionNode visit(TypedStringLiteralNode node) {
                 return compileStringLiteral(node);
             }
@@ -103,6 +108,10 @@ public class JavaCodeGenerator {
                 components
             )
         );
+    }
+
+    private static JavaExpressionNode compileReference(TypedReferenceNode node) {
+        return new JavaReferenceNode(node.name());
     }
 
     private static JavaStatementNode compileReturn(TypedReturnNode node) {

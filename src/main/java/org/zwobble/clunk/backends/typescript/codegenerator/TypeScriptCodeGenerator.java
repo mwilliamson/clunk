@@ -22,6 +22,11 @@ public class TypeScriptCodeGenerator {
             }
 
             @Override
+            public TypeScriptExpressionNode visit(TypedReferenceNode node) {
+                return compileReference(node);
+            }
+
+            @Override
             public TypeScriptExpressionNode visit(TypedStringLiteralNode node) {
                 return compileStringLiteral(node);
             }
@@ -85,6 +90,10 @@ public class TypeScriptCodeGenerator {
             .collect(Collectors.toList());
 
         return new TypeScriptInterfaceDeclarationNode(node.name(), fields);
+    }
+
+    private static TypeScriptExpressionNode compileReference(TypedReferenceNode node) {
+        return new TypeScriptReferenceNode(node.name());
     }
 
     private static TypeScriptStatementNode compileReturn(TypedReturnNode node) {

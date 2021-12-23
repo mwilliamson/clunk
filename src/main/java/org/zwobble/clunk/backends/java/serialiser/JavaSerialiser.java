@@ -42,6 +42,12 @@ public class JavaSerialiser {
             }
 
             @Override
+            public Void visit(JavaReferenceNode node) {
+                serialiseReference(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(JavaStringLiteralNode node) {
                 serialiseStringLiteral(node, builder);
                 return null;
@@ -109,6 +115,10 @@ public class JavaSerialiser {
         );
 
         builder.append(") {\n}");
+    }
+
+    private static void serialiseReference(JavaReferenceNode node, CodeBuilder builder) {
+        builder.append(node.name());
     }
 
     private static void serialiseReturn(JavaReturnNode node, CodeBuilder builder) {

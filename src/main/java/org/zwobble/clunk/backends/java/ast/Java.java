@@ -21,6 +21,10 @@ public class Java {
         return new JavaParamNode(type, name);
     }
 
+    public static JavaReferenceNode reference(String name) {
+        return new JavaReferenceNode(name);
+    }
+
     public static JavaReturnNode returnStatement(JavaExpressionNode expression) {
         return new JavaReturnNode(expression);
     }

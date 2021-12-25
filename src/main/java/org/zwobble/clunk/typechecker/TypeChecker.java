@@ -7,6 +7,7 @@ import org.zwobble.clunk.types.IntType;
 import org.zwobble.clunk.types.StringType;
 import org.zwobble.clunk.types.Type;
 
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import static org.zwobble.clunk.types.Types.isSubType;
@@ -50,28 +51,35 @@ public class TypeChecker {
         var returnType = typeCheckStaticExpressionNode(node.returnType());
 
         var context = TypeCheckerFunctionContext.enter(returnType.type());
+        var typedStatements = new ArrayList<TypedFunctionStatementNode>();
+
+        for (var statement : node.body()) {
+            var statementResult = typeCheckFunctionStatement(statement, context);
+            context = statementResult.context();
+            typedStatements.add(statementResult.typedNode());
+        }
 
         return new TypedFunctionNode(
             node.name(),
             node.params().stream().map(param -> typeCheckParam(param)).toList(),
             returnType,
-            node.body().stream().map(statement -> typeCheckFunctionStatement(statement, context)).toList(),
+            typedStatements,
             node.source()
         );
     }
 
-    public static TypedFunctionStatementNode typeCheckFunctionStatement(
+    public static TypeCheckFunctionStatementResult typeCheckFunctionStatement(
         UntypedFunctionStatementNode node,
         TypeCheckerFunctionContext context
     ) {
-        return node.accept(new UntypedFunctionStatementNode.Visitor<TypedFunctionStatementNode>() {
+        return node.accept(new UntypedFunctionStatementNode.Visitor<TypeCheckFunctionStatementResult>() {
             @Override
-            public TypedFunctionStatementNode visit(UntypedReturnNode node) {
+            public TypeCheckFunctionStatementResult visit(UntypedReturnNode node) {
                 return typeCheckReturn(node, context);
             }
 
             @Override
-            public TypedFunctionStatementNode visit(UntypedVarNode node) {
+            public TypeCheckFunctionStatementResult visit(UntypedVarNode node) {
                 return typeCheckVar(node, context);
             }
         });
@@ -123,14 +131,16 @@ public class TypeChecker {
         return new TypedReferenceNode(node.name(), context.typeOf(node.name()), node.source());
     }
 
-    private static TypedFunctionStatementNode typeCheckReturn(UntypedReturnNode node, TypeCheckerFunctionContext context) {
+    private static TypeCheckFunctionStatementResult typeCheckReturn(UntypedReturnNode node, TypeCheckerFunctionContext context) {
         var expression = typeCheckExpression(node.expression(), context);
 
         if (!isSubType(expression.type(), context.returnType())) {
             throw new UnexpectedTypeError(context.returnType(), expression.type(), node.expression().source());
         }
 
-        return new TypedReturnNode(expression, node.source());
+        var typedNode = new TypedReturnNode(expression, node.source());
+
+        return new TypeCheckFunctionStatementResult(typedNode, context);
     }
 
     private static TypedStaticExpressionNode typeCheckStaticExpressionNode(UntypedStaticExpressionNode node) {
@@ -151,15 +161,18 @@ public class TypeChecker {
         return new TypedStringLiteralNode(node.value(), node.source());
     }
 
-    private static TypedFunctionStatementNode typeCheckVar(
+    private static TypeCheckFunctionStatementResult typeCheckVar(
         UntypedVarNode node,
         TypeCheckerFunctionContext context
     ) {
-        return new TypedVarNode(
+        var typedExpression = typeCheckExpression(node.expression(), context);
+        var typedNode = new TypedVarNode(
             node.name(),
-            typeCheckExpression(node.expression(), context),
+            typedExpression,
             node.source()
         );
+        var updatedContext = context.updateType(node.name(), typedExpression.type());
+        return new TypeCheckFunctionStatementResult(typedNode, updatedContext);
     }
 
     private static Type resolveType(String value) {

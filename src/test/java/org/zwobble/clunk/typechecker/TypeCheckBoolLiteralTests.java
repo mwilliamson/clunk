@@ -2,7 +2,6 @@ package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.TypedBoolLiteralNode;
-import org.zwobble.clunk.ast.typed.TypedStringLiteralNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -14,7 +13,7 @@ public class TypeCheckBoolLiteralTests {
     public void untypedFalseIsConvertedToTypedFalse() {
         var untypedNode = Untyped.boolFalse();
 
-        var result = TypeChecker.typeCheckExpression(untypedNode);
+        var result = TypeChecker.typeCheckExpression(untypedNode, TypeCheckerFunctionContext.stub());
 
         assertThat(result, allOf(
             isA(TypedBoolLiteralNode.class),
@@ -26,7 +25,7 @@ public class TypeCheckBoolLiteralTests {
     public void untypedTrueIsConvertedToTypedTrue() {
         var untypedNode = Untyped.boolTrue();
 
-        var result = TypeChecker.typeCheckExpression(untypedNode);
+        var result = TypeChecker.typeCheckExpression(untypedNode, TypeCheckerFunctionContext.stub());
 
         assertThat(result, allOf(
             isA(TypedBoolLiteralNode.class),

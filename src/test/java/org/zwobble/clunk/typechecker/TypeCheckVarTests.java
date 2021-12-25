@@ -12,7 +12,7 @@ public class TypeCheckVarTests {
     @Test
     public void expressionIsTypeChecked() {
         var untypedNode = Untyped.var("x", Untyped.boolFalse());
-        var context = new TypeCheckerFunctionContext(BoolType.INSTANCE);
+        var context = TypeCheckerFunctionContext.enter(BoolType.INSTANCE);
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 

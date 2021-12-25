@@ -24,11 +24,19 @@ public class TypeChecker {
         return new TypedBoolLiteralNode(node.value(), node.source());
     }
 
-    public static TypedExpressionNode typeCheckExpression(UntypedExpressionNode node) {
+    public static TypedExpressionNode typeCheckExpression(
+        UntypedExpressionNode node,
+        TypeCheckerFunctionContext context
+    ) {
         return node.accept(new UntypedExpressionNode.Visitor<TypedExpressionNode>() {
             @Override
             public TypedExpressionNode visit(UntypedBoolLiteralNode node) {
                 return typeCheckBoolLiteral(node);
+            }
+
+            @Override
+            public TypedExpressionNode visit(UntypedReferenceNode node) {
+                return typeCheckReference(node, context);
             }
 
             @Override
@@ -41,7 +49,7 @@ public class TypeChecker {
     private static TypedNamespaceStatementNode typeCheckFunction(UntypedFunctionNode node) {
         var returnType = typeCheckStaticExpressionNode(node.returnType());
 
-        var context = new TypeCheckerFunctionContext(returnType.type());
+        var context = TypeCheckerFunctionContext.enter(returnType.type());
 
         return new TypedFunctionNode(
             node.name(),
@@ -64,7 +72,7 @@ public class TypeChecker {
 
             @Override
             public TypedFunctionStatementNode visit(UntypedVarNode node) {
-                return typeCheckVar(node);
+                return typeCheckVar(node, context);
             }
         });
     }
@@ -111,8 +119,12 @@ public class TypeChecker {
         );
     }
 
+    private static TypedExpressionNode typeCheckReference(UntypedReferenceNode node, TypeCheckerFunctionContext context) {
+        return new TypedReferenceNode(node.name(), context.typeOf(node.name()), node.source());
+    }
+
     private static TypedFunctionStatementNode typeCheckReturn(UntypedReturnNode node, TypeCheckerFunctionContext context) {
-        var expression = typeCheckExpression(node.expression());
+        var expression = typeCheckExpression(node.expression(), context);
 
         if (!isSubType(expression.type(), context.returnType())) {
             throw new UnexpectedTypeError(context.returnType(), expression.type(), node.expression().source());
@@ -139,10 +151,13 @@ public class TypeChecker {
         return new TypedStringLiteralNode(node.value(), node.source());
     }
 
-    private static TypedFunctionStatementNode typeCheckVar(UntypedVarNode node) {
+    private static TypedFunctionStatementNode typeCheckVar(
+        UntypedVarNode node,
+        TypeCheckerFunctionContext context
+    ) {
         return new TypedVarNode(
             node.name(),
-            typeCheckExpression(node.expression()),
+            typeCheckExpression(node.expression(), context),
             node.source()
         );
     }

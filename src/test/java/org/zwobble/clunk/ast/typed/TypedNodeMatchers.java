@@ -26,6 +26,10 @@ public class TypedNodeMatchers {
         return cast(TypedRecordNode.class, matcher);
     }
 
+    public static TypedReferenceNodeMatcher isTypedReferenceNode() {
+        return new TypedReferenceNodeMatcher(List.of());
+    }
+
     public static TypedReturnNodeMatcher isTypedReturnNode() {
         return new TypedReturnNodeMatcher(List.of());
     }

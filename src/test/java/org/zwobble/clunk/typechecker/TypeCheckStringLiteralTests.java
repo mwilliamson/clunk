@@ -3,14 +3,9 @@ package org.zwobble.clunk.typechecker;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.TypedStringLiteralNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
-import org.zwobble.clunk.ast.untyped.UntypedNamespaceNode;
-import org.zwobble.clunk.ast.untyped.UntypedRecordNode;
-
-import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedRecordNode;
 import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
 
 public class TypeCheckStringLiteralTests {
@@ -18,7 +13,7 @@ public class TypeCheckStringLiteralTests {
     public void untypedStringIsConvertedToTypedString() {
         var untypedNode = Untyped.string("hello");
 
-        var result = TypeChecker.typeCheckExpression(untypedNode);
+        var result = TypeChecker.typeCheckExpression(untypedNode, TypeCheckerFunctionContext.stub());
 
         assertThat(result, allOf(
             isA(TypedStringLiteralNode.class),

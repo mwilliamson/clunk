@@ -31,4 +31,12 @@ public class TypeCheckReturnTests {
         assertThat(error.getExpected(), equalTo(StringType.INSTANCE));
         assertThat(error.getActual(), equalTo(BoolType.INSTANCE));
     }
+
+    @Test
+    public void whenInContextWithoutReturnThenErrorIsThrown() {
+        var untypedNode = Untyped.returnStatement();
+        var context = TypeCheckerFunctionContext.enterTest();
+
+        Assertions.assertThrows(CannotReturnHereError.class, () -> TypeChecker.typeCheckFunctionStatement(untypedNode, context));
+    }
 }

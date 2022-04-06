@@ -23,6 +23,10 @@ public class Untyped {
         return new UntypedReferenceNode(name, NullSource.INSTANCE);
     }
 
+    public static UntypedReturnNode returnStatement() {
+        return new UntypedReturnNode(boolFalse(), NullSource.INSTANCE);
+    }
+
     public static UntypedReturnNode returnStatement(UntypedExpressionNode expression) {
         return new UntypedReturnNode(expression, NullSource.INSTANCE);
     }

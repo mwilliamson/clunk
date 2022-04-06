@@ -139,8 +139,13 @@ public class TypeChecker {
     private static TypeCheckFunctionStatementResult typeCheckReturn(UntypedReturnNode node, TypeCheckerFunctionContext context) {
         var expression = typeCheckExpression(node.expression(), context);
 
-        if (!isSubType(expression.type(), context.returnType().get())) {
-            throw new UnexpectedTypeError(context.returnType().get(), expression.type(), node.expression().source());
+        if (context.returnType().isEmpty()) {
+            throw new CannotReturnHereError(node.source());
+        }
+        var returnType = context.returnType().get();
+
+        if (!isSubType(expression.type(), returnType)) {
+            throw new UnexpectedTypeError(returnType, expression.type(), node.expression().source());
         }
 
         var typedNode = new TypedReturnNode(expression, node.source());

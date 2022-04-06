@@ -45,6 +45,10 @@ public class UntypedNodeMatchers {
         return cast(UntypedStringLiteralNode.class, has("value", equalTo(value)));
     }
 
+    public static UntypedTestNodeMatcher isUntypedTestNode() {
+        return new UntypedTestNodeMatcher(List.of());
+    }
+
     public static UntypedVarNodeMatcher isUntypedVarNode() {
         return new UntypedVarNodeMatcher(List.of());
     }

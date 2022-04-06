@@ -5,6 +5,7 @@ public enum TokenType {
     KEYWORD_FUN,
     KEYWORD_RECORD,
     KEYWORD_RETURN,
+    KEYWORD_TEST,
     KEYWORD_TRUE,
     KEYWORD_VAR,
 

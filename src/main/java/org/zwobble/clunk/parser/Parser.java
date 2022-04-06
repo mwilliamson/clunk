@@ -17,6 +17,16 @@ public class Parser {
         this.fullSource = fullSource;
     }
 
+    private List<UntypedFunctionStatementNode> parseBlock(TokenIterator<TokenType> tokens) {
+        tokens.skip(TokenType.SYMBOL_BRACE_OPEN);
+        var body = parseRepeated(
+            () -> tokens.isNext(TokenType.SYMBOL_BRACE_CLOSE),
+            () -> parseFunctionStatement(tokens)
+        );
+        tokens.skip(TokenType.SYMBOL_BRACE_CLOSE);
+        return body;
+    }
+
     public UntypedExpressionNode parseExpression(TokenIterator<TokenType> tokens) {
         var source = tokens.peek().source();
         if (tokens.trySkip(TokenType.KEYWORD_FALSE)) {
@@ -30,7 +40,7 @@ public class Parser {
         }
     }
 
-    private UntypedExpressionNode parseStringLiteral(TokenIterator<TokenType> tokens) {
+    private UntypedStringLiteralNode parseStringLiteral(TokenIterator<TokenType> tokens) {
         var source = source(tokens);
         var tokenValue = tokens.nextValue(TokenType.STRING);
         var escapedValue = tokenValue.substring(1, tokenValue.length() - 1);
@@ -91,12 +101,7 @@ public class Parser {
         tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
         tokens.skip(TokenType.SYMBOL_ARROW);
         var returnType = parseType(tokens);
-        tokens.skip(TokenType.SYMBOL_BRACE_OPEN);
-        var body = parseRepeated(
-            () -> tokens.isNext(TokenType.SYMBOL_BRACE_CLOSE),
-            () -> parseFunctionStatement(tokens)
-        );
-        tokens.skip(TokenType.SYMBOL_BRACE_CLOSE);
+        var body = parseBlock(tokens);
 
         return new UntypedFunctionNode(name, params, returnType, body, source);
     }
@@ -126,6 +131,8 @@ public class Parser {
             return parseFunction(tokens);
         } else if (tokens.isNext(TokenType.KEYWORD_RECORD)) {
             return parseRecord(tokens);
+        } else if (tokens.isNext(TokenType.KEYWORD_TEST)) {
+            return parseTest(tokens);
         } else {
             throw new RuntimeException("TODO");
         }
@@ -167,6 +174,16 @@ public class Parser {
         tokens.skip(TokenType.SYMBOL_SEMICOLON);
 
         return new UntypedReturnNode(expression, source);
+    }
+
+    private UntypedNamespaceStatementNode parseTest(TokenIterator<TokenType> tokens) {
+        var source = source(tokens);
+
+        tokens.skip(TokenType.KEYWORD_TEST);
+        var name = parseStringLiteral(tokens).value();
+        var body = parseBlock(tokens);
+
+        return new UntypedTestNode(name, body, source);
     }
 
     private UntypedStaticExpressionNode parseType(TokenIterator<TokenType> tokens) {

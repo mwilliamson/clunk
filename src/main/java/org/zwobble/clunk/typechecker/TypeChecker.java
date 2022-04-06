@@ -106,6 +106,11 @@ public class TypeChecker {
             public TypedNamespaceStatementNode visit(UntypedRecordNode node) {
                 return typeCheckRecord(node);
             }
+
+            @Override
+            public TypedNamespaceStatementNode visit(UntypedTestNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
         });
     }
 

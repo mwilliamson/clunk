@@ -50,7 +50,7 @@ public class TypeChecker {
     private static TypedNamespaceStatementNode typeCheckFunction(UntypedFunctionNode node) {
         var returnType = typeCheckStaticExpressionNode(node.returnType());
 
-        var context = TypeCheckerFunctionContext.enter(returnType.type());
+        var context = TypeCheckerFunctionContext.enterFunction(returnType.type());
         var typedStatements = new ArrayList<TypedFunctionStatementNode>();
 
         for (var statement : node.body()) {
@@ -109,7 +109,7 @@ public class TypeChecker {
 
             @Override
             public TypedNamespaceStatementNode visit(UntypedTestNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return typeCheckTest(node);
             }
         });
     }
@@ -139,8 +139,8 @@ public class TypeChecker {
     private static TypeCheckFunctionStatementResult typeCheckReturn(UntypedReturnNode node, TypeCheckerFunctionContext context) {
         var expression = typeCheckExpression(node.expression(), context);
 
-        if (!isSubType(expression.type(), context.returnType())) {
-            throw new UnexpectedTypeError(context.returnType(), expression.type(), node.expression().source());
+        if (!isSubType(expression.type(), context.returnType().get())) {
+            throw new UnexpectedTypeError(context.returnType().get(), expression.type(), node.expression().source());
         }
 
         var typedNode = new TypedReturnNode(expression, node.source());
@@ -164,6 +164,23 @@ public class TypeChecker {
 
     private static TypedExpressionNode typeCheckStringLiteral(UntypedStringLiteralNode node) {
         return new TypedStringLiteralNode(node.value(), node.source());
+    }
+
+    private static TypedNamespaceStatementNode typeCheckTest(UntypedTestNode node) {
+        var context = TypeCheckerFunctionContext.enterTest();
+        var typedStatements = new ArrayList<TypedFunctionStatementNode>();
+
+        for (var statement : node.body()) {
+            var statementResult = typeCheckFunctionStatement(statement, context);
+            context = statementResult.context();
+            typedStatements.add(statementResult.typedNode());
+        }
+
+        return new TypedTestNode(
+            node.name(),
+            typedStatements,
+            node.source()
+        );
     }
 
     private static TypeCheckFunctionStatementResult typeCheckVar(

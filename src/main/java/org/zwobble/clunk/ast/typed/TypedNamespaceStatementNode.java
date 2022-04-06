@@ -4,6 +4,7 @@ public interface TypedNamespaceStatementNode extends TypedNode {
     interface Visitor<T> {
         T visit(TypedFunctionNode node);
         T visit(TypedRecordNode node);
+        T visit(TypedTestNode node);
     }
 
     <T> T accept(Visitor<T> visitor);

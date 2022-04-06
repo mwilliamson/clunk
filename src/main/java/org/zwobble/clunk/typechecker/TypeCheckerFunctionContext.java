@@ -5,14 +5,19 @@ import org.zwobble.clunk.types.Type;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
-public record TypeCheckerFunctionContext(Type returnType, Map<String, Type> environment) {
+public record TypeCheckerFunctionContext(Optional<Type> returnType, Map<String, Type> environment) {
     public static TypeCheckerFunctionContext stub() {
-        return enter(BoolType.INSTANCE);
+        return enterFunction(BoolType.INSTANCE);
     }
 
-    public static TypeCheckerFunctionContext enter(Type returnType) {
-        return new TypeCheckerFunctionContext(returnType, Map.of());
+    public static TypeCheckerFunctionContext enterFunction(Type returnType) {
+        return new TypeCheckerFunctionContext(Optional.of(returnType), Map.of());
+    }
+
+    public static TypeCheckerFunctionContext enterTest() {
+        return new TypeCheckerFunctionContext(Optional.empty(), Map.of());
     }
 
     public TypeCheckerFunctionContext updateType(String name, Type type) {

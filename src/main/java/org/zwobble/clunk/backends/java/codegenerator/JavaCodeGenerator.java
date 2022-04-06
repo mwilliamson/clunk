@@ -79,6 +79,11 @@ public class JavaCodeGenerator {
                     compilationUnits.add(compileRecord(node.name(), recordNode));
                     return null;
                 }
+
+                @Override
+                public Void visit(TypedTestNode node) {
+                    throw new UnsupportedOperationException("TODO");
+                }
             });
         }
 

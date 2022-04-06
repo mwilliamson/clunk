@@ -38,6 +38,10 @@ public class TypedNodeMatchers {
         return has("type", equalTo(type));
     }
 
+    public static TypedTestNodeMatcher isTypedTestNode() {
+        return new TypedTestNodeMatcher(List.of());
+    }
+
     public static TypedVarNodeMatcher isTypedVarNode() {
         return new TypedVarNodeMatcher(List.of());
     }

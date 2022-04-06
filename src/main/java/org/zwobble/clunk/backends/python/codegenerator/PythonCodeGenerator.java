@@ -83,6 +83,11 @@ public class PythonCodeGenerator {
             public PythonStatementNode visit(TypedRecordNode node) {
                 return compileRecord(node);
             }
+
+            @Override
+            public PythonStatementNode visit(TypedTestNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
         });
     }
 

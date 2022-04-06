@@ -14,7 +14,7 @@ public class TypeCheckReturnTests {
     @Test
     public void expressionIsTypeChecked() {
         var untypedNode = Untyped.returnStatement(Untyped.boolFalse());
-        var context = TypeCheckerFunctionContext.enter(BoolType.INSTANCE);
+        var context = TypeCheckerFunctionContext.enterFunction(BoolType.INSTANCE);
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
@@ -24,7 +24,7 @@ public class TypeCheckReturnTests {
     @Test
     public void whenTypeOfExpressionIsNotSubtypeOfFunctionReturnTypeThenErrorIsThrown() {
         var untypedNode = Untyped.returnStatement(Untyped.boolFalse());
-        var context = TypeCheckerFunctionContext.enter(StringType.INSTANCE);
+        var context = TypeCheckerFunctionContext.enterFunction(StringType.INSTANCE);
 
         var error = Assertions.assertThrows(UnexpectedTypeError.class, () -> TypeChecker.typeCheckFunctionStatement(untypedNode, context));
 

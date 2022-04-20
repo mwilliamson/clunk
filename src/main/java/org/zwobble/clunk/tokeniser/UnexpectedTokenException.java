@@ -1,6 +1,6 @@
 package org.zwobble.clunk.tokeniser;
 
-import org.zwobble.clunk.SourceError;
+import org.zwobble.clunk.errors.SourceError;
 import org.zwobble.clunk.sources.Source;
 
 public class UnexpectedTokenException extends SourceError {

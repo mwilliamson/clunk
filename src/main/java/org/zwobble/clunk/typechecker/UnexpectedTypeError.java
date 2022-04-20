@@ -1,6 +1,6 @@
 package org.zwobble.clunk.typechecker;
 
-import org.zwobble.clunk.SourceError;
+import org.zwobble.clunk.errors.SourceError;
 import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.types.Type;
 

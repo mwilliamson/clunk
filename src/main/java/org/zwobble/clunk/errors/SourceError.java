@@ -1,4 +1,4 @@
-package org.zwobble.clunk;
+package org.zwobble.clunk.errors;
 
 import org.zwobble.clunk.sources.Source;
 

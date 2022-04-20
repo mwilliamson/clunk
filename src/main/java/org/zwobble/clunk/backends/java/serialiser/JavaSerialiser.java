@@ -76,6 +76,15 @@ public class JavaSerialiser {
         });
     }
 
+    private static void serialiseFullyQualifiedTypeReference(
+        JavaFullyQualifiedTypeReferenceNode node,
+        CodeBuilder builder
+    ) {
+        builder.append(node.packageName());
+        builder.append(".");
+        builder.append(node.typeName());
+    }
+
     public static void serialiseMethodDeclaration(JavaMethodDeclarationNode node, CodeBuilder builder) {
         for (var annotation : node.annotations()) {
             serialiseAnnotation(annotation, builder);
@@ -203,14 +212,20 @@ public class JavaSerialiser {
     public static void serialiseTypeExpression(JavaTypeExpressionNode node, CodeBuilder builder) {
         node.accept(new JavaTypeExpressionNode.Visitor<Void>() {
             @Override
+            public Void visit(JavaFullyQualifiedTypeReferenceNode node) {
+                serialiseFullyQualifiedTypeReference(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(JavaTypeVariableReferenceNode node) {
-                serialiseTypeReference(node, builder);
+                serialiseTypeVariableReference(node, builder);
                 return null;
             }
         });
     }
 
-    private static void serialiseTypeReference(JavaTypeVariableReferenceNode node, CodeBuilder builder) {
+    private static void serialiseTypeVariableReference(JavaTypeVariableReferenceNode node, CodeBuilder builder) {
         builder.append(node.name());
     }
 

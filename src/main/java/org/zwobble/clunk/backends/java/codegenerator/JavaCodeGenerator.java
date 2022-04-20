@@ -40,6 +40,7 @@ public class JavaCodeGenerator {
 
     public static JavaClassBodyDeclarationNode compileFunction(TypedFunctionNode node) {
         return new JavaMethodDeclarationNode(
+            List.of(),
             true,
             compileStaticExpression(node.returnType()),
             node.name(),

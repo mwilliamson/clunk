@@ -59,6 +59,7 @@ public class JavaSerialiserMethodDeclarationTests {
             """
         ));
     }
+
     @Test
     public void canSerialiseMethodWithBody() {
         var node = JavaMethodDeclarationNode.builder()
@@ -72,6 +73,26 @@ public class JavaSerialiserMethodDeclarationTests {
         assertThat(result, equalTo("""
             public void f() {
                 return false;
+            }
+            """
+        ));
+    }
+
+    @Test
+    public void canSerialiseMethodWithAnnotations() {
+        var node = JavaMethodDeclarationNode.builder()
+            .returnType(Java.typeReference("void"))
+            .name("f")
+            .addAnnotation(Java.annotation(Java.typeReference("Test")))
+            .addAnnotation(Java.annotation(Java.typeReference("Skip")))
+            .build();
+
+        var result = serialiseToString(node, JavaSerialiser::serialiseMethodDeclaration);
+
+        assertThat(result, equalTo("""
+            @Test
+            @Skip
+            public void f() {
             }
             """
         ));

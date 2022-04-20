@@ -61,6 +61,11 @@ public class JavaSerialiser {
     }
 
     public static void serialiseMethodDeclaration(JavaMethodDeclarationNode node, CodeBuilder builder) {
+        for (var annotation : node.annotations()) {
+            serialiseAnnotation(annotation, builder);
+            builder.newLine();
+        }
+
         builder.append("public ");
         if (node.isStatic()) {
             builder.append("static ");

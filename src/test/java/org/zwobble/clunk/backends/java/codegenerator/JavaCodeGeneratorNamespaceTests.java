@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.TypedFunctionNode;
 import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
+import org.zwobble.clunk.ast.typed.TypedTestNode;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
 import org.zwobble.clunk.types.StringType;
 
@@ -35,7 +36,7 @@ public class JavaCodeGeneratorNamespaceTests {
         assertThat(strings, contains(
             equalTo(
                 """
-                    package example.project; 
+                    package example.project;
                     
                     public record First() {
                     }"""
@@ -75,6 +76,41 @@ public class JavaCodeGeneratorNamespaceTests {
                         public static String f() {
                         }
                         public static String g() {
+                        }
+                    }"""
+            )
+        ));
+    }
+
+    @Test
+    public void testsAreGroupedIntoSingleClassNamedAfterNamespace() {
+        var node = TypedNamespaceNode.builder(List.of("example", "project"))
+            .addStatement(TypedTestNode.builder().name("f").build())
+            .addStatement(TypedTestNode.builder().name("g").build())
+            .build();
+
+        var result = JavaCodeGenerator.compileNamespace(node);
+
+        var strings = result
+            .stream()
+            .map(compilationUnit -> serialiseToString(
+                compilationUnit,
+                JavaSerialiser::serialiseOrdinaryCompilationUnit)
+            )
+            .collect(Collectors.toList());
+        assertThat(strings, contains(
+            equalTo(
+                """
+                    package example.project;
+
+                    public class Project {
+                        @org.junit.jupiter.api.Test
+                        @org.junit.jupiter.api.DisplayName("f")
+                        public void f() {
+                        }
+                        @org.junit.jupiter.api.Test
+                        @org.junit.jupiter.api.DisplayName("g")
+                        public void g() {
                         }
                     }"""
             )

@@ -82,8 +82,9 @@ public class JavaCodeGenerator {
                 }
 
                 @Override
-                public Void visit(TypedTestNode node) {
-                    throw new UnsupportedOperationException("TODO");
+                public Void visit(TypedTestNode testNode) {
+                    functions.add(compileTest(testNode));
+                    return null;
                 }
             });
         }

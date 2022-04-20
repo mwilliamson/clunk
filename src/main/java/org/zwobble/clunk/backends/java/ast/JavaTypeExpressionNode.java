@@ -4,6 +4,6 @@ public interface JavaTypeExpressionNode extends JavaNode {
     <T> T accept(Visitor<T> visitor);
 
     interface Visitor<T> {
-        T visit(JavaTypeReferenceNode node);
+        T visit(JavaTypeVariableReferenceNode node);
     }
 }

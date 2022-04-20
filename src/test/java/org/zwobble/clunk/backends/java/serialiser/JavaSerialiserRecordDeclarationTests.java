@@ -26,7 +26,7 @@ public class JavaSerialiserRecordDeclarationTests {
     @Test
     public void recordWithOneComponent() {
         var node = JavaRecordDeclarationNode.builder("Example")
-            .addComponent(new JavaRecordComponentNode(Java.typeReference("String"), "first"))
+            .addComponent(new JavaRecordComponentNode(Java.typeVariableReference("String"), "first"))
             .build();
 
         var result = serialiseToString(node, JavaSerialiser::serialiseTypeDeclaration);
@@ -41,8 +41,8 @@ public class JavaSerialiserRecordDeclarationTests {
     @Test
     public void recordWithMultipleComponents() {
         var node = JavaRecordDeclarationNode.builder("Example")
-            .addComponent(new JavaRecordComponentNode(Java.typeReference("String"), "first"))
-            .addComponent(new JavaRecordComponentNode(Java.typeReference("int"), "second"))
+            .addComponent(new JavaRecordComponentNode(Java.typeVariableReference("String"), "first"))
+            .addComponent(new JavaRecordComponentNode(Java.typeVariableReference("int"), "second"))
             .build();
 
         var result = serialiseToString(node, JavaSerialiser::serialiseTypeDeclaration);

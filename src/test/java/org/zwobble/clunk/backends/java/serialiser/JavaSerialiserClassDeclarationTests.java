@@ -29,7 +29,7 @@ public class JavaSerialiserClassDeclarationTests {
             .addBodyDeclaration(
                 JavaMethodDeclarationNode.builder()
                     .name("f")
-                    .returnType(Java.typeReference("void"))
+                    .returnType(Java.typeVariableReference("void"))
                     .build()
             )
             .build();

@@ -12,7 +12,7 @@ public class JavaSerialiserMethodDeclarationTests {
     @Test
     public void canSerialiseEmptyMethod() {
         var node = JavaMethodDeclarationNode.builder()
-            .returnType(Java.typeReference("void"))
+            .returnType(Java.typeVariableReference("void"))
             .name("f")
             .build();
 
@@ -28,7 +28,7 @@ public class JavaSerialiserMethodDeclarationTests {
     @Test
     public void canSerialiseStaticMethod() {
         var node = JavaMethodDeclarationNode.builder()
-            .returnType(Java.typeReference("void"))
+            .returnType(Java.typeVariableReference("void"))
             .name("f")
             .isStatic(true)
             .build();
@@ -45,10 +45,10 @@ public class JavaSerialiserMethodDeclarationTests {
     @Test
     public void canSerialiseMethodWithParams() {
         var node = JavaMethodDeclarationNode.builder()
-            .returnType(Java.typeReference("void"))
+            .returnType(Java.typeVariableReference("void"))
             .name("f")
-            .addParam(Java.param(Java.typeReference("int"), "x"))
-            .addParam(Java.param(Java.typeReference("String"), "y"))
+            .addParam(Java.param(Java.typeVariableReference("int"), "x"))
+            .addParam(Java.param(Java.typeVariableReference("String"), "y"))
             .build();
 
         var result = serialiseToString(node, JavaSerialiser::serialiseMethodDeclaration);
@@ -63,7 +63,7 @@ public class JavaSerialiserMethodDeclarationTests {
     @Test
     public void canSerialiseMethodWithBody() {
         var node = JavaMethodDeclarationNode.builder()
-            .returnType(Java.typeReference("void"))
+            .returnType(Java.typeVariableReference("void"))
             .name("f")
             .addBodyStatement(Java.returnStatement(Java.boolFalse()))
             .build();
@@ -81,10 +81,10 @@ public class JavaSerialiserMethodDeclarationTests {
     @Test
     public void canSerialiseMethodWithAnnotations() {
         var node = JavaMethodDeclarationNode.builder()
-            .returnType(Java.typeReference("void"))
+            .returnType(Java.typeVariableReference("void"))
             .name("f")
-            .addAnnotation(Java.annotation(Java.typeReference("Test")))
-            .addAnnotation(Java.annotation(Java.typeReference("Skip")))
+            .addAnnotation(Java.annotation(Java.typeVariableReference("Test")))
+            .addAnnotation(Java.annotation(Java.typeVariableReference("Skip")))
             .build();
 
         var result = serialiseToString(node, JavaSerialiser::serialiseMethodDeclaration);

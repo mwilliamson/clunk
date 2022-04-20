@@ -21,8 +21,8 @@ public class Java {
         return new JavaStringLiteralNode(value);
     }
 
-    public static JavaTypeReferenceNode typeReference(String name) {
-        return new JavaTypeReferenceNode(name);
+    public static JavaTypeVariableReferenceNode typeVariableReference(String name) {
+        return new JavaTypeVariableReferenceNode(name);
     }
 
     public static JavaParamNode param(JavaTypeExpressionNode type, String name) {

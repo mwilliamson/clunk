@@ -10,7 +10,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class JavaSerialiserAnnotationTests {
     @Test
     public void canSerialiseMarkerAnnotation() {
-        var node = Java.annotation(Java.typeReference("Test"));
+        var node = Java.annotation(Java.typeVariableReference("Test"));
 
         var result = serialiseToString(node, JavaSerialiser::serialiseAnnotation);
 
@@ -19,7 +19,7 @@ public class JavaSerialiserAnnotationTests {
 
     @Test
     public void canSerialiseSingleElementAnnotation() {
-        var node = Java.annotation(Java.typeReference("DisplayName"), Java.string("one two three"));
+        var node = Java.annotation(Java.typeVariableReference("DisplayName"), Java.string("one two three"));
 
         var result = serialiseToString(node, JavaSerialiser::serialiseAnnotation);
 

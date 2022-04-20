@@ -124,8 +124,8 @@ public class JavaCodeGenerator {
         return new JavaReturnNode(compileExpression(node.expression()));
     }
 
-    public static JavaTypeReferenceNode compileStaticExpression(TypedStaticExpressionNode node) {
-        return new JavaTypeReferenceNode(compileType(node.type()));
+    public static JavaTypeVariableReferenceNode compileStaticExpression(TypedStaticExpressionNode node) {
+        return new JavaTypeVariableReferenceNode(compileType(node.type()));
     }
 
     private static JavaStringLiteralNode compileStringLiteral(TypedStringLiteralNode node) {

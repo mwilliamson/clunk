@@ -203,14 +203,14 @@ public class JavaSerialiser {
     public static void serialiseTypeExpression(JavaTypeExpressionNode node, CodeBuilder builder) {
         node.accept(new JavaTypeExpressionNode.Visitor<Void>() {
             @Override
-            public Void visit(JavaTypeReferenceNode node) {
+            public Void visit(JavaTypeVariableReferenceNode node) {
                 serialiseTypeReference(node, builder);
                 return null;
             }
         });
     }
 
-    private static void serialiseTypeReference(JavaTypeReferenceNode node, CodeBuilder builder) {
+    private static void serialiseTypeReference(JavaTypeVariableReferenceNode node, CodeBuilder builder) {
         builder.append(node.name());
     }
 

@@ -17,7 +17,7 @@ public record JavaMethodDeclarationNode(
     }
 
     public static Builder builder() {
-        return new Builder(List.of(), false, Java.typeReference("void"), "f", List.of(), List.of());
+        return new Builder(List.of(), false, Java.typeVariableReference("void"), "f", List.of(), List.of());
     }
 
     public record Builder(

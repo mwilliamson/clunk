@@ -17,6 +17,10 @@ public class Java {
         return new JavaBoolLiteralNode(true);
     }
 
+    public static JavaTypeExpressionNode fullyQualifiedTypeReference(String packageName, String typeName) {
+        return new JavaFullyQualifiedTypeReferenceNode(packageName, typeName);
+    }
+
     public static JavaStringLiteralNode string(String value) {
         return new JavaStringLiteralNode(value);
     }

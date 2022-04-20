@@ -132,6 +132,22 @@ public class JavaCodeGenerator {
         return new JavaStringLiteralNode(node.value());
     }
 
+    public static JavaClassBodyDeclarationNode compileTest(TypedTestNode node) {
+        var method = JavaMethodDeclarationNode.builder()
+            .addAnnotation(Java.annotation(Java.fullyQualifiedTypeReference("org.junit.jupiter.api", "Test")))
+            .addAnnotation(Java.annotation(
+                Java.fullyQualifiedTypeReference("org.junit.jupiter.api", "DisplayName"),
+                Java.string(node.name())
+            ))
+            .isStatic(false);
+
+        for (var statement : node.body()) {
+            method = method.addBodyStatement(compileFunctionStatement(statement));
+        }
+
+        return method.build();
+    }
+
     private static JavaStatementNode compileVar(TypedVarNode node) {
         return new JavaVariableDeclarationNode(node.name(), compileExpression(node.expression()));
     }

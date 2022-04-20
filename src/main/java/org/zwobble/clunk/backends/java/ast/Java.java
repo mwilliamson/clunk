@@ -1,8 +1,8 @@
 package org.zwobble.clunk.backends.java.ast;
 
 public class Java {
-    public static JavaAnnotationNode annotation(String name) {
-        return new JavaAnnotationNode(name);
+    public static JavaAnnotationNode annotation(JavaTypeExpressionNode type) {
+        return new JavaAnnotationNode(type);
     }
 
     public static JavaBoolLiteralNode boolFalse() {

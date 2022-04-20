@@ -10,7 +10,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class JavaSerialiserAnnotationTests {
     @Test
     public void canSerialiseAnnotationWithoutArguments() {
-        var node = Java.annotation("Test");
+        var node = Java.annotation(Java.typeReference("Test"));
 
         var result = serialiseToString(node, JavaSerialiser::serialiseAnnotation);
 

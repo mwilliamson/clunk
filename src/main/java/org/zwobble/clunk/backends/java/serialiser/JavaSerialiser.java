@@ -6,6 +6,12 @@ import org.zwobble.clunk.backends.java.ast.*;
 import static org.zwobble.clunk.util.Iterables.forEachInterspersed;
 
 public class JavaSerialiser {
+    public static void serialiseAnnotation(JavaAnnotationNode node, CodeBuilder builder) {
+        builder.append("@");
+        builder.append(node.name());
+        builder.newLine();
+    }
+
     private static void serialiseBoolLiteral(JavaBoolLiteralNode node, CodeBuilder builder) {
         builder.append(node.value() ? "true" : "false");
     }

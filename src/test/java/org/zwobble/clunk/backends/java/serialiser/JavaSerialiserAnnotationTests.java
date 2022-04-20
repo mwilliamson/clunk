@@ -14,6 +14,6 @@ public class JavaSerialiserAnnotationTests {
 
         var result = serialiseToString(node, JavaSerialiser::serialiseAnnotation);
 
-        assertThat(result, equalTo("@Test\n"));
+        assertThat(result, equalTo("@Test"));
     }
 }

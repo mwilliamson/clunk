@@ -9,7 +9,6 @@ public class JavaSerialiser {
     public static void serialiseAnnotation(JavaAnnotationNode node, CodeBuilder builder) {
         builder.append("@");
         builder.append(node.name());
-        builder.newLine();
     }
 
     private static void serialiseBoolLiteral(JavaBoolLiteralNode node, CodeBuilder builder) {

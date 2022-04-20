@@ -19,7 +19,7 @@ public class PythonCodeGeneratorNamespaceTests {
             .addStatement(TypedRecordNode.builder("Second").build())
             .build();
 
-        var result = PythonCodeGenerator.compileNamespace(node);
+        var result = PythonCodeGenerator.DEFAULT.compileNamespace(node);
 
         assertThat(result.name(), equalTo("example.project"));
         var string = serialiseToString(result, PythonSerialiser::serialiseModule);

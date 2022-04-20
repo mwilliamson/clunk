@@ -23,7 +23,7 @@ public class PythonCodeGeneratorFunctionTests {
             .addBodyStatement(Typed.returnStatement(Typed.boolFalse()))
             .build();
 
-        var result = PythonCodeGenerator.compileNamespaceStatement(node);
+        var result = PythonCodeGenerator.DEFAULT.compileNamespaceStatement(node);
 
         var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
         assertThat(string, equalTo(
@@ -40,7 +40,7 @@ public class PythonCodeGeneratorFunctionTests {
             .name("makeItSo")
             .build();
 
-        var result = PythonCodeGenerator.compileNamespaceStatement(node);
+        var result = PythonCodeGenerator.DEFAULT.compileNamespaceStatement(node);
 
         var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
         assertThat(string, equalTo(
@@ -59,7 +59,7 @@ public class PythonCodeGeneratorFunctionTests {
             .addParam(Typed.param("maxHeight", IntType.INSTANCE))
             .build();
 
-        var result = PythonCodeGenerator.compileNamespaceStatement(node);
+        var result = PythonCodeGenerator.DEFAULT.compileNamespaceStatement(node);
 
         var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
         assertThat(string, equalTo(

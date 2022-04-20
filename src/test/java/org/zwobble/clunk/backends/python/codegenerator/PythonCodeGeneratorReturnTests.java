@@ -2,8 +2,8 @@ package org.zwobble.clunk.backends.python.codegenerator;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
-import org.zwobble.clunk.backends.java.codegenerator.JavaCodeGenerator;
-import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
+import org.zwobble.clunk.ast.typed.TypedReturnNode;
+import org.zwobble.clunk.backends.python.ast.PythonStatementNode;
 import org.zwobble.clunk.backends.python.serialiser.PythonSerialiser;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -15,9 +15,13 @@ public class PythonCodeGeneratorReturnTests {
     public void returnNodeGeneratesReturn() {
         var node = Typed.returnStatement(Typed.boolFalse());
 
-        var result = PythonCodeGenerator.compileFunctionStatement(node);
+        var result = compileFunctionStatement(node);
 
         var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
         assertThat(string, equalTo("return False\n"));
+    }
+
+    private PythonStatementNode compileFunctionStatement(TypedReturnNode node) {
+        return PythonCodeGenerator.DEFAULT.compileFunctionStatement(node);
     }
 }

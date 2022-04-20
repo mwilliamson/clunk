@@ -16,7 +16,7 @@ public class PythonCodeGeneratorStaticExpressionTests {
     public void boolTypeIsCompiledToJavaBooleanType() {
         var node = Typed.staticExpression(BoolType.INSTANCE);
 
-        var result = PythonCodeGenerator.compileStaticExpression(node);
+        var result = PythonCodeGenerator.DEFAULT.compileStaticExpression(node);
 
         var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
         assertThat(string, equalTo("bool"));
@@ -26,7 +26,7 @@ public class PythonCodeGeneratorStaticExpressionTests {
     public void intTypeIsCompiledToJavaIntType() {
         var node = Typed.staticExpression(IntType.INSTANCE);
 
-        var result = PythonCodeGenerator.compileStaticExpression(node);
+        var result = PythonCodeGenerator.DEFAULT.compileStaticExpression(node);
 
         var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
         assertThat(string, equalTo("int"));
@@ -36,7 +36,7 @@ public class PythonCodeGeneratorStaticExpressionTests {
     public void stringTypeIsCompiledToJavaStringType() {
         var node = Typed.staticExpression(StringType.INSTANCE);
 
-        var result = PythonCodeGenerator.compileStaticExpression(node);
+        var result = PythonCodeGenerator.DEFAULT.compileStaticExpression(node);
 
         var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
         assertThat(string, equalTo("str"));

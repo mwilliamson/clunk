@@ -2,8 +2,6 @@ package org.zwobble.clunk.backends.python.codegenerator;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
-import org.zwobble.clunk.backends.java.codegenerator.JavaCodeGenerator;
-import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
 import org.zwobble.clunk.backends.python.serialiser.PythonSerialiser;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -15,7 +13,7 @@ public class PythonCodeGeneratorBoolLiteralTests {
     public void falseLiteralGeneratesFalseLiteral() {
         var node = Typed.boolFalse();
 
-        var result = PythonCodeGenerator.compileExpression(node);
+        var result = PythonCodeGenerator.DEFAULT.compileExpression(node);
 
         var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
         assertThat(string, equalTo("False"));
@@ -25,7 +23,7 @@ public class PythonCodeGeneratorBoolLiteralTests {
     public void trueLiteralGeneratesTrueLiteral() {
         var node = Typed.boolTrue();
 
-        var result = PythonCodeGenerator.compileExpression(node);
+        var result = PythonCodeGenerator.DEFAULT.compileExpression(node);
 
         var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
         assertThat(string, equalTo("True"));

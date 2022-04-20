@@ -13,7 +13,7 @@ public class PythonCodeGeneratorVarTests {
     public void varIsCompiledToAssignment() {
         var node = Typed.var("x", Typed.boolFalse());
 
-        var result = PythonCodeGenerator.compileFunctionStatement(node);
+        var result = PythonCodeGenerator.DEFAULT.compileFunctionStatement(node);
 
         var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
         assertThat(string, equalTo("x = False\n"));

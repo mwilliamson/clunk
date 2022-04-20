@@ -14,11 +14,13 @@ import java.util.Optional;
 import static org.zwobble.clunk.backends.python.codegenerator.CaseConverter.camelCaseToSnakeCase;
 
 public class PythonCodeGenerator {
-    private static PythonExpressionNode compileBoolLiteral(TypedBoolLiteralNode node) {
+    public static final PythonCodeGenerator DEFAULT = new PythonCodeGenerator();
+
+    private PythonExpressionNode compileBoolLiteral(TypedBoolLiteralNode node) {
         return new PythonBoolLiteralNode(node.value());
     }
 
-    public static PythonExpressionNode compileExpression(TypedExpressionNode node) {
+    public PythonExpressionNode compileExpression(TypedExpressionNode node) {
         return node.accept(new TypedExpressionNode.Visitor<PythonExpressionNode>() {
             @Override
             public PythonExpressionNode visit(TypedBoolLiteralNode node) {
@@ -37,7 +39,7 @@ public class PythonCodeGenerator {
         });
     }
 
-    private static PythonStatementNode compileFunction(TypedFunctionNode node) {
+    private PythonStatementNode compileFunction(TypedFunctionNode node) {
         return new PythonFunctionNode(
             camelCaseToSnakeCase(node.name()),
             node.params().stream().map(param -> compileParam(param)).toList(),
@@ -45,7 +47,7 @@ public class PythonCodeGenerator {
         );
     }
 
-    public static PythonStatementNode compileFunctionStatement(TypedFunctionStatementNode node) {
+    public PythonStatementNode compileFunctionStatement(TypedFunctionStatementNode node) {
         return node.accept(new TypedFunctionStatementNode.Visitor<PythonStatementNode>() {
             @Override
             public PythonStatementNode visit(TypedReturnNode node) {
@@ -59,7 +61,7 @@ public class PythonCodeGenerator {
         });
     }
 
-    public static PythonModuleNode compileNamespace(TypedNamespaceNode node) {
+    public PythonModuleNode compileNamespace(TypedNamespaceNode node) {
         var moduleName = String.join(".", node.name());
 
         var statements = new ArrayList<PythonStatementNode>();
@@ -72,7 +74,7 @@ public class PythonCodeGenerator {
         return new PythonModuleNode(moduleName, statements);
     }
 
-    public static PythonStatementNode compileNamespaceStatement(TypedNamespaceStatementNode node) {
+    public PythonStatementNode compileNamespaceStatement(TypedNamespaceStatementNode node) {
         return node.accept(new TypedNamespaceStatementNode.Visitor<PythonStatementNode>() {
             @Override
             public PythonStatementNode visit(TypedFunctionNode node) {
@@ -91,11 +93,11 @@ public class PythonCodeGenerator {
         });
     }
 
-    private static String compileParam(TypedParamNode node) {
+    private String compileParam(TypedParamNode node) {
         return camelCaseToSnakeCase(node.name());
     }
 
-    public static PythonClassDeclarationNode compileRecord(TypedRecordNode node) {
+    public PythonClassDeclarationNode compileRecord(TypedRecordNode node) {
         var decorators = List.of(
             Python.call(
                 Python.attr(Python.reference("dataclasses"), "dataclass"),
@@ -110,23 +112,23 @@ public class PythonCodeGenerator {
         return new PythonClassDeclarationNode(node.name(), decorators, statements);
     }
 
-    private static PythonExpressionNode compileReference(TypedReferenceNode node) {
+    private PythonExpressionNode compileReference(TypedReferenceNode node) {
         return new PythonReferenceNode(node.name());
     }
 
-    private static PythonStatementNode compileReturn(TypedReturnNode node) {
+    private PythonStatementNode compileReturn(TypedReturnNode node) {
         return new PythonReturnNode(compileExpression(node.expression()));
     }
 
-    public static PythonReferenceNode compileStaticExpression(TypedStaticExpressionNode node) {
+    public PythonReferenceNode compileStaticExpression(TypedStaticExpressionNode node) {
         return new PythonReferenceNode(compileType(node.type()));
     }
 
-    private static PythonExpressionNode compileStringLiteral(TypedStringLiteralNode node) {
+    private PythonExpressionNode compileStringLiteral(TypedStringLiteralNode node) {
         return new PythonStringLiteralNode(node.value());
     }
 
-    private static PythonStatementNode compileTest(TypedTestNode node) {
+    private PythonStatementNode compileTest(TypedTestNode node) {
         return new PythonFunctionNode(
             PythonTestNames.generateName(node.name()),
             List.of(),
@@ -134,7 +136,7 @@ public class PythonCodeGenerator {
         );
     }
 
-    private static PythonStatementNode compileVar(TypedVarNode node) {
+    private PythonStatementNode compileVar(TypedVarNode node) {
         return new PythonAssignmentNode(
             node.name(),
             Optional.empty(),
@@ -142,7 +144,7 @@ public class PythonCodeGenerator {
         );
     }
 
-    private static String compileType(Type type) {
+    private String compileType(Type type) {
         if (type == BoolType.INSTANCE) {
             return "bool";
         } else if (type == IntType.INSTANCE) {

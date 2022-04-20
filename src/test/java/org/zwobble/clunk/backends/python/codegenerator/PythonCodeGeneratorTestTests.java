@@ -17,7 +17,7 @@ public class PythonCodeGeneratorTestTests {
             .addBodyStatement(Typed.var("x", Typed.boolFalse()))
             .build();
 
-        var result = PythonCodeGenerator.compileNamespaceStatement(node);
+        var result = PythonCodeGenerator.DEFAULT.compileNamespaceStatement(node);
 
         var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
         assertThat(string, equalTo(
@@ -34,7 +34,7 @@ public class PythonCodeGeneratorTestTests {
             .name("one two three")
             .build();
 
-        var result = PythonCodeGenerator.compileNamespaceStatement(node);
+        var result = PythonCodeGenerator.DEFAULT.compileNamespaceStatement(node);
 
         var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
         assertThat(string, equalTo(

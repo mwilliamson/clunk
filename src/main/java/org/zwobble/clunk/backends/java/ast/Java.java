@@ -5,6 +5,10 @@ public class Java {
         return new JavaMarkerAnnotationNode(type);
     }
 
+    public static JavaAnnotationNode annotation(JavaTypeExpressionNode type, JavaExpressionNode value) {
+        return new JavaSingleElementAnnotation(type, value);
+    }
+
     public static JavaBoolLiteralNode boolFalse() {
         return new JavaBoolLiteralNode(false);
     }

@@ -5,5 +5,6 @@ public interface JavaAnnotationNode extends JavaNode {
 
     interface Visitor<T> {
         T visit(JavaMarkerAnnotationNode node);
+        T visit(JavaSingleElementAnnotation node);
     }
 }

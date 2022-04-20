@@ -14,6 +14,16 @@ public class JavaSerialiser {
                 serialiseTypeExpression(node.type(), builder);
                 return null;
             }
+
+            @Override
+            public Void visit(JavaSingleElementAnnotation node) {
+                builder.append("@");
+                serialiseTypeExpression(node.type(), builder);
+                builder.append("(");
+                serialiseExpression(node.value(), builder);
+                builder.append(")");
+                return null;
+            }
         });
     }
 

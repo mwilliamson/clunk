@@ -128,7 +128,7 @@ public class PythonCodeGenerator {
 
     private static PythonStatementNode compileTest(TypedTestNode node) {
         return new PythonFunctionNode(
-            node.name(),
+            PythonTestNames.generateName(node.name()),
             List.of(),
             node.body().stream().map(statement -> compileFunctionStatement(statement)).toList()
         );

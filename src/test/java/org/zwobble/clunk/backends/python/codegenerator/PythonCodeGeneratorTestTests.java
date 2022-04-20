@@ -27,4 +27,21 @@ public class PythonCodeGeneratorTestTests {
                 """
         ));
     }
+
+    @Test
+    public void testNameIsCompiledToValidPythonIdentifier() {
+        var node = TypedTestNode.builder()
+            .name("one two three")
+            .build();
+
+        var result = PythonCodeGenerator.compileNamespaceStatement(node);
+
+        var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
+        assertThat(string, equalTo(
+            """
+                def one_two_three():
+                    pass
+                """
+        ));
+    }
 }

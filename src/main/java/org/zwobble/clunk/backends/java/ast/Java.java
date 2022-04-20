@@ -2,7 +2,7 @@ package org.zwobble.clunk.backends.java.ast;
 
 public class Java {
     public static JavaAnnotationNode annotation(JavaTypeExpressionNode type) {
-        return new JavaAnnotationNode(type);
+        return new JavaMarkerAnnotationNode(type);
     }
 
     public static JavaBoolLiteralNode boolFalse() {

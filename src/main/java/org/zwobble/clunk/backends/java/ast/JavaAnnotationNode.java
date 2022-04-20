@@ -1,4 +1,9 @@
 package org.zwobble.clunk.backends.java.ast;
 
-public record JavaAnnotationNode(JavaTypeExpressionNode type) implements JavaNode {
+public interface JavaAnnotationNode extends JavaNode {
+    <T> T accept(Visitor<T> visitor);
+
+    interface Visitor<T> {
+        T visit(JavaMarkerAnnotationNode node);
+    }
 }

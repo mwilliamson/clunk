@@ -7,8 +7,14 @@ import static org.zwobble.clunk.util.Iterables.forEachInterspersed;
 
 public class JavaSerialiser {
     public static void serialiseAnnotation(JavaAnnotationNode node, CodeBuilder builder) {
-        builder.append("@");
-        serialiseTypeExpression(node.type(), builder);
+        node.accept(new JavaAnnotationNode.Visitor<Void>() {
+            @Override
+            public Void visit(JavaMarkerAnnotationNode node) {
+                builder.append("@");
+                serialiseTypeExpression(node.type(), builder);
+                return null;
+            }
+        });
     }
 
     private static void serialiseBoolLiteral(JavaBoolLiteralNode node, CodeBuilder builder) {

@@ -24,7 +24,7 @@ public class JavaCodeGeneratorTestTests {
             """
                 @org.junit.jupiter.api.Test
                 @org.junit.jupiter.api.DisplayName("can assign bool")
-                public void f() {
+                public void canAssignBool() {
                     var x = false;
                 }
                 """

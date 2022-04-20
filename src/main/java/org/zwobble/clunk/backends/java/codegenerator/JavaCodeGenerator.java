@@ -139,7 +139,8 @@ public class JavaCodeGenerator {
                 Java.fullyQualifiedTypeReference("org.junit.jupiter.api", "DisplayName"),
                 Java.string(node.name())
             ))
-            .isStatic(false);
+            .isStatic(false)
+            .name(JavaTestNames.generateName(node.name()));
 
         for (var statement : node.body()) {
             method = method.addBodyStatement(compileFunctionStatement(statement));

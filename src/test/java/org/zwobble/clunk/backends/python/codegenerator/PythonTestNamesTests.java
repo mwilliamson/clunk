@@ -1,9 +1,11 @@
 package org.zwobble.clunk.backends.python.codegenerator;
 
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.errors.InternalCompilerError;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PythonTestNamesTests {
     @Test
@@ -18,5 +20,15 @@ public class PythonTestNamesTests {
         var result = PythonTestNames.generateName("One TWO thrEE");
 
         assertThat(result, equalTo("one_two_three"));
+    }
+
+    @Test
+    public void whenNameIsNotValidIdentifierThenErrorIsThrown() {
+        var result = assertThrows(
+            InternalCompilerError.class,
+            () -> PythonTestNames.generateName("☃")
+        );
+
+        assertThat(result.getMessage(), equalTo("Could not convert test name to Python identifier: ☃"));
     }
 }

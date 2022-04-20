@@ -12,4 +12,11 @@ public class PythonTestNamesTests {
 
         assertThat(result, equalTo("one_two_three"));
     }
+
+    @Test
+    public void nameIsConvertedToLowercase() {
+        var result = PythonTestNames.generateName("One TWO thrEE");
+
+        assertThat(result, equalTo("one_two_three"));
+    }
 }

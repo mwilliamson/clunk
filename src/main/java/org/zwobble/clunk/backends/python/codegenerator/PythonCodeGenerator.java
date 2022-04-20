@@ -86,7 +86,7 @@ public class PythonCodeGenerator {
 
             @Override
             public PythonStatementNode visit(TypedTestNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileTest(node);
             }
         });
     }
@@ -124,6 +124,14 @@ public class PythonCodeGenerator {
 
     private static PythonExpressionNode compileStringLiteral(TypedStringLiteralNode node) {
         return new PythonStringLiteralNode(node.value());
+    }
+
+    private static PythonStatementNode compileTest(TypedTestNode node) {
+        return new PythonFunctionNode(
+            node.name(),
+            List.of(),
+            node.body().stream().map(statement -> compileFunctionStatement(statement)).toList()
+        );
     }
 
     private static PythonStatementNode compileVar(TypedVarNode node) {

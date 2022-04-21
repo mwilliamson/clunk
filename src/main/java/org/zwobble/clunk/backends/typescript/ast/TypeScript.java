@@ -15,6 +15,13 @@ public class TypeScript {
         return new TypeScriptBoolLiteralNode(true);
     }
 
+    public static TypeScriptCallNode call(
+        TypeScriptExpressionNode receiver,
+        List<TypeScriptExpressionNode> args
+    ) {
+        return new TypeScriptCallNode(receiver, args);
+    }
+
     public static TypeScriptInterfaceFieldNode interfaceField(String name, TypeScriptReferenceNode type) {
         return new TypeScriptInterfaceFieldNode(name, type);
     }

@@ -5,6 +5,7 @@ public interface TypeScriptExpressionNode extends TypeScriptNode {
 
     interface Visitor<T> {
         T visit(TypeScriptBoolLiteralNode node);
+        T visit(TypeScriptCallNode node);
         T visit(TypeScriptReferenceNode node);
         T visit(TypeScriptStringLiteralNode node);
     }

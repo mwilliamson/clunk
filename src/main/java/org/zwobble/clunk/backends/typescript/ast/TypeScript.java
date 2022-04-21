@@ -22,6 +22,10 @@ public class TypeScript {
         return new TypeScriptCallNode(receiver, args);
     }
 
+    public static TypeScriptStatementNode expressionStatement(TypeScriptExpressionNode expression) {
+        return new TypeScriptExpressionStatementNode(expression);
+    }
+
     public static TypeScriptInterfaceFieldNode interfaceField(String name, TypeScriptReferenceNode type) {
         return new TypeScriptInterfaceFieldNode(name, type);
     }

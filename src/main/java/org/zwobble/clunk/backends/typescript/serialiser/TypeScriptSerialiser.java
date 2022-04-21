@@ -52,6 +52,12 @@ public class TypeScriptSerialiser {
         });
     }
 
+    private static void serialiseExpressionStatement(TypeScriptExpressionStatementNode node, CodeBuilder builder) {
+        serialiseExpression(node.expression(), builder);
+        builder.append(";");
+        builder.newLine();
+    }
+
     private static void serialiseFunctionDeclaration(TypeScriptFunctionDeclarationNode node, CodeBuilder builder) {
         builder.append("function ");
         builder.append(node.name());
@@ -133,6 +139,12 @@ public class TypeScriptSerialiser {
 
     public static void serialiseStatement(TypeScriptStatementNode node, CodeBuilder builder) {
         node.accept(new TypeScriptStatementNode.Visitor<Void>() {
+            @Override
+            public Void visit(TypeScriptExpressionStatementNode node) {
+                serialiseExpressionStatement(node, builder);
+                return null;
+            }
+
             @Override
             public Void visit(TypeScriptFunctionDeclarationNode node) {
                 serialiseFunctionDeclaration(node, builder);

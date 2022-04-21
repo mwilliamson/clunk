@@ -39,6 +39,12 @@ public class TypeScriptSerialiser {
             }
 
             @Override
+            public Void visit(TypeScriptFunctionExpressionNode node) {
+                serialiseFunctionExpression(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(TypeScriptReferenceNode node) {
                 serialiseReference(node, builder);
                 return null;
@@ -70,6 +76,24 @@ public class TypeScriptSerialiser {
         builder.append("): ");
         serialiseExpression(node.returnType(), builder);
         builder.append(" {");
+        builder.newLine();
+        builder.indent();
+        for (var statement : node.body()) {
+            serialiseStatement(statement, builder);
+        }
+        builder.dedent();
+        builder.append("}");
+    }
+
+    private static void serialiseFunctionExpression(TypeScriptFunctionExpressionNode node, CodeBuilder builder) {
+        builder.append("function ");
+        builder.append("(");
+        forEachInterspersed(
+            node.params(),
+            param -> serialiseParam(param, builder),
+            () -> builder.append(", ")
+        );
+        builder.append(") {");
         builder.newLine();
         builder.indent();
         for (var statement : node.body()) {

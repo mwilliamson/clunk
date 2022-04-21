@@ -76,6 +76,15 @@ public class JavaSerialiser {
         });
     }
 
+    private static void serialiseExpressionStatement(
+        JavaExpressionStatementNode node,
+        CodeBuilder builder
+    ) {
+        serialiseExpression(node.expression(), builder);
+        builder.append(";");
+        builder.newLine();
+    }
+
     private static void serialiseFullyQualifiedTypeReference(
         JavaFullyQualifiedTypeReferenceNode node,
         CodeBuilder builder
@@ -166,14 +175,20 @@ public class JavaSerialiser {
     public static void serialiseStatement(JavaStatementNode node, CodeBuilder builder) {
         node.accept(new JavaStatementNode.Visitor<Void>() {
             @Override
-            public Void visit(JavaVariableDeclarationNode node) {
-                serialiseVariableDeclaration(node, builder);
+            public Void visit(JavaExpressionStatementNode node) {
+                serialiseExpressionStatement(node, builder);
                 return null;
             }
 
             @Override
             public Void visit(JavaReturnNode node) {
                 serialiseReturn(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(JavaVariableDeclarationNode node) {
+                serialiseVariableDeclaration(node, builder);
                 return null;
             }
         });

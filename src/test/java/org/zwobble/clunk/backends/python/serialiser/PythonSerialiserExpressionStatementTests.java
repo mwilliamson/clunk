@@ -9,7 +9,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class PythonSerialiserExpressionStatementTests {
     @Test
-    public void assignmentWithTypeAndNoExpressionIsSerialised() {
+    public void expressionIsSerialisedAsStatement() {
         var node = Python.expressionStatement(Python.FALSE);
 
         var result = serialiseToString(node, PythonSerialiser::serialiseStatement);

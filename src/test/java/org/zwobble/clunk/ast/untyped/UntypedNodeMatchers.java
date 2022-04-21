@@ -37,6 +37,10 @@ public class UntypedNodeMatchers {
         return new UntypedRecordFieldNodeMatcher(List.of());
     }
 
+    public static Matcher<UntypedExpressionNode> isUntypedReferenceNode(String name) {
+        return cast(UntypedReferenceNode.class, has("name", equalTo(name)));
+    }
+
     public static UntypedReturnNodeMatcher isUntypedReturnNode() {
         return new UntypedReturnNodeMatcher(List.of());
     }

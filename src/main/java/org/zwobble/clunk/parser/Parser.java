@@ -35,6 +35,8 @@ public class Parser {
             return new UntypedBoolLiteralNode(true, source);
         } else if (tokens.isNext(TokenType.STRING)) {
             return parseStringLiteral(tokens);
+        } else if (tokens.isNext(TokenType.IDENTIFIER)) {
+            return new UntypedReferenceNode(tokens.nextValue(TokenType.IDENTIFIER), source);
         } else {
             throw new RuntimeException("TODO");
         }

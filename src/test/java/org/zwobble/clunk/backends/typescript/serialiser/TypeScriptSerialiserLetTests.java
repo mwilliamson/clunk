@@ -7,7 +7,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
-public class TypeScriptSerialiserLetNode {
+public class TypeScriptSerialiserLetTests {
     @Test
     public void canSerialiseLetNode() {
         var node = TypeScript.let("x", TypeScript.boolFalse());

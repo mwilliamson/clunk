@@ -39,6 +39,10 @@ public class PythonCodeGenerator {
         });
     }
 
+    private PythonStatementNode compileExpressionStatement(TypedExpressionStatementNode node) {
+        return new PythonExpressionStatementNode(compileExpression(node.expression()));
+    }
+
     private PythonStatementNode compileFunction(TypedFunctionNode node) {
         return new PythonFunctionNode(
             camelCaseToSnakeCase(node.name()),
@@ -49,6 +53,11 @@ public class PythonCodeGenerator {
 
     public PythonStatementNode compileFunctionStatement(TypedFunctionStatementNode node) {
         return node.accept(new TypedFunctionStatementNode.Visitor<PythonStatementNode>() {
+            @Override
+            public PythonStatementNode visit(TypedExpressionStatementNode node) {
+                return compileExpressionStatement(node);
+            }
+
             @Override
             public PythonStatementNode visit(TypedReturnNode node) {
                 return compileReturn(node);

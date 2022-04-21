@@ -34,6 +34,10 @@ public class TypeScriptCodeGenerator {
         });
     }
 
+    private static TypeScriptStatementNode compileExpressionStatement(TypedExpressionStatementNode node) {
+        return new TypeScriptExpressionStatementNode(compileExpression(node.expression()));
+    }
+
     private static TypeScriptStatementNode compileFunction(TypedFunctionNode node) {
         return new TypeScriptFunctionDeclarationNode(
             node.name(),
@@ -45,6 +49,11 @@ public class TypeScriptCodeGenerator {
 
     public static TypeScriptStatementNode compileFunctionStatement(TypedFunctionStatementNode node) {
         return node.accept(new TypedFunctionStatementNode.Visitor<TypeScriptStatementNode>() {
+            @Override
+            public TypeScriptStatementNode visit(TypedExpressionStatementNode node) {
+                return compileExpressionStatement(node);
+            }
+
             @Override
             public TypeScriptStatementNode visit(TypedReturnNode node) {
                 return compileReturn(node);

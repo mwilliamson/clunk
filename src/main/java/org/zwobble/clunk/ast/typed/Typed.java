@@ -12,6 +12,10 @@ public class Typed {
         return new TypedBoolLiteralNode(true, NullSource.INSTANCE);
     }
 
+    public static TypedExpressionStatementNode expressionStatement(TypedExpressionNode expression) {
+        return new TypedExpressionStatementNode(expression, NullSource.INSTANCE);
+    }
+
     public static TypedParamNode param(String name, Type type) {
         return new TypedParamNode(name, staticExpression(type), NullSource.INSTANCE);
     }

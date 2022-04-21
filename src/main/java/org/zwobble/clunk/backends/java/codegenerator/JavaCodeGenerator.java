@@ -38,6 +38,10 @@ public class JavaCodeGenerator {
         });
     }
 
+    private static JavaStatementNode compileExpressionStatement(TypedExpressionStatementNode node) {
+        return new JavaExpressionStatementNode(compileExpression(node.expression()));
+    }
+
     public static JavaClassBodyDeclarationNode compileFunction(TypedFunctionNode node) {
         return new JavaMethodDeclarationNode(
             List.of(),
@@ -51,6 +55,11 @@ public class JavaCodeGenerator {
 
     public static JavaStatementNode compileFunctionStatement(TypedFunctionStatementNode node) {
         return node.accept(new TypedFunctionStatementNode.Visitor<JavaStatementNode>() {
+            @Override
+            public JavaStatementNode visit(TypedExpressionStatementNode node) {
+                return compileExpressionStatement(node);
+            }
+
             @Override
             public JavaStatementNode visit(TypedReturnNode node) {
                 return compileReturn(node);

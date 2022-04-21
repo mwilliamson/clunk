@@ -8,6 +8,7 @@ import org.zwobble.clunk.types.StringType;
 import org.zwobble.clunk.types.Type;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.zwobble.clunk.types.Types.isSubType;
@@ -51,13 +52,7 @@ public class TypeChecker {
         var returnType = typeCheckStaticExpressionNode(node.returnType());
 
         var context = TypeCheckerFunctionContext.enterFunction(returnType.type());
-        var typedStatements = new ArrayList<TypedFunctionStatementNode>();
-
-        for (var statement : node.body()) {
-            var statementResult = typeCheckFunctionStatement(statement, context);
-            context = statementResult.context();
-            typedStatements.add(statementResult.typedNode());
-        }
+        var typedStatements = typeCheckFunctionStatements(node.body(), context);
 
         return new TypedFunctionNode(
             node.name(),
@@ -83,6 +78,21 @@ public class TypeChecker {
                 return typeCheckVar(node, context);
             }
         });
+    }
+
+    private static List<TypedFunctionStatementNode> typeCheckFunctionStatements(
+        List<UntypedFunctionStatementNode> body,
+        TypeCheckerFunctionContext context
+    ) {
+        var typedStatements = new ArrayList<TypedFunctionStatementNode>();
+
+        for (var statement : body) {
+            var statementResult = typeCheckFunctionStatement(statement, context);
+            context = statementResult.context();
+            typedStatements.add(statementResult.typedNode());
+        }
+
+        return typedStatements;
     }
 
     public static TypedNamespaceNode typeCheckNamespace(UntypedNamespaceNode node) {
@@ -173,13 +183,7 @@ public class TypeChecker {
 
     private static TypedNamespaceStatementNode typeCheckTest(UntypedTestNode node) {
         var context = TypeCheckerFunctionContext.enterTest();
-        var typedStatements = new ArrayList<TypedFunctionStatementNode>();
-
-        for (var statement : node.body()) {
-            var statementResult = typeCheckFunctionStatement(statement, context);
-            context = statementResult.context();
-            typedStatements.add(statementResult.typedNode());
-        }
+        var typedStatements = typeCheckFunctionStatements(node.body(), context);
 
         return new TypedTestNode(
             node.name(),

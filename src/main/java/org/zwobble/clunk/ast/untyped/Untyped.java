@@ -11,6 +11,10 @@ public class Untyped {
         return new UntypedBoolLiteralNode(true, NullSource.INSTANCE);
     }
 
+    public static UntypedExpressionStatementNode expressionStatement(UntypedExpressionNode expression) {
+        return new UntypedExpressionStatementNode(expression, NullSource.INSTANCE);
+    }
+
     public static UntypedParamNode param(String name, UntypedStaticExpressionNode type) {
         return new UntypedParamNode(name, type, NullSource.INSTANCE);
     }

@@ -48,6 +48,15 @@ public class TypeChecker {
         });
     }
 
+    private static TypeCheckFunctionStatementResult typeCheckExpressionStatement(
+        UntypedExpressionStatementNode node,
+        TypeCheckerFunctionContext context
+    ) {
+        var typedExpression = typeCheckExpression(node.expression(), context);
+        var typedStatement = new TypedExpressionStatementNode(typedExpression, node.source());
+        return new TypeCheckFunctionStatementResult(typedStatement, context);
+    }
+
     private static TypedNamespaceStatementNode typeCheckFunction(UntypedFunctionNode node) {
         var returnType = typeCheckStaticExpressionNode(node.returnType());
 
@@ -68,6 +77,11 @@ public class TypeChecker {
         TypeCheckerFunctionContext context
     ) {
         return node.accept(new UntypedFunctionStatementNode.Visitor<TypeCheckFunctionStatementResult>() {
+            @Override
+            public TypeCheckFunctionStatementResult visit(UntypedExpressionStatementNode node) {
+                return typeCheckExpressionStatement(node, context);
+            }
+
             @Override
             public TypeCheckFunctionStatementResult visit(UntypedReturnNode node) {
                 return typeCheckReturn(node, context);

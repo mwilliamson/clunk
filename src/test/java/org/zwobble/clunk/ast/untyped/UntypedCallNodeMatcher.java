@@ -18,7 +18,7 @@ public class UntypedCallNodeMatcher extends CastMatcher<Object, UntypedCallNode>
         this.matchers = matchers;
     }
 
-    public UntypedCallNodeMatcher withReceiver(Matcher<UntypedExpressionNode> receiver) {
+    public UntypedCallNodeMatcher withReceiver(Matcher<? super UntypedExpressionNode> receiver) {
         return addMatcher(has("receiver", receiver));
     }
 

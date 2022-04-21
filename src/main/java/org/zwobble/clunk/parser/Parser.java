@@ -31,9 +31,14 @@ public class Parser {
         var expression = parsePrimaryExpression(tokens);
 
         while (tokens.isNext(TokenType.SYMBOL_PAREN_OPEN)) {
-            expression = new UntypedCallNode(expression, List.of(), expression.source());
             tokens.skip(TokenType.SYMBOL_PAREN_OPEN);
+            var positionalArgs = parseMany(
+                () -> tokens.isNext(TokenType.SYMBOL_PAREN_CLOSE),
+                () -> parseExpression(tokens),
+                () -> tokens.trySkip(TokenType.SYMBOL_COMMA)
+            );
             tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
+            expression = new UntypedCallNode(expression, positionalArgs, expression.source());
         }
 
         return expression;

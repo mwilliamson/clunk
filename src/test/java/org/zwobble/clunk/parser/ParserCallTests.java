@@ -3,9 +3,9 @@ package org.zwobble.clunk.parser;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
-import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.isUntypedCall;
-import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.isUntypedReferenceNode;
+import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.*;
 import static org.zwobble.clunk.parser.Parsing.parseString;
 
 public class ParserCallTests {
@@ -18,6 +18,30 @@ public class ParserCallTests {
         assertThat(node, isUntypedCall()
             .withReceiver(isUntypedReferenceNode("f"))
             .withPositionalArgs(empty())
+        );
+    }
+
+    @Test
+    public void canParseCallWithOneArgument() {
+        var source = "f(true)";
+
+        var node = parseString(source, Parser::parseExpression);
+
+        assertThat(node, isUntypedCall()
+            .withReceiver(isUntypedReferenceNode("f"))
+            .withPositionalArgs(contains(isUntypedBoolLiteralNode(true)))
+        );
+    }
+
+    @Test
+    public void canParseCallWithManyArguments() {
+        var source = "f(true, false)";
+
+        var node = parseString(source, Parser::parseExpression);
+
+        assertThat(node, isUntypedCall()
+            .withReceiver(isUntypedReferenceNode("f"))
+            .withPositionalArgs(contains(isUntypedBoolLiteralNode(true), isUntypedBoolLiteralNode(false)))
         );
     }
 

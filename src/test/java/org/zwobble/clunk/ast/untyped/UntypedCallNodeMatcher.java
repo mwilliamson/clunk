@@ -4,7 +4,6 @@ import org.hamcrest.Matcher;
 import org.zwobble.clunk.matchers.CastMatcher;
 import org.zwobble.clunk.util.Lists;
 
-import java.util.Collection;
 import java.util.List;
 
 import static org.hamcrest.Matchers.allOf;
@@ -22,7 +21,7 @@ public class UntypedCallNodeMatcher extends CastMatcher<Object, UntypedCallNode>
         return addMatcher(has("receiver", receiver));
     }
 
-    public UntypedCallNodeMatcher withPositionalArgs(Matcher<Collection<? extends UntypedExpressionNode>> positionalArgs) {
+    public UntypedCallNodeMatcher withPositionalArgs(Matcher<? extends Iterable<? extends UntypedExpressionNode>> positionalArgs) {
         return addMatcher(has("positionalArgs", positionalArgs));
     }
 

@@ -7,6 +7,7 @@ import org.zwobble.clunk.types.IntType;
 import org.zwobble.clunk.types.StringType;
 import org.zwobble.clunk.types.Type;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class TypeScriptCodeGenerator {
@@ -80,7 +81,7 @@ public class TypeScriptCodeGenerator {
 
             @Override
             public TypeScriptStatementNode visit(TypedTestNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileTest(node);
             }
         });
     }
@@ -111,6 +112,18 @@ public class TypeScriptCodeGenerator {
 
     private static TypeScriptExpressionNode compileStringLiteral(TypedStringLiteralNode node) {
         return new TypeScriptStringLiteralNode(node.value());
+    }
+
+    private static TypeScriptStatementNode compileTest(TypedTestNode node) {
+        return TypeScript.expressionStatement(TypeScript.call(
+            TypeScript.reference("test"),
+            List.of(
+                TypeScript.string(node.name()),
+                TypeScriptFunctionExpressionNode.builder()
+                    .addBodyStatements(node.body().stream().map(statement -> compileFunctionStatement(statement)).toList())
+                    .build()
+            )
+        ));
     }
 
     private static TypeScriptStatementNode compileVar(TypedVarNode node) {

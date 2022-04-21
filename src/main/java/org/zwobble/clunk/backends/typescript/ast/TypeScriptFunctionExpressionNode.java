@@ -35,5 +35,11 @@ public record TypeScriptFunctionExpressionNode(
             body.add(statement);
             return new Builder(params, body);
         }
+
+        public Builder addBodyStatements(List<TypeScriptStatementNode> statements) {
+            var body = new ArrayList<>(this.body);
+            body.addAll(statements);
+            return new Builder(params, body);
+        }
     }
 }

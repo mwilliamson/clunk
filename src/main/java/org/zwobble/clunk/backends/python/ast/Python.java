@@ -19,6 +19,10 @@ public class Python {
         return new PythonCallNode(receiver, kwargs);
     }
 
+    public static PythonExpressionStatementNode expressionStatement(PythonExpressionNode expression) {
+        return new PythonExpressionStatementNode(expression);
+    }
+
     public static PythonKeywordArgumentNode kwarg(String name, PythonExpressionNode expression) {
         return new PythonKeywordArgumentNode(name, expression);
     }

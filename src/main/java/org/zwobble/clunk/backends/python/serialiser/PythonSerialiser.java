@@ -111,6 +111,14 @@ public class PythonSerialiser {
         });
     }
 
+    private static void serialiseExpressionStatement(
+        PythonExpressionStatementNode node,
+        CodeBuilder builder
+    ) {
+        serialiseExpression(node.expression(), builder);
+        builder.newLine();
+    }
+
     private static void serialiseFunction(PythonFunctionNode node, CodeBuilder builder) {
         builder.append("def ");
         builder.append(node.name());
@@ -158,6 +166,12 @@ public class PythonSerialiser {
             @Override
             public Void visit(PythonClassDeclarationNode node) {
                 serialiseClassDeclaration(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(PythonExpressionStatementNode node) {
+                serialiseExpressionStatement(node, builder);
                 return null;
             }
 

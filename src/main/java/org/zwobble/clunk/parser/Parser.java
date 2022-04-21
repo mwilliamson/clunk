@@ -40,6 +40,13 @@ public class Parser {
         }
     }
 
+    private UntypedExpressionStatementNode parseExpressionStatement(TokenIterator<TokenType> tokens) {
+        var source = source(tokens);
+        var expression = parseExpression(tokens);
+        tokens.skip(TokenType.SYMBOL_SEMICOLON);
+        return new UntypedExpressionStatementNode(expression, source);
+    }
+
     private UntypedStringLiteralNode parseStringLiteral(TokenIterator<TokenType> tokens) {
         var source = source(tokens);
         var tokenValue = tokens.nextValue(TokenType.STRING);
@@ -112,7 +119,7 @@ public class Parser {
         } else if (tokens.isNext(TokenType.KEYWORD_VAR)) {
             return parseVar(tokens);
         } else {
-            throw new RuntimeException("TODO");
+            return parseExpressionStatement(tokens);
         }
     }
 

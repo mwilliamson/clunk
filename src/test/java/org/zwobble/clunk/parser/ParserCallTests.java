@@ -46,6 +46,18 @@ public class ParserCallTests {
     }
 
     @Test
+    public void argumentsMayHaveTrailingCommand() {
+        var source = "f(true,)";
+
+        var node = parseString(source, Parser::parseExpression);
+
+        assertThat(node, isUntypedCall()
+            .withReceiver(isUntypedReferenceNode("f"))
+            .withPositionalArgs(contains(isUntypedBoolLiteralNode(true)))
+        );
+    }
+
+    @Test
     public void canParseCallOfCall() {
         var source = "f()()";
 

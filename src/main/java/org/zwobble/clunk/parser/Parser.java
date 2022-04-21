@@ -28,6 +28,18 @@ public class Parser {
     }
 
     public UntypedExpressionNode parseExpression(TokenIterator<TokenType> tokens) {
+        var expression = parsePrimaryExpression(tokens);
+
+        while (tokens.isNext(TokenType.SYMBOL_PAREN_OPEN)) {
+            expression = new UntypedCallNode(expression, List.of(), expression.source());
+            tokens.skip(TokenType.SYMBOL_PAREN_OPEN);
+            tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
+        }
+
+        return expression;
+    }
+
+    private UntypedExpressionNode parsePrimaryExpression(TokenIterator<TokenType> tokens) {
         var source = tokens.peek().source();
         if (tokens.trySkip(TokenType.KEYWORD_FALSE)) {
             return new UntypedBoolLiteralNode(false, source);
@@ -41,6 +53,7 @@ public class Parser {
             throw new RuntimeException("TODO");
         }
     }
+
 
     private UntypedExpressionStatementNode parseExpressionStatement(TokenIterator<TokenType> tokens) {
         var source = source(tokens);

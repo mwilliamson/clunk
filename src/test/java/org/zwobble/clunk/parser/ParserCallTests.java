@@ -1,0 +1,23 @@
+package org.zwobble.clunk.parser;
+
+import org.junit.jupiter.api.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
+import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.*;
+import static org.zwobble.clunk.parser.Parsing.parseString;
+
+public class ParserCallTests {
+    @Test
+    public void canParseCallWithNoArguments() {
+        var source = "f()";
+
+        var node = parseString(source, Parser::parseExpression);
+
+        assertThat(node, isUntypedCall()
+            .withReceiver(isUntypedReferenceNode("f"))
+            .withPositionalArgs(empty())
+        );
+    }
+}

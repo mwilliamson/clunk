@@ -13,6 +13,10 @@ public class UntypedNodeMatchers {
         return cast(UntypedBoolLiteralNode.class, has("value", equalTo(value)));
     }
 
+    public static UntypedCallNodeMatcher isUntypedCall() {
+        return new UntypedCallNodeMatcher(List.of());
+    }
+
     public static Matcher<UntypedFunctionStatementNode> isUntypedExpressionStatementNode(Matcher<UntypedExpressionNode> expression) {
         return cast(UntypedExpressionStatementNode.class, has("expression", expression));
     }

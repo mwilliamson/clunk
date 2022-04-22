@@ -20,7 +20,11 @@ public class PythonCodeGenerator {
     }
 
     private PythonExpressionNode compileCall(TypedCallNode node) {
-        throw new RuntimeException("TODO");
+        return new PythonCallNode(
+            compileExpression(node.receiver()),
+            node.positionalArgs().stream().map(arg -> compileExpression(arg)).toList(),
+            List.of()
+        );
     }
 
     public PythonExpressionNode compileExpression(TypedExpressionNode node) {

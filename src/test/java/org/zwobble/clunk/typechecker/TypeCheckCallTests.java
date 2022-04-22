@@ -31,6 +31,7 @@ public class TypeCheckCallTests {
         assertThat(result, isTypedCallNode()
             .withReceiver(isTypedReceiverStaticFunctionNode(List.of("Stdlib", "Math"), "abs"))
             .withPositionalArgs(contains(isTypedIntLiteralNode(123)))
+            .withType(Types.INT)
         );
     }
 

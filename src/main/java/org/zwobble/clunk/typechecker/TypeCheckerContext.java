@@ -1,9 +1,7 @@
 package org.zwobble.clunk.typechecker;
 
-import org.zwobble.clunk.types.BoolType;
-import org.zwobble.clunk.types.IntType;
-import org.zwobble.clunk.types.StringType;
-import org.zwobble.clunk.types.Type;
+import org.zwobble.clunk.builtins.Builtins;
+import org.zwobble.clunk.types.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +9,7 @@ import java.util.Optional;
 
 public record TypeCheckerContext(Optional<Type> returnType, Map<String, Type> environment) {
     public static TypeCheckerContext stub() {
-        return new TypeCheckerContext(Optional.empty(), Map.of());
+        return new TypeCheckerContext(Optional.empty(), Builtins.ENVIRONMENT);
     }
 
     public TypeCheckerContext enterFunction(Type returnType) {
@@ -32,13 +30,13 @@ public record TypeCheckerContext(Optional<Type> returnType, Map<String, Type> en
         return new TypeCheckerContext(returnType, environment);
     }
 
-    public Type resolveType(String value) {
-        return switch (value) {
-            case "Bool" -> BoolType.INSTANCE;
-            case "Int" -> IntType.INSTANCE;
-            case "String" -> StringType.INSTANCE;
-            default -> throw new RuntimeException("TODO");
-        };
+    public Type resolveType(String name) {
+        var type = typeOf(name);
+        if (type instanceof MetaType) {
+            return ((MetaType) type).type();
+        } else {
+            throw new RuntimeException("TODO");
+        }
     }
 
     public Type typeOf(String name) {

@@ -8,6 +8,7 @@ public class Types {
     public static final Type BOOL = BoolType.INSTANCE;
     public static final Type INT = IntType.INSTANCE;
     public static final Type STRING = StringType.INSTANCE;
+    public static final Type UNIT = UnitType.INSTANCE;
 
     public static boolean isSubType(Type subType, Type superType) {
         return subType.equals(superType);

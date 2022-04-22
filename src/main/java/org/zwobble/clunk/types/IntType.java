@@ -6,4 +6,9 @@ public class IntType implements Type {
     private IntType() {
 
     }
+
+    @Override
+    public String describe() {
+        return "Int";
+    }
 }

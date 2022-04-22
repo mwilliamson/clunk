@@ -6,4 +6,9 @@ public class BoolType implements Type {
     private BoolType() {
 
     }
+
+    @Override
+    public String describe() {
+        return "Bool";
+    }
 }

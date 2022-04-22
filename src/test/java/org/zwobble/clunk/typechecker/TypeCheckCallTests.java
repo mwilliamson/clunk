@@ -36,6 +36,25 @@ public class TypeCheckCallTests {
     }
 
     @Test
+    public void whenNamespaceIsMissingFieldThenErrorIsThrown() {
+        var untypedNode = Untyped.call(
+            Untyped.fieldAccess(Untyped.reference("Math"), "noSuchFunction"),
+            List.of(Untyped.intLiteral(123))
+        );
+        var namespaceType = new NamespaceType(
+            List.of("Stdlib", "Math"),
+            Map.of("abs", new FunctionType(List.of(Types.INT), Types.INT))
+        );
+        var context = TypeCheckerContext.stub()
+            .updateType("Math", namespaceType);
+
+        var error = assertThrows(UnknownFieldError.class, () -> TypeChecker.typeCheckExpression(untypedNode, context));
+
+        assertThat(error.getType(), equalTo(namespaceType));
+        assertThat(error.getFieldName(), equalTo("noSuchFunction"));
+    }
+
+    @Test
     public void whenPositionalArgIsWrongTypeThenErrorIsThrown() {
         var untypedNode = Untyped.call(
             Untyped.fieldAccess(Untyped.reference("Math"), "abs"),

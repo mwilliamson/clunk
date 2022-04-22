@@ -32,8 +32,11 @@ public class TypeChecker {
             var typedFieldAccessReceiver = typeCheckExpression(receiver.receiver(), context);
 
             var fieldAccessReceiverType = (NamespaceType) typedFieldAccessReceiver.type();
-            // TODO: handle missing function
+
             var functionType = fieldAccessReceiverType.functions().get(receiver.fieldName());
+            if (functionType == null) {
+                throw new UnknownFieldError(fieldAccessReceiverType, receiver.fieldName(), receiver.source());
+            }
 
             if (node.positionalArgs().size() != functionType.positionalParams().size()) {
                 throw new WrongNumberOfArgumentsError(

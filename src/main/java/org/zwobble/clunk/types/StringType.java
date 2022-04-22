@@ -6,4 +6,9 @@ public class StringType implements Type {
     private StringType() {
 
     }
+
+    @Override
+    public String describe() {
+        return "String";
+    }
 }

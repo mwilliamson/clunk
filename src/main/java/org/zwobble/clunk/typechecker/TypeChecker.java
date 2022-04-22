@@ -2,6 +2,7 @@ package org.zwobble.clunk.typechecker;
 
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.ast.untyped.*;
+import org.zwobble.clunk.types.NamespaceType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,25 @@ public class TypeChecker {
         return new TypedBoolLiteralNode(node.value(), node.source());
     }
 
+    private static TypedExpressionNode typeCheckCall(UntypedCallNode node, TypeCheckerContext context) {
+        if (node.receiver() instanceof UntypedFieldAccessNode receiver) {
+            // TODO: handle not a namespace type
+            var typedFieldAccessReceiver = typeCheckExpression(receiver.receiver(), context);
+            var typedPositionalArgs = node.positionalArgs().stream().map(arg -> typeCheckExpression(arg, context)).toList();
+            var fieldAccessReceiverType = (NamespaceType) typedFieldAccessReceiver.type();
+            // TODO: handle missing function
+            var returnType = fieldAccessReceiverType.functions().get(receiver.fieldName());
+            return new TypedCallNode(
+                new TypedReceiverStaticFunctionNode(fieldAccessReceiverType.name(), receiver.fieldName(), receiver.source()),
+                typedPositionalArgs,
+                returnType,
+                node.source()
+            );
+        } else {
+            throw new RuntimeException("TODO");
+        }
+    }
+
     public static TypedExpressionNode typeCheckExpression(
         UntypedExpressionNode node,
         TypeCheckerContext context
@@ -37,7 +57,7 @@ public class TypeChecker {
 
             @Override
             public TypedExpressionNode visit(UntypedCallNode node) {
-                throw new RuntimeException("TODO: Not implemented");
+                return typeCheckCall(node, context);
             }
 
             @Override

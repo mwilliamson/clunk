@@ -29,6 +29,11 @@ public class PythonCodeGenerator {
             }
 
             @Override
+            public PythonExpressionNode visit(TypedCallNode node) {
+                throw new RuntimeException("TODO");
+            }
+
+            @Override
             public PythonExpressionNode visit(TypedIntLiteralNode node) {
                 return compileIntLiteral(node);
             }

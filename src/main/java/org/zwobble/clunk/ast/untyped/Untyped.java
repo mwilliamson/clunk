@@ -2,6 +2,8 @@ package org.zwobble.clunk.ast.untyped;
 
 import org.zwobble.clunk.sources.NullSource;
 
+import java.util.List;
+
 public class Untyped {
     public static UntypedBoolLiteralNode boolFalse() {
         return new UntypedBoolLiteralNode(false, NullSource.INSTANCE);
@@ -11,8 +13,19 @@ public class Untyped {
         return new UntypedBoolLiteralNode(true, NullSource.INSTANCE);
     }
 
+    public static UntypedCallNode call(
+        UntypedExpressionNode receiver,
+        List<UntypedExpressionNode> positionalArgs
+    ) {
+        return new UntypedCallNode(receiver, positionalArgs, NullSource.INSTANCE);
+    }
+
     public static UntypedExpressionStatementNode expressionStatement(UntypedExpressionNode expression) {
         return new UntypedExpressionStatementNode(expression, NullSource.INSTANCE);
+    }
+
+    public static UntypedExpressionNode fieldAccess(UntypedExpressionNode receiver, String fieldName) {
+        return new UntypedFieldAccessNode(receiver, fieldName, NullSource.INSTANCE);
     }
 
     public static UntypedIntLiteralNode intLiteral(int value) {

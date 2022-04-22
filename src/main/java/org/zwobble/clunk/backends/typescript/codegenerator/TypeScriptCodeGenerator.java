@@ -23,6 +23,11 @@ public class TypeScriptCodeGenerator {
             }
 
             @Override
+            public TypeScriptExpressionNode visit(TypedCallNode node) {
+                throw new RuntimeException("TODO");
+            }
+
+            @Override
             public TypeScriptExpressionNode visit(TypedIntLiteralNode node) {
                 return compileIntLiteral(node);
             }

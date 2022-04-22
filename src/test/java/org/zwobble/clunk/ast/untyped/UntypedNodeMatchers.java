@@ -4,6 +4,7 @@ import org.hamcrest.Matcher;
 
 import java.util.List;
 
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.matchers.CastMatcher.cast;
 import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
@@ -19,6 +20,16 @@ public class UntypedNodeMatchers {
 
     public static Matcher<UntypedFunctionStatementNode> isUntypedExpressionStatementNode(Matcher<UntypedExpressionNode> expression) {
         return cast(UntypedExpressionStatementNode.class, has("expression", expression));
+    }
+
+    public static Matcher<UntypedExpressionNode> isUntypedFieldAccessNode(
+        Matcher<UntypedExpressionNode> receiver,
+        Matcher<String> fieldName
+    ) {
+        return cast(UntypedFieldAccessNode.class, allOf(
+            has("receiver", receiver),
+            has("fieldName", fieldName)
+        ));
     }
 
     public static UntypedFunctionNodeMatcher isUntypedFunctionNode() {

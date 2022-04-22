@@ -30,18 +30,22 @@ public class Parser {
     public UntypedExpressionNode parseExpression(TokenIterator<TokenType> tokens) {
         var expression = parsePrimaryExpression(tokens);
 
-        while (tokens.isNext(TokenType.SYMBOL_PAREN_OPEN)) {
-            tokens.skip(TokenType.SYMBOL_PAREN_OPEN);
-            var positionalArgs = parseMany(
-                () -> tokens.isNext(TokenType.SYMBOL_PAREN_CLOSE),
-                () -> parseExpression(tokens),
-                () -> tokens.trySkip(TokenType.SYMBOL_COMMA)
-            );
-            tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
-            expression = new UntypedCallNode(expression, positionalArgs, expression.source());
+        while (true) {
+            if (tokens.trySkip(TokenType.SYMBOL_DOT)) {
+                var fieldName = tokens.nextValue(TokenType.IDENTIFIER);
+                expression = new UntypedFieldAccessNode(expression, fieldName, expression.source());
+            } else if (tokens.trySkip(TokenType.SYMBOL_PAREN_OPEN)) {
+                var positionalArgs = parseMany(
+                    () -> tokens.isNext(TokenType.SYMBOL_PAREN_CLOSE),
+                    () -> parseExpression(tokens),
+                    () -> tokens.trySkip(TokenType.SYMBOL_COMMA)
+                );
+                tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
+                expression = new UntypedCallNode(expression, positionalArgs, expression.source());
+            } else {
+                return expression;
+            }
         }
-
-        return expression;
     }
 
     private UntypedExpressionNode parsePrimaryExpression(TokenIterator<TokenType> tokens) {

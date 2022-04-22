@@ -26,6 +26,7 @@ public class Tokeniser {
             RegexTokeniser.rule(TokenType.SYMBOL_BRACE_CLOSE, "\\}"),
             RegexTokeniser.rule(TokenType.SYMBOL_COLON, ":"),
             RegexTokeniser.rule(TokenType.SYMBOL_COMMA, ","),
+            RegexTokeniser.rule(TokenType.SYMBOL_DOT, "\\."),
             RegexTokeniser.rule(TokenType.SYMBOL_EQUALS, "="),
             RegexTokeniser.rule(TokenType.SYMBOL_PAREN_OPEN, "\\("),
             RegexTokeniser.rule(TokenType.SYMBOL_PAREN_CLOSE, "\\)"),

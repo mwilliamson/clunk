@@ -41,6 +41,11 @@ public class TypeChecker {
             }
 
             @Override
+            public TypedExpressionNode visit(UntypedFieldAccessNode node) {
+                throw new RuntimeException("TODO: Not implemented");
+            }
+
+            @Override
             public TypedExpressionNode visit(UntypedReferenceNode node) {
                 return typeCheckReference(node, context);
             }

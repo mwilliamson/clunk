@@ -39,6 +39,12 @@ public class TypeScriptSerialiser {
             }
 
             @Override
+            public Void visit(TypeScriptNumberLiteralNode node) {
+                serialiseNumberLiteral(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(TypeScriptFunctionExpressionNode node) {
                 serialiseFunctionExpression(node, builder);
                 return null;
@@ -101,6 +107,14 @@ public class TypeScriptSerialiser {
         }
         builder.dedent();
         builder.append("}");
+    }
+
+    private static void serialiseNumberLiteral(TypeScriptNumberLiteralNode node, CodeBuilder builder) {
+        if ((int)node.value() == node.value()) {
+            builder.append(Integer.toString((int)node.value()));
+        } else {
+            builder.append(Double.toString(node.value()));
+        }
     }
 
     private static void serialiseParam(TypeScriptParamNode node, CodeBuilder builder) {

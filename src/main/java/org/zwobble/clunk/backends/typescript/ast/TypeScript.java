@@ -38,6 +38,10 @@ public class TypeScript {
         return new TypeScriptModuleNode(name, statements);
     }
 
+    public static TypeScriptExpressionNode numberLiteral(double value) {
+        return new TypeScriptNumberLiteralNode(value);
+    }
+
     public static TypeScriptParamNode param(String name, TypeScriptReferenceNode type) {
         return new TypeScriptParamNode(name, type);
     }

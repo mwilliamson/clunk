@@ -17,7 +17,10 @@ public class TypeCheckFunctionTests {
             .name("f")
             .build();
 
-        var result = TypeChecker.typeCheckNamespaceStatement(untypedNode);
+        var result = TypeChecker.typeCheckNamespaceStatement(
+            untypedNode,
+            TypeCheckerContext.stub()
+        );
 
         assertThat(result, isTypedFunctionNode().withName("f"));
     }
@@ -29,7 +32,10 @@ public class TypeCheckFunctionTests {
             .addParam(Untyped.param("y", Untyped.staticReference("String")))
             .build();
 
-        var result = TypeChecker.typeCheckNamespaceStatement(untypedNode);
+        var result = TypeChecker.typeCheckNamespaceStatement(
+            untypedNode,
+            TypeCheckerContext.stub()
+        );
 
         assertThat(result, isTypedFunctionNode().withParams(contains(
             isTypedParamNode().withName("x").withType(IntType.INSTANCE),
@@ -43,7 +49,10 @@ public class TypeCheckFunctionTests {
             .returnType(Untyped.staticReference("Int"))
             .build();
 
-        var result = TypeChecker.typeCheckNamespaceStatement(untypedNode);
+        var result = TypeChecker.typeCheckNamespaceStatement(
+            untypedNode,
+            TypeCheckerContext.stub()
+        );
 
         assertThat(result, isTypedFunctionNode().withReturnType(IntType.INSTANCE));
     }
@@ -55,7 +64,10 @@ public class TypeCheckFunctionTests {
             .addBodyStatement(Untyped.returnStatement(Untyped.boolFalse()))
             .build();
 
-        var result = TypeChecker.typeCheckNamespaceStatement(untypedNode);
+        var result = TypeChecker.typeCheckNamespaceStatement(
+            untypedNode,
+            TypeCheckerContext.stub()
+        );
 
         assertThat(result, isTypedFunctionNode().withBody(contains(
             isTypedReturnNode().withExpression(isTypedBoolLiteralNode(false))

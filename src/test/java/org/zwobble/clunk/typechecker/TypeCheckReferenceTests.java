@@ -11,7 +11,7 @@ public class TypeCheckReferenceTests {
     @Test
     public void referenceHasTypeOfNameInEnvironment() {
         var untypedNode = Untyped.reference("x");
-        var context = TypeCheckerFunctionContext.stub()
+        var context = TypeCheckerContext.stub()
             .updateType("x", IntType.INSTANCE);
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);

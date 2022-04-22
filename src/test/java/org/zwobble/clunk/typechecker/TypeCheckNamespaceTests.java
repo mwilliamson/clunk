@@ -18,7 +18,7 @@ public class TypeCheckNamespaceTests {
             .addStatement(UntypedRecordNode.builder("X").build())
             .build();
 
-        var result = TypeChecker.typeCheckNamespace(untypedNode);
+        var result = TypeChecker.typeCheckNamespace(untypedNode, TypeCheckerContext.stub());
 
         assertThat(result, allOf(
             has("name", equalTo(List.of("example", "project"))),

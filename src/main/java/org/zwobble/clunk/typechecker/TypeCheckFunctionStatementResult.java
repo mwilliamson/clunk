@@ -4,6 +4,6 @@ import org.zwobble.clunk.ast.typed.TypedFunctionStatementNode;
 
 public record TypeCheckFunctionStatementResult(
     TypedFunctionStatementNode typedNode,
-    TypeCheckerFunctionContext context
+    TypeCheckerContext context
 ) {
 }

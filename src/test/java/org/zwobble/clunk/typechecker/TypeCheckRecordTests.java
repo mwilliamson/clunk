@@ -16,7 +16,10 @@ public class TypeCheckRecordTests {
             .addField(Untyped.recordField("x", Untyped.staticReference("String")))
             .build();
 
-        var result = TypeChecker.typeCheckRecord(untypedNode);
+        var result = TypeChecker.typeCheckRecord(
+            untypedNode,
+            TypeCheckerContext.stub()
+        );
 
         assertThat(result, allOf(
             has("name", equalTo("Example")),

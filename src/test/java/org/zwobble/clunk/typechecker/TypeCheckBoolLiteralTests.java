@@ -13,7 +13,7 @@ public class TypeCheckBoolLiteralTests {
     public void untypedFalseIsConvertedToTypedFalse() {
         var untypedNode = Untyped.boolFalse();
 
-        var result = TypeChecker.typeCheckExpression(untypedNode, TypeCheckerFunctionContext.stub());
+        var result = TypeChecker.typeCheckExpression(untypedNode, TypeCheckerContext.stub());
 
         assertThat(result, allOf(
             isA(TypedBoolLiteralNode.class),
@@ -25,7 +25,7 @@ public class TypeCheckBoolLiteralTests {
     public void untypedTrueIsConvertedToTypedTrue() {
         var untypedNode = Untyped.boolTrue();
 
-        var result = TypeChecker.typeCheckExpression(untypedNode, TypeCheckerFunctionContext.stub());
+        var result = TypeChecker.typeCheckExpression(untypedNode, TypeCheckerContext.stub());
 
         assertThat(result, allOf(
             isA(TypedBoolLiteralNode.class),

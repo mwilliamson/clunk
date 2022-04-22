@@ -2,10 +2,6 @@ package org.zwobble.clunk.typechecker;
 
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.ast.untyped.*;
-import org.zwobble.clunk.types.BoolType;
-import org.zwobble.clunk.types.IntType;
-import org.zwobble.clunk.types.StringType;
-import org.zwobble.clunk.types.Type;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +10,13 @@ import java.util.stream.Collectors;
 import static org.zwobble.clunk.types.Types.isSubType;
 
 public class TypeChecker {
-    private static TypedParamNode typeCheckParam(UntypedParamNode node) {
+    private static TypedParamNode typeCheckParam(
+        UntypedParamNode node,
+        TypeCheckerContext context
+    ) {
         return new TypedParamNode(
             node.name(),
-            typeCheckStaticExpressionNode(node.type()),
+            typeCheckStaticExpressionNode(node.type(), context),
             node.source()
         );
     }
@@ -28,7 +27,7 @@ public class TypeChecker {
 
     public static TypedExpressionNode typeCheckExpression(
         UntypedExpressionNode node,
-        TypeCheckerFunctionContext context
+        TypeCheckerContext context
     ) {
         return node.accept(new UntypedExpressionNode.Visitor<TypedExpressionNode>() {
             @Override
@@ -55,22 +54,27 @@ public class TypeChecker {
 
     private static TypeCheckFunctionStatementResult typeCheckExpressionStatement(
         UntypedExpressionStatementNode node,
-        TypeCheckerFunctionContext context
+        TypeCheckerContext context
     ) {
         var typedExpression = typeCheckExpression(node.expression(), context);
         var typedStatement = new TypedExpressionStatementNode(typedExpression, node.source());
         return new TypeCheckFunctionStatementResult(typedStatement, context);
     }
 
-    private static TypedNamespaceStatementNode typeCheckFunction(UntypedFunctionNode node) {
-        var returnType = typeCheckStaticExpressionNode(node.returnType());
+    private static TypedNamespaceStatementNode typeCheckFunction(
+        UntypedFunctionNode node,
+        TypeCheckerContext context
+    ) {
+        var returnType = typeCheckStaticExpressionNode(node.returnType(), context);
 
-        var context = TypeCheckerFunctionContext.enterFunction(returnType.type());
-        var typedStatements = typeCheckFunctionStatements(node.body(), context);
+        var typedStatements = typeCheckFunctionStatements(
+            node.body(),
+            context.enterFunction(returnType.type())
+        );
 
         return new TypedFunctionNode(
             node.name(),
-            node.params().stream().map(param -> typeCheckParam(param)).toList(),
+            node.params().stream().map(param -> typeCheckParam(param, context)).toList(),
             returnType,
             typedStatements,
             node.source()
@@ -79,7 +83,7 @@ public class TypeChecker {
 
     public static TypeCheckFunctionStatementResult typeCheckFunctionStatement(
         UntypedFunctionStatementNode node,
-        TypeCheckerFunctionContext context
+        TypeCheckerContext context
     ) {
         return node.accept(new UntypedFunctionStatementNode.Visitor<TypeCheckFunctionStatementResult>() {
             @Override
@@ -101,7 +105,7 @@ public class TypeChecker {
 
     private static List<TypedFunctionStatementNode> typeCheckFunctionStatements(
         List<UntypedFunctionStatementNode> body,
-        TypeCheckerFunctionContext context
+        TypeCheckerContext context
     ) {
         var typedStatements = new ArrayList<TypedFunctionStatementNode>();
 
@@ -114,58 +118,70 @@ public class TypeChecker {
         return typedStatements;
     }
 
-    public static TypedNamespaceNode typeCheckNamespace(UntypedNamespaceNode node) {
+    public static TypedNamespaceNode typeCheckNamespace(
+        UntypedNamespaceNode node,
+        TypeCheckerContext context
+    ) {
         return new TypedNamespaceNode(
             node.name(),
             node.statements().stream()
-                .map(statement -> typeCheckNamespaceStatement(statement))
+                .map(statement -> typeCheckNamespaceStatement(statement, context))
                 .collect(Collectors.toList()),
             node.source()
         );
     }
 
-    public static TypedNamespaceStatementNode typeCheckNamespaceStatement(UntypedNamespaceStatementNode node) {
+    public static TypedNamespaceStatementNode typeCheckNamespaceStatement(
+        UntypedNamespaceStatementNode node,
+        TypeCheckerContext context
+    ) {
         return node.accept(new UntypedNamespaceStatementNode.Visitor<TypedNamespaceStatementNode>() {
             @Override
             public TypedNamespaceStatementNode visit(UntypedFunctionNode node) {
-                return typeCheckFunction(node);
+                return typeCheckFunction(node, context);
             }
 
             @Override
             public TypedNamespaceStatementNode visit(UntypedRecordNode node) {
-                return typeCheckRecord(node);
+                return typeCheckRecord(node, context);
             }
 
             @Override
             public TypedNamespaceStatementNode visit(UntypedTestNode node) {
-                return typeCheckTest(node);
+                return typeCheckTest(node, context);
             }
         });
     }
 
-    public static TypedRecordNode typeCheckRecord(UntypedRecordNode node) {
+    public static TypedRecordNode typeCheckRecord(
+        UntypedRecordNode node,
+        TypeCheckerContext context
+    ) {
         return new TypedRecordNode(
             node.name(),
             node.fields().stream()
-                .map(field -> typeCheckRecordField(field))
+                .map(field -> typeCheckRecordField(field, context))
                 .collect(Collectors.toList()),
             node.source()
         );
     }
 
-    private static TypedRecordFieldNode typeCheckRecordField(UntypedRecordFieldNode node) {
+    private static TypedRecordFieldNode typeCheckRecordField(
+        UntypedRecordFieldNode node,
+        TypeCheckerContext context
+    ) {
         return new TypedRecordFieldNode(
             node.name(),
-            typeCheckStaticExpressionNode(node.type()),
+            typeCheckStaticExpressionNode(node.type(), context),
             node.source()
         );
     }
 
-    private static TypedExpressionNode typeCheckReference(UntypedReferenceNode node, TypeCheckerFunctionContext context) {
+    private static TypedExpressionNode typeCheckReference(UntypedReferenceNode node, TypeCheckerContext context) {
         return new TypedReferenceNode(node.name(), context.typeOf(node.name()), node.source());
     }
 
-    private static TypeCheckFunctionStatementResult typeCheckReturn(UntypedReturnNode node, TypeCheckerFunctionContext context) {
+    private static TypeCheckFunctionStatementResult typeCheckReturn(UntypedReturnNode node, TypeCheckerContext context) {
         var expression = typeCheckExpression(node.expression(), context);
 
         if (context.returnType().isEmpty()) {
@@ -182,17 +198,23 @@ public class TypeChecker {
         return new TypeCheckFunctionStatementResult(typedNode, context);
     }
 
-    private static TypedStaticExpressionNode typeCheckStaticExpressionNode(UntypedStaticExpressionNode node) {
+    private static TypedStaticExpressionNode typeCheckStaticExpressionNode(
+        UntypedStaticExpressionNode node,
+        TypeCheckerContext context
+    ) {
         return node.accept(new UntypedStaticExpressionNode.Visitor<TypedStaticExpressionNode>() {
             @Override
             public TypedStaticExpressionNode visit(UntypedStaticReferenceNode node) {
-                return typeCheckStaticReferenceNode(node);
+                return typeCheckStaticReferenceNode(node, context);
             }
         });
     }
 
-    public static TypedStaticExpressionNode typeCheckStaticReferenceNode(UntypedStaticReferenceNode node) {
-        var type = resolveType(node.value());
+    public static TypedStaticExpressionNode typeCheckStaticReferenceNode(
+        UntypedStaticReferenceNode node,
+        TypeCheckerContext context
+    ) {
+        var type = context.resolveType(node.value());
         return new TypedStaticExpressionNode(type, node.source());
     }
 
@@ -200,9 +222,14 @@ public class TypeChecker {
         return new TypedStringLiteralNode(node.value(), node.source());
     }
 
-    private static TypedNamespaceStatementNode typeCheckTest(UntypedTestNode node) {
-        var context = TypeCheckerFunctionContext.enterTest();
-        var typedStatements = typeCheckFunctionStatements(node.body(), context);
+    private static TypedNamespaceStatementNode typeCheckTest(
+        UntypedTestNode node,
+        TypeCheckerContext context
+    ) {
+        var typedStatements = typeCheckFunctionStatements(
+            node.body(),
+            context.enterTest()
+        );
 
         return new TypedTestNode(
             node.name(),
@@ -213,7 +240,7 @@ public class TypeChecker {
 
     private static TypeCheckFunctionStatementResult typeCheckVar(
         UntypedVarNode node,
-        TypeCheckerFunctionContext context
+        TypeCheckerContext context
     ) {
         var typedExpression = typeCheckExpression(node.expression(), context);
         var typedNode = new TypedVarNode(
@@ -223,14 +250,5 @@ public class TypeChecker {
         );
         var updatedContext = context.updateType(node.name(), typedExpression.type());
         return new TypeCheckFunctionStatementResult(typedNode, updatedContext);
-    }
-
-    private static Type resolveType(String value) {
-        return switch (value) {
-            case "Bool" -> BoolType.INSTANCE;
-            case "Int" -> IntType.INSTANCE;
-            case "String" -> StringType.INSTANCE;
-            default -> throw new RuntimeException("TODO");
-        };
     }
 }

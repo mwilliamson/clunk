@@ -15,7 +15,10 @@ public class TypeCheckTestTests {
             .addBodyStatement(Untyped.var("x", Untyped.boolFalse()))
             .build();
 
-        var result = TypeChecker.typeCheckNamespaceStatement(untypedNode);
+        var result = TypeChecker.typeCheckNamespaceStatement(
+            untypedNode,
+            TypeCheckerContext.stub()
+        );
 
         assertThat(result, isTypedTestNode().withBody(contains(
             isTypedVarNode().withExpression(isTypedBoolLiteralNode(false))

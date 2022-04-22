@@ -13,7 +13,7 @@ public class TypeCheckStringLiteralTests {
     public void untypedStringIsConvertedToTypedString() {
         var untypedNode = Untyped.string("hello");
 
-        var result = TypeChecker.typeCheckExpression(untypedNode, TypeCheckerFunctionContext.stub());
+        var result = TypeChecker.typeCheckExpression(untypedNode, TypeCheckerContext.stub());
 
         assertThat(result, allOf(
             isA(TypedStringLiteralNode.class),

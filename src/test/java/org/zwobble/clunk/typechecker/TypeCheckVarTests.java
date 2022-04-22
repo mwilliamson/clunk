@@ -13,7 +13,7 @@ public class TypeCheckVarTests {
     @Test
     public void expressionIsTypeChecked() {
         var untypedNode = Untyped.var("x", Untyped.boolFalse());
-        var context = TypeCheckerFunctionContext.stub();
+        var context = TypeCheckerContext.stub();
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
@@ -23,7 +23,7 @@ public class TypeCheckVarTests {
     @Test
     public void nameHasInferredTypeInEnvironment() {
         var untypedNode = Untyped.var("x", Untyped.boolFalse());
-        var context = TypeCheckerFunctionContext.stub();
+        var context = TypeCheckerContext.stub();
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 

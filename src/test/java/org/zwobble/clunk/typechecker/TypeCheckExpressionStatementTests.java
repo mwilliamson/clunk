@@ -14,7 +14,7 @@ public class TypeCheckExpressionStatementTests {
     public void expressionIsTypeChecked() {
         var untypedNode = Untyped.expressionStatement(Untyped.boolFalse());
 
-        var result = TypeChecker.typeCheckFunctionStatement(untypedNode, TypeCheckerFunctionContext.stub());
+        var result = TypeChecker.typeCheckFunctionStatement(untypedNode, TypeCheckerContext.stub());
 
         assertThat(result.typedNode(), allOf(
             isA(TypedExpressionStatementNode.class),

@@ -117,13 +117,36 @@ public class Parser {
     public UntypedNamespaceNode parseNamespace(TokenIterator<TokenType> tokens, List<String> name) {
         var source = source(tokens);
 
+        var imports = parseMany(
+            () -> !tokens.isNext(TokenType.KEYWORD_IMPORT),
+            () -> parseImport(tokens),
+            () -> true
+        );
+
         var statements = parseMany(
             () -> tokens.isNext(TokenType.END),
             () -> parseNamespaceStatement(tokens),
             () -> true
         );
 
-        return new UntypedNamespaceNode(name, statements, source);
+        return new UntypedNamespaceNode(name, imports, statements, source);
+    }
+
+    private UntypedImportNode parseImport(TokenIterator<TokenType> tokens) {
+        var source = source(tokens);
+        var name = new ArrayList<String>();
+
+        tokens.skip(TokenType.KEYWORD_IMPORT);
+
+        while (true) {
+            name.add(tokens.nextValue(TokenType.IDENTIFIER));
+
+            if (tokens.trySkip(TokenType.SYMBOL_SEMICOLON)) {
+                return new UntypedImportNode(name, source);
+            }
+
+            tokens.skip(TokenType.SYMBOL_DOT);
+        }
     }
 
     private UntypedNamespaceStatementNode parseFunction(TokenIterator<TokenType> tokens) {

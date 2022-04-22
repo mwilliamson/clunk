@@ -36,6 +36,10 @@ public class UntypedNodeMatchers {
         return new UntypedFunctionNodeMatcher(List.of());
     }
 
+    public static Matcher<UntypedImportNode> isUntypedImportNode(List<String> name) {
+        return cast(UntypedImportNode.class, has("name", equalTo(name)));
+    }
+
     public static Matcher<UntypedExpressionNode> isUntypedIntLiteralNode(int value) {
         return cast(UntypedIntLiteralNode.class, has("value", equalTo(value)));
     }

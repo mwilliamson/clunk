@@ -17,6 +17,10 @@ public class UntypedNamespaceNodeMatcher extends CastMatcher<Object, UntypedName
         this.matchers = matchers;
     }
 
+    public UntypedNamespaceNodeMatcher withImports(Matcher<Iterable<? extends UntypedImportNode>> imports) {
+        return addMatcher(has("imports", imports));
+    }
+
     public UntypedNamespaceNodeMatcher withStatements(Matcher<Iterable<? extends UntypedNamespaceStatementNode>> statements) {
         return addMatcher(has("statements", statements));
     }

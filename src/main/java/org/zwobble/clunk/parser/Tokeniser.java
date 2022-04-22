@@ -15,6 +15,7 @@ public class Tokeniser {
         List.of(
             RegexTokeniser.rule(TokenType.KEYWORD_FALSE, "false"),
             RegexTokeniser.rule(TokenType.KEYWORD_FUN, "fun"),
+            RegexTokeniser.rule(TokenType.KEYWORD_IMPORT, "import"),
             RegexTokeniser.rule(TokenType.KEYWORD_RECORD, "record"),
             RegexTokeniser.rule(TokenType.KEYWORD_RETURN, "return"),
             RegexTokeniser.rule(TokenType.KEYWORD_TEST, "test"),

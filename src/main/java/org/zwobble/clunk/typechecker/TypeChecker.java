@@ -2,7 +2,7 @@ package org.zwobble.clunk.typechecker;
 
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.ast.untyped.*;
-import org.zwobble.clunk.types.NamespaceType;
+import org.zwobble.clunk.types.StaticFunctionType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,43 +27,34 @@ public class TypeChecker {
     }
 
     private static TypedExpressionNode typeCheckCall(UntypedCallNode node, TypeCheckerContext context) {
-        if (node.receiver() instanceof UntypedFieldAccessNode receiver) {
-            // TODO: handle not a namespace type
-            var typedFieldAccessReceiver = typeCheckExpression(receiver.receiver(), context);
+        var receiver = typeCheckExpression(node.receiver(), context);
 
-            var fieldAccessReceiverType = (NamespaceType) typedFieldAccessReceiver.type();
+        // TODO: handle not a StaticFunctionType
+        var receiverType = (StaticFunctionType) receiver.type();
 
-            var functionType = fieldAccessReceiverType.functions().get(receiver.fieldName());
-            if (functionType == null) {
-                throw new UnknownFieldError(fieldAccessReceiverType, receiver.fieldName(), receiver.source());
-            }
-
-            if (node.positionalArgs().size() != functionType.positionalParams().size()) {
-                throw new WrongNumberOfArgumentsError(
-                    functionType.positionalParams().size(),
-                    node.positionalArgs().size(),
-                    node.source()
-                );
-            }
-            var typedPositionalArgs = node.positionalArgs().stream().map(arg -> typeCheckExpression(arg, context)).toList();
-
-            for (var argIndex = 0; argIndex < functionType.positionalParams().size(); argIndex++) {
-                var paramType = functionType.positionalParams().get(argIndex);
-                var argNode = typedPositionalArgs.get(argIndex);
-                var argType = argNode.type();
-                if (!isSubType(argType, paramType)) {
-                    throw new UnexpectedTypeError(paramType, argType, argNode.source());
-                }
-            }
-            return new TypedCallNode(
-                new TypedReceiverStaticFunctionNode(fieldAccessReceiverType, receiver.fieldName(), receiver.source()),
-                typedPositionalArgs,
-                functionType.returnType(),
+        if (node.positionalArgs().size() != receiverType.positionalParams().size()) {
+            throw new WrongNumberOfArgumentsError(
+                receiverType.positionalParams().size(),
+                node.positionalArgs().size(),
                 node.source()
             );
-        } else {
-            throw new RuntimeException("TODO");
         }
+        var typedPositionalArgs = node.positionalArgs().stream().map(arg -> typeCheckExpression(arg, context)).toList();
+
+        for (var argIndex = 0; argIndex < receiverType.positionalParams().size(); argIndex++) {
+            var paramType = receiverType.positionalParams().get(argIndex);
+            var argNode = typedPositionalArgs.get(argIndex);
+            var argType = argNode.type();
+            if (!isSubType(argType, paramType)) {
+                throw new UnexpectedTypeError(paramType, argType, argNode.source());
+            }
+        }
+        return new TypedCallNode(
+            receiver,
+            typedPositionalArgs,
+            receiverType.returnType(),
+            node.source()
+        );
     }
 
     public static TypedExpressionNode typeCheckExpression(

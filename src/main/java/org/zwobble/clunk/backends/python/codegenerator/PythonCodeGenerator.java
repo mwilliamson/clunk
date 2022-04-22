@@ -3,10 +3,7 @@ package org.zwobble.clunk.backends.python.codegenerator;
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.python.ast.*;
 import org.zwobble.clunk.builtins.Builtins;
-import org.zwobble.clunk.types.BoolType;
-import org.zwobble.clunk.types.IntType;
-import org.zwobble.clunk.types.StringType;
-import org.zwobble.clunk.types.Type;
+import org.zwobble.clunk.types.*;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -57,7 +54,11 @@ public class PythonCodeGenerator {
 
     private PythonStatementNode compileExpressionStatement(TypedExpressionStatementNode node) {
         if (node.expression() instanceof TypedCallNode expression) {
-            if (expression.receiver().namespaceType() == Builtins.NAMESPACE_STDLIB_ASSERT && expression.receiver().functionName().equals("isTrue")) {
+            if (
+                expression.receiver().type() instanceof StaticFunctionType receiverType &&
+                receiverType.namespaceName().equals(Builtins.NAMESPACE_STDLIB_ASSERT.name())
+                && receiverType.functionName().equals("isTrue")
+            ) {
                 return new PythonAssertNode(compileExpression(expression.positionalArgs().get(0)));
             }
         }

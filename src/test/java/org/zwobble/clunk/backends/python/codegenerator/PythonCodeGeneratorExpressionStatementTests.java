@@ -3,10 +3,10 @@ package org.zwobble.clunk.backends.python.codegenerator;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedCallNode;
-import org.zwobble.clunk.ast.typed.TypedReceiverStaticFunctionNode;
 import org.zwobble.clunk.backends.python.serialiser.PythonSerialiser;
 import org.zwobble.clunk.builtins.Builtins;
 import org.zwobble.clunk.sources.NullSource;
+import org.zwobble.clunk.types.StaticFunctionType;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
@@ -29,7 +29,15 @@ public class PythonCodeGeneratorExpressionStatementTests {
     @Test
     public void staticAssertCallsAreCompiledToAssertStatements() {
         var node = Typed.expressionStatement(new TypedCallNode(
-            new TypedReceiverStaticFunctionNode(Builtins.NAMESPACE_STDLIB_ASSERT, "isTrue", NullSource.INSTANCE),
+            Typed.reference(
+                "isTrue",
+                new StaticFunctionType(
+                    Builtins.NAMESPACE_STDLIB_ASSERT.name(),
+                    "isTrue",
+                    List.of(Types.BOOL),
+                    Types.UNIT
+                )
+            ),
             List.of(Typed.boolFalse()),
             Types.UNIT,
             NullSource.INSTANCE

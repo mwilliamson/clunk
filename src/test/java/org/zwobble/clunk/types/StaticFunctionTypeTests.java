@@ -7,13 +7,18 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-public class FunctionTypeTests {
+public class StaticFunctionTypeTests {
     @Test
     public void describeIncludesArgsAndReturnType() {
-        var type = new FunctionType(List.of(Types.BOOL, Types.STRING), Types.INT);
+        var type = new StaticFunctionType(
+            List.of("A", "B"),
+            "f",
+            List.of(Types.BOOL, Types.STRING),
+            Types.INT
+        );
 
         var result = type.describe();
 
-        assertThat(result, equalTo("(Bool, String) -> Int"));
+        assertThat(result, equalTo("A.B.f: (Bool, String) -> Int"));
     }
 }

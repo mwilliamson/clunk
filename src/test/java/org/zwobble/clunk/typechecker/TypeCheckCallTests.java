@@ -2,10 +2,12 @@ package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.untyped.Untyped;
-import org.zwobble.clunk.types.*;
+import org.zwobble.clunk.types.IntType;
+import org.zwobble.clunk.types.StaticFunctionType;
+import org.zwobble.clunk.types.StringType;
+import org.zwobble.clunk.types.Types;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
@@ -17,55 +19,41 @@ public class TypeCheckCallTests {
     @Test
     public void canTypeCheckCallToStaticFunction() {
         var untypedNode = Untyped.call(
-            Untyped.fieldAccess(Untyped.reference("Math"), "abs"),
+            Untyped.reference("abs"),
             List.of(Untyped.intLiteral(123))
         );
-        var namespaceType = new NamespaceType(
+        var functionType = new StaticFunctionType(
             List.of("Stdlib", "Math"),
-            Map.of("abs", new FunctionType(List.of(Types.INT), Types.INT))
+            "abs",
+            List.of(Types.INT),
+            Types.INT
         );
         var context = TypeCheckerContext.stub()
-            .updateType("Math", namespaceType);
+            .updateType("abs", functionType);
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 
         assertThat(result, isTypedCallNode()
-            .withReceiver(isTypedReceiverStaticFunctionNode(namespaceType, "abs"))
+            .withReceiver(isTypedReferenceNode().withName("abs").withType(functionType))
             .withPositionalArgs(contains(isTypedIntLiteralNode(123)))
             .withType(Types.INT)
         );
     }
 
     @Test
-    public void whenNamespaceIsMissingFieldThenErrorIsThrown() {
-        var untypedNode = Untyped.call(
-            Untyped.fieldAccess(Untyped.reference("Math"), "noSuchFunction"),
-            List.of(Untyped.intLiteral(123))
-        );
-        var namespaceType = new NamespaceType(
-            List.of("Stdlib", "Math"),
-            Map.of("abs", new FunctionType(List.of(Types.INT), Types.INT))
-        );
-        var context = TypeCheckerContext.stub()
-            .updateType("Math", namespaceType);
-
-        var error = assertThrows(UnknownFieldError.class, () -> TypeChecker.typeCheckExpression(untypedNode, context));
-
-        assertThat(error.getType(), equalTo(namespaceType));
-        assertThat(error.getFieldName(), equalTo("noSuchFunction"));
-    }
-
-    @Test
     public void whenPositionalArgIsWrongTypeThenErrorIsThrown() {
         var untypedNode = Untyped.call(
-            Untyped.fieldAccess(Untyped.reference("Math"), "abs"),
+            Untyped.reference("abs"),
             List.of(Untyped.string("123"))
         );
+        var functionType = new StaticFunctionType(
+            List.of("Stdlib", "Math"),
+            "abs",
+            List.of(Types.INT),
+            Types.INT
+        );
         var context = TypeCheckerContext.stub()
-            .updateType("Math", new NamespaceType(
-                List.of("Stdlib", "Math"),
-                Map.of("abs", new FunctionType(List.of(Types.INT), Types.INT))
-            ));
+            .updateType("abs", functionType);
 
         var error = assertThrows(UnexpectedTypeError.class, () -> TypeChecker.typeCheckExpression(untypedNode, context));
 
@@ -76,14 +64,17 @@ public class TypeCheckCallTests {
     @Test
     public void whenPositionalArgIsMissingThenErrorIsThrown() {
         var untypedNode = Untyped.call(
-            Untyped.fieldAccess(Untyped.reference("Math"), "abs"),
+            Untyped.reference("abs"),
             List.of()
         );
+        var functionType = new StaticFunctionType(
+            List.of("Stdlib", "Math"),
+            "abs",
+            List.of(Types.INT),
+            Types.INT
+        );
         var context = TypeCheckerContext.stub()
-            .updateType("Math", new NamespaceType(
-                List.of("Stdlib", "Math"),
-                Map.of("abs", new FunctionType(List.of(Types.INT), Types.INT))
-            ));
+            .updateType("abs", functionType);
 
         var error = assertThrows(WrongNumberOfArgumentsError.class, () -> TypeChecker.typeCheckExpression(untypedNode, context));
 
@@ -94,14 +85,17 @@ public class TypeCheckCallTests {
     @Test
     public void whenExtraPositionalArgIsPassedThenErrorIsThrown() {
         var untypedNode = Untyped.call(
-            Untyped.fieldAccess(Untyped.reference("Math"), "abs"),
+            Untyped.reference("abs"),
             List.of(Untyped.intLiteral(123), Untyped.intLiteral(456))
         );
+        var functionType = new StaticFunctionType(
+            List.of("Stdlib", "Math"),
+            "abs",
+            List.of(Types.INT),
+            Types.INT
+        );
         var context = TypeCheckerContext.stub()
-            .updateType("Math", new NamespaceType(
-                List.of("Stdlib", "Math"),
-                Map.of("abs", new FunctionType(List.of(Types.INT), Types.INT))
-            ));
+            .updateType("abs", functionType);
 
         var error = assertThrows(WrongNumberOfArgumentsError.class, () -> TypeChecker.typeCheckExpression(untypedNode, context));
 

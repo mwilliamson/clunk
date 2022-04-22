@@ -14,10 +14,7 @@ public class Builtins {
         Map.entry("String", metaType(Types.STRING))
     );
 
-    public static final NamespaceType NAMESPACE_STDLIB_ASSERT = new NamespaceType(
-        List.of("Stdlib", "Assert"),
-        Map.ofEntries(
-            Map.entry("isTrue", new FunctionType(List.of(Types.BOOL), Types.UNIT))
-        )
-    );
+    public static final NamespaceType NAMESPACE_STDLIB_ASSERT = NamespaceType.builder(List.of("Stdlib", "Assert"))
+        .addFunction("isTrue", List.of(Types.BOOL), Types.UNIT)
+        .build();
 }

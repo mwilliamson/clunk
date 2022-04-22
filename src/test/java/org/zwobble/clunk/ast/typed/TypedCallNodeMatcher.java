@@ -19,7 +19,7 @@ public class TypedCallNodeMatcher extends CastMatcher<Object, TypedCallNode> {
         this.matchers = matchers;
     }
 
-    public TypedCallNodeMatcher withReceiver(Matcher<TypedReceiverStaticFunctionNode> receiver) {
+    public TypedCallNodeMatcher withReceiver(Matcher<? super TypedExpressionNode> receiver) {
         return addMatcher(has("receiver", receiver));
     }
 

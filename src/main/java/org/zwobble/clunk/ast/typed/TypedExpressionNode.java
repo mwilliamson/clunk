@@ -8,6 +8,7 @@ public interface TypedExpressionNode extends TypedNode {
 
     interface Visitor<T> {
         T visit(TypedBoolLiteralNode node);
+        T visit(TypedIntLiteralNode node);
         T visit(TypedReferenceNode node);
         T visit(TypedStringLiteralNode node);
     }

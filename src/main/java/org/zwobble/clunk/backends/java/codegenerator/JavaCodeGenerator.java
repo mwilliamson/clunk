@@ -27,6 +27,11 @@ public class JavaCodeGenerator {
             }
 
             @Override
+            public JavaExpressionNode visit(TypedIntLiteralNode node) {
+                throw new RuntimeException("TODO");
+            }
+
+            @Override
             public JavaExpressionNode visit(TypedReferenceNode node) {
                 return compileReference(node);
             }

@@ -15,6 +15,10 @@ public class Untyped {
         return new UntypedExpressionStatementNode(expression, NullSource.INSTANCE);
     }
 
+    public static UntypedIntLiteralNode intLiteral(int value) {
+        return new UntypedIntLiteralNode(value, NullSource.INSTANCE);
+    }
+
     public static UntypedParamNode param(String name, UntypedStaticExpressionNode type) {
         return new UntypedParamNode(name, type, NullSource.INSTANCE);
     }

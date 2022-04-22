@@ -18,6 +18,10 @@ public class TypedNodeMatchers {
         return new TypedFunctionNodeMatcher(List.of());
     }
 
+    public static Matcher<TypedExpressionNode> isTypedIntLiteralNode(int value) {
+        return cast(TypedIntLiteralNode.class, has("value", equalTo(value)));
+    }
+
     public static TypedParamNodeMatcher isTypedParamNode() {
         return new TypedParamNodeMatcher(List.of());
     }

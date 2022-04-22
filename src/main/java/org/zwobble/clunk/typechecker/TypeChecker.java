@@ -47,7 +47,7 @@ public class TypeChecker {
 
             @Override
             public TypedExpressionNode visit(UntypedIntLiteralNode node) {
-                throw new RuntimeException("TODO: Not implemented");
+                return typeCheckIntLiteral(node);
             }
 
             @Override
@@ -126,6 +126,10 @@ public class TypeChecker {
         }
 
         return typedStatements;
+    }
+
+    private static TypedExpressionNode typeCheckIntLiteral(UntypedIntLiteralNode node) {
+        return new TypedIntLiteralNode(node.value(), node.source());
     }
 
     public static TypedNamespaceNode typeCheckNamespace(

@@ -28,7 +28,7 @@ public class JavaCodeGenerator {
 
             @Override
             public JavaExpressionNode visit(TypedIntLiteralNode node) {
-                throw new RuntimeException("TODO");
+                return compileIntLiteral(node);
             }
 
             @Override
@@ -75,6 +75,10 @@ public class JavaCodeGenerator {
                 return compileVar(node);
             }
         });
+    }
+
+    private static JavaExpressionNode compileIntLiteral(TypedIntLiteralNode node) {
+        return new JavaIntLiteralNode(node.value());
     }
 
     public static List<JavaOrdinaryCompilationUnitNode> compileNamespace(TypedNamespaceNode node) {

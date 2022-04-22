@@ -16,6 +16,10 @@ public class Typed {
         return new TypedExpressionStatementNode(expression, NullSource.INSTANCE);
     }
 
+    public static TypedExpressionNode intLiteral(int value) {
+        return new TypedIntLiteralNode(value, NullSource.INSTANCE);
+    }
+
     public static TypedParamNode param(String name, Type type) {
         return new TypedParamNode(name, staticExpression(type), NullSource.INSTANCE);
     }

@@ -4,6 +4,7 @@ import java.util.List;
 
 public record PythonCallNode(
     PythonExpressionNode receiver,
+    List<PythonExpressionNode> args,
     List<PythonKeywordArgumentNode> kwargs
 ) implements PythonExpressionNode {
     @Override

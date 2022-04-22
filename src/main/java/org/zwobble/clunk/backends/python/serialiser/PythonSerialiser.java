@@ -58,6 +58,17 @@ public class PythonSerialiser {
         builder.append("(");
         serialiseExpression(node.receiver(), builder);
         builder.append(")(");
+
+        forEachInterspersed(
+            node.args(),
+            arg -> serialiseExpression(arg, builder),
+            () -> builder.append(", ")
+        );
+
+        if (node.args().size() > 0 && node.kwargs().size() > 0) {
+            builder.append(", ");
+        }
+
         forEachInterspersed(
             node.kwargs(),
             kwarg -> {

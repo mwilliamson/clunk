@@ -20,8 +20,16 @@ public class Python {
         return new PythonAttrAccessNode(receiver, attrName);
     }
 
+    public static PythonCallNode call(
+        PythonExpressionNode receiver,
+        List<PythonExpressionNode> args,
+        List<PythonKeywordArgumentNode> kwargs
+    ) {
+        return new PythonCallNode(receiver, args, kwargs);
+    }
+
     public static PythonCallNode call(PythonExpressionNode receiver, List<PythonKeywordArgumentNode> kwargs) {
-        return new PythonCallNode(receiver, kwargs);
+        return new PythonCallNode(receiver, List.of(), kwargs);
     }
 
     public static PythonExpressionStatementNode expressionStatement(PythonExpressionNode expression) {

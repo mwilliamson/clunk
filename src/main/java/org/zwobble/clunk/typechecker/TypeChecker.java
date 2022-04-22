@@ -30,6 +30,7 @@ public class TypeChecker {
         if (node.receiver() instanceof UntypedFieldAccessNode receiver) {
             // TODO: handle not a namespace type
             var typedFieldAccessReceiver = typeCheckExpression(receiver.receiver(), context);
+            // TODO: check number of args and arg types
             var typedPositionalArgs = node.positionalArgs().stream().map(arg -> typeCheckExpression(arg, context)).toList();
             var fieldAccessReceiverType = (NamespaceType) typedFieldAccessReceiver.type();
             // TODO: handle missing function

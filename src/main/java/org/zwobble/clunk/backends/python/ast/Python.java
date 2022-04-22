@@ -12,6 +12,10 @@ public class Python {
 
     }
 
+    public static PythonAssertNode assert_(PythonExpressionNode expression) {
+        return new PythonAssertNode(expression);
+    }
+
     public static PythonAttrAccessNode attr(PythonExpressionNode receiver, String attrName) {
         return new PythonAttrAccessNode(receiver, attrName);
     }

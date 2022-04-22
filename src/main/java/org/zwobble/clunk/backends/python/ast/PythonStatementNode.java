@@ -4,6 +4,7 @@ public interface PythonStatementNode extends PythonNode {
     <T> T accept(Visitor<T> visitor);
 
     interface Visitor<T> {
+        T visit(PythonAssertNode node);
         T visit(PythonAssignmentNode node);
         T visit(PythonClassDeclarationNode node);
         T visit(PythonExpressionStatementNode node);

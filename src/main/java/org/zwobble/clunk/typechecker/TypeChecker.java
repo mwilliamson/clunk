@@ -56,7 +56,7 @@ public class TypeChecker {
                 }
             }
             return new TypedCallNode(
-                new TypedReceiverStaticFunctionNode(fieldAccessReceiverType.name(), receiver.fieldName(), receiver.source()),
+                new TypedReceiverStaticFunctionNode(fieldAccessReceiverType, receiver.fieldName(), receiver.source()),
                 typedPositionalArgs,
                 functionType.returnType(),
                 node.source()

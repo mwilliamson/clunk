@@ -20,16 +20,17 @@ public class TypeCheckCallTests {
             Untyped.fieldAccess(Untyped.reference("Math"), "abs"),
             List.of(Untyped.intLiteral(123))
         );
+        var namespaceType = new NamespaceType(
+            List.of("Stdlib", "Math"),
+            Map.of("abs", new FunctionType(List.of(Types.INT), Types.INT))
+        );
         var context = TypeCheckerContext.stub()
-            .updateType("Math", new NamespaceType(
-                List.of("Stdlib", "Math"),
-                Map.of("abs", new FunctionType(List.of(Types.INT), Types.INT))
-            ));
+            .updateType("Math", namespaceType);
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 
         assertThat(result, isTypedCallNode()
-            .withReceiver(isTypedReceiverStaticFunctionNode(List.of("Stdlib", "Math"), "abs"))
+            .withReceiver(isTypedReceiverStaticFunctionNode(namespaceType, "abs"))
             .withPositionalArgs(contains(isTypedIntLiteralNode(123)))
             .withType(Types.INT)
         );

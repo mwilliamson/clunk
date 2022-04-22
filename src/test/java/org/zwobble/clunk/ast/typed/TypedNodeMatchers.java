@@ -1,6 +1,7 @@
 package org.zwobble.clunk.ast.typed;
 
 import org.hamcrest.Matcher;
+import org.zwobble.clunk.types.NamespaceType;
 import org.zwobble.clunk.types.Type;
 
 import java.util.List;
@@ -32,11 +33,11 @@ public class TypedNodeMatchers {
     }
 
     public static Matcher<TypedReceiverStaticFunctionNode> isTypedReceiverStaticFunctionNode(
-        List<String> namespaceName,
+        NamespaceType namespaceType,
         String functionName
     ) {
         return allOf(
-            has("namespaceName", equalTo(namespaceName)),
+            has("namespaceType", equalTo(namespaceType)),
             has("functionName", equalTo(functionName))
         );
     }

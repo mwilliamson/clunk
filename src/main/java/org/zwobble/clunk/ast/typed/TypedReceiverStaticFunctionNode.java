@@ -1,11 +1,10 @@
 package org.zwobble.clunk.ast.typed;
 
 import org.zwobble.clunk.sources.Source;
-
-import java.util.List;
+import org.zwobble.clunk.types.NamespaceType;
 
 public record TypedReceiverStaticFunctionNode(
-    List<String> namespaceName,
+    NamespaceType namespaceType,
     String functionName,
     Source source
 ) implements TypedNode {

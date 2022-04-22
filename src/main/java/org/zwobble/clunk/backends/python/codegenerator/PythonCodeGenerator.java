@@ -7,6 +7,7 @@ import org.zwobble.clunk.types.IntType;
 import org.zwobble.clunk.types.StringType;
 import org.zwobble.clunk.types.Type;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +30,7 @@ public class PythonCodeGenerator {
 
             @Override
             public PythonExpressionNode visit(TypedIntLiteralNode node) {
-                throw new RuntimeException("TODO");
+                return compileIntLiteral(node);
             }
 
             @Override
@@ -73,6 +74,10 @@ public class PythonCodeGenerator {
                 return compileVar(node);
             }
         });
+    }
+
+    private PythonExpressionNode compileIntLiteral(TypedIntLiteralNode node) {
+        return new PythonIntLiteralNode(BigInteger.valueOf(node.value()));
     }
 
     public PythonModuleNode compileNamespace(TypedNamespaceNode node) {

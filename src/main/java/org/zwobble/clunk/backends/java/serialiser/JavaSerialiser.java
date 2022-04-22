@@ -63,6 +63,12 @@ public class JavaSerialiser {
             }
 
             @Override
+            public Void visit(JavaIntLiteralNode node) {
+                serialiseIntLiteral(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(JavaReferenceNode node) {
                 serialiseReference(node, builder);
                 return null;
@@ -92,6 +98,10 @@ public class JavaSerialiser {
         builder.append(node.packageName());
         builder.append(".");
         builder.append(node.typeName());
+    }
+
+    private static void serialiseIntLiteral(JavaIntLiteralNode node, CodeBuilder builder) {
+        builder.append(Integer.toString(node.value()));
     }
 
     public static void serialiseMethodDeclaration(JavaMethodDeclarationNode node, CodeBuilder builder) {

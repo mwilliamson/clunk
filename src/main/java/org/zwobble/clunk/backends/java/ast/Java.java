@@ -25,6 +25,10 @@ public class Java {
         return new JavaFullyQualifiedTypeReferenceNode(packageName, typeName);
     }
 
+    public static JavaExpressionNode intLiteral(int value) {
+        return new JavaIntLiteralNode(value);
+    }
+
     public static JavaStringLiteralNode string(String value) {
         return new JavaStringLiteralNode(value);
     }

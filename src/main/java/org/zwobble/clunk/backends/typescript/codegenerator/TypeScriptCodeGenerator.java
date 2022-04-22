@@ -24,7 +24,7 @@ public class TypeScriptCodeGenerator {
 
             @Override
             public TypeScriptExpressionNode visit(TypedIntLiteralNode node) {
-                throw new RuntimeException("TODO");
+                return compileIntLiteral(node);
             }
 
             @Override
@@ -69,6 +69,10 @@ public class TypeScriptCodeGenerator {
                 return compileVar(node);
             }
         });
+    }
+
+    private static TypeScriptExpressionNode compileIntLiteral(TypedIntLiteralNode node) {
+        return new TypeScriptNumberLiteralNode(node.value());
     }
 
     public static TypeScriptModuleNode compileNamespace(TypedNamespaceNode node) {

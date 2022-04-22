@@ -36,6 +36,10 @@ public class UntypedNodeMatchers {
         return new UntypedFunctionNodeMatcher(List.of());
     }
 
+    public static Matcher<UntypedExpressionNode> isUntypedIntLiteralNode(int value) {
+        return cast(UntypedIntLiteralNode.class, has("value", equalTo(value)));
+    }
+
     public static UntypedNamespaceNodeMatcher isUntypedNamespaceNode() {
         return new UntypedNamespaceNodeMatcher(List.of());
     }

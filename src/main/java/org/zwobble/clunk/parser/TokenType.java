@@ -21,6 +21,7 @@ public enum TokenType {
     SYMBOL_SEMICOLON,
 
     IDENTIFIER,
+    INT,
     STRING,
 
     WHITESPACE,

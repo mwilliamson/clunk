@@ -56,6 +56,8 @@ public class Parser {
             return new UntypedBoolLiteralNode(true, source);
         } else if (tokens.isNext(TokenType.STRING)) {
             return parseStringLiteral(tokens);
+        } else if (tokens.isNext(TokenType.INT)) {
+            return parseIntLiteral(tokens);
         } else if (tokens.isNext(TokenType.IDENTIFIER)) {
             return new UntypedReferenceNode(tokens.nextValue(TokenType.IDENTIFIER), source);
         } else {
@@ -63,12 +65,18 @@ public class Parser {
         }
     }
 
-
     private UntypedExpressionStatementNode parseExpressionStatement(TokenIterator<TokenType> tokens) {
         var source = source(tokens);
         var expression = parseExpression(tokens);
         tokens.skip(TokenType.SYMBOL_SEMICOLON);
         return new UntypedExpressionStatementNode(expression, source);
+    }
+
+    private UntypedExpressionNode parseIntLiteral(TokenIterator<TokenType> tokens) {
+        var source = source(tokens);
+        var tokenValue = tokens.nextValue(TokenType.INT);
+        var value = Integer.parseInt(tokenValue);
+        return new UntypedIntLiteralNode(value, source);
     }
 
     private UntypedStringLiteralNode parseStringLiteral(TokenIterator<TokenType> tokens) {

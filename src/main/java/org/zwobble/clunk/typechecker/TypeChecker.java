@@ -30,15 +30,26 @@ public class TypeChecker {
         if (node.receiver() instanceof UntypedFieldAccessNode receiver) {
             // TODO: handle not a namespace type
             var typedFieldAccessReceiver = typeCheckExpression(receiver.receiver(), context);
-            // TODO: check number of args and arg types
-            var typedPositionalArgs = node.positionalArgs().stream().map(arg -> typeCheckExpression(arg, context)).toList();
+
             var fieldAccessReceiverType = (NamespaceType) typedFieldAccessReceiver.type();
             // TODO: handle missing function
-            var returnType = fieldAccessReceiverType.functions().get(receiver.fieldName());
+            var functionType = fieldAccessReceiverType.functions().get(receiver.fieldName());
+
+            // TODO: check number of args and arg types
+            var typedPositionalArgs = node.positionalArgs().stream().map(arg -> typeCheckExpression(arg, context)).toList();
+
+            for (var argIndex = 0; argIndex < functionType.positionalParams().size(); argIndex++) {
+                var paramType = functionType.positionalParams().get(argIndex);
+                var argNode = typedPositionalArgs.get(argIndex);
+                var argType = argNode.type();
+                if (!isSubType(argType, paramType)) {
+                    throw new UnexpectedTypeError(paramType, argType, argNode.source());
+                }
+            }
             return new TypedCallNode(
                 new TypedReceiverStaticFunctionNode(fieldAccessReceiverType.name(), receiver.fieldName(), receiver.source()),
                 typedPositionalArgs,
-                returnType,
+                functionType.returnType(),
                 node.source()
             );
         } else {

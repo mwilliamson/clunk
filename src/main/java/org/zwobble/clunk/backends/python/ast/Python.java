@@ -1,5 +1,6 @@
 package org.zwobble.clunk.backends.python.ast;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +26,10 @@ public class Python {
 
     public static PythonKeywordArgumentNode kwarg(String name, PythonExpressionNode expression) {
         return new PythonKeywordArgumentNode(name, expression);
+    }
+
+    public static PythonExpressionNode intLiteral(int value) {
+        return new PythonIntLiteralNode(BigInteger.valueOf(value));
     }
 
     public static PythonStringLiteralNode string(String value) {

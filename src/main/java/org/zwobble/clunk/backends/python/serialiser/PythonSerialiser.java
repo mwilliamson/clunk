@@ -98,6 +98,12 @@ public class PythonSerialiser {
             }
 
             @Override
+            public Void visit(PythonIntLiteralNode node) {
+                serialiseIntLiteral(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(PythonReferenceNode node) {
                 serialiseReference(node, builder);
                 return null;
@@ -137,6 +143,10 @@ public class PythonSerialiser {
         builder.append("import ");
         builder.append(node.moduleName());
         builder.newLine();
+    }
+
+    private static void serialiseIntLiteral(PythonIntLiteralNode node, CodeBuilder builder) {
+        builder.append(node.value().toString());
     }
 
     public static void serialiseModule(PythonModuleNode node, CodeBuilder builder) {

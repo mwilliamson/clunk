@@ -2,6 +2,7 @@ package org.zwobble.clunk.backends.python.codegenerator;
 
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.python.ast.*;
+import org.zwobble.clunk.builtins.Builtins;
 import org.zwobble.clunk.types.BoolType;
 import org.zwobble.clunk.types.IntType;
 import org.zwobble.clunk.types.StringType;
@@ -21,6 +22,10 @@ public class PythonCodeGenerator {
         return new PythonBoolLiteralNode(node.value());
     }
 
+    private PythonExpressionNode compileCall(TypedCallNode node) {
+        throw new RuntimeException("TODO");
+    }
+
     public PythonExpressionNode compileExpression(TypedExpressionNode node) {
         return node.accept(new TypedExpressionNode.Visitor<PythonExpressionNode>() {
             @Override
@@ -30,7 +35,7 @@ public class PythonCodeGenerator {
 
             @Override
             public PythonExpressionNode visit(TypedCallNode node) {
-                throw new RuntimeException("TODO");
+                return compileCall(node);
             }
 
             @Override
@@ -51,6 +56,12 @@ public class PythonCodeGenerator {
     }
 
     private PythonStatementNode compileExpressionStatement(TypedExpressionStatementNode node) {
+        if (node.expression() instanceof TypedCallNode expression) {
+            if (expression.receiver().namespaceType() == Builtins.NAMESPACE_STDLIB_ASSERT && expression.receiver().functionName().equals("isTrue")) {
+                return new PythonAssertNode(compileExpression(expression.positionalArgs().get(0)));
+            }
+        }
+
         return new PythonExpressionStatementNode(compileExpression(node.expression()));
     }
 

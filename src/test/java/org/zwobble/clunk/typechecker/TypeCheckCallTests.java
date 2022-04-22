@@ -36,7 +36,7 @@ public class TypeCheckCallTests {
     }
 
     @Test
-    public void whenArgIsWrongTypeThenErrorIsThrown() {
+    public void whenPositionalArgIsWrongTypeThenErrorIsThrown() {
         var untypedNode = Untyped.call(
             Untyped.fieldAccess(Untyped.reference("Math"), "abs"),
             List.of(Untyped.string("123"))
@@ -51,5 +51,41 @@ public class TypeCheckCallTests {
 
         assertThat(error.getExpected(), equalTo(IntType.INSTANCE));
         assertThat(error.getActual(), equalTo(StringType.INSTANCE));
+    }
+
+    @Test
+    public void whenPositionalArgIsMissingThenErrorIsThrown() {
+        var untypedNode = Untyped.call(
+            Untyped.fieldAccess(Untyped.reference("Math"), "abs"),
+            List.of()
+        );
+        var context = TypeCheckerContext.stub()
+            .updateType("Math", new NamespaceType(
+                List.of("Stdlib", "Math"),
+                Map.of("abs", new FunctionType(List.of(Types.INT), Types.INT))
+            ));
+
+        var error = assertThrows(WrongNumberOfArgumentsError.class, () -> TypeChecker.typeCheckExpression(untypedNode, context));
+
+        assertThat(error.getExpected(), equalTo(1));
+        assertThat(error.getActual(), equalTo(0));
+    }
+
+    @Test
+    public void whenExtraPositionalArgIsPassedThenErrorIsThrown() {
+        var untypedNode = Untyped.call(
+            Untyped.fieldAccess(Untyped.reference("Math"), "abs"),
+            List.of(Untyped.intLiteral(123), Untyped.intLiteral(456))
+        );
+        var context = TypeCheckerContext.stub()
+            .updateType("Math", new NamespaceType(
+                List.of("Stdlib", "Math"),
+                Map.of("abs", new FunctionType(List.of(Types.INT), Types.INT))
+            ));
+
+        var error = assertThrows(WrongNumberOfArgumentsError.class, () -> TypeChecker.typeCheckExpression(untypedNode, context));
+
+        assertThat(error.getExpected(), equalTo(1));
+        assertThat(error.getActual(), equalTo(2));
     }
 }

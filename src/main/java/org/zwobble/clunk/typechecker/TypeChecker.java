@@ -35,7 +35,13 @@ public class TypeChecker {
             // TODO: handle missing function
             var functionType = fieldAccessReceiverType.functions().get(receiver.fieldName());
 
-            // TODO: check number of args and arg types
+            if (node.positionalArgs().size() != functionType.positionalParams().size()) {
+                throw new WrongNumberOfArgumentsError(
+                    functionType.positionalParams().size(),
+                    node.positionalArgs().size(),
+                    node.source()
+                );
+            }
             var typedPositionalArgs = node.positionalArgs().stream().map(arg -> typeCheckExpression(arg, context)).toList();
 
             for (var argIndex = 0; argIndex < functionType.positionalParams().size(); argIndex++) {

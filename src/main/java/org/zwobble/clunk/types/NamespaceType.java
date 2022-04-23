@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public record NamespaceType(List<String> name, Map<String, StaticFunctionType> functions) implements Type {
+public record NamespaceType(List<String> name, Map<String, Type> fields) implements Type {
     @Override
     public String describe() {
         return String.join(".", name);
@@ -15,18 +15,19 @@ public record NamespaceType(List<String> name, Map<String, StaticFunctionType> f
         return new Builder(name, List.of());
     }
 
-    public static record Builder(List<String> name, List<StaticFunctionType> functions) {
+    public static record Builder(List<String> name, List<Map.Entry<String, Type>> fields) {
         public NamespaceType build() {
             return new NamespaceType(
                 name,
-                functions.stream().collect(Collectors.toMap(StaticFunctionType::functionName, t -> t))
+                fields.stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
             );
         }
 
         public Builder addFunction(String functionName, List<Type> positionalArgs, Type returnType) {
-            var functions = new ArrayList<>(this.functions);
-            functions.add(new StaticFunctionType(name, functionName, positionalArgs, returnType));
-            return new Builder(name, functions);
+            var fields = new ArrayList<>(this.fields);
+            var type = new StaticFunctionType(name, functionName, positionalArgs, returnType);
+            fields.add(Map.entry(functionName, type));
+            return new Builder(name, fields);
         }
     }
 }

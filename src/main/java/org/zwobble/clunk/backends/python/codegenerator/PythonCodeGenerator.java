@@ -102,7 +102,7 @@ public class PythonCodeGenerator {
     }
 
     public PythonModuleNode compileNamespace(TypedNamespaceNode node) {
-        var moduleName = String.join(".", node.name());
+        var moduleName = String.join(".", node.name().parts());
 
         var statements = new ArrayList<PythonStatementNode>();
         statements.add(new PythonImportNode("dataclasses"));

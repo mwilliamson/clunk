@@ -6,9 +6,9 @@ import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.ast.typed.TypedTestNode;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
+import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.StringType;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -19,7 +19,8 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class JavaCodeGeneratorNamespaceTests {
     @Test
     public void recordsInNamespaceAreCompiledToSeparateJavaCompilationUnits() {
-        var node = TypedNamespaceNode.builder(List.of("example", "project"))
+        var node = TypedNamespaceNode
+            .builder(NamespaceName.parts("example", "project"))
             .addStatement(TypedRecordNode.builder("First").build())
             .addStatement(TypedRecordNode.builder("Second").build())
             .build();
@@ -53,7 +54,8 @@ public class JavaCodeGeneratorNamespaceTests {
 
     @Test
     public void functionsAreGroupedIntoSingleClassNamedAfterNamespace() {
-        var node = TypedNamespaceNode.builder(List.of("example", "project"))
+        var node = TypedNamespaceNode
+            .builder(NamespaceName.parts("example", "project"))
             .addStatement(TypedFunctionNode.builder().name("f").returnType(StringType.INSTANCE).build())
             .addStatement(TypedFunctionNode.builder().name("g").returnType(StringType.INSTANCE).build())
             .build();
@@ -84,7 +86,8 @@ public class JavaCodeGeneratorNamespaceTests {
 
     @Test
     public void testsAreGroupedIntoSingleClassNamedAfterNamespace() {
-        var node = TypedNamespaceNode.builder(List.of("example", "project"))
+        var node = TypedNamespaceNode
+            .builder(NamespaceName.parts("example", "project"))
             .addStatement(TypedTestNode.builder().name("f").build())
             .addStatement(TypedTestNode.builder().name("g").build())
             .build();

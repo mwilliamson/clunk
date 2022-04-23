@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public record StaticFunctionType(
-    List<String> namespaceName,
+    NamespaceName namespaceName,
     String functionName,
     List<Type> positionalParams,
     Type returnType
@@ -15,6 +15,6 @@ public record StaticFunctionType(
             .map(param -> param.describe())
             .collect(Collectors.joining(", "));
 
-        return String.join(".", namespaceName) + "." + functionName + ": (" + paramsString + ") -> " + returnType.describe();
+        return namespaceName + "." + functionName + ": (" + paramsString + ") -> " + returnType.describe();
     }
 }

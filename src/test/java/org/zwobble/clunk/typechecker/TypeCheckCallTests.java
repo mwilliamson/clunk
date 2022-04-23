@@ -2,10 +2,7 @@ package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.untyped.Untyped;
-import org.zwobble.clunk.types.IntType;
-import org.zwobble.clunk.types.StaticFunctionType;
-import org.zwobble.clunk.types.StringType;
-import org.zwobble.clunk.types.Types;
+import org.zwobble.clunk.types.*;
 
 import java.util.List;
 
@@ -23,7 +20,7 @@ public class TypeCheckCallTests {
             List.of(Untyped.intLiteral(123))
         );
         var functionType = new StaticFunctionType(
-            List.of("Stdlib", "Math"),
+            NamespaceName.parts("Stdlib", "Math"),
             "abs",
             List.of(Types.INT),
             Types.INT
@@ -47,7 +44,7 @@ public class TypeCheckCallTests {
             List.of(Untyped.string("123"))
         );
         var functionType = new StaticFunctionType(
-            List.of("Stdlib", "Math"),
+            NamespaceName.parts("Stdlib", "Math"),
             "abs",
             List.of(Types.INT),
             Types.INT
@@ -68,7 +65,7 @@ public class TypeCheckCallTests {
             List.of()
         );
         var functionType = new StaticFunctionType(
-            List.of("Stdlib", "Math"),
+            NamespaceName.parts("Stdlib", "Math"),
             "abs",
             List.of(Types.INT),
             Types.INT
@@ -89,7 +86,7 @@ public class TypeCheckCallTests {
             List.of(Untyped.intLiteral(123), Untyped.intLiteral(456))
         );
         var functionType = new StaticFunctionType(
-            List.of("Stdlib", "Math"),
+            NamespaceName.parts("Stdlib", "Math"),
             "abs",
             List.of(Types.INT),
             Types.INT

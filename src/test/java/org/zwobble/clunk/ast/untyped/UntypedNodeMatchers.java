@@ -1,6 +1,7 @@
 package org.zwobble.clunk.ast.untyped;
 
 import org.hamcrest.Matcher;
+import org.zwobble.clunk.types.NamespaceName;
 
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class UntypedNodeMatchers {
         return new UntypedFunctionNodeMatcher(List.of());
     }
 
-    public static Matcher<UntypedImportNode> isUntypedImportNode(List<String> name) {
+    public static Matcher<UntypedImportNode> isUntypedImportNode(NamespaceName name) {
         return cast(UntypedImportNode.class, has("name", equalTo(name)));
     }
 

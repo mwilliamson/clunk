@@ -11,7 +11,7 @@ public class StaticFunctionTypeTests {
     @Test
     public void describeIncludesArgsAndReturnType() {
         var type = new StaticFunctionType(
-            List.of("A", "B"),
+            NamespaceName.parts("A", "B"),
             "f",
             List.of(Types.BOOL, Types.STRING),
             Types.INT

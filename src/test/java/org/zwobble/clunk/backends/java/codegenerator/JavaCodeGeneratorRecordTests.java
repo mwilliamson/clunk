@@ -5,9 +5,8 @@ import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
 import org.zwobble.clunk.types.IntType;
+import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.StringType;
-
-import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -21,7 +20,7 @@ public class JavaCodeGeneratorRecordTests {
             .addField(Typed.recordField("second", IntType.INSTANCE))
             .build();
 
-        var result = JavaCodeGenerator.compileRecord(List.of("example", "project"), node);
+        var result = JavaCodeGenerator.compileRecord(NamespaceName.parts("example", "project"), node);
 
         var string = serialiseToString(result, JavaSerialiser::serialiseOrdinaryCompilationUnit);
         assertThat(string, equalTo(

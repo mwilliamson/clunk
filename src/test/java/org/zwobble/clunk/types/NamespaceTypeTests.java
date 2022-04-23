@@ -11,7 +11,7 @@ import static org.hamcrest.Matchers.equalTo;
 public class NamespaceTypeTests {
     @Test
     public void describeReturnsNameOfNamespace() {
-        var type = new NamespaceType(List.of("Stdlib", "Assert"), Map.of());
+        var type = new NamespaceType(NamespaceName.parts("Stdlib", "Assert"), Map.of());
 
         var result = type.describe();
 

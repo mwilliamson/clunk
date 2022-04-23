@@ -2,22 +2,23 @@ package org.zwobble.clunk.ast.untyped;
 
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.sources.Source;
+import org.zwobble.clunk.types.NamespaceName;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public record UntypedNamespaceNode(
-    List<String> name,
+    NamespaceName name,
     List<UntypedImportNode> imports,
     List<UntypedNamespaceStatementNode> statements,
     Source source
 ) implements UntypedNode {
-    public static Builder builder(List<String> name) {
+    public static Builder builder(NamespaceName name) {
         return new Builder(name, List.of(), List.of(), NullSource.INSTANCE);
     }
 
     public static record Builder(
-        List<String> name,
+        NamespaceName name,
         List<UntypedImportNode> imports,
         List<UntypedNamespaceStatementNode> statements,
         Source source

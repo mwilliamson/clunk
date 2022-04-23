@@ -2,10 +2,7 @@ package org.zwobble.clunk.backends.java.codegenerator;
 
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.java.ast.*;
-import org.zwobble.clunk.types.BoolType;
-import org.zwobble.clunk.types.IntType;
-import org.zwobble.clunk.types.StringType;
-import org.zwobble.clunk.types.Type;
+import org.zwobble.clunk.types.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,7 +112,7 @@ public class JavaCodeGenerator {
         if (!functions.isEmpty()) {
             compilationUnits.add(new JavaOrdinaryCompilationUnitNode(
                 namespaceToPackage(node.name()),
-                new JavaClassDeclarationNode(lowerCamelCaseToUpperCamelCase(last(node.name())), functions)
+                new JavaClassDeclarationNode(lowerCamelCaseToUpperCamelCase(last(node.name().parts())), functions)
             ));
         }
 
@@ -126,7 +123,7 @@ public class JavaCodeGenerator {
         return new JavaParamNode(compileStaticExpression(node.type()), node.name());
     }
 
-    public static JavaOrdinaryCompilationUnitNode compileRecord(List<String> namespace, TypedRecordNode node) {
+    public static JavaOrdinaryCompilationUnitNode compileRecord(NamespaceName namespace, TypedRecordNode node) {
         var components = node.fields().stream()
             .map(field -> new JavaRecordComponentNode(compileStaticExpression(field.type()), field.name()))
             .collect(Collectors.toList());
@@ -189,7 +186,7 @@ public class JavaCodeGenerator {
         }
     }
 
-    private static String namespaceToPackage(List<String> namespace) {
-        return String.join(".", namespace);
+    private static String namespaceToPackage(NamespaceName namespace) {
+        return String.join(".", namespace.parts());
     }
 }

@@ -81,7 +81,7 @@ public class TypeScriptCodeGenerator {
     }
 
     public static TypeScriptModuleNode compileNamespace(TypedNamespaceNode node) {
-        var name = String.join("/", node.name());
+        var name = String.join("/", node.name().parts());
 
         var statements = node.statements().stream()
             .map(statement -> compileNamespaceStatement(statement))

@@ -1,8 +1,7 @@
 package org.zwobble.clunk.parser;
 
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
+import org.zwobble.clunk.types.NamespaceName;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
@@ -14,12 +13,18 @@ public class ParserNamespaceTests {
     public void canParseImports() {
         var source = "import Example;\nimport Stdlib.Assert;\nimport Stdlib.Matchers;";
 
-        var node = parseString(source, (parser, tokens) -> parser.parseNamespace(tokens, List.of("example", "project")));
+        var node = parseString(
+            source,
+            (parser, tokens) -> parser.parseNamespace(
+                tokens,
+                NamespaceName.parts("example", "project")
+            )
+        );
 
         assertThat(node, isUntypedNamespaceNode().withImports(contains(
-            isUntypedImportNode(List.of("Example")),
-            isUntypedImportNode(List.of("Stdlib", "Assert")),
-            isUntypedImportNode(List.of("Stdlib", "Matchers"))
+            isUntypedImportNode(NamespaceName.parts("Example")),
+            isUntypedImportNode(NamespaceName.parts("Stdlib", "Assert")),
+            isUntypedImportNode(NamespaceName.parts("Stdlib", "Matchers"))
         )));
     }
 
@@ -27,7 +32,13 @@ public class ParserNamespaceTests {
     public void canParseStatements() {
         var source = "record First(name: String)\nrecord Second(name: String)";
 
-        var node = parseString(source, (parser, tokens) -> parser.parseNamespace(tokens, List.of("example", "project")));
+        var node = parseString(
+            source,
+            (parser, tokens) -> parser.parseNamespace(
+                tokens,
+                NamespaceName.parts("example", "project")
+            )
+        );
 
         assertThat(node, isUntypedNamespaceNode().withStatements(contains(
             isUntypedRecordNode().withName("First"),

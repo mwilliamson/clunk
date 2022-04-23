@@ -3,6 +3,7 @@ package org.zwobble.clunk.parser;
 import org.zwobble.clunk.ast.untyped.*;
 import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.tokeniser.TokenIterator;
+import org.zwobble.clunk.types.NamespaceName;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,7 +115,7 @@ public class Parser {
         };
     }
 
-    public UntypedNamespaceNode parseNamespace(TokenIterator<TokenType> tokens, List<String> name) {
+    public UntypedNamespaceNode parseNamespace(TokenIterator<TokenType> tokens, NamespaceName name) {
         var source = source(tokens);
 
         var imports = parseMany(
@@ -142,7 +143,7 @@ public class Parser {
             name.add(tokens.nextValue(TokenType.IDENTIFIER));
 
             if (tokens.trySkip(TokenType.SYMBOL_SEMICOLON)) {
-                return new UntypedImportNode(name, source);
+                return new UntypedImportNode(new NamespaceName(name), source);
             }
 
             tokens.skip(TokenType.SYMBOL_DOT);

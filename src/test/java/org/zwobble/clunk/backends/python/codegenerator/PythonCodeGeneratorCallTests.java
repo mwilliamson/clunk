@@ -5,6 +5,7 @@ import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedCallNode;
 import org.zwobble.clunk.backends.python.serialiser.PythonSerialiser;
 import org.zwobble.clunk.sources.NullSource;
+import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.StaticFunctionType;
 import org.zwobble.clunk.types.Types;
 
@@ -21,7 +22,7 @@ public class PythonCodeGeneratorCallTests {
             Typed.reference(
                 "abs",
                 new StaticFunctionType(
-                    List.of("Math"),
+                    NamespaceName.parts("Math"),
                     "abs",
                     List.of(Types.INT),
                     Types.INT

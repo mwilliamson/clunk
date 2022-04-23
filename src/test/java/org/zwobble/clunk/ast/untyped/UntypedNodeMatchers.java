@@ -4,6 +4,7 @@ import org.hamcrest.Matcher;
 import org.zwobble.clunk.types.NamespaceName;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
@@ -37,8 +38,14 @@ public class UntypedNodeMatchers {
         return new UntypedFunctionNodeMatcher(List.of());
     }
 
-    public static Matcher<UntypedImportNode> isUntypedImportNode(NamespaceName name) {
-        return cast(UntypedImportNode.class, has("name", equalTo(name)));
+    public static Matcher<UntypedImportNode> isUntypedImportNode(
+        NamespaceName namespaceName,
+        Optional<String> fieldName
+    ) {
+        return cast(UntypedImportNode.class, allOf(
+            has("namespaceName", equalTo(namespaceName)),
+            has("fieldName", equalTo(fieldName))
+        ));
     }
 
     public static Matcher<UntypedExpressionNode> isUntypedIntLiteralNode(int value) {

@@ -7,6 +7,7 @@ import org.zwobble.clunk.types.NamespaceName;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -115,7 +116,7 @@ public class Parser {
         };
     }
 
-    public UntypedNamespaceNode parseNamespace(TokenIterator<TokenType> tokens, NamespaceName name) {
+    public UntypedNamespaceNode parseNamespaceName(TokenIterator<TokenType> tokens, NamespaceName name) {
         var source = source(tokens);
 
         var imports = parseMany(
@@ -135,18 +136,29 @@ public class Parser {
 
     private UntypedImportNode parseImport(TokenIterator<TokenType> tokens) {
         var source = source(tokens);
-        var name = new ArrayList<String>();
 
         tokens.skip(TokenType.KEYWORD_IMPORT);
+
+        var namespaceName = parseNamespaceName(tokens);
+
+        var fieldName = tokens.trySkip(TokenType.SYMBOL_DOT)
+            ? Optional.of(tokens.nextValue(TokenType.IDENTIFIER))
+            : Optional.<String>empty();
+
+        tokens.skip(TokenType.SYMBOL_SEMICOLON);
+
+        return new UntypedImportNode(namespaceName, fieldName, source);
+    }
+
+    private NamespaceName parseNamespaceName(TokenIterator<TokenType> tokens) {
+        var name = new ArrayList<String>();
 
         while (true) {
             name.add(tokens.nextValue(TokenType.IDENTIFIER));
 
-            if (tokens.trySkip(TokenType.SYMBOL_SEMICOLON)) {
-                return new UntypedImportNode(new NamespaceName(name), source);
+            if (!tokens.trySkip(TokenType.SYMBOL_FORWARD_SLASH)) {
+                return new NamespaceName(name);
             }
-
-            tokens.skip(TokenType.SYMBOL_FORWARD_SLASH);
         }
     }
 

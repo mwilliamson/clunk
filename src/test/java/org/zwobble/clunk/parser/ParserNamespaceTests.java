@@ -3,6 +3,8 @@ package org.zwobble.clunk.parser;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.types.NamespaceName;
 
+import java.util.Optional;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.*;
@@ -10,21 +12,40 @@ import static org.zwobble.clunk.parser.Parsing.parseString;
 
 public class ParserNamespaceTests {
     @Test
-    public void canParseImports() {
+    public void canParseImportsOfNamespaces() {
         var source = "import Example;\nimport Stdlib/Assert;\nimport Stdlib/Matchers;";
 
         var node = parseString(
             source,
-            (parser, tokens) -> parser.parseNamespace(
+            (parser, tokens) -> parser.parseNamespaceName(
                 tokens,
                 NamespaceName.parts("example", "project")
             )
         );
 
         assertThat(node, isUntypedNamespaceNode().withImports(contains(
-            isUntypedImportNode(NamespaceName.parts("Example")),
-            isUntypedImportNode(NamespaceName.parts("Stdlib", "Assert")),
-            isUntypedImportNode(NamespaceName.parts("Stdlib", "Matchers"))
+            isUntypedImportNode(NamespaceName.parts("Example"), Optional.empty()),
+            isUntypedImportNode(NamespaceName.parts("Stdlib", "Assert"), Optional.empty()),
+            isUntypedImportNode(NamespaceName.parts("Stdlib", "Matchers"), Optional.empty())
+        )));
+    }
+
+    @Test
+    public void canParseImportsOfNamespaceFields() {
+        var source = "import a.B;\nimport a/b.C;\nimport a/b/c.D;";
+
+        var node = parseString(
+            source,
+            (parser, tokens) -> parser.parseNamespaceName(
+                tokens,
+                NamespaceName.parts("example", "project")
+            )
+        );
+
+        assertThat(node, isUntypedNamespaceNode().withImports(contains(
+            isUntypedImportNode(NamespaceName.parts("a"), Optional.of("B")),
+            isUntypedImportNode(NamespaceName.parts("a", "b"), Optional.of("C")),
+            isUntypedImportNode(NamespaceName.parts("a", "b", "c"), Optional.of("D"))
         )));
     }
 
@@ -34,7 +55,7 @@ public class ParserNamespaceTests {
 
         var node = parseString(
             source,
-            (parser, tokens) -> parser.parseNamespace(
+            (parser, tokens) -> parser.parseNamespaceName(
                 tokens,
                 NamespaceName.parts("example", "project")
             )

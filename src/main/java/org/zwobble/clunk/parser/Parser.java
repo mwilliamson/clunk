@@ -146,7 +146,7 @@ public class Parser {
                 return new UntypedImportNode(new NamespaceName(name), source);
             }
 
-            tokens.skip(TokenType.SYMBOL_DOT);
+            tokens.skip(TokenType.SYMBOL_FORWARD_SLASH);
         }
     }
 

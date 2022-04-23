@@ -1,15 +1,24 @@
 package org.zwobble.clunk.typechecker;
 
 import org.zwobble.clunk.builtins.Builtins;
-import org.zwobble.clunk.types.*;
+import org.zwobble.clunk.errors.SourceError;
+import org.zwobble.clunk.sources.Source;
+import org.zwobble.clunk.types.MetaType;
+import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.NamespaceType;
+import org.zwobble.clunk.types.Type;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public record TypeCheckerContext(Optional<Type> returnType, Map<String, Type> environment) {
+public record TypeCheckerContext(
+    Optional<Type> returnType,
+    Map<String, Type> environment,
+    Map<NamespaceName, NamespaceType> namespaceTypes
+) {
     public static TypeCheckerContext stub() {
-        return new TypeCheckerContext(Optional.empty(), Builtins.ENVIRONMENT);
+        return new TypeCheckerContext(Optional.empty(), Builtins.ENVIRONMENT, Map.of());
     }
 
     public TypeCheckerContext enterFunction(Type returnType) {
@@ -21,17 +30,27 @@ public record TypeCheckerContext(Optional<Type> returnType, Map<String, Type> en
     }
 
     private TypeCheckerContext enter(Optional<Type> returnType) {
-        return new TypeCheckerContext(returnType, Map.of());
+        return new TypeCheckerContext(returnType, Map.of(), namespaceTypes);
+    }
+
+    public TypeCheckerContext updateNamespaceType(NamespaceType namespaceType) {
+        var namespaceTypes = new HashMap<>(this.namespaceTypes);
+        namespaceTypes.put(namespaceType.name(), namespaceType);
+        return new TypeCheckerContext(returnType, environment, namespaceTypes);
+    }
+
+    public Optional<NamespaceType> typeOfNamespace(NamespaceName name) {
+        return Optional.of(namespaceTypes.get(name));
     }
 
     public TypeCheckerContext updateType(String name, Type type) {
         var environment = new HashMap<>(this.environment);
         environment.put(name, type);
-        return new TypeCheckerContext(returnType, environment);
+        return new TypeCheckerContext(returnType, environment, namespaceTypes);
     }
 
-    public Type resolveType(String name) {
-        var type = typeOf(name);
+    public Type resolveType(String name, Source source) {
+        var type = typeOf(name, source);
         if (type instanceof MetaType) {
             return ((MetaType) type).type();
         } else {
@@ -39,7 +58,11 @@ public record TypeCheckerContext(Optional<Type> returnType, Map<String, Type> en
         }
     }
 
-    public Type typeOf(String name) {
-        return environment.get(name);
+    public Type typeOf(String name, Source source) {
+        var type = environment.get(name);
+        if (type == null) {
+            throw new SourceError("unknown variable: " + name, source);
+        }
+        return type;
     }
 }

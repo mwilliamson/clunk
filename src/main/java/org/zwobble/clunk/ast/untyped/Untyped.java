@@ -1,8 +1,10 @@
 package org.zwobble.clunk.ast.untyped;
 
 import org.zwobble.clunk.sources.NullSource;
+import org.zwobble.clunk.types.NamespaceName;
 
 import java.util.List;
+import java.util.Optional;
 
 public class Untyped {
     public static UntypedBoolLiteralNode boolFalse() {
@@ -26,6 +28,10 @@ public class Untyped {
 
     public static UntypedExpressionNode fieldAccess(UntypedExpressionNode receiver, String fieldName) {
         return new UntypedFieldAccessNode(receiver, fieldName, NullSource.INSTANCE);
+    }
+
+    public static UntypedImportNode import_(NamespaceName name, String fieldName) {
+        return new UntypedImportNode(name, Optional.of(fieldName), NullSource.INSTANCE);
     }
 
     public static UntypedIntLiteralNode intLiteral(int value) {

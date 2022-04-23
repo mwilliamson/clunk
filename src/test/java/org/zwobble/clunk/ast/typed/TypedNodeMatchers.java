@@ -24,6 +24,10 @@ public class TypedNodeMatchers {
         return new TypedFunctionNodeMatcher(List.of());
     }
 
+    public static Matcher<TypedImportNode> isTypedImportNode(Matcher<TypedImportNode> matcher) {
+        return matcher;
+    }
+
     public static Matcher<TypedExpressionNode> isTypedIntLiteralNode(int value) {
         return cast(TypedIntLiteralNode.class, has("value", equalTo(value)));
     }

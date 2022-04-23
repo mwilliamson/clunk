@@ -1,12 +1,19 @@
 package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.ast.untyped.UntypedNamespaceNode;
 import org.zwobble.clunk.ast.untyped.UntypedRecordNode;
 import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.NamespaceType;
+import org.zwobble.clunk.types.Types;
+
+import java.util.Map;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedImportNode;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedRecordNode;
 import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
 
@@ -24,6 +31,44 @@ public class TypeCheckNamespaceTests {
             has("name", equalTo(NamespaceName.parts("example", "project"))),
             has("statements", contains(
                 isTypedRecordNode(has("name", equalTo("X")))
+            ))
+        ));
+    }
+
+    // TODO: test unknown namespace
+    // TODO: test unknown field
+    // TODO: test import of namespace (no field)
+    @Test
+    public void importedFieldIsAddedToEnvironment() {
+        var untypedNode = UntypedNamespaceNode.builder(NamespaceName.parts("example", "project"))
+            .addImport(Untyped.import_(NamespaceName.parts("x", "y"), "IntAlias"))
+            .addStatement(
+                UntypedRecordNode.builder("X")
+                    .addField(Untyped.recordField("f", Untyped.staticReference("IntAlias"))).build()
+            )
+            .build();
+        var namespaceType = new NamespaceType(
+            NamespaceName.parts("x", "y"),
+            Map.of("IntAlias", Types.metaType(Types.INT))
+        );
+        var context = TypeCheckerContext.stub()
+            .updateNamespaceType(namespaceType);
+
+        var result = TypeChecker.typeCheckNamespace(untypedNode, context);
+
+        assertThat(result, allOf(
+            has("imports", contains(
+                isTypedImportNode(allOf(
+                    has("namespaceName", equalTo(NamespaceName.parts("x", "y"))),
+                    has("fieldName", equalTo(Optional.of("IntAlias")))
+                ))
+            )),
+            has("statements", contains(
+                isTypedRecordNode(has("fields", contains(
+                    allOf(
+                        has("type", has("type", equalTo(Types.INT)))
+                    )
+                )))
             ))
         ));
     }

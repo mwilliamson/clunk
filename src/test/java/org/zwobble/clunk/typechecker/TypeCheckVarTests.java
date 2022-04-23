@@ -2,6 +2,7 @@ package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.untyped.Untyped;
+import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.BoolType;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -27,6 +28,6 @@ public class TypeCheckVarTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
-        assertThat(result.context().typeOf("x"), equalTo(BoolType.INSTANCE));
+        assertThat(result.context().typeOf("x", NullSource.INSTANCE), equalTo(BoolType.INSTANCE));
     }
 }

@@ -2,6 +2,7 @@ package org.zwobble.clunk.typechecker;
 
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.ast.untyped.*;
+import org.zwobble.clunk.errors.SourceError;
 import org.zwobble.clunk.types.StaticFunctionType;
 
 import java.util.ArrayList;
@@ -160,6 +161,31 @@ public class TypeChecker {
         return typedStatements;
     }
 
+    private record TypeCheckImportResult(TypedImportNode node, TypeCheckerContext context) {
+    }
+
+    private static TypeCheckImportResult typeCheckImport(
+        UntypedImportNode import_,
+        TypeCheckerContext context
+    ) {
+        var typedNode = new TypedImportNode(import_.namespaceName(), import_.fieldName(), import_.source());
+
+        var type = context.typeOfNamespace(import_.namespaceName());
+        if (type.isEmpty()) {
+            throw new SourceError("unknown namespace: " + import_.namespaceName(), import_.source());
+        }
+
+        if (import_.fieldName().isPresent()) {
+            var importType = type.get().fields().get(import_.fieldName().get());
+
+            var newContext = context.updateType(import_.fieldName().get(), importType);
+
+            return new TypeCheckImportResult(typedNode, newContext);
+        } else {
+            throw new RuntimeException("TODO");
+        }
+    }
+
     private static TypedExpressionNode typeCheckIntLiteral(UntypedIntLiteralNode node) {
         return new TypedIntLiteralNode(node.value(), node.source());
     }
@@ -168,11 +194,22 @@ public class TypeChecker {
         UntypedNamespaceNode node,
         TypeCheckerContext context
     ) {
+        var typedImports = new ArrayList<TypedImportNode>();
+        for (var import_ : node.imports()) {
+            var typeCheckImportResult = typeCheckImport(import_, context);
+            context = typeCheckImportResult.context;
+            typedImports.add(typeCheckImportResult.node);
+        }
+
+        var typedBody = new ArrayList<TypedNamespaceStatementNode>();
+        for (var statement : node.statements()) {
+            typedBody.add(typeCheckNamespaceStatement(statement, context));
+        }
+
         return new TypedNamespaceNode(
             node.name(),
-            node.statements().stream()
-                .map(statement -> typeCheckNamespaceStatement(statement, context))
-                .collect(Collectors.toList()),
+            typedImports,
+            typedBody,
             node.source()
         );
     }
@@ -224,7 +261,8 @@ public class TypeChecker {
     }
 
     private static TypedExpressionNode typeCheckReference(UntypedReferenceNode node, TypeCheckerContext context) {
-        return new TypedReferenceNode(node.name(), context.typeOf(node.name()), node.source());
+        var type = context.typeOf(node.name(), node.source());
+        return new TypedReferenceNode(node.name(), type, node.source());
     }
 
     private static TypeCheckFunctionStatementResult typeCheckReturn(UntypedReturnNode node, TypeCheckerContext context) {
@@ -260,7 +298,7 @@ public class TypeChecker {
         UntypedStaticReferenceNode node,
         TypeCheckerContext context
     ) {
-        var type = context.resolveType(node.value());
+        var type = context.resolveType(node.value(), node.source());
         return new TypedStaticExpressionNode(type, node.source());
     }
 

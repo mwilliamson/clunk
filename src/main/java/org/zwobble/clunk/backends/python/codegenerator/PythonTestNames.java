@@ -15,6 +15,6 @@ public class PythonTestNames {
             throw new InternalCompilerError("Could not convert test name to Python identifier: " + name);
         }
 
-        return identifier;
+        return "test_" + identifier;
     }
 }

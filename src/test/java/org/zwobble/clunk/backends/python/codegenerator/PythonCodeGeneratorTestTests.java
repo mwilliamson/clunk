@@ -22,7 +22,7 @@ public class PythonCodeGeneratorTestTests {
         var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
         assertThat(string, equalTo(
             """
-                def f():
+                def test_f():
                     x = False
                 """
         ));
@@ -39,7 +39,7 @@ public class PythonCodeGeneratorTestTests {
         var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
         assertThat(string, equalTo(
             """
-                def one_two_three():
+                def test_one_two_three():
                     pass
                 """
         ));

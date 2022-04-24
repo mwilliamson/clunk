@@ -20,7 +20,6 @@ import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
 
 public class TypeCheckImportTests {
     // TODO: test unknown namespace
-    // TODO: test unknown field
     // TODO: test import of namespace (no field)
     @Test
     public void importedFieldIsAddedToEnvironment() {

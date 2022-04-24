@@ -2,7 +2,6 @@ package org.zwobble.clunk.backends.python.codegenerator;
 
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.python.ast.*;
-import org.zwobble.clunk.builtins.Builtins;
 import org.zwobble.clunk.types.*;
 
 import java.math.BigInteger;
@@ -121,16 +120,6 @@ public class PythonCodeGenerator {
         TypedExpressionStatementNode node,
         PythonCodeGeneratorContext context
     ) {
-        if (node.expression() instanceof TypedCallNode expression) {
-            if (
-                expression.receiver().type() instanceof StaticFunctionType receiverType &&
-                    receiverType.namespaceName().equals(Builtins.NAMESPACE_STDLIB_ASSERT.name())
-                    && receiverType.functionName().equals("isTrue")
-            ) {
-                return new PythonAssertNode(compileExpression(expression.positionalArgs().get(0), context));
-            }
-        }
-
         return new PythonExpressionStatementNode(compileExpression(node.expression(), context));
     }
 

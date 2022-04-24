@@ -53,4 +53,26 @@ public class PythonCodeGeneratorNamespaceTests {
             """
         ));
     }
+
+    @Test
+    public void namespaceImportsAreCompiled() {
+        var node = TypedNamespaceNode
+            .builder(NamespaceName.parts("example", "project"))
+            .addImport(Typed.import_(NamespaceName.parts("a")))
+            .addImport(Typed.import_(NamespaceName.parts("b", "c")))
+            .addImport(Typed.import_(NamespaceName.parts("d", "e", "f")))
+            .build();
+
+        var result = PythonCodeGenerator.DEFAULT.compileNamespace(node);
+
+        assertThat(result.name(), equalTo("example.project"));
+        var string = serialiseToString(result, PythonSerialiser::serialiseModule);
+        assertThat(string, equalTo("""
+            import dataclasses
+            import a
+            from b import c
+            from d.e import f
+            """
+        ));
+    }
 }

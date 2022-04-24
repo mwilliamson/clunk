@@ -98,10 +98,23 @@ public class PythonCodeGenerator {
     }
 
     private PythonStatementNode compileImport(TypedImportNode import_) {
-        return new PythonImportFromNode(
-            namespaceNameToModuleName(import_.namespaceName()),
-            List.of(import_.fieldName().get())
-        );
+        if (import_.fieldName().isPresent()) {
+            return new PythonImportFromNode(
+                namespaceNameToModuleName(import_.namespaceName()),
+                List.of(import_.fieldName().get())
+            );
+        } else if (import_.namespaceName().parts().size() == 1) {
+            return new PythonImportNode(
+                namespaceNameToModuleName(import_.namespaceName())
+            );
+        } else {
+            var parts = import_.namespaceName().parts();
+
+            return new PythonImportFromNode(
+                namespaceNameToModuleName(parts.subList(0, parts.size() - 1)),
+                List.of(parts.get(parts.size() - 1))
+            );
+        }
     }
 
     private PythonExpressionNode compileIntLiteral(TypedIntLiteralNode node) {
@@ -208,6 +221,10 @@ public class PythonCodeGenerator {
     }
 
     private String namespaceNameToModuleName(NamespaceName name) {
-        return String.join(".", name.parts());
+        return namespaceNameToModuleName(name.parts());
+    }
+
+    private String namespaceNameToModuleName(List<String> parts) {
+        return String.join(".", parts);
     }
 }

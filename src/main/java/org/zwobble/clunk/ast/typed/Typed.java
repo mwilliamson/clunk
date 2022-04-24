@@ -19,6 +19,10 @@ public class Typed {
         return new TypedExpressionStatementNode(expression, NullSource.INSTANCE);
     }
 
+    public static TypedImportNode import_(NamespaceName name) {
+        return new TypedImportNode(name, Optional.empty(), NullSource.INSTANCE);
+    }
+
     public static TypedImportNode import_(NamespaceName name, String fieldName) {
         return new TypedImportNode(name, Optional.of(fieldName), NullSource.INSTANCE);
     }

@@ -176,9 +176,17 @@ public class TypeChecker {
         }
 
         if (import_.fieldName().isPresent()) {
-            var importType = type.get().fields().get(import_.fieldName().get());
+            var fieldName = import_.fieldName().get();
 
-            var newContext = context.updateType(import_.fieldName().get(), importType);
+            var importType = type.get().fields().get(fieldName);
+            if (importType == null) {
+                throw new SourceError(
+                    "unknown field " + fieldName + " on namespace " + import_.namespaceName(),
+                    import_.source()
+                );
+            }
+
+            var newContext = context.updateType(fieldName, importType);
 
             return new TypeCheckImportResult(typedNode, newContext);
         } else {

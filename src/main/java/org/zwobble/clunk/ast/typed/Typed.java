@@ -1,7 +1,10 @@
 package org.zwobble.clunk.ast.typed;
 
 import org.zwobble.clunk.sources.NullSource;
+import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.Type;
+
+import java.util.Optional;
 
 public class Typed {
     public static TypedBoolLiteralNode boolFalse() {
@@ -14,6 +17,10 @@ public class Typed {
 
     public static TypedExpressionStatementNode expressionStatement(TypedExpressionNode expression) {
         return new TypedExpressionStatementNode(expression, NullSource.INSTANCE);
+    }
+
+    public static TypedImportNode import_(NamespaceName name, String fieldName) {
+        return new TypedImportNode(name, Optional.of(fieldName), NullSource.INSTANCE);
     }
 
     public static TypedExpressionNode intLiteral(int value) {

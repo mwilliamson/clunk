@@ -1,6 +1,7 @@
 package org.zwobble.clunk.backends.python.codegenerator;
 
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.backends.python.serialiser.PythonSerialiser;
@@ -31,6 +32,24 @@ public class PythonCodeGeneratorNamespaceTests {
             @((dataclasses).dataclass)(frozen=True)
             class Second:
                 pass
+            """
+        ));
+    }
+
+    @Test
+    public void fieldImportsAreCompiled() {
+        var node = TypedNamespaceNode
+            .builder(NamespaceName.parts("example", "project"))
+            .addImport(Typed.import_(NamespaceName.parts("a", "b"), "C"))
+            .build();
+
+        var result = PythonCodeGenerator.DEFAULT.compileNamespace(node);
+
+        assertThat(result.name(), equalTo("example.project"));
+        var string = serialiseToString(result, PythonSerialiser::serialiseModule);
+        assertThat(string, equalTo("""
+            import dataclasses
+            from a.b import C
             """
         ));
     }

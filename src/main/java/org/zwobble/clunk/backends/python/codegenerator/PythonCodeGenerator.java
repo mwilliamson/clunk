@@ -97,15 +97,26 @@ public class PythonCodeGenerator {
         });
     }
 
+    private PythonStatementNode compileImport(TypedImportNode import_) {
+        return new PythonImportFromNode(
+            namespaceNameToModuleName(import_.namespaceName()),
+            List.of(import_.fieldName().get())
+        );
+    }
+
     private PythonExpressionNode compileIntLiteral(TypedIntLiteralNode node) {
         return new PythonIntLiteralNode(BigInteger.valueOf(node.value()));
     }
 
     public PythonModuleNode compileNamespace(TypedNamespaceNode node) {
-        var moduleName = String.join(".", node.name().parts());
+        var moduleName = namespaceNameToModuleName(node.name());
 
         var statements = new ArrayList<PythonStatementNode>();
         statements.add(new PythonImportNode("dataclasses"));
+
+        node.imports().stream()
+            .map(import_ -> compileImport(import_))
+            .forEachOrdered(statements::add);
 
         node.statements().stream()
             .map(statement -> compileNamespaceStatement(statement))
@@ -194,5 +205,9 @@ public class PythonCodeGenerator {
         } else {
             throw new RuntimeException("TODO");
         }
+    }
+
+    private String namespaceNameToModuleName(NamespaceName name) {
+        return String.join(".", name.parts());
     }
 }

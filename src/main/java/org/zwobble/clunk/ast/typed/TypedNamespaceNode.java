@@ -27,7 +27,13 @@ public record TypedNamespaceNode(
             return new TypedNamespaceNode(name, imports, statements, source);
         }
 
-        public TypedNamespaceNode.Builder addStatement(TypedNamespaceStatementNode statement) {
+        public Builder addImport(TypedImportNode import_) {
+            var imports = new ArrayList<>(this.imports);
+            imports.add(import_);
+            return new TypedNamespaceNode.Builder(name, imports, statements, source);
+        }
+
+        public Builder addStatement(TypedNamespaceStatementNode statement) {
             var statements = new ArrayList<>(this.statements);
             statements.add(statement);
             return new TypedNamespaceNode.Builder(name, imports, statements, source);

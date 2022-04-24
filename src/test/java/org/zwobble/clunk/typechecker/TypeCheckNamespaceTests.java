@@ -35,9 +35,6 @@ public class TypeCheckNamespaceTests {
         ));
     }
 
-    // TODO: test unknown namespace
-    // TODO: test unknown field
-    // TODO: test import of namespace (no field)
     @Test
     public void importedFieldIsAddedToEnvironment() {
         var untypedNode = UntypedNamespaceNode.builder(NamespaceName.parts("example", "project"))

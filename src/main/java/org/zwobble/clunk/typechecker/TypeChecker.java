@@ -161,10 +161,10 @@ public class TypeChecker {
         return typedStatements;
     }
 
-    private record TypeCheckImportResult(TypedImportNode node, TypeCheckerContext context) {
+    public record TypeCheckImportResult(TypedImportNode node, TypeCheckerContext context) {
     }
 
-    private static TypeCheckImportResult typeCheckImport(
+    public static TypeCheckImportResult typeCheckImport(
         UntypedImportNode import_,
         TypeCheckerContext context
     ) {

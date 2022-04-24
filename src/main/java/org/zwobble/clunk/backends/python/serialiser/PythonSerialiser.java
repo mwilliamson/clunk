@@ -162,6 +162,18 @@ public class PythonSerialiser {
         builder.newLine();
     }
 
+    private static void serialiseImportFrom(PythonImportFromNode node, CodeBuilder builder) {
+        builder.append("from ");
+        builder.append(node.moduleName());
+        builder.append(" import ");
+        forEachInterspersed(
+            node.names(),
+            name -> builder.append(name),
+            () -> builder.append(", ")
+        );
+        builder.newLine();
+    }
+
     private static void serialiseIntLiteral(PythonIntLiteralNode node, CodeBuilder builder) {
         builder.append(node.value().toString());
     }
@@ -217,6 +229,12 @@ public class PythonSerialiser {
             @Override
             public Void visit(PythonImportNode node) {
                 serialiseImport(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(PythonImportFromNode node) {
+                serialiseImportFrom(node, builder);
                 return null;
             }
 

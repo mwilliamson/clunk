@@ -10,6 +10,6 @@ public record NamespaceName(List<String> parts) {
 
     @Override
     public String toString() {
-        return String.join(".", parts);
+        return String.join("/", parts);
     }
 }

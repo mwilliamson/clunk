@@ -19,6 +19,6 @@ public class StaticFunctionTypeTests {
 
         var result = type.describe();
 
-        assertThat(result, equalTo("A.B.f: (Bool, String) -> Int"));
+        assertThat(result, equalTo("A/B.f: (Bool, String) -> Int"));
     }
 }

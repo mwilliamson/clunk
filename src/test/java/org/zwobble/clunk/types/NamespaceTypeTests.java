@@ -2,7 +2,6 @@ package org.zwobble.clunk.types;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -15,6 +14,6 @@ public class NamespaceTypeTests {
 
         var result = type.describe();
 
-        assertThat(result, equalTo("Stdlib.Assert"));
+        assertThat(result, equalTo("Stdlib/Assert"));
     }
 }

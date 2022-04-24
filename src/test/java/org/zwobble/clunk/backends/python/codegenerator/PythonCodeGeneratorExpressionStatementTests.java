@@ -20,7 +20,7 @@ public class PythonCodeGeneratorExpressionStatementTests {
     public void expressionStatementGeneratesExpressionStatement() {
         var node = Typed.expressionStatement(Typed.boolFalse());
 
-        var result = PythonCodeGenerator.DEFAULT.compileFunctionStatement(node);
+        var result = PythonCodeGenerator.DEFAULT.compileFunctionStatement(node, PythonCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
         assertThat(string, equalTo("False\n"));
@@ -43,7 +43,7 @@ public class PythonCodeGeneratorExpressionStatementTests {
             NullSource.INSTANCE
         ));
 
-        var result = PythonCodeGenerator.DEFAULT.compileFunctionStatement(node);
+        var result = PythonCodeGenerator.DEFAULT.compileFunctionStatement(node, PythonCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
         assertThat(string, equalTo(

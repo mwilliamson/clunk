@@ -8,6 +8,7 @@ import org.zwobble.clunk.types.*;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.zwobble.clunk.backends.python.codegenerator.CaseConverter.camelCaseToSnakeCase;
@@ -15,19 +16,79 @@ import static org.zwobble.clunk.backends.python.codegenerator.CaseConverter.came
 public class PythonCodeGenerator {
     public static final PythonCodeGenerator DEFAULT = new PythonCodeGenerator();
 
+    private interface PythonMacro {
+        PythonExpressionNode compileReceiver(PythonCodeGeneratorContext context);
+    }
+
+    private static final Map<NamespaceName, Map<String, PythonMacro>> MACROS = Map.ofEntries(
+        Map.entry(
+            NamespaceName.parts("stdlib", "assertions"),
+            Map.ofEntries(
+                Map.entry("assertThat", new PythonMacro() {
+                    @Override
+                    public PythonExpressionNode compileReceiver(PythonCodeGeneratorContext context) {
+                        context.addImport(List.of("precisely", "assert_that"));
+                        return new PythonReferenceNode("assert_that");
+                    }
+                })
+            )
+        ),
+        Map.entry(
+            NamespaceName.parts("stdlib", "matchers"),
+            Map.ofEntries(
+                Map.entry("equalTo", new PythonMacro() {
+                    @Override
+                    public PythonExpressionNode compileReceiver(PythonCodeGeneratorContext context) {
+                        context.addImport(List.of("precisely", "equal_to"));
+                        return new PythonReferenceNode("equal_to");
+                    }
+                })
+            )
+        )
+    );
+
+    private static Optional<PythonMacro> lookupMacro(Type type) {
+        if (type instanceof StaticFunctionType staticFunctionType) {
+            var macro = MACROS.getOrDefault(staticFunctionType.namespaceName(), Map.of())
+                .get(staticFunctionType.functionName());
+            return Optional.ofNullable(macro);
+        } else {
+            return Optional.empty();
+        }
+    }
+
     private PythonExpressionNode compileBoolLiteral(TypedBoolLiteralNode node) {
         return new PythonBoolLiteralNode(node.value());
     }
 
-    private PythonExpressionNode compileCall(TypedCallNode node) {
+    private PythonExpressionNode compileCall(
+        TypedCallNode node,
+        PythonCodeGeneratorContext context
+    ) {
         return new PythonCallNode(
-            compileExpression(node.receiver()),
-            node.positionalArgs().stream().map(arg -> compileExpression(arg)).toList(),
+            compileCallReceiver(node.receiver(), context),
+            node.positionalArgs().stream().map(arg -> compileExpression(arg, context)).toList(),
             List.of()
         );
     }
 
-    public PythonExpressionNode compileExpression(TypedExpressionNode node) {
+    private PythonExpressionNode compileCallReceiver(
+        TypedExpressionNode receiver,
+        PythonCodeGeneratorContext context
+    ) {
+        var macro = lookupMacro(receiver.type());
+
+        if (macro.isPresent()) {
+            return macro.get().compileReceiver(context);
+        } else {
+            return compileExpression(receiver, context);
+        }
+    }
+
+    public PythonExpressionNode compileExpression(
+        TypedExpressionNode node,
+        PythonCodeGeneratorContext context
+    ) {
         return node.accept(new TypedExpressionNode.Visitor<PythonExpressionNode>() {
             @Override
             public PythonExpressionNode visit(TypedBoolLiteralNode node) {
@@ -36,7 +97,7 @@ public class PythonCodeGenerator {
 
             @Override
             public PythonExpressionNode visit(TypedCallNode node) {
-                return compileCall(node);
+                return compileCall(node, context);
             }
 
             @Override
@@ -56,64 +117,70 @@ public class PythonCodeGenerator {
         });
     }
 
-    private PythonStatementNode compileExpressionStatement(TypedExpressionStatementNode node) {
+    private PythonStatementNode compileExpressionStatement(
+        TypedExpressionStatementNode node,
+        PythonCodeGeneratorContext context
+    ) {
         if (node.expression() instanceof TypedCallNode expression) {
             if (
                 expression.receiver().type() instanceof StaticFunctionType receiverType &&
-                receiverType.namespaceName().equals(Builtins.NAMESPACE_STDLIB_ASSERT.name())
-                && receiverType.functionName().equals("isTrue")
+                    receiverType.namespaceName().equals(Builtins.NAMESPACE_STDLIB_ASSERT.name())
+                    && receiverType.functionName().equals("isTrue")
             ) {
-                return new PythonAssertNode(compileExpression(expression.positionalArgs().get(0)));
+                return new PythonAssertNode(compileExpression(expression.positionalArgs().get(0), context));
             }
         }
 
-        return new PythonExpressionStatementNode(compileExpression(node.expression()));
+        return new PythonExpressionStatementNode(compileExpression(node.expression(), context));
     }
 
-    private PythonStatementNode compileFunction(TypedFunctionNode node) {
+    private PythonStatementNode compileFunction(TypedFunctionNode node, PythonCodeGeneratorContext context) {
         return new PythonFunctionNode(
             camelCaseToSnakeCase(node.name()),
             node.params().stream().map(param -> compileParam(param)).toList(),
-            node.body().stream().map(statement -> compileFunctionStatement(statement)).toList()
+            node.body().stream().map(statement -> compileFunctionStatement(statement, context)).toList()
         );
     }
 
-    public PythonStatementNode compileFunctionStatement(TypedFunctionStatementNode node) {
+    public PythonStatementNode compileFunctionStatement(TypedFunctionStatementNode node, PythonCodeGeneratorContext context) {
         return node.accept(new TypedFunctionStatementNode.Visitor<PythonStatementNode>() {
             @Override
             public PythonStatementNode visit(TypedExpressionStatementNode node) {
-                return compileExpressionStatement(node);
+                return compileExpressionStatement(node, context);
             }
 
             @Override
             public PythonStatementNode visit(TypedReturnNode node) {
-                return compileReturn(node);
+                return compileReturn(node, context);
             }
 
             @Override
             public PythonStatementNode visit(TypedVarNode node) {
-                return compileVar(node);
+                return compileVar(node, context);
             }
         });
     }
 
-    private PythonStatementNode compileImport(TypedImportNode import_) {
-        if (import_.fieldName().isPresent()) {
-            return new PythonImportFromNode(
+    private List<PythonStatementNode> compileImport(TypedImportNode import_) {
+        var macro = lookupMacro(import_.type());
+        if (macro.isPresent()) {
+            return List.of();
+        } else if (import_.fieldName().isPresent()) {
+            return List.of(new PythonImportFromNode(
                 namespaceNameToModuleName(import_.namespaceName()),
                 List.of(import_.fieldName().get())
-            );
+            ));
         } else if (import_.namespaceName().parts().size() == 1) {
-            return new PythonImportNode(
+            return List.of(new PythonImportNode(
                 namespaceNameToModuleName(import_.namespaceName())
-            );
+            ));
         } else {
             var parts = import_.namespaceName().parts();
 
-            return new PythonImportFromNode(
+            return List.of(new PythonImportFromNode(
                 namespaceNameToModuleName(parts.subList(0, parts.size() - 1)),
                 List.of(parts.get(parts.size() - 1))
-            );
+            ));
         }
     }
 
@@ -129,7 +196,7 @@ public class PythonCodeGenerator {
 
         node.imports().stream()
             .map(import_ -> compileImport(import_))
-            .forEachOrdered(statements::add);
+            .forEachOrdered(statements::addAll);
 
         node.statements().stream()
             .map(statement -> compileNamespaceStatement(statement, context))
@@ -147,7 +214,7 @@ public class PythonCodeGenerator {
         return node.accept(new TypedNamespaceStatementNode.Visitor<PythonStatementNode>() {
             @Override
             public PythonStatementNode visit(TypedFunctionNode node) {
-                return compileFunction(node);
+                return compileFunction(node, context);
             }
 
             @Override
@@ -157,7 +224,7 @@ public class PythonCodeGenerator {
 
             @Override
             public PythonStatementNode visit(TypedTestNode node) {
-                return compileTest(node);
+                return compileTest(node, context);
             }
         });
     }
@@ -190,8 +257,8 @@ public class PythonCodeGenerator {
         return new PythonReferenceNode(node.name());
     }
 
-    private PythonStatementNode compileReturn(TypedReturnNode node) {
-        return new PythonReturnNode(compileExpression(node.expression()));
+    private PythonStatementNode compileReturn(TypedReturnNode node, PythonCodeGeneratorContext context) {
+        return new PythonReturnNode(compileExpression(node.expression(), context));
     }
 
     public PythonReferenceNode compileStaticExpression(TypedStaticExpressionNode node) {
@@ -202,19 +269,19 @@ public class PythonCodeGenerator {
         return new PythonStringLiteralNode(node.value());
     }
 
-    private PythonStatementNode compileTest(TypedTestNode node) {
+    private PythonStatementNode compileTest(TypedTestNode node, PythonCodeGeneratorContext context) {
         return new PythonFunctionNode(
             PythonTestNames.generateName(node.name()),
             List.of(),
-            node.body().stream().map(statement -> compileFunctionStatement(statement)).toList()
+            node.body().stream().map(statement -> compileFunctionStatement(statement, context)).toList()
         );
     }
 
-    private PythonStatementNode compileVar(TypedVarNode node) {
+    private PythonStatementNode compileVar(TypedVarNode node, PythonCodeGeneratorContext context) {
         return new PythonAssignmentNode(
             node.name(),
             Optional.empty(),
-            Optional.of(compileExpression(node.expression()))
+            Optional.of(compileExpression(node.expression(), context))
         );
     }
 

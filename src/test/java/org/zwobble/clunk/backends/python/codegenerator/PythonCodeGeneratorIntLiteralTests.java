@@ -13,7 +13,7 @@ public class PythonCodeGeneratorIntLiteralTests {
     public void intLiteralGeneratesIntLiteral() {
         var node = Typed.intLiteral(123);
 
-        var result = PythonCodeGenerator.DEFAULT.compileExpression(node);
+        var result = PythonCodeGenerator.DEFAULT.compileExpression(node, PythonCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
         assertThat(string, equalTo("123"));

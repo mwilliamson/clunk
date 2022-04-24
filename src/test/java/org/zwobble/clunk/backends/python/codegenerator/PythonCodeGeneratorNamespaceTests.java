@@ -1,12 +1,13 @@
 package org.zwobble.clunk.backends.python.codegenerator;
 
 import org.junit.jupiter.api.Test;
-import org.zwobble.clunk.ast.typed.Typed;
-import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
-import org.zwobble.clunk.ast.typed.TypedRecordNode;
+import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.python.serialiser.PythonSerialiser;
 import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.StaticFunctionType;
 import org.zwobble.clunk.types.Types;
+
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -73,5 +74,84 @@ public class PythonCodeGeneratorNamespaceTests {
             from d.e import f
             """
         ));
+    }
+
+    @Test
+    public void macroImportsDoNotImmediatelyGenerateImports() {
+        var node = TypedNamespaceNode
+            .builder(NamespaceName.parts("example", "project"))
+            .addImport(Typed.import_(
+                NamespaceName.parts("stdlib", "assertions"), "assertThat",
+                new StaticFunctionType(
+                    NamespaceName.parts("stdlib", "assertions"),
+                    "assertThat",
+                    List.of(),
+                    Types.UNIT
+                )
+            ))
+            .build();
+
+        var result = PythonCodeGenerator.DEFAULT.compileNamespace(node);
+
+        assertThat(result.name(), equalTo("example.project"));
+        var string = serialiseToString(result, PythonSerialiser::serialiseModule);
+        assertThat(string, equalTo(""));
+    }
+
+    @Test
+    public void macrosGenerateImports() {
+        var assertThatType = new StaticFunctionType(
+            NamespaceName.parts("stdlib", "assertions"),
+            "assertThat",
+            List.of(),
+            Types.UNIT
+        );
+        var equalToType = new StaticFunctionType(
+            NamespaceName.parts("stdlib", "matchers"),
+            "equalTo",
+            List.of(),
+            Types.UNIT
+        );
+        var node = TypedNamespaceNode
+            .builder(NamespaceName.parts("example", "project"))
+            .addImport(Typed.import_(
+                NamespaceName.parts("stdlib", "assertions"), "assertThat",
+                assertThatType
+            ))
+            .addImport(Typed.import_(
+                NamespaceName.parts("stdlib", "assertions"), "equalTo",
+                equalToType
+            ))
+            .addStatement(
+                TypedTestNode.builder()
+                    .name("x")
+                    .addBodyStatement(Typed.expressionStatement(
+                        Typed.call(
+                            Typed.reference("assertThat", assertThatType),
+                            List.of(
+                                Typed.intLiteral(1),
+                                Typed.call(
+                                    Typed.reference("equalTo", equalToType),
+                                    List.of(Typed.intLiteral(2)),
+                                    Types.UNIT
+                                )
+                            ),
+                            Types.UNIT
+                        )
+                    ))
+                    .build()
+            )
+            .build();
+
+        var result = PythonCodeGenerator.DEFAULT.compileNamespace(node);
+
+        assertThat(result.name(), equalTo("example.project"));
+        var string = serialiseToString(result, PythonSerialiser::serialiseModule);
+        assertThat(string, equalTo("""
+            from precisely import assert_that
+            from precisely import equal_to
+            def test_x():
+                (assert_that)(1, (equal_to)(2))
+            """));
     }
 }

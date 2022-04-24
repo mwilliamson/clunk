@@ -4,6 +4,7 @@ import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.Type;
 
+import java.util.List;
 import java.util.Optional;
 
 public class Typed {
@@ -13,6 +14,10 @@ public class Typed {
 
     public static TypedBoolLiteralNode boolTrue() {
         return new TypedBoolLiteralNode(true, NullSource.INSTANCE);
+    }
+
+    public static TypedCallNode call(TypedExpressionNode receiver, List<TypedExpressionNode> args, Type type) {
+        return new TypedCallNode(receiver, args, type, NullSource.INSTANCE);
     }
 
     public static TypedExpressionStatementNode expressionStatement(TypedExpressionNode expression) {

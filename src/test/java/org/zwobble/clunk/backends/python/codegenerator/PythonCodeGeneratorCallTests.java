@@ -33,7 +33,7 @@ public class PythonCodeGeneratorCallTests {
             NullSource.INSTANCE
         );
 
-        var result = PythonCodeGenerator.DEFAULT.compileExpression(node);
+        var result = PythonCodeGenerator.DEFAULT.compileExpression(node, PythonCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
         assertThat(string, equalTo("(abs)(123)"));

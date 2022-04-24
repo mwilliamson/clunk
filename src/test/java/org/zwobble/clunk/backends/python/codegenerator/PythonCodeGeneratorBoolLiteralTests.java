@@ -13,7 +13,7 @@ public class PythonCodeGeneratorBoolLiteralTests {
     public void falseLiteralGeneratesFalseLiteral() {
         var node = Typed.boolFalse();
 
-        var result = PythonCodeGenerator.DEFAULT.compileExpression(node);
+        var result = PythonCodeGenerator.DEFAULT.compileExpression(node, PythonCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
         assertThat(string, equalTo("False"));
@@ -23,7 +23,7 @@ public class PythonCodeGeneratorBoolLiteralTests {
     public void trueLiteralGeneratesTrueLiteral() {
         var node = Typed.boolTrue();
 
-        var result = PythonCodeGenerator.DEFAULT.compileExpression(node);
+        var result = PythonCodeGenerator.DEFAULT.compileExpression(node, PythonCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
         assertThat(string, equalTo("True"));

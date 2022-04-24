@@ -122,23 +122,28 @@ public class PythonCodeGenerator {
     }
 
     public PythonModuleNode compileNamespace(TypedNamespaceNode node) {
+        var context = new PythonCodeGeneratorContext();
         var moduleName = namespaceNameToModuleName(node.name());
 
         var statements = new ArrayList<PythonStatementNode>();
-        statements.add(new PythonImportNode("dataclasses"));
 
         node.imports().stream()
             .map(import_ -> compileImport(import_))
             .forEachOrdered(statements::add);
 
         node.statements().stream()
-            .map(statement -> compileNamespaceStatement(statement))
+            .map(statement -> compileNamespaceStatement(statement, context))
             .forEachOrdered(statements::add);
+
+        statements.addAll(0, context.imports());
 
         return new PythonModuleNode(moduleName, statements);
     }
 
-    public PythonStatementNode compileNamespaceStatement(TypedNamespaceStatementNode node) {
+    public PythonStatementNode compileNamespaceStatement(
+        TypedNamespaceStatementNode node,
+        PythonCodeGeneratorContext context
+    ) {
         return node.accept(new TypedNamespaceStatementNode.Visitor<PythonStatementNode>() {
             @Override
             public PythonStatementNode visit(TypedFunctionNode node) {
@@ -147,7 +152,7 @@ public class PythonCodeGenerator {
 
             @Override
             public PythonStatementNode visit(TypedRecordNode node) {
-                return compileRecord(node);
+                return compileRecord(node, context);
             }
 
             @Override
@@ -161,7 +166,12 @@ public class PythonCodeGenerator {
         return camelCaseToSnakeCase(node.name());
     }
 
-    public PythonClassDeclarationNode compileRecord(TypedRecordNode node) {
+    public PythonClassDeclarationNode compileRecord(
+        TypedRecordNode node,
+        PythonCodeGeneratorContext context
+    ) {
+        context.addImport(List.of("dataclasses"));
+
         var decorators = List.of(
             Python.call(
                 Python.attr(Python.reference("dataclasses"), "dataclass"),

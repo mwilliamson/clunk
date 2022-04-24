@@ -48,7 +48,6 @@ public class PythonCodeGeneratorNamespaceTests {
         assertThat(result.name(), equalTo("example.project"));
         var string = serialiseToString(result, PythonSerialiser::serialiseModule);
         assertThat(string, equalTo("""
-            import dataclasses
             from a.b import C
             """
         ));
@@ -68,7 +67,6 @@ public class PythonCodeGeneratorNamespaceTests {
         assertThat(result.name(), equalTo("example.project"));
         var string = serialiseToString(result, PythonSerialiser::serialiseModule);
         assertThat(string, equalTo("""
-            import dataclasses
             import a
             from b import c
             from d.e import f

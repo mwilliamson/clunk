@@ -19,7 +19,7 @@ public class PythonCodeGeneratorRecordTests {
             .addField(Typed.recordField("second", IntType.INSTANCE))
             .build();
 
-        var result = PythonCodeGenerator.DEFAULT.compileRecord(node);
+        var result = PythonCodeGenerator.DEFAULT.compileRecord(node, PythonCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
         assertThat(string, equalTo(

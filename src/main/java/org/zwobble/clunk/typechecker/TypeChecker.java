@@ -168,7 +168,6 @@ public class TypeChecker {
         UntypedImportNode import_,
         TypeCheckerContext context
     ) {
-        var typedNode = new TypedImportNode(import_.namespaceName(), import_.fieldName(), import_.source());
 
         var type = context.typeOfNamespace(import_.namespaceName());
         if (type.isEmpty()) {
@@ -187,6 +186,8 @@ public class TypeChecker {
             }
 
             var newContext = context.updateType(fieldName, importType);
+
+            var typedNode = new TypedImportNode(import_.namespaceName(), import_.fieldName(), importType, import_.source());
 
             return new TypeCheckImportResult(typedNode, newContext);
         } else {

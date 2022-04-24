@@ -6,6 +6,7 @@ import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.backends.python.serialiser.PythonSerialiser;
 import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.Types;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -40,7 +41,7 @@ public class PythonCodeGeneratorNamespaceTests {
     public void fieldImportsAreCompiled() {
         var node = TypedNamespaceNode
             .builder(NamespaceName.parts("example", "project"))
-            .addImport(Typed.import_(NamespaceName.parts("a", "b"), "C"))
+            .addImport(Typed.import_(NamespaceName.parts("a", "b"), "C", Types.INT))
             .build();
 
         var result = PythonCodeGenerator.DEFAULT.compileNamespace(node);
@@ -57,9 +58,9 @@ public class PythonCodeGeneratorNamespaceTests {
     public void namespaceImportsAreCompiled() {
         var node = TypedNamespaceNode
             .builder(NamespaceName.parts("example", "project"))
-            .addImport(Typed.import_(NamespaceName.parts("a")))
-            .addImport(Typed.import_(NamespaceName.parts("b", "c")))
-            .addImport(Typed.import_(NamespaceName.parts("d", "e", "f")))
+            .addImport(Typed.import_(NamespaceName.parts("a"), Types.INT))
+            .addImport(Typed.import_(NamespaceName.parts("b", "c"), Types.INT))
+            .addImport(Typed.import_(NamespaceName.parts("d", "e", "f"), Types.INT))
             .build();
 
         var result = PythonCodeGenerator.DEFAULT.compileNamespace(node);

@@ -22,7 +22,7 @@ public class TypeCheckImportTests {
     // TODO: test unknown namespace
     // TODO: test import of namespace (no field)
     @Test
-    public void importedFieldIsAddedToEnvironment() {
+    public void importedFieldIsTypeChecked() {
         var untypedNode = Untyped.import_(NamespaceName.parts("x", "y"), "IntAlias");
         var namespaceType = new NamespaceType(
             NamespaceName.parts("x", "y"),
@@ -35,8 +35,23 @@ public class TypeCheckImportTests {
 
         assertThat(result.node(), isTypedImportNode(allOf(
             has("namespaceName", equalTo(NamespaceName.parts("x", "y"))),
-            has("fieldName", equalTo(Optional.of("IntAlias")))
+            has("fieldName", equalTo(Optional.of("IntAlias"))),
+            has("type", equalTo(Types.metaType(Types.INT)))
         )));
+    }
+
+    @Test
+    public void importedFieldIsAddedToEnvironment() {
+        var untypedNode = Untyped.import_(NamespaceName.parts("x", "y"), "IntAlias");
+        var namespaceType = new NamespaceType(
+            NamespaceName.parts("x", "y"),
+            Map.of("IntAlias", Types.metaType(Types.INT))
+        );
+        var context = TypeCheckerContext.stub()
+            .updateNamespaceType(namespaceType);
+
+        var result = TypeChecker.typeCheckImport(untypedNode, context);
+
         assertThat(result.context().typeOf("IntAlias", NullSource.INSTANCE), equalTo(Types.metaType(Types.INT)));
     }
 

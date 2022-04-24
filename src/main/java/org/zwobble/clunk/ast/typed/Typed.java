@@ -19,12 +19,12 @@ public class Typed {
         return new TypedExpressionStatementNode(expression, NullSource.INSTANCE);
     }
 
-    public static TypedImportNode import_(NamespaceName name) {
-        return new TypedImportNode(name, Optional.empty(), NullSource.INSTANCE);
+    public static TypedImportNode import_(NamespaceName name, Type type) {
+        return new TypedImportNode(name, Optional.empty(), type, NullSource.INSTANCE);
     }
 
-    public static TypedImportNode import_(NamespaceName name, String fieldName) {
-        return new TypedImportNode(name, Optional.of(fieldName), NullSource.INSTANCE);
+    public static TypedImportNode import_(NamespaceName name, String fieldName, Type type) {
+        return new TypedImportNode(name, Optional.of(fieldName), type, NullSource.INSTANCE);
     }
 
     public static TypedExpressionNode intLiteral(int value) {

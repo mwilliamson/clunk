@@ -17,6 +17,8 @@ public record TypeCheckerContext(
     Map<String, Type> environment,
     Map<NamespaceName, NamespaceType> namespaceTypes
 ) {
+    public static final TypeCheckerContext EMPTY = new TypeCheckerContext(Optional.empty(), Map.of(), Map.of());
+
     public static TypeCheckerContext stub() {
         return new TypeCheckerContext(Optional.empty(), Builtins.ENVIRONMENT, Map.of());
     }
@@ -30,7 +32,7 @@ public record TypeCheckerContext(
     }
 
     private TypeCheckerContext enter(Optional<Type> returnType) {
-        return new TypeCheckerContext(returnType, Map.of(), namespaceTypes);
+        return new TypeCheckerContext(returnType, environment, namespaceTypes);
     }
 
     public TypeCheckerContext updateNamespaceType(NamespaceType namespaceType) {
@@ -40,7 +42,11 @@ public record TypeCheckerContext(
     }
 
     public Optional<NamespaceType> typeOfNamespace(NamespaceName name) {
-        return Optional.of(namespaceTypes.get(name));
+        return Optional.ofNullable(namespaceTypes.get(name));
+    }
+
+    public TypeCheckerContext withEnvironment(Map<String, Type> environment) {
+        return new TypeCheckerContext(returnType, environment, namespaceTypes);
     }
 
     public TypeCheckerContext updateType(String name, Type type) {

@@ -15,7 +15,7 @@ public class Types {
         if (superType == OBJECT) {
             return true;
         }
-        
+
         return subType.equals(superType);
     }
 

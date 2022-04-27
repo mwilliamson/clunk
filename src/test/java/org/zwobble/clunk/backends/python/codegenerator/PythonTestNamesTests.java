@@ -23,6 +23,13 @@ public class PythonTestNamesTests {
     }
 
     @Test
+    public void doubleEqualsAreConvertedToEquals() {
+        var result = PythonTestNames.generateName("one == two");
+
+        assertThat(result, equalTo("test_one_equals_two"));
+    }
+
+    @Test
     public void whenNameIsNotValidIdentifierThenErrorIsThrown() {
         var result = assertThrows(
             InternalCompilerError.class,

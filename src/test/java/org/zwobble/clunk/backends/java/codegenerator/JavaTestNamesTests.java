@@ -16,6 +16,13 @@ public class JavaTestNamesTests {
     }
 
     @Test
+    public void doubleEqualsAreConvertedToEquals() {
+        var result = JavaTestNames.generateName("one == two");
+
+        assertThat(result, equalTo("oneEqualsTwo"));
+    }
+
+    @Test
     public void whenNameIsNotValidIdentifierThenErrorIsThrown() {
         var result = assertThrows(
             InternalCompilerError.class,

@@ -10,7 +10,7 @@ public class JavaTestNames {
 
     public static String generateName(String name) {
         var identifier = Pattern.compile(" ([a-z])")
-            .matcher(name)
+            .matcher(name.replace(" == ", " equals "))
             .replaceAll(result -> result.group(1).toUpperCase(Locale.ROOT));
 
         if (!VALID_IDENTIFIER.matcher(identifier).matches()) {

@@ -4,6 +4,7 @@ import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.zwobble.clunk.Compiler;
+import org.zwobble.clunk.backends.python.PythonBackend;
 import org.zwobble.clunk.errors.SourceError;
 
 import java.io.IOException;
@@ -25,7 +26,7 @@ public class ClunkCompilerCli {
         var outputPath = Paths.get(args.getString("output"));
 
         var compiler = new Compiler();
-        compiler.compile(sourcePath, outputPath);
+        compiler.compile(sourcePath, outputPath, new PythonBackend());
     }
 
     private static Namespace parseArgs(String[] args) {

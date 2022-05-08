@@ -1,8 +1,6 @@
 package org.zwobble.clunk;
 
-import org.zwobble.clunk.backends.CodeBuilder;
-import org.zwobble.clunk.backends.python.codegenerator.PythonCodeGenerator;
-import org.zwobble.clunk.backends.python.serialiser.PythonSerialiser;
+import org.zwobble.clunk.backends.Backend;
 import org.zwobble.clunk.builtins.Builtins;
 import org.zwobble.clunk.parser.Parser;
 import org.zwobble.clunk.parser.Tokeniser;
@@ -15,14 +13,13 @@ import org.zwobble.clunk.types.StaticFunctionType;
 import org.zwobble.clunk.types.Types;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
 public class Compiler {
-    public void compile(Path sourcePath, Path outputPath) throws IOException {
+    public void compile(Path sourcePath, Path outputPath, Backend backend) throws IOException {
         var sourceContents = Files.readString(sourcePath);
         var source = FileFragmentSource.create(sourcePath.toString(), sourceContents);
         var tokens = Tokeniser.tokenise(source);
@@ -50,9 +47,6 @@ public class Compiler {
             .withEnvironment(Builtins.ENVIRONMENT);
         var typedNamespaceNode = TypeChecker.typeCheckNamespace(untypedNamespaceNode, typeCheckerContext);
 
-        var pythonModule = PythonCodeGenerator.DEFAULT.compileNamespace(typedNamespaceNode);
-        var codeBuilder = new CodeBuilder();
-        PythonSerialiser.serialiseModule(pythonModule, codeBuilder);
-        Files.writeString(outputPath, codeBuilder.toString(), StandardCharsets.UTF_8);
+        backend.compile(typedNamespaceNode, outputPath);
     }
 }

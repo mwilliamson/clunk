@@ -1,0 +1,18 @@
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+
+test "assert False" {
+    assertThat(false, equalTo(true));
+}
+
+test "assert True" {
+    assertThat(true, equalTo(false));
+}
+
+test "assert 42 == 47" {
+    assertThat(42, equalTo(47));
+}
+
+test "assert 42 == 42" {
+    assertThat(42, equalTo(42));
+}

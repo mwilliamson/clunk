@@ -1,0 +1,42 @@
+============================= test session starts ==============================
+rootdir: ROOTDIR
+collected 4 items
+
+SimpleTest.py FFF.                                                       [100%]
+
+=================================== FAILURES ===================================
+______________________________ test_assert_false _______________________________
+SimpleTest.py:4: in test_assert_false
+    (assert_that)(False, (equal_to)(True))
+SITE-PACKAGES/precisely/__init__.py:50: in assert_that
+    raise AssertionError("\nExpected:{0}\nbut:{1}".format(
+E   AssertionError: 
+E   Expected:
+E     True
+E   but:
+E     was False
+_______________________________ test_assert_true _______________________________
+SimpleTest.py:6: in test_assert_true
+    (assert_that)(True, (equal_to)(False))
+SITE-PACKAGES/precisely/__init__.py:50: in assert_that
+    raise AssertionError("\nExpected:{0}\nbut:{1}".format(
+E   AssertionError: 
+E   Expected:
+E     False
+E   but:
+E     was True
+___________________________ test_assert_42_equals_47 ___________________________
+SimpleTest.py:8: in test_assert_42_equals_47
+    (assert_that)(42, (equal_to)(47))
+SITE-PACKAGES/precisely/__init__.py:50: in assert_that
+    raise AssertionError("\nExpected:{0}\nbut:{1}".format(
+E   AssertionError: 
+E   Expected:
+E     47
+E   but:
+E     was 42
+=========================== short test summary info ============================
+FAILED SimpleTest.py::test_assert_false - AssertionError: 
+FAILED SimpleTest.py::test_assert_true - AssertionError: 
+FAILED SimpleTest.py::test_assert_42_equals_47 - AssertionError: 
+========================= 3 failed, 1 passed in 0.03s ==========================

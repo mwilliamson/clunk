@@ -1,0 +1,68 @@
+#!/usr/bin/env python3.8
+
+import argparse
+import os
+import sys
+
+
+def _main():
+    args = _parse_args()
+    args.func(args)
+
+
+def _parse_args():
+    parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    approve_parser = subparsers.add_parser("approve")
+    approve_parser.set_defaults(func=_approve)
+    approve_parser.add_argument("--all", "-a", action="store_true")
+
+    reject_parser = subparsers.add_parser("reject")
+    reject_parser.set_defaults(func=_reject)
+    reject_parser.add_argument("--all", "-a", action="store_true")
+
+    return parser.parse_args()
+
+
+def _approve(args):
+    if args.all:
+        for path in _find_actual_paths():
+            expected_path = _replace_extension(path, "expected")
+            print("replace\n    {}\nwith\n    {}".format(expected_path, path), file=sys.stderr)
+            os.replace(path, expected_path)
+    else:
+        raise Exception("not implemented yet")
+
+
+def _reject(args):
+    if args.all:
+        for path in _find_actual_paths():
+            print("delete\n    {}".format(path), file=sys.stderr)
+            os.unlink(path)
+    else:
+        raise Exception("not implemented yet")
+
+
+def _find_actual_paths():
+    for root, dirnames, filenames in os.walk(_snapshots_path()):
+        for filename in filenames:
+            path = os.path.join(root, filename)
+            if _has_extension(path, "actual"):
+                yield path
+
+
+def _snapshots_path():
+    return os.path.join(os.path.dirname(__file__), "snapshots")
+
+
+def _has_extension(path, extension):
+    return os.path.splitext(path)[1] == "." + extension
+
+
+def _replace_extension(path, extension):
+    return os.path.splitext(path)[0] + "." + extension
+
+
+if __name__ == "__main__":
+    _main()

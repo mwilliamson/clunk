@@ -1,3 +1,39 @@
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+
+test "assert False" {
+    assertThat(false, equalTo(true));
+}
+
+test "assert True" {
+    assertThat(true, equalTo(false));
+}
+
+test "assert 42 == 47" {
+    assertThat(42, equalTo(47));
+}
+
+test "assert 42 == 42" {
+    assertThat(42, equalTo(42));
+}
+
+
+==============
+
+from precisely import assert_that
+from precisely import equal_to
+def test_assert_false():
+    (assert_that)(False, (equal_to)(True))
+def test_assert_true():
+    (assert_that)(True, (equal_to)(False))
+def test_assert_42_equals_47():
+    (assert_that)(42, (equal_to)(47))
+def test_assert_42_equals_42():
+    (assert_that)(42, (equal_to)(42))
+
+
+==============
+
 ============================= test session starts ==============================
 rootdir: ROOTDIR
 collected 4 items

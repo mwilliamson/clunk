@@ -52,7 +52,13 @@ public class PythonExampleTests {
 
             process.waitFor();
 
-            snapshotter.assertSnapshot(output);
+            var separator = "\n\n==============\n\n";
+
+            snapshotter.assertSnapshot(
+                Files.readString(sourcePath) + separator +
+                    Files.readString(outputPath) + separator +
+                    output
+            );
         } finally {
             deleteRecursive(temporaryDirectory);
         }

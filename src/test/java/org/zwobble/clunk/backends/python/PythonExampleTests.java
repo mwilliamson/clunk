@@ -39,6 +39,6 @@ public class PythonExampleTests {
     }
 
     private void runPythonExampleTest(Snapshotter snapshotter, String testName) throws IOException, InterruptedException {
-        runExampleTest(snapshotter, testName, new PythonTestRunner());
+        runExampleTest(snapshotter, testName, logger -> new PythonBackend(logger), new PythonTestRunner());
     }
 }

@@ -1,8 +1,9 @@
 package org.zwobble.clunk.builtins;
 
-import org.zwobble.clunk.types.Type;
-import org.zwobble.clunk.types.Types;
+import org.zwobble.clunk.typechecker.TypeCheckerContext;
+import org.zwobble.clunk.types.*;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.zwobble.clunk.types.Types.metaType;
@@ -13,4 +14,24 @@ public class Builtins {
         Map.entry("Int", metaType(Types.INT)),
         Map.entry("String", metaType(Types.STRING))
     );
+
+    // TODO: proper typing for builtin modules
+    public static final TypeCheckerContext TYPE_CHECKER_CONTEXT = TypeCheckerContext.EMPTY
+        .updateNamespaceType(new NamespaceType(NamespaceName.parts("stdlib", "assertions"), Map.ofEntries(
+            Map.entry("assertThat", new StaticFunctionType(
+                NamespaceName.parts("stdlib", "assertions"),
+                "assertThat",
+                List.of(Types.OBJECT, Types.UNIT),
+                Types.UNIT
+            ))
+        )))
+        .updateNamespaceType(new NamespaceType(NamespaceName.parts("stdlib", "matchers"), Map.ofEntries(
+            Map.entry("equalTo", new StaticFunctionType(
+                NamespaceName.parts("stdlib", "matchers"),
+                "equalTo",
+                List.of(Types.OBJECT),
+                Types.UNIT
+            ))
+        )))
+        .withEnvironment(Builtins.ENVIRONMENT);
 }

@@ -66,26 +66,7 @@ public class Compiler {
         var parser = new Parser(source);
         var untypedNamespaceNode = parser.parseNamespaceName(tokens, NamespaceName.parts("x"));
 
-        // TODO: proper typing for builtin modules
-        var typeCheckerContext = TypeCheckerContext.EMPTY
-            .updateNamespaceType(new NamespaceType(NamespaceName.parts("stdlib", "assertions"), Map.ofEntries(
-                Map.entry("assertThat", new StaticFunctionType(
-                    NamespaceName.parts("stdlib", "assertions"),
-                    "assertThat",
-                    List.of(Types.OBJECT, Types.UNIT),
-                    Types.UNIT
-                ))
-            )))
-            .updateNamespaceType(new NamespaceType(NamespaceName.parts("stdlib", "matchers"), Map.ofEntries(
-                Map.entry("equalTo", new StaticFunctionType(
-                    NamespaceName.parts("stdlib", "matchers"),
-                    "equalTo",
-                    List.of(Types.OBJECT),
-                    Types.UNIT
-                ))
-            )))
-            .withEnvironment(Builtins.ENVIRONMENT);
-        var typedNamespaceNode = TypeChecker.typeCheckNamespace(untypedNamespaceNode, typeCheckerContext);
+        var typedNamespaceNode = TypeChecker.typeCheckNamespace(untypedNamespaceNode, Builtins.TYPE_CHECKER_CONTEXT);
 
         backend.compile(typedNamespaceNode, outputPath);
     }

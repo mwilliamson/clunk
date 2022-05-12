@@ -13,7 +13,7 @@ public class TypeScriptCodeGeneratorVarTests {
     public void varIsCompiledToVariableDeclaration() {
         var node = Typed.var("x", Typed.boolFalse());
 
-        var result = TypeScriptCodeGenerator.compileFunctionStatement(node);
+        var result = TypeScriptCodeGenerator.compileFunctionStatement(node, TypeScriptCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseStatement);
         assertThat(string, equalTo("let x = false;\n"));

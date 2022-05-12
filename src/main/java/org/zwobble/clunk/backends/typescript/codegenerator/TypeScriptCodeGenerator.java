@@ -2,27 +2,78 @@ package org.zwobble.clunk.backends.typescript.codegenerator;
 
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.typescript.ast.*;
-import org.zwobble.clunk.types.BoolType;
-import org.zwobble.clunk.types.IntType;
-import org.zwobble.clunk.types.StringType;
-import org.zwobble.clunk.types.Type;
+import org.zwobble.clunk.types.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class TypeScriptCodeGenerator {
+    private interface TypeScriptMacro {
+        TypeScriptExpressionNode compileReceiver(TypeScriptCodeGeneratorContext context);
+    }
+
+    private static final Map<NamespaceName, Map<String, TypeScriptMacro>> MACROS = Map.ofEntries(
+        Map.entry(
+            NamespaceName.fromParts("stdlib", "assertions"),
+            Map.ofEntries(
+                Map.entry("assertThat", new TypeScriptMacro() {
+                    @Override
+                    public TypeScriptExpressionNode compileReceiver(TypeScriptCodeGeneratorContext context) {
+                        context.addImport("@mwilliamson/precisely", "assertThat");
+                        return new TypeScriptReferenceNode("assertThat");
+                    }
+                })
+            )
+        ),
+        Map.entry(
+            NamespaceName.fromParts("stdlib", "matchers"),
+            Map.ofEntries(
+                Map.entry("equalTo", new TypeScriptMacro() {
+                    @Override
+                    public TypeScriptExpressionNode compileReceiver(TypeScriptCodeGeneratorContext context) {
+                        context.addImport("@mwilliamson/precisely", "equalTo");
+                        return new TypeScriptReferenceNode("equalTo");
+                    }
+                })
+            )
+        )
+    );
+
+    private static Optional<TypeScriptMacro> lookupMacro(Type type) {
+        if (type instanceof StaticFunctionType staticFunctionType) {
+            var macro = MACROS.getOrDefault(staticFunctionType.namespaceName(), Map.of())
+                .get(staticFunctionType.functionName());
+            return Optional.ofNullable(macro);
+        } else {
+            return Optional.empty();
+        }
+    }
+
     private static TypeScriptExpressionNode compileBoolLiteral(TypedBoolLiteralNode node) {
         return new TypeScriptBoolLiteralNode(node.value());
     }
 
-    private static TypeScriptExpressionNode compileCall(TypedCallNode node) {
+    private static TypeScriptExpressionNode compileCall(TypedCallNode node, TypeScriptCodeGeneratorContext context) {
         return new TypeScriptCallNode(
-            compileExpression(node.receiver()),
-            node.positionalArgs().stream().map(arg -> compileExpression(arg)).toList()
+            compileCallReceiver(node.receiver(), context),
+            node.positionalArgs().stream().map(arg -> compileExpression(arg, context)).toList()
         );
     }
 
-    public static TypeScriptExpressionNode compileExpression(TypedExpressionNode node) {
+    private static TypeScriptExpressionNode compileCallReceiver(TypedExpressionNode receiver, TypeScriptCodeGeneratorContext context) {
+        var macro = lookupMacro(receiver.type());
+
+        if (macro.isPresent()) {
+            return macro.get().compileReceiver(context);
+        } else {
+            return compileExpression(receiver, context);
+        }
+    }
+
+    public static TypeScriptExpressionNode compileExpression(TypedExpressionNode node, TypeScriptCodeGeneratorContext context) {
         return node.accept(new TypedExpressionNode.Visitor<TypeScriptExpressionNode>() {
             @Override
             public TypeScriptExpressionNode visit(TypedBoolLiteralNode node) {
@@ -31,7 +82,7 @@ public class TypeScriptCodeGenerator {
 
             @Override
             public TypeScriptExpressionNode visit(TypedCallNode node) {
-                return compileCall(node);
+                return compileCall(node, context);
             }
 
             @Override
@@ -51,34 +102,40 @@ public class TypeScriptCodeGenerator {
         });
     }
 
-    private static TypeScriptStatementNode compileExpressionStatement(TypedExpressionStatementNode node) {
-        return new TypeScriptExpressionStatementNode(compileExpression(node.expression()));
+    private static TypeScriptStatementNode compileExpressionStatement(
+        TypedExpressionStatementNode node,
+        TypeScriptCodeGeneratorContext context
+    ) {
+        return new TypeScriptExpressionStatementNode(compileExpression(node.expression(), context));
     }
 
-    private static TypeScriptStatementNode compileFunction(TypedFunctionNode node) {
+    private static TypeScriptStatementNode compileFunction(TypedFunctionNode node, TypeScriptCodeGeneratorContext context) {
         return new TypeScriptFunctionDeclarationNode(
             node.name(),
             node.params().stream().map(param -> compileParam(param)).toList(),
             compileStaticExpression(node.returnType()),
-            node.body().stream().map(statement -> compileFunctionStatement(statement)).toList()
+            node.body().stream().map(statement -> compileFunctionStatement(statement, context)).toList()
         );
     }
 
-    public static TypeScriptStatementNode compileFunctionStatement(TypedFunctionStatementNode node) {
+    public static TypeScriptStatementNode compileFunctionStatement(
+        TypedFunctionStatementNode node,
+        TypeScriptCodeGeneratorContext context
+    ) {
         return node.accept(new TypedFunctionStatementNode.Visitor<TypeScriptStatementNode>() {
             @Override
             public TypeScriptStatementNode visit(TypedExpressionStatementNode node) {
-                return compileExpressionStatement(node);
+                return compileExpressionStatement(node, context);
             }
 
             @Override
             public TypeScriptStatementNode visit(TypedReturnNode node) {
-                return compileReturn(node);
+                return compileReturn(node, context);
             }
 
             @Override
             public TypeScriptStatementNode visit(TypedVarNode node) {
-                return compileVar(node);
+                return compileVar(node, context);
             }
         });
     }
@@ -89,19 +146,27 @@ public class TypeScriptCodeGenerator {
 
     public static TypeScriptModuleNode compileNamespace(TypedNamespaceNode node) {
         var name = String.join("/", node.name().parts());
+        var context = new TypeScriptCodeGeneratorContext();
 
-        var statements = node.statements().stream()
-            .map(statement -> compileNamespaceStatement(statement))
-            .toList();
+        var statements = new ArrayList<TypeScriptStatementNode>();
+
+        node.statements().stream()
+            .map(statement -> compileNamespaceStatement(statement, context))
+            .forEachOrdered(statements::add);
+
+        statements.addAll(0, context.imports());
 
         return new TypeScriptModuleNode(name, statements);
     }
 
-    public static TypeScriptStatementNode compileNamespaceStatement(TypedNamespaceStatementNode node) {
+    public static TypeScriptStatementNode compileNamespaceStatement(
+        TypedNamespaceStatementNode node,
+        TypeScriptCodeGeneratorContext context
+    ) {
         return node.accept(new TypedNamespaceStatementNode.Visitor<TypeScriptStatementNode>() {
             @Override
             public TypeScriptStatementNode visit(TypedFunctionNode node) {
-                return compileFunction(node);
+                return compileFunction(node, context);
             }
 
             @Override
@@ -111,7 +176,7 @@ public class TypeScriptCodeGenerator {
 
             @Override
             public TypeScriptStatementNode visit(TypedTestNode node) {
-                return compileTest(node);
+                return compileTest(node, context);
             }
         });
     }
@@ -132,8 +197,8 @@ public class TypeScriptCodeGenerator {
         return new TypeScriptReferenceNode(node.name());
     }
 
-    private static TypeScriptStatementNode compileReturn(TypedReturnNode node) {
-        return new TypeScriptReturnNode(compileExpression(node.expression()));
+    private static TypeScriptStatementNode compileReturn(TypedReturnNode node, TypeScriptCodeGeneratorContext context) {
+        return new TypeScriptReturnNode(compileExpression(node.expression(), context));
     }
 
     public static TypeScriptReferenceNode compileStaticExpression(TypedStaticExpressionNode node) {
@@ -144,20 +209,20 @@ public class TypeScriptCodeGenerator {
         return new TypeScriptStringLiteralNode(node.value());
     }
 
-    private static TypeScriptStatementNode compileTest(TypedTestNode node) {
+    private static TypeScriptStatementNode compileTest(TypedTestNode node, TypeScriptCodeGeneratorContext context) {
         return TypeScript.expressionStatement(TypeScript.call(
             TypeScript.reference("test"),
             List.of(
                 TypeScript.string(node.name()),
                 TypeScriptFunctionExpressionNode.builder()
-                    .addBodyStatements(node.body().stream().map(statement -> compileFunctionStatement(statement)).toList())
+                    .addBodyStatements(node.body().stream().map(statement -> compileFunctionStatement(statement, context)).toList())
                     .build()
             )
         ));
     }
 
-    private static TypeScriptStatementNode compileVar(TypedVarNode node) {
-        return new TypeScriptLetNode(node.name(), compileExpression(node.expression()));
+    private static TypeScriptStatementNode compileVar(TypedVarNode node, TypeScriptCodeGeneratorContext context) {
+        return new TypeScriptLetNode(node.name(), compileExpression(node.expression(), context));
     }
 
     private static String compileType(Type type) {

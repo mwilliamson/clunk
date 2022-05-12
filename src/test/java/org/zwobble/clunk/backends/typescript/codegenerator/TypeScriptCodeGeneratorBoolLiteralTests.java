@@ -13,7 +13,7 @@ public class TypeScriptCodeGeneratorBoolLiteralTests {
     public void falseLiteralGeneratesFalseLiteral() {
         var node = Typed.boolFalse();
 
-        var result = TypeScriptCodeGenerator.compileExpression(node);
+        var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
         assertThat(string, equalTo("false"));
@@ -23,7 +23,7 @@ public class TypeScriptCodeGeneratorBoolLiteralTests {
     public void trueLiteralGeneratesTrueLiteral() {
         var node = Typed.boolTrue();
 
-        var result = TypeScriptCodeGenerator.compileExpression(node);
+        var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
         assertThat(string, equalTo("true"));

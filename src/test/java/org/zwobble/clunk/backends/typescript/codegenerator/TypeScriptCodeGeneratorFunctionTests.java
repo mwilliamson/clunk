@@ -23,7 +23,7 @@ public class TypeScriptCodeGeneratorFunctionTests {
             .addBodyStatement(Typed.returnStatement(Typed.boolFalse()))
             .build();
 
-        var result = TypeScriptCodeGenerator.compileNamespaceStatement(node);
+        var result = TypeScriptCodeGenerator.compileNamespaceStatement(node, TypeScriptCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseStatement);
         assertThat(string, equalTo(

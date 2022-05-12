@@ -15,7 +15,7 @@ public class TypeScriptCodeGeneratorReturnTests {
     public void returnNodeGeneratesReturn() {
         var node = Typed.returnStatement(Typed.boolFalse());
 
-        var result = TypeScriptCodeGenerator.compileFunctionStatement(node);
+        var result = TypeScriptCodeGenerator.compileFunctionStatement(node, TypeScriptCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseStatement);
         assertThat(string, equalTo("return false;\n"));

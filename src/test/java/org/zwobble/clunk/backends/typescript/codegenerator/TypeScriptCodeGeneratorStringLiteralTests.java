@@ -15,7 +15,7 @@ public class TypeScriptCodeGeneratorStringLiteralTests {
     public void stringIsCompiledToString() {
         var node = Typed.string("hello");
 
-        var result = TypeScriptCodeGenerator.compileExpression(node);
+        var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
         assertThat(string, equalTo("\"hello\""));

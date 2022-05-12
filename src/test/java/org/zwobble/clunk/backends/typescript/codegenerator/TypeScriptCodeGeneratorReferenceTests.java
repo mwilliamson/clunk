@@ -14,7 +14,7 @@ public class TypeScriptCodeGeneratorReferenceTests {
     public void referenceIsCompiledToReference() {
         var node = Typed.reference("value", BoolType.INSTANCE);
 
-        var result = TypeScriptCodeGenerator.compileExpression(node);
+        var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
         assertThat(string, equalTo("value"));

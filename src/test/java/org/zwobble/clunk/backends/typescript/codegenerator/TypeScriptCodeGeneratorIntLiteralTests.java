@@ -13,7 +13,7 @@ public class TypeScriptCodeGeneratorIntLiteralTests {
     public void intLiteralGeneratesNumberLiteral() {
         var node = Typed.intLiteral(123);
 
-        var result = TypeScriptCodeGenerator.compileExpression(node);
+        var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
         assertThat(string, equalTo("123"));

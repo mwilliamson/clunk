@@ -36,7 +36,7 @@ public class TypeScriptCodeGeneratorCallTests {
             NullSource.INSTANCE
         );
 
-        var result = TypeScriptCodeGenerator.compileExpression(node);
+        var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
         assertThat(string, equalTo("(abs)(123)"));

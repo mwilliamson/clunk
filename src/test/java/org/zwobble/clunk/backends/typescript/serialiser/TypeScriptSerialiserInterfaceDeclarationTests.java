@@ -19,7 +19,8 @@ public class TypeScriptSerialiserInterfaceDeclarationTests {
         assertThat(result, equalTo(
             """
             interface Example {
-            }"""
+            }
+            """
         ));
     }
 
@@ -35,7 +36,8 @@ public class TypeScriptSerialiserInterfaceDeclarationTests {
             """
             interface Example {
                 readonly first: string;
-            }"""
+            }
+            """
         ));
     }
 
@@ -53,7 +55,8 @@ public class TypeScriptSerialiserInterfaceDeclarationTests {
             interface Example {
                 readonly first: string;
                 readonly second: number;
-            }"""
+            }
+            """
         ));
     }
 }

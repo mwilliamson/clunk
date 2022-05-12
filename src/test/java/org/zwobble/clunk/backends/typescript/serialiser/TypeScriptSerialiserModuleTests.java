@@ -26,8 +26,8 @@ public class TypeScriptSerialiserModuleTests {
         assertThat(result, equalTo("""
             interface First {
             }
-            
             interface Second {
-            }"""));
+            }
+            """));
     }
 }

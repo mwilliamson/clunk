@@ -27,7 +27,8 @@ public class TypeScriptCodeGeneratorRecordTests {
                 interface Example {
                     readonly first: string;
                     readonly second: number;
-                }"""
+                }
+                """
         ));
     }
 }

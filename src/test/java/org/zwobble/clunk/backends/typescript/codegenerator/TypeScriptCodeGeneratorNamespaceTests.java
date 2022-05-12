@@ -35,9 +35,9 @@ public class TypeScriptCodeGeneratorNamespaceTests {
             """
                 interface First {
                 }
-                
                 interface Second {
-                }"""
+                }
+                """
         ));
     }
 
@@ -112,11 +112,7 @@ public class TypeScriptCodeGeneratorNamespaceTests {
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseModule);
         assertThat(string, equalTo("""
             import {assertThat} from "@mwilliamson/precisely";
-            
-            
             import {equalTo} from "@mwilliamson/precisely";
-            
-            
             (test)("x", function () {
                 (assertThat)(1, (equalTo)(2));
             });

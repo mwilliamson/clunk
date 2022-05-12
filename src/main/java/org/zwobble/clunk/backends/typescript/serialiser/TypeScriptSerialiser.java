@@ -154,6 +154,7 @@ public class TypeScriptSerialiser {
         }
         builder.dedent();
         builder.append("}");
+        builder.newLine();
     }
 
     private static void serialiseLet(TypeScriptLetNode node, CodeBuilder builder) {
@@ -166,16 +167,8 @@ public class TypeScriptSerialiser {
     }
 
     public static void serialiseModule(TypeScriptModuleNode node, CodeBuilder builder) {
-        var isFirst = true;
         for (var statement : node.statements()) {
-            if (!isFirst) {
-                builder.newLine();
-                builder.newLine();
-            }
-
             serialiseStatement(statement, builder);
-
-            isFirst = false;
         }
     }
 

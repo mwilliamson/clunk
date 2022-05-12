@@ -2,6 +2,7 @@ package org.zwobble.clunk;
 
 import org.zwobble.clunk.backends.Backend;
 import org.zwobble.clunk.builtins.Builtins;
+import org.zwobble.clunk.logging.Logger;
 import org.zwobble.clunk.parser.Parser;
 import org.zwobble.clunk.parser.Tokeniser;
 import org.zwobble.clunk.sources.FileFragmentSource;
@@ -15,21 +16,9 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class Compiler {
-    public interface Logger {
-        Logger NULL = new NullLogger();
-
-        void sourceFile(Path sourcePath, String contents);
-    }
-
-    private static class NullLogger implements Logger {
-        @Override
-        public void sourceFile(Path sourcePath, String contents) {
-        }
-    }
 
     private Logger logger;
 

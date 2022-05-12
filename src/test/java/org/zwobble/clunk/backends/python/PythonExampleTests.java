@@ -3,17 +3,15 @@ package org.zwobble.clunk.backends.python;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.zwobble.clunk.Compiler;
+import org.zwobble.clunk.logging.Logger;
 import org.zwobble.clunk.testing.snapshots.SnapshotResolver;
 import org.zwobble.clunk.testing.snapshots.Snapshotter;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -48,7 +46,7 @@ public class PythonExampleTests {
             var snapshot = new StringBuilder();
             var separator = "\n\n==============\n\n";
 
-            var compiler = new Compiler(new Compiler.Logger() {
+            var compiler = new Compiler(new Logger() {
                 @Override
                 public void sourceFile(Path sourcePath, String contents) {
                     snapshot.append("Source path: " + sourceRoot.relativize(sourcePath) + "\n");

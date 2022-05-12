@@ -6,6 +6,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import org.zwobble.clunk.Compiler;
 import org.zwobble.clunk.backends.python.PythonBackend;
 import org.zwobble.clunk.errors.SourceError;
+import org.zwobble.clunk.logging.Logger;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -25,7 +26,7 @@ public class ClunkCompilerCli {
         var sourcePath = Paths.get(args.getString("source"));
         var outputPath = Paths.get(args.getString("output"));
 
-        var compiler = new Compiler(Compiler.Logger.NULL);
+        var compiler = new Compiler(Logger.NULL);
         compiler.compile(sourcePath, outputPath, new PythonBackend());
     }
 

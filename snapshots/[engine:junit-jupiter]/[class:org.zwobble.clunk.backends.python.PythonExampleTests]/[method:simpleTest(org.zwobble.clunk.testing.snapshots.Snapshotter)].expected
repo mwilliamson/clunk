@@ -37,7 +37,7 @@ def test_assert_42_equals_42():
 ==============
 
 ============================= test session starts ==============================
-rootdir: ROOTDIR
+rootdir: ROOTDIR, configfile: tox.ini
 collected 4 items
 
 SimpleTest.py FFF.                                                       [100%]

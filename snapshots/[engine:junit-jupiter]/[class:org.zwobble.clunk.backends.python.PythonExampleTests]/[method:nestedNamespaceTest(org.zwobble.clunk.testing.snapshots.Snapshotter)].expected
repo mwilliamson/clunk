@@ -19,7 +19,7 @@ def test_assert_false():
 ==============
 
 ============================= test session starts ==============================
-rootdir: ROOTDIR
+rootdir: ROOTDIR, configfile: tox.ini
 collected 1 item
 
 One/Two/SimpleTest.py F                                                  [100%]

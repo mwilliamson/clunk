@@ -26,6 +26,7 @@ public class PythonBackend implements Backend {
         for (var typedNamespaceNode : typedNamespaceNodes) {
             compileNamespace(typedNamespaceNode, outputRoot);
         }
+        Files.writeString(outputRoot.resolve("tox.ini"), "[pytest]\npython_files = *Test.py\n");
     }
 
     private void compileNamespace(TypedNamespaceNode typedNamespaceNode, Path outputRoot) throws IOException {

@@ -23,11 +23,10 @@ import static org.zwobble.clunk.testing.ProjectRoot.findRoot;
 public class PythonExampleTests {
     @Test
     public void simpleTest(Snapshotter snapshotter) throws IOException, InterruptedException {
-        var sourcePath = findRoot().resolve("examples/SimpleTest.clunk");
+        var sourcePath = findRoot().resolve("examples/SimpleTest");
 
-        var temporaryDirectory = Files.createTempDirectory("clunk-tests");
+        var outputPath = Files.createTempDirectory("clunk-tests");
         try {
-            var outputPath = temporaryDirectory.resolve("SimpleTest.py");
             var compiler = new Compiler();
             compiler.compile(sourcePath, outputPath, new PythonBackend());
             var virtualenvPath = findRoot().resolve("testing/python/_virtualenv");
@@ -35,9 +34,9 @@ public class PythonExampleTests {
             var process = new ProcessBuilder(
                 virtualenvPath.resolve("bin/py.test").toString(),
                 "--tb=short",
-                outputPath.toString()
+                outputPath.resolve("SimpleTest.py").toString()
             )
-                .directory(temporaryDirectory.toFile())
+                .directory(outputPath.toFile())
                 .start();
 
             var output = new BufferedReader(new InputStreamReader(process.getInputStream()))
@@ -45,7 +44,7 @@ public class PythonExampleTests {
                 .filter(line -> !Pattern.matches("^platform [a-z]+ -- Python.*", line))
                 .map(
                     line -> line
-                        .replace(temporaryDirectory.toString(), "ROOTDIR")
+                        .replace(outputPath.toString(), "ROOTDIR")
                         .replaceAll(Pattern.quote(virtualenvPath.toString()) + ".*site-packages", "SITE-PACKAGES")
                         .replaceAll("in [0-9.]+s =======", "in TIME =======")
                 )
@@ -56,12 +55,12 @@ public class PythonExampleTests {
             var separator = "\n\n==============\n\n";
 
             snapshotter.assertSnapshot(
-                Files.readString(sourcePath) + separator +
-                    Files.readString(outputPath) + separator +
+                Files.readString(sourcePath.resolve("src/SimpleTest.clunk")) + separator +
+                    Files.readString(outputPath.resolve("SimpleTest.py")) + separator +
                     output
             );
         } finally {
-            deleteRecursive(temporaryDirectory);
+            deleteRecursive(outputPath);
         }
     }
 

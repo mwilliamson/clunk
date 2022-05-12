@@ -17,6 +17,7 @@ public class PythonBackend implements Backend {
         var pythonModule = PythonCodeGenerator.DEFAULT.compileNamespace(typedNamespaceNode);
         var codeBuilder = new CodeBuilder();
         PythonSerialiser.serialiseModule(pythonModule, codeBuilder);
+        Files.createDirectories(outputPath.getParent());
         Files.writeString(outputPath, codeBuilder.toString(), StandardCharsets.UTF_8);
     }
 }

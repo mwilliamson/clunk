@@ -25,7 +25,7 @@ public class ClunkCompilerCli {
         var sourcePath = Paths.get(args.getString("source"));
         var outputPath = Paths.get(args.getString("output"));
 
-        var compiler = new Compiler();
+        var compiler = new Compiler(Compiler.Logger.NULL);
         compiler.compile(sourcePath, outputPath, new PythonBackend());
     }
 

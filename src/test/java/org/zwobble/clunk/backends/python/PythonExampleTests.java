@@ -47,7 +47,17 @@ public class PythonExampleTests {
 
         var outputRoot = Files.createTempDirectory("clunk-tests");
         try {
-            var compiler = new Compiler();
+            var snapshot = new StringBuilder();
+            var separator = "\n\n==============\n\n";
+
+            var compiler = new Compiler(new Compiler.Logger() {
+                @Override
+                public void sourceFile(Path sourcePath, String contents) {
+                    snapshot.append("Source path: " + sourceRoot.relativize(sourcePath) + "\n");
+                    snapshot.append(contents);
+                    snapshot.append(separator);
+                }
+            });
             compiler.compile(sourceRoot, outputRoot, new PythonBackend());
             var virtualenvPath = findRoot().resolve("testing/python/_virtualenv");
 
@@ -72,13 +82,11 @@ public class PythonExampleTests {
 
             process.waitFor();
 
-            var separator = "\n\n==============\n\n";
+            snapshot.append(Files.readString(outputRoot.resolve(outputPath)));
+            snapshot.append(separator);
+            snapshot.append(output);
 
-            snapshotter.assertSnapshot(
-                Files.readString(sourceRoot.resolve("src/" + sourcePath)) + separator +
-                    Files.readString(outputRoot.resolve(outputPath)) + separator +
-                    output
-            );
+            snapshotter.assertSnapshot(snapshot.toString());
         } finally {
             deleteRecursive(outputRoot);
         }

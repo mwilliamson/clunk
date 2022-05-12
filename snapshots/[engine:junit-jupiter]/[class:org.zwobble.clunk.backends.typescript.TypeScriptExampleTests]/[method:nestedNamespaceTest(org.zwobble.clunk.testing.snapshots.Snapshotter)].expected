@@ -1,0 +1,21 @@
+Source path: src/One/Two/SimpleTest.clunk
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+
+test "assert False" {
+    assertThat(false, equalTo(true));
+}
+
+
+==============
+
+Output path: One/Two/SimpleTest.ts
+import {assertThat} from "@mwilliamson/precisely";
+import {equalTo} from "@mwilliamson/precisely";
+(test)("assert False", function () {
+    (assertThat)(false, (equalTo)(true));
+});
+
+
+==============
+

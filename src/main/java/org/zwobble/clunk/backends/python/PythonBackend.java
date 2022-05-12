@@ -5,6 +5,7 @@ import org.zwobble.clunk.backends.Backend;
 import org.zwobble.clunk.backends.CodeBuilder;
 import org.zwobble.clunk.backends.python.codegenerator.PythonCodeGenerator;
 import org.zwobble.clunk.backends.python.serialiser.PythonSerialiser;
+import org.zwobble.clunk.logging.Logger;
 import org.zwobble.clunk.types.NamespaceName;
 
 import java.io.IOException;
@@ -13,6 +14,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class PythonBackend implements Backend {
+    private Logger logger;
+
+    public PythonBackend(Logger logger) {
+        this.logger = logger;
+    }
+
     @Override
     public void compile(TypedNamespaceNode typedNamespaceNode, Path outputRoot) throws IOException {
         var pythonModule = PythonCodeGenerator.DEFAULT.compileNamespace(typedNamespaceNode);
@@ -22,7 +29,9 @@ public class PythonBackend implements Backend {
         var outputPath = generateOutputPath(outputRoot, typedNamespaceNode.name());
 
         Files.createDirectories(outputPath.getParent());
-        Files.writeString(outputPath, codeBuilder.toString(), StandardCharsets.UTF_8);
+        var outputContents = codeBuilder.toString();
+        logger.outputFile(outputPath, outputContents);
+        Files.writeString(outputPath, outputContents, StandardCharsets.UTF_8);
     }
 
     private Path generateOutputPath(Path outputRoot, NamespaceName namespaceName) {

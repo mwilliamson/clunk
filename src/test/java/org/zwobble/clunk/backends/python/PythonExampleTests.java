@@ -46,15 +46,25 @@ public class PythonExampleTests {
             var snapshot = new StringBuilder();
             var separator = "\n\n==============\n\n";
 
-            var compiler = new Compiler(new Logger() {
+            var logger = new Logger() {
                 @Override
-                public void sourceFile(Path sourcePath, String contents) {
-                    snapshot.append("Source path: " + sourceRoot.relativize(sourcePath) + "\n");
+                public void sourceFile(Path path, String contents) {
+                    logFile("Source", sourceRoot.relativize(path), contents);
+                }
+
+                @Override
+                public void outputFile(Path path, String contents) {
+                    logFile("Output", outputRoot.relativize(path), contents);
+                }
+
+                private void logFile(String fileType, Path path, String contents) {
+                    snapshot.append(fileType + " path: " + path + "\n");
                     snapshot.append(contents);
                     snapshot.append(separator);
                 }
-            });
-            compiler.compile(sourceRoot, outputRoot, new PythonBackend());
+            };
+            var compiler = new Compiler(logger);
+            compiler.compile(sourceRoot, outputRoot, new PythonBackend(logger));
             var virtualenvPath = findRoot().resolve("testing/python/_virtualenv");
 
             var process = new ProcessBuilder(
@@ -78,8 +88,6 @@ public class PythonExampleTests {
 
             process.waitFor();
 
-            snapshot.append(Files.readString(outputRoot.resolve(outputPath)));
-            snapshot.append(separator);
             snapshot.append(output);
 
             snapshotter.assertSnapshot(snapshot.toString());

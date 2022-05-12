@@ -9,6 +9,7 @@ test "assert False" {
 
 ==============
 
+Output path: One/Two/SimpleTest.py
 from precisely import assert_that
 from precisely import equal_to
 def test_assert_false():

@@ -21,6 +21,7 @@ test "assert 42 == 42" {
 
 ==============
 
+Output path: SimpleTest.py
 from precisely import assert_that
 from precisely import equal_to
 def test_assert_false():

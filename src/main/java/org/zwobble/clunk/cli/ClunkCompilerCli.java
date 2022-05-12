@@ -27,7 +27,7 @@ public class ClunkCompilerCli {
         var outputPath = Paths.get(args.getString("output"));
 
         var compiler = new Compiler(Logger.NULL);
-        compiler.compile(sourcePath, outputPath, new PythonBackend());
+        compiler.compile(sourcePath, outputPath, new PythonBackend(Logger.NULL));
     }
 
     private static Namespace parseArgs(String[] args) {

@@ -1,0 +1,38 @@
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+
+test "assert False" {
+    assertThat(false, equalTo(true));
+}
+
+
+==============
+
+from precisely import assert_that
+from precisely import equal_to
+def test_assert_false():
+    (assert_that)(False, (equal_to)(True))
+
+
+==============
+
+============================= test session starts ==============================
+rootdir: ROOTDIR
+collected 1 item
+
+One/Two/SimpleTest.py F                                                  [100%]
+
+=================================== FAILURES ===================================
+______________________________ test_assert_false _______________________________
+One/Two/SimpleTest.py:4: in test_assert_false
+    (assert_that)(False, (equal_to)(True))
+SITE-PACKAGES/precisely/__init__.py:50: in assert_that
+    raise AssertionError("\nExpected:{0}\nbut:{1}".format(
+E   AssertionError: 
+E   Expected:
+E     True
+E   but:
+E     was False
+=========================== short test summary info ============================
+FAILED One/Two/SimpleTest.py::test_assert_false - AssertionError: 
+============================== 1 failed in TIME ===============================

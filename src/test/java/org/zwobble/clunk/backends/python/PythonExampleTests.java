@@ -23,20 +23,39 @@ import static org.zwobble.clunk.testing.ProjectRoot.findRoot;
 public class PythonExampleTests {
     @Test
     public void simpleTest(Snapshotter snapshotter) throws IOException, InterruptedException {
-        var sourcePath = findRoot().resolve("examples/SimpleTest");
+        runExampleTest(
+            snapshotter,
+            "SimpleTest",
+            "SimpleTest.clunk",
+            "SimpleTest.py"
+        );
+    }
 
-        var outputPath = Files.createTempDirectory("clunk-tests");
+    @Test
+    public void nestedNamespaceTest(Snapshotter snapshotter) throws IOException, InterruptedException {
+        runExampleTest(
+            snapshotter,
+            "NestedNamespaceTest",
+            "One/Two/SimpleTest.clunk",
+            "One/Two/SimpleTest.py"
+        );
+    }
+
+    private void runExampleTest(Snapshotter snapshotter, String exampleName, String sourcePath, String outputPath) throws IOException, InterruptedException {
+        var sourceRoot = findRoot().resolve("examples/" + exampleName);
+
+        var outputRoot = Files.createTempDirectory("clunk-tests");
         try {
             var compiler = new Compiler();
-            compiler.compile(sourcePath, outputPath, new PythonBackend());
+            compiler.compile(sourceRoot, outputRoot, new PythonBackend());
             var virtualenvPath = findRoot().resolve("testing/python/_virtualenv");
 
             var process = new ProcessBuilder(
                 virtualenvPath.resolve("bin/py.test").toString(),
                 "--tb=short",
-                outputPath.resolve("SimpleTest.py").toString()
+                outputRoot.resolve(outputPath).toString()
             )
-                .directory(outputPath.toFile())
+                .directory(outputRoot.toFile())
                 .start();
 
             var output = new BufferedReader(new InputStreamReader(process.getInputStream()))
@@ -44,7 +63,7 @@ public class PythonExampleTests {
                 .filter(line -> !Pattern.matches("^platform [a-z]+ -- Python.*", line))
                 .map(
                     line -> line
-                        .replace(outputPath.toString(), "ROOTDIR")
+                        .replace(outputRoot.toString(), "ROOTDIR")
                         .replaceAll(Pattern.quote(virtualenvPath.toString()) + ".*site-packages", "SITE-PACKAGES")
                         .replaceAll("in [0-9.]+s =======", "in TIME =======")
                 )
@@ -55,12 +74,12 @@ public class PythonExampleTests {
             var separator = "\n\n==============\n\n";
 
             snapshotter.assertSnapshot(
-                Files.readString(sourcePath.resolve("src/SimpleTest.clunk")) + separator +
-                    Files.readString(outputPath.resolve("SimpleTest.py")) + separator +
+                Files.readString(sourceRoot.resolve("src/" + sourcePath)) + separator +
+                    Files.readString(outputRoot.resolve(outputPath)) + separator +
                     output
             );
         } finally {
-            deleteRecursive(outputPath);
+            deleteRecursive(outputRoot);
         }
     }
 

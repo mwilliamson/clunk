@@ -23,7 +23,7 @@ public class Compiler {
         var sourcePaths = collectSourceFiles(sourceRoot);
         for (var sourcePath : sourcePaths) {
             var outputFilename = sourcePath.getFileName().toString().replaceAll("\\.clunk$", ".py");
-            var outputPath = outputRoot.resolve(sourcePath.relativize(sourceRoot).resolveSibling(outputFilename));
+            var outputPath = outputRoot.resolve(sourceRoot.relativize(sourcePath).resolveSibling(outputFilename));
             System.out.println(outputPath);
             compileFile(sourcePath, outputPath, backend);
         }

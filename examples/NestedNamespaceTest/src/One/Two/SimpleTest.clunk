@@ -1,0 +1,6 @@
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+
+test "assert False" {
+    assertThat(false, equalTo(true));
+}

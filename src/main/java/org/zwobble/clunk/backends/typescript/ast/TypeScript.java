@@ -26,6 +26,10 @@ public class TypeScript {
         return new TypeScriptExpressionStatementNode(expression);
     }
 
+    public static TypeScriptImportNode import_(String module, List<String> exports) {
+        return new TypeScriptImportNode(module, exports);
+    }
+
     public static TypeScriptInterfaceFieldNode interfaceField(String name, TypeScriptReferenceNode type) {
         return new TypeScriptInterfaceFieldNode(name, type);
     }

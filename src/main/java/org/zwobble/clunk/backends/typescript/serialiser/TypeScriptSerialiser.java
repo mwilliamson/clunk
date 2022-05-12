@@ -123,6 +123,21 @@ public class TypeScriptSerialiser {
         serialiseExpression(node.type(), builder);
     }
 
+    private static void serialiseImport(TypeScriptImportNode node, CodeBuilder builder) {
+        builder.append("import ");
+        builder.append("{");
+        forEachInterspersed(
+            node.exports(),
+            export -> builder.append(export),
+            () -> builder.append(", ")
+        );
+        builder.append("}");
+        builder.append(" from ");
+        serialiseStringLiteral(node.module(), builder);
+        builder.append(";");
+        builder.newLine();
+    }
+
     private static void serialiseInterfaceDeclaration(TypeScriptInterfaceDeclarationNode node, CodeBuilder builder) {
         builder.append("interface ");
         builder.append(node.name());
@@ -190,6 +205,12 @@ public class TypeScriptSerialiser {
             }
 
             @Override
+            public Void visit(TypeScriptImportNode node) {
+                serialiseImport(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(TypeScriptInterfaceDeclarationNode node) {
                 serialiseInterfaceDeclaration(node, builder);
                 return null;
@@ -210,8 +231,12 @@ public class TypeScriptSerialiser {
     }
 
     private static void serialiseStringLiteral(TypeScriptStringLiteralNode node, CodeBuilder builder) {
+        serialiseStringLiteral(node.value(), builder);
+    }
+
+    private static void serialiseStringLiteral(String value, CodeBuilder builder) {
         builder.append("\"");
-        var escapedValue = node.value()
+        var escapedValue = value
             .replace("\\", "\\\\")
             .replace("\b", "\\b")
             .replace("\t", "\\t")

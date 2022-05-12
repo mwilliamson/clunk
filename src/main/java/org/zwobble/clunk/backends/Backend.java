@@ -6,5 +6,5 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public interface Backend {
-    void compile(TypedNamespaceNode typedNamespaceNode, Path outputPath) throws IOException;
+    void compile(TypedNamespaceNode typedNamespaceNode, Path outputRoot) throws IOException;
 }

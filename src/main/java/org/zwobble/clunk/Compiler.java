@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class Compiler {
@@ -22,11 +23,20 @@ public class Compiler {
         var sourceRoot = projectPath.resolve("src");
         var sourcePaths = collectSourceFiles(sourceRoot);
         for (var sourcePath : sourcePaths) {
-            var outputFilename = sourcePath.getFileName().toString().replaceAll("\\.clunk$", ".py");
-            var outputPath = outputRoot.resolve(sourceRoot.relativize(sourcePath).resolveSibling(outputFilename));
-            System.out.println(outputPath);
-            compileFile(sourcePath, outputPath, backend);
+            var namespaceParts = sourceRoot.relativize(sourcePath).resolveSibling(
+                sourcePath.getFileName().toString().replaceAll("\\.clunk$", "")
+            );
+            var namespaceName = new NamespaceName(pathToParts(namespaceParts));
+            compileFile(sourcePath, namespaceName, outputRoot, backend);
         }
+    }
+
+    private List<String> pathToParts(Path namespaceParts) {
+        var result = new ArrayList<String>();
+        for (var i = 0; i < namespaceParts.getNameCount(); i++) {
+            result.add(namespaceParts.getName(i).toString());
+        }
+        return result;
     }
 
     private List<Path> collectSourceFiles(Path sourceRoot) throws IOException {
@@ -54,15 +64,20 @@ public class Compiler {
         return paths;
     }
 
-    private void compileFile(Path sourcePath, Path outputPath, Backend backend) throws IOException {
+    private void compileFile(
+        Path sourcePath,
+        NamespaceName namespaceName,
+        Path outputRoot,
+        Backend backend
+    ) throws IOException {
         var sourceContents = Files.readString(sourcePath);
         var source = FileFragmentSource.create(sourcePath.toString(), sourceContents);
         var tokens = Tokeniser.tokenise(source);
         var parser = new Parser(source);
-        var untypedNamespaceNode = parser.parseNamespaceName(tokens, NamespaceName.fromParts("x"));
+        var untypedNamespaceNode = parser.parseNamespaceName(tokens, namespaceName);
 
         var typedNamespaceNode = TypeChecker.typeCheckNamespace(untypedNamespaceNode, Builtins.TYPE_CHECKER_CONTEXT);
 
-        backend.compile(typedNamespaceNode, outputPath);
+        backend.compile(typedNamespaceNode, outputRoot);
     }
 }

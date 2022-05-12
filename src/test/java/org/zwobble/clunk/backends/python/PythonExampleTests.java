@@ -3,6 +3,7 @@ package org.zwobble.clunk.backends.python;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.zwobble.clunk.Compiler;
+import org.zwobble.clunk.backends.TargetTestRunner;
 import org.zwobble.clunk.logging.Logger;
 import org.zwobble.clunk.testing.snapshots.SnapshotResolver;
 import org.zwobble.clunk.testing.snapshots.Snapshotter;
@@ -24,7 +25,8 @@ public class PythonExampleTests {
     public void simpleTest(Snapshotter snapshotter) throws IOException, InterruptedException {
         runExampleTest(
             snapshotter,
-            "SimpleTest"
+            "SimpleTest",
+            new PythonTestRunner()
         );
     }
 
@@ -32,11 +34,16 @@ public class PythonExampleTests {
     public void nestedNamespaceTest(Snapshotter snapshotter) throws IOException, InterruptedException {
         runExampleTest(
             snapshotter,
-            "NestedNamespaceTest"
+            "NestedNamespaceTest",
+            new PythonTestRunner()
         );
     }
 
-    private void runExampleTest(Snapshotter snapshotter, String exampleName) throws IOException, InterruptedException {
+    private void runExampleTest(
+        Snapshotter snapshotter,
+        String exampleName,
+        TargetTestRunner targetTestRunner
+    ) throws IOException, InterruptedException {
         var sourceRoot = findRoot().resolve("examples/" + exampleName);
 
         var outputRoot = Files.createTempDirectory("clunk-tests");
@@ -63,28 +70,8 @@ public class PythonExampleTests {
             };
             var compiler = new Compiler(logger);
             compiler.compile(sourceRoot, outputRoot, new PythonBackend(logger));
-            var virtualenvPath = findRoot().resolve("testing/python/_virtualenv");
 
-            var process = new ProcessBuilder(
-                virtualenvPath.resolve("bin/py.test").toString(),
-                "--tb=short",
-                outputRoot.toString()
-            )
-                .directory(outputRoot.toFile())
-                .start();
-
-            var output = new BufferedReader(new InputStreamReader(process.getInputStream()))
-                .lines()
-                .filter(line -> !Pattern.matches("^platform [a-z]+ -- Python.*", line))
-                .map(
-                    line -> line
-                        .replace(outputRoot.toString(), "ROOTDIR")
-                        .replaceAll(Pattern.quote(virtualenvPath.toString()) + ".*site-packages", "SITE-PACKAGES")
-                        .replaceAll("in [0-9.]+s =======", "in TIME =======")
-                )
-                .collect(Collectors.joining("\n"));
-
-            process.waitFor();
+            var output = targetTestRunner.runTests(outputRoot);
 
             snapshot.append(output);
 

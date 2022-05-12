@@ -15,7 +15,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class PythonBackend implements Backend {
-    private Logger logger;
+    private final Logger logger;
 
     public PythonBackend(Logger logger) {
         this.logger = logger;

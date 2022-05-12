@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static org.zwobble.clunk.backends.ExampleTests.runExampleTest;
 import static org.zwobble.clunk.testing.ProjectRoot.findRoot;
 import static org.zwobble.clunk.util.DeleteRecursive.deleteRecursive;
 
@@ -23,61 +24,21 @@ import static org.zwobble.clunk.util.DeleteRecursive.deleteRecursive;
 public class PythonExampleTests {
     @Test
     public void simpleTest(Snapshotter snapshotter) throws IOException, InterruptedException {
-        runExampleTest(
+        runPythonExampleTest(
             snapshotter,
-            "SimpleTest",
-            new PythonTestRunner()
+            "SimpleTest"
         );
     }
 
     @Test
     public void nestedNamespaceTest(Snapshotter snapshotter) throws IOException, InterruptedException {
-        runExampleTest(
+        runPythonExampleTest(
             snapshotter,
-            "NestedNamespaceTest",
-            new PythonTestRunner()
+            "NestedNamespaceTest"
         );
     }
 
-    private void runExampleTest(
-        Snapshotter snapshotter,
-        String exampleName,
-        TargetTestRunner targetTestRunner
-    ) throws IOException, InterruptedException {
-        var sourceRoot = findRoot().resolve("examples/" + exampleName);
-
-        var outputRoot = Files.createTempDirectory("clunk-tests");
-        try {
-            var snapshot = new StringBuilder();
-            var separator = "\n\n==============\n\n";
-
-            var logger = new Logger() {
-                @Override
-                public void sourceFile(Path path, String contents) {
-                    logFile("Source", sourceRoot.relativize(path), contents);
-                }
-
-                @Override
-                public void outputFile(Path path, String contents) {
-                    logFile("Output", outputRoot.relativize(path), contents);
-                }
-
-                private void logFile(String fileType, Path path, String contents) {
-                    snapshot.append(fileType + " path: " + path + "\n");
-                    snapshot.append(contents);
-                    snapshot.append(separator);
-                }
-            };
-            var compiler = new Compiler(logger);
-            compiler.compile(sourceRoot, outputRoot, new PythonBackend(logger));
-
-            var output = targetTestRunner.runTests(outputRoot);
-
-            snapshot.append(output);
-
-            snapshotter.assertSnapshot(snapshot.toString());
-        } finally {
-            deleteRecursive(outputRoot);
-        }
+    private void runPythonExampleTest(Snapshotter snapshotter, String testName) throws IOException, InterruptedException {
+        runExampleTest(snapshotter, testName, new PythonTestRunner());
     }
 }

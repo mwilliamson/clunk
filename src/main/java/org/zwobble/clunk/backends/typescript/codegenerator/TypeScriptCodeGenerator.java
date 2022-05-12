@@ -15,6 +15,13 @@ public class TypeScriptCodeGenerator {
         return new TypeScriptBoolLiteralNode(node.value());
     }
 
+    private static TypeScriptExpressionNode compileCall(TypedCallNode node) {
+        return new TypeScriptCallNode(
+            compileExpression(node.receiver()),
+            node.positionalArgs().stream().map(arg -> compileExpression(arg)).toList()
+        );
+    }
+
     public static TypeScriptExpressionNode compileExpression(TypedExpressionNode node) {
         return node.accept(new TypedExpressionNode.Visitor<TypeScriptExpressionNode>() {
             @Override
@@ -24,7 +31,7 @@ public class TypeScriptCodeGenerator {
 
             @Override
             public TypeScriptExpressionNode visit(TypedCallNode node) {
-                throw new RuntimeException("TODO");
+                return compileCall(node);
             }
 
             @Override

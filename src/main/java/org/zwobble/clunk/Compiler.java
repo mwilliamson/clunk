@@ -1,5 +1,6 @@
 package org.zwobble.clunk;
 
+import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
 import org.zwobble.clunk.backends.Backend;
 import org.zwobble.clunk.builtins.Builtins;
 import org.zwobble.clunk.logging.Logger;
@@ -29,13 +30,18 @@ public class Compiler {
     public void compile(Path projectPath, Path outputRoot, Backend backend) throws IOException {
         var sourceRoot = projectPath.resolve("src");
         var sourcePaths = collectSourceFiles(sourceRoot);
+
+        var typedNamespaceNodes = new ArrayList<TypedNamespaceNode>();
         for (var sourcePath : sourcePaths) {
             var namespaceParts = sourceRoot.relativize(sourcePath).resolveSibling(
                 sourcePath.getFileName().toString().replaceAll("\\.clunk$", "")
             );
             var namespaceName = new NamespaceName(pathToParts(namespaceParts));
-            compileFile(sourcePath, namespaceName, outputRoot, backend);
+            var typedNamespaceNode = readFile(sourcePath, namespaceName);
+            typedNamespaceNodes.add(typedNamespaceNode);
         }
+
+        backend.compile(typedNamespaceNodes, outputRoot);
     }
 
     private List<String> pathToParts(Path namespaceParts) {
@@ -71,11 +77,9 @@ public class Compiler {
         return paths;
     }
 
-    private void compileFile(
+    private TypedNamespaceNode readFile(
         Path sourcePath,
-        NamespaceName namespaceName,
-        Path outputRoot,
-        Backend backend
+        NamespaceName namespaceName
     ) throws IOException {
         var sourceContents = Files.readString(sourcePath);
         logger.sourceFile(sourcePath, sourceContents);
@@ -84,8 +88,6 @@ public class Compiler {
         var parser = new Parser(source);
         var untypedNamespaceNode = parser.parseNamespaceName(tokens, namespaceName);
 
-        var typedNamespaceNode = TypeChecker.typeCheckNamespace(untypedNamespaceNode, Builtins.TYPE_CHECKER_CONTEXT);
-
-        backend.compile(typedNamespaceNode, outputRoot);
+        return TypeChecker.typeCheckNamespace(untypedNamespaceNode, Builtins.TYPE_CHECKER_CONTEXT);
     }
 }

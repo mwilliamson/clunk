@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 public class PythonBackend implements Backend {
     private Logger logger;
@@ -21,7 +22,13 @@ public class PythonBackend implements Backend {
     }
 
     @Override
-    public void compile(TypedNamespaceNode typedNamespaceNode, Path outputRoot) throws IOException {
+    public void compile(List<TypedNamespaceNode> typedNamespaceNodes, Path outputRoot) throws IOException {
+        for (var typedNamespaceNode : typedNamespaceNodes) {
+            compileNamespace(typedNamespaceNode, outputRoot);
+        }
+    }
+
+    private void compileNamespace(TypedNamespaceNode typedNamespaceNode, Path outputRoot) throws IOException {
         var pythonModule = PythonCodeGenerator.DEFAULT.compileNamespace(typedNamespaceNode);
         var codeBuilder = new CodeBuilder();
         PythonSerialiser.serialiseModule(pythonModule, codeBuilder);

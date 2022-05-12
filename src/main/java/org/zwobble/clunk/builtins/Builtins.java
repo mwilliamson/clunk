@@ -17,17 +17,17 @@ public class Builtins {
 
     // TODO: proper typing for builtin modules
     public static final TypeCheckerContext TYPE_CHECKER_CONTEXT = TypeCheckerContext.EMPTY
-        .updateNamespaceType(new NamespaceType(NamespaceName.parts("stdlib", "assertions"), Map.ofEntries(
+        .updateNamespaceType(new NamespaceType(NamespaceName.fromParts("stdlib", "assertions"), Map.ofEntries(
             Map.entry("assertThat", new StaticFunctionType(
-                NamespaceName.parts("stdlib", "assertions"),
+                NamespaceName.fromParts("stdlib", "assertions"),
                 "assertThat",
                 List.of(Types.OBJECT, Types.UNIT),
                 Types.UNIT
             ))
         )))
-        .updateNamespaceType(new NamespaceType(NamespaceName.parts("stdlib", "matchers"), Map.ofEntries(
+        .updateNamespaceType(new NamespaceType(NamespaceName.fromParts("stdlib", "matchers"), Map.ofEntries(
             Map.entry("equalTo", new StaticFunctionType(
-                NamespaceName.parts("stdlib", "matchers"),
+                NamespaceName.fromParts("stdlib", "matchers"),
                 "equalTo",
                 List.of(Types.OBJECT),
                 Types.UNIT

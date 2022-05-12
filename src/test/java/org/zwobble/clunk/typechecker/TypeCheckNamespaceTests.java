@@ -21,14 +21,14 @@ public class TypeCheckNamespaceTests {
     @Test
     public void namespaceIsTypeChecked() {
         var untypedNode = UntypedNamespaceNode
-            .builder(NamespaceName.parts("example", "project"))
+            .builder(NamespaceName.fromParts("example", "project"))
             .addStatement(UntypedRecordNode.builder("X").build())
             .build();
 
         var result = TypeChecker.typeCheckNamespace(untypedNode, TypeCheckerContext.stub());
 
         assertThat(result, allOf(
-            has("name", equalTo(NamespaceName.parts("example", "project"))),
+            has("name", equalTo(NamespaceName.fromParts("example", "project"))),
             has("statements", contains(
                 isTypedRecordNode(has("name", equalTo("X")))
             ))
@@ -37,15 +37,15 @@ public class TypeCheckNamespaceTests {
 
     @Test
     public void importedFieldIsAddedToEnvironment() {
-        var untypedNode = UntypedNamespaceNode.builder(NamespaceName.parts("example", "project"))
-            .addImport(Untyped.import_(NamespaceName.parts("x", "y"), "IntAlias"))
+        var untypedNode = UntypedNamespaceNode.builder(NamespaceName.fromParts("example", "project"))
+            .addImport(Untyped.import_(NamespaceName.fromParts("x", "y"), "IntAlias"))
             .addStatement(
                 UntypedRecordNode.builder("X")
                     .addField(Untyped.recordField("f", Untyped.staticReference("IntAlias"))).build()
             )
             .build();
         var namespaceType = new NamespaceType(
-            NamespaceName.parts("x", "y"),
+            NamespaceName.fromParts("x", "y"),
             Map.of("IntAlias", Types.metaType(Types.INT))
         );
         var context = TypeCheckerContext.stub()
@@ -56,7 +56,7 @@ public class TypeCheckNamespaceTests {
         assertThat(result, allOf(
             has("imports", contains(
                 isTypedImportNode(allOf(
-                    has("namespaceName", equalTo(NamespaceName.parts("x", "y"))),
+                    has("namespaceName", equalTo(NamespaceName.fromParts("x", "y"))),
                     has("fieldName", equalTo(Optional.of("IntAlias")))
                 ))
             )),

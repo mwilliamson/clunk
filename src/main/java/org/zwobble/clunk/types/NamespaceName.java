@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public record NamespaceName(List<String> parts) {
-    public static NamespaceName parts(String... parts) {
+    public static NamespaceName fromParts(String... parts) {
         return new NamespaceName(Arrays.asList(parts));
     }
 

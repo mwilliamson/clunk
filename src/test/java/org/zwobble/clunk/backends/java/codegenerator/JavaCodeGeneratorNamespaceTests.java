@@ -20,7 +20,7 @@ public class JavaCodeGeneratorNamespaceTests {
     @Test
     public void recordsInNamespaceAreCompiledToSeparateJavaCompilationUnits() {
         var node = TypedNamespaceNode
-            .builder(NamespaceName.parts("example", "project"))
+            .builder(NamespaceName.fromParts("example", "project"))
             .addStatement(TypedRecordNode.builder("First").build())
             .addStatement(TypedRecordNode.builder("Second").build())
             .build();
@@ -55,7 +55,7 @@ public class JavaCodeGeneratorNamespaceTests {
     @Test
     public void functionsAreGroupedIntoSingleClassNamedAfterNamespace() {
         var node = TypedNamespaceNode
-            .builder(NamespaceName.parts("example", "project"))
+            .builder(NamespaceName.fromParts("example", "project"))
             .addStatement(TypedFunctionNode.builder().name("f").returnType(StringType.INSTANCE).build())
             .addStatement(TypedFunctionNode.builder().name("g").returnType(StringType.INSTANCE).build())
             .build();
@@ -87,7 +87,7 @@ public class JavaCodeGeneratorNamespaceTests {
     @Test
     public void testsAreGroupedIntoSingleClassNamedAfterNamespace() {
         var node = TypedNamespaceNode
-            .builder(NamespaceName.parts("example", "project"))
+            .builder(NamespaceName.fromParts("example", "project"))
             .addStatement(TypedTestNode.builder().name("f").build())
             .addStatement(TypedTestNode.builder().name("g").build())
             .build();

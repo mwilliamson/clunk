@@ -21,7 +21,7 @@ public class PythonCodeGenerator {
 
     private static final Map<NamespaceName, Map<String, PythonMacro>> MACROS = Map.ofEntries(
         Map.entry(
-            NamespaceName.parts("stdlib", "assertions"),
+            NamespaceName.fromParts("stdlib", "assertions"),
             Map.ofEntries(
                 Map.entry("assertThat", new PythonMacro() {
                     @Override
@@ -33,7 +33,7 @@ public class PythonCodeGenerator {
             )
         ),
         Map.entry(
-            NamespaceName.parts("stdlib", "matchers"),
+            NamespaceName.fromParts("stdlib", "matchers"),
             Map.ofEntries(
                 Map.entry("equalTo", new PythonMacro() {
                     @Override

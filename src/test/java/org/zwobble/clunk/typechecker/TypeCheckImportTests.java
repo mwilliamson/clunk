@@ -23,9 +23,9 @@ public class TypeCheckImportTests {
     // TODO: test import of namespace (no field)
     @Test
     public void importedFieldIsTypeChecked() {
-        var untypedNode = Untyped.import_(NamespaceName.parts("x", "y"), "IntAlias");
+        var untypedNode = Untyped.import_(NamespaceName.fromParts("x", "y"), "IntAlias");
         var namespaceType = new NamespaceType(
-            NamespaceName.parts("x", "y"),
+            NamespaceName.fromParts("x", "y"),
             Map.of("IntAlias", Types.metaType(Types.INT))
         );
         var context = TypeCheckerContext.stub()
@@ -34,7 +34,7 @@ public class TypeCheckImportTests {
         var result = TypeChecker.typeCheckImport(untypedNode, context);
 
         assertThat(result.node(), isTypedImportNode(allOf(
-            has("namespaceName", equalTo(NamespaceName.parts("x", "y"))),
+            has("namespaceName", equalTo(NamespaceName.fromParts("x", "y"))),
             has("fieldName", equalTo(Optional.of("IntAlias"))),
             has("type", equalTo(Types.metaType(Types.INT)))
         )));
@@ -42,9 +42,9 @@ public class TypeCheckImportTests {
 
     @Test
     public void importedFieldIsAddedToEnvironment() {
-        var untypedNode = Untyped.import_(NamespaceName.parts("x", "y"), "IntAlias");
+        var untypedNode = Untyped.import_(NamespaceName.fromParts("x", "y"), "IntAlias");
         var namespaceType = new NamespaceType(
-            NamespaceName.parts("x", "y"),
+            NamespaceName.fromParts("x", "y"),
             Map.of("IntAlias", Types.metaType(Types.INT))
         );
         var context = TypeCheckerContext.stub()
@@ -57,9 +57,9 @@ public class TypeCheckImportTests {
 
     @Test
     public void whenFieldIsUnknownThenErrorIsThrown() {
-        var untypedNode = Untyped.import_(NamespaceName.parts("x", "y"), "IntAlias");
+        var untypedNode = Untyped.import_(NamespaceName.fromParts("x", "y"), "IntAlias");
         var namespaceType = new NamespaceType(
-            NamespaceName.parts("x", "y"),
+            NamespaceName.fromParts("x", "y"),
             Map.of("Int", Types.metaType(Types.INT))
         );
         var context = TypeCheckerContext.stub()

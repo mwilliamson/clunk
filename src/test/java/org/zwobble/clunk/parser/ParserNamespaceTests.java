@@ -19,14 +19,14 @@ public class ParserNamespaceTests {
             source,
             (parser, tokens) -> parser.parseNamespaceName(
                 tokens,
-                NamespaceName.parts("example", "project")
+                NamespaceName.fromParts("example", "project")
             )
         );
 
         assertThat(node, isUntypedNamespaceNode().withImports(contains(
-            isUntypedImportNode(NamespaceName.parts("Example"), Optional.empty()),
-            isUntypedImportNode(NamespaceName.parts("Stdlib", "Assert"), Optional.empty()),
-            isUntypedImportNode(NamespaceName.parts("Stdlib", "Matchers"), Optional.empty())
+            isUntypedImportNode(NamespaceName.fromParts("Example"), Optional.empty()),
+            isUntypedImportNode(NamespaceName.fromParts("Stdlib", "Assert"), Optional.empty()),
+            isUntypedImportNode(NamespaceName.fromParts("Stdlib", "Matchers"), Optional.empty())
         )));
     }
 
@@ -38,14 +38,14 @@ public class ParserNamespaceTests {
             source,
             (parser, tokens) -> parser.parseNamespaceName(
                 tokens,
-                NamespaceName.parts("example", "project")
+                NamespaceName.fromParts("example", "project")
             )
         );
 
         assertThat(node, isUntypedNamespaceNode().withImports(contains(
-            isUntypedImportNode(NamespaceName.parts("a"), Optional.of("B")),
-            isUntypedImportNode(NamespaceName.parts("a", "b"), Optional.of("C")),
-            isUntypedImportNode(NamespaceName.parts("a", "b", "c"), Optional.of("D"))
+            isUntypedImportNode(NamespaceName.fromParts("a"), Optional.of("B")),
+            isUntypedImportNode(NamespaceName.fromParts("a", "b"), Optional.of("C")),
+            isUntypedImportNode(NamespaceName.fromParts("a", "b", "c"), Optional.of("D"))
         )));
     }
 
@@ -57,7 +57,7 @@ public class ParserNamespaceTests {
             source,
             (parser, tokens) -> parser.parseNamespaceName(
                 tokens,
-                NamespaceName.parts("example", "project")
+                NamespaceName.fromParts("example", "project")
             )
         );
 

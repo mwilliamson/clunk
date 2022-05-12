@@ -14,7 +14,7 @@ public class TypeScriptCodeGeneratorNamespaceTests {
     @Test
     public void namespaceIsCompiledToTypeScriptModule() {
         var node = TypedNamespaceNode
-            .builder(NamespaceName.parts("example", "project"))
+            .builder(NamespaceName.fromParts("example", "project"))
             .addStatement(TypedRecordNode.builder("First").build())
             .addStatement(TypedRecordNode.builder("Second").build())
             .build();

@@ -6,11 +6,7 @@ import org.zwobble.clunk.parser.Parser;
 import org.zwobble.clunk.parser.Tokeniser;
 import org.zwobble.clunk.sources.FileFragmentSource;
 import org.zwobble.clunk.typechecker.TypeChecker;
-import org.zwobble.clunk.typechecker.TypeCheckerContext;
 import org.zwobble.clunk.types.NamespaceName;
-import org.zwobble.clunk.types.NamespaceType;
-import org.zwobble.clunk.types.StaticFunctionType;
-import org.zwobble.clunk.types.Types;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -20,7 +16,6 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class Compiler {
     public void compile(Path projectPath, Path outputRoot, Backend backend) throws IOException {
@@ -64,7 +59,7 @@ public class Compiler {
         var source = FileFragmentSource.create(sourcePath.toString(), sourceContents);
         var tokens = Tokeniser.tokenise(source);
         var parser = new Parser(source);
-        var untypedNamespaceNode = parser.parseNamespaceName(tokens, NamespaceName.parts("x"));
+        var untypedNamespaceNode = parser.parseNamespaceName(tokens, NamespaceName.fromParts("x"));
 
         var typedNamespaceNode = TypeChecker.typeCheckNamespace(untypedNamespaceNode, Builtins.TYPE_CHECKER_CONTEXT);
 

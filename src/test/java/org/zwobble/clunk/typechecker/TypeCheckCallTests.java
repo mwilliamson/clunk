@@ -20,7 +20,7 @@ public class TypeCheckCallTests {
             List.of(Untyped.intLiteral(123))
         );
         var functionType = new StaticFunctionType(
-            NamespaceName.parts("Stdlib", "Math"),
+            NamespaceName.fromParts("Stdlib", "Math"),
             "abs",
             List.of(Types.INT),
             Types.INT
@@ -44,7 +44,7 @@ public class TypeCheckCallTests {
             List.of(Untyped.string("123"))
         );
         var functionType = new StaticFunctionType(
-            NamespaceName.parts("Stdlib", "Math"),
+            NamespaceName.fromParts("Stdlib", "Math"),
             "abs",
             List.of(Types.INT),
             Types.INT
@@ -65,7 +65,7 @@ public class TypeCheckCallTests {
             List.of()
         );
         var functionType = new StaticFunctionType(
-            NamespaceName.parts("Stdlib", "Math"),
+            NamespaceName.fromParts("Stdlib", "Math"),
             "abs",
             List.of(Types.INT),
             Types.INT
@@ -86,7 +86,7 @@ public class TypeCheckCallTests {
             List.of(Untyped.intLiteral(123), Untyped.intLiteral(456))
         );
         var functionType = new StaticFunctionType(
-            NamespaceName.parts("Stdlib", "Math"),
+            NamespaceName.fromParts("Stdlib", "Math"),
             "abs",
             List.of(Types.INT),
             Types.INT

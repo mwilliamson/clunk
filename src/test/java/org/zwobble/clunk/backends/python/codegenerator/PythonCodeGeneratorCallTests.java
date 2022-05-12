@@ -22,7 +22,7 @@ public class PythonCodeGeneratorCallTests {
             Typed.reference(
                 "abs",
                 new StaticFunctionType(
-                    NamespaceName.parts("Math"),
+                    NamespaceName.fromParts("Math"),
                     "abs",
                     List.of(Types.INT),
                     Types.INT

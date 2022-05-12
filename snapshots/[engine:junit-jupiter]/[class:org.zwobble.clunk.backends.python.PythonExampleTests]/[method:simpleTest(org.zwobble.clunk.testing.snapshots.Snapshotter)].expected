@@ -75,4 +75,4 @@ E     was 42
 FAILED SimpleTest.py::test_assert_false - AssertionError: 
 FAILED SimpleTest.py::test_assert_true - AssertionError: 
 FAILED SimpleTest.py::test_assert_42_equals_47 - AssertionError: 
-========================= 3 failed, 1 passed in 0.03s ==========================
+========================= 3 failed, 1 passed in TIME ==========================

@@ -47,6 +47,7 @@ public class PythonExampleTests {
                     line -> line
                         .replace(temporaryDirectory.toString(), "ROOTDIR")
                         .replaceAll(Pattern.quote(virtualenvPath.toString()) + ".*site-packages", "SITE-PACKAGES")
+                        .replaceAll("in [0-9.]+s =======", "in TIME =======")
                 )
                 .collect(Collectors.joining("\n"));
 

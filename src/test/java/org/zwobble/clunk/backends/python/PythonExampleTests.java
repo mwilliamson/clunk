@@ -27,7 +27,6 @@ public class PythonExampleTests {
         runExampleTest(
             snapshotter,
             "SimpleTest",
-            "SimpleTest.clunk",
             "SimpleTest.py"
         );
     }
@@ -37,12 +36,11 @@ public class PythonExampleTests {
         runExampleTest(
             snapshotter,
             "NestedNamespaceTest",
-            "One/Two/SimpleTest.clunk",
             "One/Two/SimpleTest.py"
         );
     }
 
-    private void runExampleTest(Snapshotter snapshotter, String exampleName, String sourcePath, String outputPath) throws IOException, InterruptedException {
+    private void runExampleTest(Snapshotter snapshotter, String exampleName, String outputPath) throws IOException, InterruptedException {
         var sourceRoot = findRoot().resolve("examples/" + exampleName);
 
         var outputRoot = Files.createTempDirectory("clunk-tests");

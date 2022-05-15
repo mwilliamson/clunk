@@ -40,3 +40,44 @@ import {equalTo} from "@mwilliamson/precisely";
 
 ==============
 
+
+
+  1) assert False
+  2) assert True
+  3) assert 42 == 47
+  ✔ assert 42 == 42
+
+  1 passing (TIME)
+  3 failing
+
+  1) assert False:
+     AssertionError: 
+Expected:
+  true
+but:
+  was false
+      at Object.assertThat (node_modules/@mwilliamson/precisely/lib/assertThat.js:14:15)
+      at Context.<anonymous> (src/SimpleTest.ts:4:17)
+      at processImmediate (node:internal/timers:466:21)
+
+  2) assert True:
+     AssertionError: 
+Expected:
+  false
+but:
+  was true
+      at Object.assertThat (node_modules/@mwilliamson/precisely/lib/assertThat.js:14:15)
+      at Context.<anonymous> (src/SimpleTest.ts:7:17)
+      at processImmediate (node:internal/timers:466:21)
+
+  3) assert 42 == 47:
+     AssertionError: 
+Expected:
+  47
+but:
+  was 42
+      at Object.assertThat (node_modules/@mwilliamson/precisely/lib/assertThat.js:14:15)
+      at Context.<anonymous> (src/SimpleTest.ts:10:17)
+      at processImmediate (node:internal/timers:466:21)
+
+

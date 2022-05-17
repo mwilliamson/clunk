@@ -7,5 +7,5 @@ import java.nio.file.Path;
 import java.util.List;
 
 public interface Backend {
-    void compile(List<TypedNamespaceNode> typedNamespaceNode, Path outputRoot) throws IOException;
+    void compile(List<TypedNamespaceNode> typedNamespaceNodes, Path outputRoot) throws IOException;
 }

@@ -1,5 +1,7 @@
 package org.zwobble.clunk.backends.java.ast;
 
+import java.util.List;
+
 public class Java {
     public static JavaAnnotationNode annotation(JavaTypeExpressionNode type) {
         return new JavaMarkerAnnotationNode(type);
@@ -15,6 +17,10 @@ public class Java {
 
     public static JavaBoolLiteralNode boolTrue() {
         return new JavaBoolLiteralNode(true);
+    }
+
+    public static JavaCallNode call(JavaExpressionNode receiver, List<JavaExpressionNode> args) {
+        return new JavaCallNode(receiver, args);
     }
 
     public static JavaExpressionStatementNode expressionStatement(JavaExpressionNode expression) {

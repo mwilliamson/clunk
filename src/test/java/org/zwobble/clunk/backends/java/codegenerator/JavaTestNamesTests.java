@@ -9,8 +9,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JavaTestNamesTests {
     @Test
-    public void testNameIsConvertedToCamelCase() {
+    public void spaceFollowedByLowerCaseLetterIsConvertedToCamelCase() {
         var result = JavaTestNames.generateName("can assign bool");
+
+        assertThat(result, equalTo("canAssignBool"));
+    }
+
+    @Test
+    public void spaceFollowedByUpperCaseLetterIsConvertedToCamelCase() {
+        var result = JavaTestNames.generateName("can Assign Bool");
 
         assertThat(result, equalTo("canAssignBool"));
     }

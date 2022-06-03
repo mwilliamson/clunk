@@ -16,6 +16,13 @@ public class JavaCodeGenerator {
         return new JavaBoolLiteralNode(node.value());
     }
 
+    private static JavaExpressionNode compileCall(TypedCallNode node) {
+        return new JavaCallNode(
+            compileExpression(node.receiver()),
+            node.positionalArgs().stream().map(arg -> compileExpression(arg)).toList()
+        );
+    }
+
     public static JavaExpressionNode compileExpression(TypedExpressionNode node) {
         return node.accept(new TypedExpressionNode.Visitor<JavaExpressionNode>() {
             @Override
@@ -25,7 +32,7 @@ public class JavaCodeGenerator {
 
             @Override
             public JavaExpressionNode visit(TypedCallNode node) {
-                throw new RuntimeException("TODO");
+                return compileCall(node);
             }
 
             @Override

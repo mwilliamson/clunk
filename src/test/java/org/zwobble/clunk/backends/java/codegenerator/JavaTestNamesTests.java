@@ -23,6 +23,13 @@ public class JavaTestNamesTests {
     }
 
     @Test
+    public void spaceFollowedByNumberIsConvertedToCamelCase() {
+        var result = JavaTestNames.generateName("increment 42");
+
+        assertThat(result, equalTo("increment42"));
+    }
+
+    @Test
     public void doubleEqualsAreConvertedToEquals() {
         var result = JavaTestNames.generateName("one == two");
 

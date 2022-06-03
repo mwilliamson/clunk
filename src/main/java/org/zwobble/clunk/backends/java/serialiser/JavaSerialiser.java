@@ -175,6 +175,12 @@ public class JavaSerialiser {
         serialisePackageDeclaration(node.packageDeclaration(), builder);
         builder.newLine();
         builder.newLine();
+        if (!node.imports().isEmpty()) {
+            for (var importNode : node.imports()) {
+                serialiseImport(importNode, builder);
+            }
+            builder.newLine();
+        }
         serialiseTypeDeclaration(node.typeDeclaration(), builder);
     }
 

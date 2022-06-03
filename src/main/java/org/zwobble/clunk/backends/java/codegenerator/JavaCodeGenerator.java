@@ -119,6 +119,7 @@ public class JavaCodeGenerator {
         if (!functions.isEmpty()) {
             compilationUnits.add(new JavaOrdinaryCompilationUnitNode(
                 namespaceToPackage(node.name()),
+                List.of(),
                 new JavaClassDeclarationNode(lowerCamelCaseToUpperCamelCase(last(node.name().parts())), functions)
             ));
         }
@@ -137,6 +138,7 @@ public class JavaCodeGenerator {
 
         return new JavaOrdinaryCompilationUnitNode(
             namespaceToPackage(namespace),
+            List.of(),
             new JavaRecordDeclarationNode(
                 node.name(),
                 components

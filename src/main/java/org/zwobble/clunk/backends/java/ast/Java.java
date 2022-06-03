@@ -31,6 +31,10 @@ public class Java {
         return new JavaFullyQualifiedTypeReferenceNode(packageName, typeName);
     }
 
+    public static JavaImportNode importStatic(String typeName, String identifier) {
+        return new JavaImportStaticNode(typeName, identifier);
+    }
+
     public static JavaExpressionNode intLiteral(int value) {
         return new JavaIntLiteralNode(value);
     }

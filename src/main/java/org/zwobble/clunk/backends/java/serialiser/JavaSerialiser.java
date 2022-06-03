@@ -118,6 +118,25 @@ public class JavaSerialiser {
         builder.append(node.typeName());
     }
 
+    public static void serialiseImport(JavaImportNode node, CodeBuilder builder) {
+        node.accept(new JavaImportNode.Visitor<Void>() {
+            @Override
+            public Void visit(JavaImportStaticNode node) {
+                serialiseImportStatic(node, builder);
+                return null;
+            }
+        });
+    }
+
+    private static void serialiseImportStatic(JavaImportStaticNode node, CodeBuilder builder) {
+        builder.append("import static ");
+        builder.append(node.typeName());
+        builder.append(".");
+        builder.append(node.identifier());
+        builder.append(";");
+        builder.newLine();
+    }
+
     private static void serialiseIntLiteral(JavaIntLiteralNode node, CodeBuilder builder) {
         builder.append(Integer.toString(node.value()));
     }

@@ -5,10 +5,12 @@ import org.zwobble.clunk.ast.typed.TypedFunctionNode;
 import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.ast.typed.TypedTestNode;
+import org.zwobble.clunk.backends.java.ast.JavaOrdinaryCompilationUnitNode;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.StringType;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -27,14 +29,7 @@ public class JavaCodeGeneratorNamespaceTests {
 
         var result = JavaCodeGenerator.compileNamespace(node);
 
-        var strings = result
-            .stream()
-            .map(compilationUnit -> serialiseToString(
-                compilationUnit,
-                JavaSerialiser::serialiseOrdinaryCompilationUnit)
-            )
-            .collect(Collectors.toList());
-        assertThat(strings, contains(
+        assertThat(serialise(result), contains(
             equalTo(
                 """
                     package example.project;
@@ -62,14 +57,7 @@ public class JavaCodeGeneratorNamespaceTests {
 
         var result = JavaCodeGenerator.compileNamespace(node);
 
-        var strings = result
-            .stream()
-            .map(compilationUnit -> serialiseToString(
-                compilationUnit,
-                JavaSerialiser::serialiseOrdinaryCompilationUnit)
-            )
-            .collect(Collectors.toList());
-        assertThat(strings, contains(
+        assertThat(serialise(result), contains(
             equalTo(
                 """
                     package example.project;
@@ -94,14 +82,7 @@ public class JavaCodeGeneratorNamespaceTests {
 
         var result = JavaCodeGenerator.compileNamespace(node);
 
-        var strings = result
-            .stream()
-            .map(compilationUnit -> serialiseToString(
-                compilationUnit,
-                JavaSerialiser::serialiseOrdinaryCompilationUnit)
-            )
-            .collect(Collectors.toList());
-        assertThat(strings, contains(
+        assertThat(serialise(result), contains(
             equalTo(
                 """
                     package example.project;
@@ -118,5 +99,16 @@ public class JavaCodeGeneratorNamespaceTests {
                     }"""
             )
         ));
+    }
+
+    private List<String> serialise(List<JavaOrdinaryCompilationUnitNode> result) {
+        return result
+            .stream()
+            .map(compilationUnit -> serialiseToString(
+                    compilationUnit,
+                    JavaSerialiser::serialiseOrdinaryCompilationUnit
+                )
+            )
+            .collect(Collectors.toList());
     }
 }

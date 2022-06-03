@@ -58,6 +58,9 @@ public class JavaTestRunner implements TargetTestRunner {
 
         var junitOutput = new BufferedReader(new InputStreamReader(junitProcess.getInputStream()))
             .lines()
+            .map(
+                line -> line.replaceAll("Test run finished after ([0-9+]+) ms", "Test run finished after TIME ms")
+            )
             .collect(Collectors.joining("\n"));
 
         junitProcess.waitFor();

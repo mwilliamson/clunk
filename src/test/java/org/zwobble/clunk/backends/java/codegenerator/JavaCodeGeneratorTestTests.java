@@ -17,7 +17,7 @@ public class JavaCodeGeneratorTestTests {
             .addBodyStatement(Typed.var("x", Typed.boolFalse()))
             .build();
 
-        var result = JavaCodeGenerator.compileTest(node);
+        var result = JavaCodeGenerator.compileTest(node, JavaCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, JavaSerialiser::serialiseClassBodyDeclaration);
         assertThat(string, equalTo(

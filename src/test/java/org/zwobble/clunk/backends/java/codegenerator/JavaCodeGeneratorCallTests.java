@@ -33,7 +33,7 @@ public class JavaCodeGeneratorCallTests {
             NullSource.INSTANCE
         );
 
-        var result = JavaCodeGenerator.compileExpression(node);
+        var result = JavaCodeGenerator.compileExpression(node, JavaCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, JavaSerialiser::serialiseExpression);
         assertThat(string, equalTo("(abs)(123)"));

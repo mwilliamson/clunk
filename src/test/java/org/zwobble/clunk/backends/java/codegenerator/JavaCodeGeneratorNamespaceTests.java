@@ -1,14 +1,13 @@
 package org.zwobble.clunk.backends.java.codegenerator;
 
 import org.junit.jupiter.api.Test;
-import org.zwobble.clunk.ast.typed.TypedFunctionNode;
-import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
-import org.zwobble.clunk.ast.typed.TypedRecordNode;
-import org.zwobble.clunk.ast.typed.TypedTestNode;
+import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.java.ast.JavaOrdinaryCompilationUnitNode;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
 import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.StaticFunctionType;
 import org.zwobble.clunk.types.StringType;
+import org.zwobble.clunk.types.Types;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -95,6 +94,72 @@ public class JavaCodeGeneratorNamespaceTests {
                         @org.junit.jupiter.api.Test
                         @org.junit.jupiter.api.DisplayName("g")
                         public void g() {
+                        }
+                    }"""
+            )
+        ));
+    }
+
+    @Test
+    public void macrosInTestsGenerateImports() {
+        var assertThatType = new StaticFunctionType(
+            NamespaceName.fromParts("stdlib", "assertions"),
+            "assertThat",
+            List.of(),
+            Types.UNIT
+        );
+        var equalToType = new StaticFunctionType(
+            NamespaceName.fromParts("stdlib", "matchers"),
+            "equalTo",
+            List.of(),
+            Types.UNIT
+        );
+        var node = TypedNamespaceNode
+            .builder(NamespaceName.fromParts("example", "project"))
+            .addImport(Typed.import_(
+                NamespaceName.fromParts("stdlib", "assertions"), "assertThat",
+                assertThatType
+            ))
+            .addImport(Typed.import_(
+                NamespaceName.fromParts("stdlib", "assertions"), "equalTo",
+                equalToType
+            ))
+            .addStatement(
+                TypedTestNode.builder()
+                    .name("x")
+                    .addBodyStatement(Typed.expressionStatement(
+                        Typed.call(
+                            Typed.reference("assertThat", assertThatType),
+                            List.of(
+                                Typed.intLiteral(1),
+                                Typed.call(
+                                    Typed.reference("equalTo", equalToType),
+                                    List.of(Typed.intLiteral(2)),
+                                    Types.UNIT
+                                )
+                            ),
+                            Types.UNIT
+                        )
+                    ))
+                    .build()
+            )
+            .build();
+
+        var result = JavaCodeGenerator.compileNamespace(node);
+
+        assertThat(serialise(result), contains(
+            equalTo(
+                """
+                    package example.project;
+                    
+                    import static org.hamcrest.MatcherAssert.assertThat;
+                    import static org.hamcrest.Matchers.equalTo;
+
+                    public class Project {
+                        @org.junit.jupiter.api.Test
+                        @org.junit.jupiter.api.DisplayName("x")
+                        public void x() {
+                            (assertThat)(1, (equalTo)(2));
                         }
                     }"""
             )

@@ -14,7 +14,7 @@ public class JavaCodeGeneratorReferenceTests {
     public void referenceIsCompiledToReference() {
         var node = Typed.reference("value", BoolType.INSTANCE);
 
-        var result = JavaCodeGenerator.compileExpression(node);
+        var result = JavaCodeGenerator.compileExpression(node, JavaCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, JavaSerialiser::serialiseExpression);
         assertThat(string, equalTo("value"));

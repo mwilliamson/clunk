@@ -23,7 +23,7 @@ public class JavaCodeGeneratorFunctionTests {
             .addBodyStatement(Typed.returnStatement(Typed.boolFalse()))
             .build();
 
-        var result = JavaCodeGenerator.compileFunction(node);
+        var result = JavaCodeGenerator.compileFunction(node, JavaCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, JavaSerialiser::serialiseClassBodyDeclaration);
         assertThat(string, equalTo(

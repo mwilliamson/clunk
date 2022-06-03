@@ -12,6 +12,9 @@ test "assert False" {
 Output path: One/Two/SimpleTest/SimpleTest.java
 package One.Two.SimpleTest;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+
 public class SimpleTest {
     @org.junit.jupiter.api.Test
     @org.junit.jupiter.api.DisplayName("assert False")

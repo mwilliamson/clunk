@@ -13,7 +13,7 @@ public class JavaCodeGeneratorVarTests {
     public void varIsCompiledToVariableDeclaration() {
         var node = Typed.var("x", Typed.boolFalse());
 
-        var result = JavaCodeGenerator.compileFunctionStatement(node);
+        var result = JavaCodeGenerator.compileFunctionStatement(node, JavaCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, JavaSerialiser::serialiseStatement);
         assertThat(string, equalTo("var x = false;\n"));

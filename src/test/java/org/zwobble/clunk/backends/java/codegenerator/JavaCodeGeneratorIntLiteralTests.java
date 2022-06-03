@@ -13,7 +13,7 @@ public class JavaCodeGeneratorIntLiteralTests {
     public void intLiteralGeneratesIntLiteral() {
         var node = Typed.intLiteral(123);
 
-        var result = JavaCodeGenerator.compileExpression(node);
+        var result = JavaCodeGenerator.compileExpression(node, JavaCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, JavaSerialiser::serialiseExpression);
         assertThat(string, equalTo("123"));

@@ -13,7 +13,7 @@ public class JavaCodeGeneratorExpressionStatementTests {
     public void expressionStatementIsCompiledToExpressionStatement() {
         var node = Typed.expressionStatement(Typed.boolFalse());
 
-        var result = JavaCodeGenerator.compileFunctionStatement(node);
+        var result = JavaCodeGenerator.compileFunctionStatement(node, JavaCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, JavaSerialiser::serialiseStatement);
         assertThat(string, equalTo("false;\n"));

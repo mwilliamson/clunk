@@ -13,7 +13,7 @@ public class JavaCodeGeneratorStringLiteralTests {
     public void stringIsCompiledToString() {
         var node = Typed.string("hello");
 
-        var result = JavaCodeGenerator.compileExpression(node);
+        var result = JavaCodeGenerator.compileExpression(node, JavaCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, JavaSerialiser::serialiseExpression);
         assertThat(string, equalTo("\"hello\""));

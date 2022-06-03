@@ -1,0 +1,24 @@
+Source path: src/One/Two/SimpleTest.clunk
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+
+test "assert False" {
+    assertThat(false, equalTo(true));
+}
+
+
+==============
+
+Output path: One/Two/SimpleTest/SimpleTest.java
+package One.Two.SimpleTest;
+
+public class SimpleTest {
+    @org.junit.jupiter.api.Test
+    @org.junit.jupiter.api.DisplayName("assert False")
+    public void assertFalse() {
+        (assertThat)(false, (equalTo)(true));
+    }
+}
+
+==============
+

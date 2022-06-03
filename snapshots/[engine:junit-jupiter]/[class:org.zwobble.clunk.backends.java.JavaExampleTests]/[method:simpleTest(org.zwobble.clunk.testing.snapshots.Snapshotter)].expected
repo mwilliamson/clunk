@@ -1,0 +1,51 @@
+Source path: src/SimpleTest.clunk
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+
+test "assert False" {
+    assertThat(false, equalTo(true));
+}
+
+test "assert True" {
+    assertThat(true, equalTo(false));
+}
+
+test "assert 42 == 47" {
+    assertThat(42, equalTo(47));
+}
+
+test "assert 42 == 42" {
+    assertThat(42, equalTo(42));
+}
+
+
+==============
+
+Output path: SimpleTest/SimpleTest.java
+package SimpleTest;
+
+public class SimpleTest {
+    @org.junit.jupiter.api.Test
+    @org.junit.jupiter.api.DisplayName("assert False")
+    public void assertFalse() {
+        (assertThat)(false, (equalTo)(true));
+    }
+    @org.junit.jupiter.api.Test
+    @org.junit.jupiter.api.DisplayName("assert True")
+    public void assertTrue() {
+        (assertThat)(true, (equalTo)(false));
+    }
+    @org.junit.jupiter.api.Test
+    @org.junit.jupiter.api.DisplayName("assert 42 == 47")
+    public void assert42Equals47() {
+        (assertThat)(42, (equalTo)(47));
+    }
+    @org.junit.jupiter.api.Test
+    @org.junit.jupiter.api.DisplayName("assert 42 == 42")
+    public void assert42Equals42() {
+        (assertThat)(42, (equalTo)(42));
+    }
+}
+
+==============
+

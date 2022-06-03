@@ -32,9 +32,8 @@ public class JavaSerialiser {
     }
 
     private static void serialiseCall(JavaCallNode node, CodeBuilder builder) {
-        builder.append("(");
         serialiseExpression(node.receiver(), builder);
-        builder.append(")(");
+        builder.append("(");
         forEachInterspersed(
             node.args(),
             arg -> serialiseExpression(arg, builder),

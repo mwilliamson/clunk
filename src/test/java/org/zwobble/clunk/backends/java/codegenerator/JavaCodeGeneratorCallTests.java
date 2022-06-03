@@ -36,6 +36,6 @@ public class JavaCodeGeneratorCallTests {
         var result = JavaCodeGenerator.compileExpression(node, JavaCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, JavaSerialiser::serialiseExpression);
-        assertThat(string, equalTo("(abs)(123)"));
+        assertThat(string, equalTo("abs(123)"));
     }
 }

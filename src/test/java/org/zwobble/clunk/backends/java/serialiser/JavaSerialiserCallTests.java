@@ -16,7 +16,7 @@ public class JavaSerialiserCallTests {
 
         var result = serialiseToString(node, JavaSerialiser::serialiseExpression);
 
-        assertThat(result, equalTo("(f)()"));
+        assertThat(result, equalTo("f()"));
     }
 
     @Test
@@ -25,7 +25,7 @@ public class JavaSerialiserCallTests {
 
         var result = serialiseToString(node, JavaSerialiser::serialiseExpression);
 
-        assertThat(result, equalTo("(f)(false)"));
+        assertThat(result, equalTo("f(false)"));
     }
 
     @Test
@@ -34,6 +34,6 @@ public class JavaSerialiserCallTests {
 
         var result = serialiseToString(node, JavaSerialiser::serialiseExpression);
 
-        assertThat(result, equalTo("(f)(false, true)"));
+        assertThat(result, equalTo("f(false, true)"));
     }
 }

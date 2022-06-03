@@ -16,17 +16,18 @@ import static org.zwobble.clunk.util.DeleteRecursive.deleteRecursive;
 public class TypeScriptTestRunner implements TargetTestRunner {
     @Override
     public String runTests(Path outputRoot) throws IOException, InterruptedException {
-        var typeScriptRoot = findRoot().resolve("testing/typescript");
-        var nodeModules = typeScriptRoot.resolve("node_modules");
+        var typeScriptTestingRoot = findRoot().resolve("testing/typescript");
+        var nodeModules = typeScriptTestingRoot.resolve("node_modules");
 
-        var srcPath = typeScriptRoot.resolve("src");
+        var srcPath = typeScriptTestingRoot.resolve("src");
         if (srcPath.toFile().exists()) {
             deleteRecursive(srcPath);
         }
-        var copyResult = new ProcessBuilder("cp", "-r", outputRoot.toString(), srcPath.toString())
+
+        var copyExitCode = new ProcessBuilder("cp", "-r", outputRoot.toString(), srcPath.toString())
             .start()
             .waitFor();
-        assertThat(copyResult, equalTo(0));
+        assertThat(copyExitCode, equalTo(0));
 
         var processBuilder = new ProcessBuilder(
             nodeModules.resolve(".bin/mocha").toString(),
@@ -35,7 +36,7 @@ public class TypeScriptTestRunner implements TargetTestRunner {
             "--require", "ts-node/register",
             "--ui", "tdd"
         )
-            .directory(typeScriptRoot.toFile())
+            .directory(typeScriptTestingRoot.toFile())
             .redirectErrorStream(true);
 
         processBuilder.environment().put("NODE_PATH", nodeModules.toString());

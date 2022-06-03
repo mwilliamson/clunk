@@ -159,7 +159,7 @@ public class JavaCodeGeneratorNamespaceTests {
                         @org.junit.jupiter.api.Test
                         @org.junit.jupiter.api.DisplayName("x")
                         public void x() {
-                            (assertThat)(1, (equalTo)(2));
+                            assertThat(1, equalTo(2));
                         }
                     }"""
             )

@@ -117,7 +117,7 @@ Expected: <false>
        org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
        [...]
 
-Test run finished after 82 ms
+Test run finished after 72 ms
 [         3 containers found      ]
 [         0 containers skipped    ]
 [         3 containers started    ]

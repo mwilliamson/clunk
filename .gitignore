@@ -1,6 +1,9 @@
 *.pyc
 /.idea
 /target
+/testing/java/bin
+/testing/java/lib
+/testing/java/src
 /testing/python/_virtualenv
 /testing/typescript/node_modules
 /testing/typescript/src

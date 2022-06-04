@@ -20,8 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Compiler {
-
-    private Logger logger;
+    private final Logger logger;
 
     public Compiler(Logger logger) {
         this.logger = logger;

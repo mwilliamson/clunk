@@ -20,7 +20,11 @@ public class JavaCodeGeneratorRecordTests {
             .addField(Typed.recordField("second", IntType.INSTANCE))
             .build();
 
-        var result = JavaCodeGenerator.compileRecord(NamespaceName.fromParts("example", "project"), node);
+        var result = JavaCodeGenerator.compileRecord(
+            NamespaceName.fromParts("example", "project"),
+            node,
+            JavaCodeGeneratorContext.stub()
+        );
 
         var string = serialiseToString(result, JavaSerialiser::serialiseOrdinaryCompilationUnit);
         assertThat(string, equalTo(

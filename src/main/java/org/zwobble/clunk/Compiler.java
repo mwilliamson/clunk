@@ -3,6 +3,7 @@ package org.zwobble.clunk;
 import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
 import org.zwobble.clunk.backends.Backend;
 import org.zwobble.clunk.builtins.Builtins;
+import org.zwobble.clunk.config.ProjectConfig;
 import org.zwobble.clunk.logging.Logger;
 import org.zwobble.clunk.parser.Parser;
 import org.zwobble.clunk.parser.Tokeniser;
@@ -27,6 +28,8 @@ public class Compiler {
     }
 
     public void compile(Path projectPath, Path outputRoot, Backend backend) throws IOException {
+        var projectConfig = ProjectConfig.read(projectPath);
+
         var sourceRoot = projectPath.resolve("src");
         var sourcePaths = collectSourceFiles(sourceRoot);
 
@@ -40,7 +43,7 @@ public class Compiler {
             typedNamespaceNodes.add(typedNamespaceNode);
         }
 
-        backend.compile(typedNamespaceNodes, outputRoot);
+        backend.compile(typedNamespaceNodes, outputRoot, projectConfig);
     }
 
     private List<String> pathToParts(Path namespaceParts) {

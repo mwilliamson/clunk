@@ -5,7 +5,9 @@ import org.zwobble.clunk.backends.Backend;
 import org.zwobble.clunk.backends.CodeBuilder;
 import org.zwobble.clunk.backends.java.ast.JavaOrdinaryCompilationUnitNode;
 import org.zwobble.clunk.backends.java.codegenerator.JavaCodeGenerator;
+import org.zwobble.clunk.backends.java.config.JavaTargetConfig;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
+import org.zwobble.clunk.config.ProjectConfig;
 import org.zwobble.clunk.logging.Logger;
 
 import java.io.IOException;
@@ -22,14 +24,23 @@ public class JavaBackend implements Backend {
     }
 
     @Override
-    public void compile(List<TypedNamespaceNode> typedNamespaceNodes, Path outputRoot) throws IOException {
+    public void compile(
+        List<TypedNamespaceNode> typedNamespaceNodes,
+        Path outputRoot,
+        ProjectConfig projectConfig
+    ) throws IOException {
         for (var typedNamespaceNode : typedNamespaceNodes) {
-            compileNamespace(typedNamespaceNode, outputRoot);
+            compileNamespace(typedNamespaceNode, outputRoot, projectConfig);
         }
     }
 
-    private void compileNamespace(TypedNamespaceNode typedNamespaceNode, Path outputRoot) throws IOException {
-        var javaCompilationUnits = JavaCodeGenerator.compileNamespace(typedNamespaceNode);
+    private void compileNamespace(
+        TypedNamespaceNode typedNamespaceNode,
+        Path outputRoot,
+        ProjectConfig projectConfig
+    ) throws IOException {
+        var javaConfig = new JavaTargetConfig(projectConfig.target("java"));
+        var javaCompilationUnits = JavaCodeGenerator.compileNamespace(typedNamespaceNode, javaConfig);
 
         for (var javaCompilationUnit : javaCompilationUnits) {
             var codeBuilder = new CodeBuilder();

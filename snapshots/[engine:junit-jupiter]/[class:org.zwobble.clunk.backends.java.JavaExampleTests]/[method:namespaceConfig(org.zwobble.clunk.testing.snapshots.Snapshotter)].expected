@@ -1,0 +1,66 @@
+Source path: src/SimpleTest.clunk
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+
+test "assert False" {
+    assertThat(false, equalTo(true));
+}
+
+
+==============
+
+Output path: com/example/prefix/SimpleTest/SimpleTest.java
+package com.example.prefix.SimpleTest;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+
+public class SimpleTest {
+    @org.junit.jupiter.api.Test
+    @org.junit.jupiter.api.DisplayName("assert False")
+    public void assertFalse() {
+        assertThat(false, equalTo(true));
+    }
+}
+
+==============
+
+╷
+├─ JUnit Jupiter ✔
+│  └─ SimpleTest ✔
+│     └─ assert False ✘ 
+│              Expected: <true>
+│                   but: was <false>
+└─ JUnit Vintage ✔
+
+Failures (1):
+  JUnit Jupiter:SimpleTest:assert False
+    MethodSource [className = 'com.example.prefix.SimpleTest.SimpleTest', methodName = 'assertFalse', methodParameterTypes = '']
+    => java.lang.AssertionError: 
+Expected: <true>
+     but: was <false>
+       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:20)
+       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:8)
+       com.example.prefix.SimpleTest.SimpleTest.assertFalse(Unknown Source)
+       java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+       java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+       java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+       java.base/java.lang.reflect.Method.invoke(Method.java:568)
+       org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:725)
+       org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+       org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+       [...]
+
+Test run finished after TIME ms
+[         3 containers found      ]
+[         0 containers skipped    ]
+[         3 containers started    ]
+[         0 containers aborted    ]
+[         3 containers successful ]
+[         0 containers failed     ]
+[         1 tests found           ]
+[         0 tests skipped         ]
+[         1 tests started         ]
+[         0 tests aborted         ]
+[         0 tests successful      ]
+[         1 tests failed          ]

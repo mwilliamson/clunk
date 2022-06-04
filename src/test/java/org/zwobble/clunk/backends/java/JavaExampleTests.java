@@ -27,6 +27,14 @@ public class JavaExampleTests {
         );
     }
 
+    @Test
+    public void namespaceConfig(Snapshotter snapshotter) throws IOException, InterruptedException {
+        runJavaExampleTest(
+            snapshotter,
+            "NamespaceConfig"
+        );
+    }
+
     private void runJavaExampleTest(Snapshotter snapshotter, String testName) throws IOException, InterruptedException {
         runExampleTest(snapshotter, testName, logger -> new JavaBackend(logger), new JavaTestRunner());
     }

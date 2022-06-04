@@ -3,10 +3,9 @@ package org.zwobble.clunk.backends.typescript;
 import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
 import org.zwobble.clunk.backends.Backend;
 import org.zwobble.clunk.backends.CodeBuilder;
-import org.zwobble.clunk.backends.python.codegenerator.PythonCodeGenerator;
-import org.zwobble.clunk.backends.python.serialiser.PythonSerialiser;
 import org.zwobble.clunk.backends.typescript.codegenerator.TypeScriptCodeGenerator;
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser;
+import org.zwobble.clunk.config.ProjectConfig;
 import org.zwobble.clunk.logging.Logger;
 import org.zwobble.clunk.types.NamespaceName;
 
@@ -24,7 +23,11 @@ public class TypeScriptBackend implements Backend {
     }
 
     @Override
-    public void compile(List<TypedNamespaceNode> typedNamespaceNodes, Path outputRoot) throws IOException {
+    public void compile(
+        List<TypedNamespaceNode> typedNamespaceNodes,
+        Path outputRoot,
+        ProjectConfig projectConfig
+    ) throws IOException {
         for (var typedNamespaceNode : typedNamespaceNodes) {
             compileNamespace(typedNamespaceNode, outputRoot);
         }

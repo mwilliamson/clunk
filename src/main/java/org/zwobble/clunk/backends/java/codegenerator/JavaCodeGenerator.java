@@ -2,6 +2,7 @@ package org.zwobble.clunk.backends.java.codegenerator;
 
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.java.ast.*;
+import org.zwobble.clunk.backends.java.config.JavaTargetConfig;
 import org.zwobble.clunk.types.*;
 
 import java.util.ArrayList;
@@ -145,8 +146,8 @@ public class JavaCodeGenerator {
         return new JavaIntLiteralNode(node.value());
     }
 
-    public static List<JavaOrdinaryCompilationUnitNode> compileNamespace(TypedNamespaceNode node) {
-        var context = new JavaCodeGeneratorContext();
+    public static List<JavaOrdinaryCompilationUnitNode> compileNamespace(TypedNamespaceNode node, JavaTargetConfig config) {
+        var context = new JavaCodeGeneratorContext(config);
         var compilationUnits = new ArrayList<JavaOrdinaryCompilationUnitNode>();
         var functions = new ArrayList<JavaClassBodyDeclarationNode>();
 
@@ -160,7 +161,7 @@ public class JavaCodeGenerator {
 
                 @Override
                 public Void visit(TypedRecordNode recordNode) {
-                    compilationUnits.add(compileRecord(node.name(), recordNode));
+                    compilationUnits.add(compileRecord(node.name(), recordNode, context));
                     return null;
                 }
 
@@ -174,7 +175,7 @@ public class JavaCodeGenerator {
 
         if (!functions.isEmpty()) {
             compilationUnits.add(new JavaOrdinaryCompilationUnitNode(
-                namespaceToPackage(node.name()),
+                namespaceToPackage(node.name(), context),
                 context.imports().stream().toList(),
                 new JavaClassDeclarationNode(lowerCamelCaseToUpperCamelCase(last(node.name().parts())), functions)
             ));
@@ -187,13 +188,17 @@ public class JavaCodeGenerator {
         return new JavaParamNode(compileStaticExpression(node.type()), node.name());
     }
 
-    public static JavaOrdinaryCompilationUnitNode compileRecord(NamespaceName namespace, TypedRecordNode node) {
+    public static JavaOrdinaryCompilationUnitNode compileRecord(
+        NamespaceName namespace,
+        TypedRecordNode node,
+        JavaCodeGeneratorContext context
+    ) {
         var components = node.fields().stream()
             .map(field -> new JavaRecordComponentNode(compileStaticExpression(field.type()), field.name()))
             .collect(Collectors.toList());
 
         return new JavaOrdinaryCompilationUnitNode(
-            namespaceToPackage(namespace),
+            namespaceToPackage(namespace, context),
             List.of(),
             new JavaRecordDeclarationNode(
                 node.name(),
@@ -251,7 +256,7 @@ public class JavaCodeGenerator {
         }
     }
 
-    private static String namespaceToPackage(NamespaceName namespace) {
-        return String.join(".", namespace.parts());
+    private static String namespaceToPackage(NamespaceName namespace, JavaCodeGeneratorContext context) {
+        return context.packagePrefix() + String.join(".", namespace.parts());
     }
 }

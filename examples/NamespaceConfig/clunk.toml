@@ -1,0 +1,2 @@
+[targets.java]
+package-prefix = "com.example.prefix."

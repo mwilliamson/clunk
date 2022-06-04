@@ -1,7 +1,6 @@
 package org.zwobble.clunk.backends;
 
 import org.zwobble.clunk.Compiler;
-import org.zwobble.clunk.backends.python.PythonBackend;
 import org.zwobble.clunk.logging.Logger;
 import org.zwobble.clunk.testing.snapshots.Snapshotter;
 

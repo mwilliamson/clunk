@@ -1,4 +1,4 @@
-Source path: src/One/Two/SimpleTest.clunk
+Source path: src/one/two/SimpleTest.clunk
 import stdlib/assertions.assertThat;
 import stdlib/matchers.equalTo;
 
@@ -9,8 +9,8 @@ test "assert False" {
 
 ==============
 
-Output path: One/Two/SimpleTest/SimpleTest.java
-package One.Two.SimpleTest;
+Output path: one/two/SimpleTest/SimpleTest.java
+package one.two.SimpleTest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -35,13 +35,13 @@ public class SimpleTest {
 
 Failures (1):
   JUnit Jupiter:SimpleTest:assert False
-    MethodSource [className = 'One.Two.SimpleTest.SimpleTest', methodName = 'assertFalse', methodParameterTypes = '']
+    MethodSource [className = 'one.two.SimpleTest.SimpleTest', methodName = 'assertFalse', methodParameterTypes = '']
     => java.lang.AssertionError: 
 Expected: <true>
      but: was <false>
        org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:20)
        org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:8)
-       One.Two.SimpleTest.SimpleTest.assertFalse(Unknown Source)
+       one.two.SimpleTest.SimpleTest.assertFalse(Unknown Source)
        java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
        java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
        java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)

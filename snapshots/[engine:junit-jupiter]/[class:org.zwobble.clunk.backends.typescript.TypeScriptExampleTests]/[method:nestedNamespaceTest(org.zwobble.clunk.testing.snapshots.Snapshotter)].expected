@@ -1,4 +1,4 @@
-Source path: src/One/Two/SimpleTest.clunk
+Source path: src/one/two/SimpleTest.clunk
 import stdlib/assertions.assertThat;
 import stdlib/matchers.equalTo;
 
@@ -9,7 +9,7 @@ test "assert False" {
 
 ==============
 
-Output path: One/Two/SimpleTest.ts
+Output path: one/two/SimpleTest.ts
 import {assertThat} from "@mwilliamson/precisely";
 import {equalTo} from "@mwilliamson/precisely";
 (test)("assert False", function () {
@@ -33,7 +33,7 @@ Expected:
 but:
   was false
       at Object.assertThat (node_modules/@mwilliamson/precisely/lib/assertThat.js:14:15)
-      at Context.<anonymous> (src/One/Two/SimpleTest.ts:4:17)
+      at Context.<anonymous> (src/one/two/SimpleTest.ts:4:17)
       at processImmediate (node:internal/timers:466:21)
 
 

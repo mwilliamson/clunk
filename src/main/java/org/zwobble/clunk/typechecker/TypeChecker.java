@@ -58,6 +58,17 @@ public class TypeChecker {
         );
     }
 
+    private static TypedConditionalBranchNode typeCheckConditionalBranch(
+        UntypedConditionalBranchNode node,
+        TypeCheckerContext context
+    ) {
+        return new TypedConditionalBranchNode(
+            typeCheckExpression(node.condition(), context),
+            List.of(),
+            node.source()
+        );
+    }
+
     public static TypedExpressionNode typeCheckExpression(
         UntypedExpressionNode node,
         TypeCheckerContext context
@@ -136,7 +147,7 @@ public class TypeChecker {
 
             @Override
             public TypeCheckFunctionStatementResult visit(UntypedIfStatementNode node) {
-                return null;
+                return typeCheckIfStatement(node, context);
             }
 
             @Override
@@ -164,6 +175,21 @@ public class TypeChecker {
         }
 
         return typedStatements;
+    }
+
+    private static TypeCheckFunctionStatementResult typeCheckIfStatement(
+        UntypedIfStatementNode node,
+        TypeCheckerContext context
+    ) {
+        var typedNode = new TypedIfStatementNode(
+            node.conditionalBranches().stream()
+                .map(branch -> typeCheckConditionalBranch(branch, context))
+                .toList(),
+            List.of(),
+            node.source()
+        );
+
+        return new TypeCheckFunctionStatementResult(typedNode, context);
     }
 
     public record TypeCheckImportResult(TypedImportNode node, TypeCheckerContext context) {

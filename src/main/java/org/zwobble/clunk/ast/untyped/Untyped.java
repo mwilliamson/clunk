@@ -22,12 +22,26 @@ public class Untyped {
         return new UntypedCallNode(receiver, positionalArgs, NullSource.INSTANCE);
     }
 
+    public static UntypedConditionalBranchNode conditionalBranch(
+        UntypedExpressionNode condition,
+        List<UntypedFunctionStatementNode> body
+    ) {
+        return new UntypedConditionalBranchNode(condition, body, NullSource.INSTANCE);
+    }
+
     public static UntypedExpressionStatementNode expressionStatement(UntypedExpressionNode expression) {
         return new UntypedExpressionStatementNode(expression, NullSource.INSTANCE);
     }
 
     public static UntypedExpressionNode fieldAccess(UntypedExpressionNode receiver, String fieldName) {
         return new UntypedFieldAccessNode(receiver, fieldName, NullSource.INSTANCE);
+    }
+
+    public static UntypedIfStatementNode ifStatement(
+        List<UntypedConditionalBranchNode> conditionalBranches,
+        List<UntypedFunctionStatementNode> elseBody
+    ) {
+        return new UntypedIfStatementNode(conditionalBranches, elseBody, NullSource.INSTANCE);
     }
 
     public static UntypedImportNode import_(NamespaceName name, String fieldName) {

@@ -195,16 +195,25 @@ public class Parser {
 
     private UntypedFunctionStatementNode parseIfStatement(TokenIterator<TokenType> tokens) {
         var source = source(tokens);
+
         tokens.skip(TokenType.KEYWORD_IF);
         tokens.skip(TokenType.SYMBOL_PAREN_OPEN);
-        var condition = parseExpression(tokens);
+        var firstCondition = parseExpression(tokens);
         tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
-        var body = parseBlock(tokens);
+        var firstBody = parseBlock(tokens);
+
+        List<UntypedFunctionStatementNode> elseBody;
+        if (tokens.trySkip(TokenType.KEYWORD_ELSE)) {
+            elseBody = parseBlock(tokens);
+        } else {
+            elseBody = List.of();
+        }
+
         return new UntypedIfStatementNode(
             List.of(
-                new UntypedIfStatementNode.ConditionalBranch(condition, body)
+                new UntypedIfStatementNode.ConditionalBranch(firstCondition, firstBody)
             ),
-            List.of(),
+            elseBody,
             source
         );
     }

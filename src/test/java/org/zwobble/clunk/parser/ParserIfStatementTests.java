@@ -10,7 +10,7 @@ import static org.zwobble.clunk.parser.Parsing.parseString;
 
 public class ParserIfStatementTests {
     @Test
-    public void canParseIfStatementWithOnlyTrueBranch() {
+    public void canParseIfStatementWithOneConditionalBranch() {
         var source = "if (true) { 42; 47; }";
 
         var node = parseString(source, Parser::parseFunctionStatement);
@@ -26,5 +26,25 @@ public class ParserIfStatementTests {
                 )
             ))
             .withElseBranch(empty()));
+    }
+
+    @Test
+    public void canParseIfStatementWithElseBranch() {
+        var source = "if (true) { 42; } else { 47; }";
+
+        var node = parseString(source, Parser::parseFunctionStatement);
+
+        assertThat(node, isUntypedIfStatementNode()
+            .withConditionalBranches(contains(
+                isUntypedConditionalBranch(
+                    isUntypedBoolLiteralNode(true),
+                    contains(
+                        isUntypedExpressionStatementNode(isUntypedIntLiteralNode(42))
+                    )
+                )
+            ))
+            .withElseBranch(contains(
+                isUntypedExpressionStatementNode(isUntypedIntLiteralNode(47))
+            )));
     }
 }

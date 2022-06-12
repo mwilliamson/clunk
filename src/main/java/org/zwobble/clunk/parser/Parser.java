@@ -220,12 +220,13 @@ public class Parser {
     }
 
     private UntypedConditionalBranchNode parseConditionalBranch(TokenIterator<TokenType> tokens) {
+        var source = source(tokens);
         tokens.skip(TokenType.KEYWORD_IF);
         tokens.skip(TokenType.SYMBOL_PAREN_OPEN);
         var condition = parseExpression(tokens);
         tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
         var body = parseBlock(tokens);
-        return new UntypedConditionalBranchNode(condition, body);
+        return new UntypedConditionalBranchNode(condition, body, source);
     }
 
     private UntypedParamNode parseParam(TokenIterator<TokenType> tokens) {

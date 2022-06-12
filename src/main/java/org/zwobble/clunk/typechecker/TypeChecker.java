@@ -135,6 +135,11 @@ public class TypeChecker {
             }
 
             @Override
+            public TypeCheckFunctionStatementResult visit(UntypedIfStatementNode node) {
+                return null;
+            }
+
+            @Override
             public TypeCheckFunctionStatementResult visit(UntypedReturnNode node) {
                 return typeCheckReturn(node, context);
             }

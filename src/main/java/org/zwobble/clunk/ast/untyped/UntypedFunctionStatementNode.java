@@ -5,6 +5,7 @@ public interface UntypedFunctionStatementNode extends UntypedNode {
 
     interface Visitor<T> {
         T visit(UntypedExpressionStatementNode node);
+        T visit(UntypedIfStatementNode node);
         T visit(UntypedReturnNode node);
         T visit(UntypedVarNode node);
     }

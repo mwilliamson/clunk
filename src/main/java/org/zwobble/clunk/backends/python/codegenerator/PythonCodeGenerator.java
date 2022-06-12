@@ -139,6 +139,11 @@ public class PythonCodeGenerator {
             }
 
             @Override
+            public PythonStatementNode visit(TypedFunctionStatementNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public PythonStatementNode visit(TypedReturnNode node) {
                 return compileReturn(node, context);
             }

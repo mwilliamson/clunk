@@ -131,6 +131,11 @@ public class JavaCodeGenerator {
             }
 
             @Override
+            public JavaStatementNode visit(TypedFunctionStatementNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public JavaStatementNode visit(TypedReturnNode node) {
                 return compileReturn(node, context);
             }

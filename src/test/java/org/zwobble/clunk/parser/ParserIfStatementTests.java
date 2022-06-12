@@ -25,7 +25,7 @@ public class ParserIfStatementTests {
                     )
                 )
             ))
-            .withElseBranch(empty()));
+            .withElseBody(empty()));
     }
 
     @Test
@@ -43,7 +43,7 @@ public class ParserIfStatementTests {
                     )
                 )
             ))
-            .withElseBranch(contains(
+            .withElseBody(contains(
                 isUntypedExpressionStatementNode(isUntypedIntLiteralNode(47))
             )));
     }

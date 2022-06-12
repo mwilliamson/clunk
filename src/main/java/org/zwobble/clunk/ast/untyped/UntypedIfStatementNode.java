@@ -6,7 +6,7 @@ import java.util.List;
 
 public record UntypedIfStatementNode(
     List<ConditionalBranch> conditionalBranches,
-    List<UntypedFunctionStatementNode> elseBranch,
+    List<UntypedFunctionStatementNode> elseBody,
     Source source
 ) implements UntypedFunctionStatementNode {
     public record ConditionalBranch(

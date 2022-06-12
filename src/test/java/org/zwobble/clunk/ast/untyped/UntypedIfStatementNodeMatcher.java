@@ -23,8 +23,8 @@ public class UntypedIfStatementNodeMatcher extends CastMatcher<Object, UntypedIf
         return addMatcher(has("conditionalBranches", conditionalBranches));
     }
 
-    public UntypedIfStatementNodeMatcher withElseBranch(Matcher<? extends Iterable<? extends UntypedFunctionStatementNode>> elseBranch) {
-        return addMatcher(has("elseBranch", elseBranch));
+    public UntypedIfStatementNodeMatcher withElseBody(Matcher<? extends Iterable<? extends UntypedFunctionStatementNode>> elseBody) {
+        return addMatcher(has("elseBody", elseBody));
     }
 
     private UntypedIfStatementNodeMatcher addMatcher(Matcher<UntypedIfStatementNode> matcher) {

@@ -185,7 +185,7 @@ public class TypeChecker {
             node.conditionalBranches().stream()
                 .map(branch -> typeCheckConditionalBranch(branch, context))
                 .toList(),
-            List.of(),
+            typeCheckFunctionStatements(node.elseBody(), context),
             node.source()
         );
 

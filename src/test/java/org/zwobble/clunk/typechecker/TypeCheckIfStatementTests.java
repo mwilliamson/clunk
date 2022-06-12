@@ -51,4 +51,21 @@ public class TypeCheckIfStatementTests {
             ))
         ));
     }
+
+    @Test
+    public void elseBodyIsTypeChecked() {
+        var untypedNode = Untyped.ifStatement(
+            List.of(),
+            List.of(
+                Untyped.expressionStatement(Untyped.intLiteral(42))
+            )
+        );
+
+        var result = TypeChecker.typeCheckFunctionStatement(untypedNode, TypeCheckerContext.stub());
+
+        assertThat(result.typedNode(), allOf(
+            isA(TypedIfStatementNode.class),
+            has("elseBody", contains(isTypedExpressionStatement(isTypedIntLiteralNode(42))))
+        ));
+    }
 }

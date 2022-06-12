@@ -170,7 +170,7 @@ public class Parser {
         tokens.skip(TokenType.SYMBOL_PAREN_OPEN);
         var params = parseMany(
             () -> tokens.isNext(TokenType.SYMBOL_PAREN_CLOSE),
-            () -> paramParam(tokens),
+            () -> parseParam(tokens),
             () -> tokens.trySkip(TokenType.SYMBOL_COMMA)
         );
         tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
@@ -218,7 +218,7 @@ public class Parser {
         );
     }
 
-    private UntypedParamNode paramParam(TokenIterator<TokenType> tokens) {
+    private UntypedParamNode parseParam(TokenIterator<TokenType> tokens) {
         var source = tokens.peek().source();
 
         var name = tokens.nextValue(TokenType.IDENTIFIER);

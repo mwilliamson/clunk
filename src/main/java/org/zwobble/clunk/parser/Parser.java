@@ -182,13 +182,31 @@ public class Parser {
     }
 
     public UntypedFunctionStatementNode parseFunctionStatement(TokenIterator<TokenType> tokens) {
-        if (tokens.isNext(TokenType.KEYWORD_RETURN)) {
+        if (tokens.isNext(TokenType.KEYWORD_IF)) {
+            return parseIfStatement(tokens);
+        } else if (tokens.isNext(TokenType.KEYWORD_RETURN)) {
             return parseReturn(tokens);
         } else if (tokens.isNext(TokenType.KEYWORD_VAR)) {
             return parseVar(tokens);
         } else {
             return parseExpressionStatement(tokens);
         }
+    }
+
+    private UntypedFunctionStatementNode parseIfStatement(TokenIterator<TokenType> tokens) {
+        var source = source(tokens);
+        tokens.skip(TokenType.KEYWORD_IF);
+        tokens.skip(TokenType.SYMBOL_PAREN_OPEN);
+        var condition = parseExpression(tokens);
+        tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
+        var body = parseBlock(tokens);
+        return new UntypedIfStatementNode(
+            List.of(
+                new UntypedIfStatementNode.ConditionalBranch(condition, body)
+            ),
+            List.of(),
+            source
+        );
     }
 
     private UntypedParamNode paramParam(TokenIterator<TokenType> tokens) {

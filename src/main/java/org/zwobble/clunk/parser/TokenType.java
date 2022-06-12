@@ -3,6 +3,7 @@ package org.zwobble.clunk.parser;
 public enum TokenType {
     KEYWORD_FALSE,
     KEYWORD_FUN,
+    KEYWORD_IF,
     KEYWORD_IMPORT,
     KEYWORD_RECORD,
     KEYWORD_RETURN,

@@ -20,6 +20,16 @@ public class UntypedNodeMatchers {
         return new UntypedCallNodeMatcher(List.of());
     }
 
+    public static Matcher<UntypedIfStatementNode.ConditionalBranch> isUntypedConditionalBranch(
+        Matcher<UntypedExpressionNode> condition,
+        Matcher<? extends Iterable<? extends UntypedFunctionStatementNode>> body
+    ) {
+        return allOf(
+            has("condition", condition),
+            has("body", body)
+        );
+    }
+
     public static Matcher<UntypedFunctionStatementNode> isUntypedExpressionStatementNode(Matcher<UntypedExpressionNode> expression) {
         return cast(UntypedExpressionStatementNode.class, has("expression", expression));
     }
@@ -36,6 +46,10 @@ public class UntypedNodeMatchers {
 
     public static UntypedFunctionNodeMatcher isUntypedFunctionNode() {
         return new UntypedFunctionNodeMatcher(List.of());
+    }
+
+    public static UntypedIfStatementNodeMatcher isUntypedIfStatementNode() {
+        return new UntypedIfStatementNodeMatcher(List.of());
     }
 
     public static Matcher<UntypedImportNode> isUntypedImportNode(

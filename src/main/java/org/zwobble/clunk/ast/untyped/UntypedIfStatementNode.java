@@ -5,15 +5,10 @@ import org.zwobble.clunk.sources.Source;
 import java.util.List;
 
 public record UntypedIfStatementNode(
-    List<ConditionalBranch> conditionalBranches,
+    List<UntypedConditionalBranchNode> conditionalBranches,
     List<UntypedFunctionStatementNode> elseBody,
     Source source
 ) implements UntypedFunctionStatementNode {
-    public record ConditionalBranch(
-        UntypedExpressionNode condition,
-        List<UntypedFunctionStatementNode> body
-    ) {
-    }
 
     @Override
     public <T> T accept(Visitor<T> visitor) {

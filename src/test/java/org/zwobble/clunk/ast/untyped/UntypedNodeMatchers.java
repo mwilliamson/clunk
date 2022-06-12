@@ -20,7 +20,7 @@ public class UntypedNodeMatchers {
         return new UntypedCallNodeMatcher(List.of());
     }
 
-    public static Matcher<UntypedIfStatementNode.ConditionalBranch> isUntypedConditionalBranch(
+    public static Matcher<UntypedConditionalBranchNode> isUntypedConditionalBranch(
         Matcher<UntypedExpressionNode> condition,
         Matcher<? extends Iterable<? extends UntypedFunctionStatementNode>> body
     ) {

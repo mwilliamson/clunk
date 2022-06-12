@@ -18,7 +18,7 @@ public class UntypedIfStatementNodeMatcher extends CastMatcher<Object, UntypedIf
     }
 
     public UntypedIfStatementNodeMatcher withConditionalBranches(
-        Matcher<? extends Iterable<? extends UntypedIfStatementNode.ConditionalBranch>> conditionalBranches
+        Matcher<? extends Iterable<? extends UntypedConditionalBranchNode>> conditionalBranches
     ) {
         return addMatcher(has("conditionalBranches", conditionalBranches));
     }

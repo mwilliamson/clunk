@@ -195,7 +195,7 @@ public class Parser {
 
     private UntypedFunctionStatementNode parseIfStatement(TokenIterator<TokenType> tokens) {
         var source = source(tokens);
-        var conditionalBranches = new ArrayList<UntypedIfStatementNode.ConditionalBranch>();
+        var conditionalBranches = new ArrayList<UntypedConditionalBranchNode>();
 
         while (true) {
             var conditionalBranch = parseConditionalBranch(tokens);
@@ -219,13 +219,13 @@ public class Parser {
         }
     }
 
-    private UntypedIfStatementNode.ConditionalBranch parseConditionalBranch(TokenIterator<TokenType> tokens) {
+    private UntypedConditionalBranchNode parseConditionalBranch(TokenIterator<TokenType> tokens) {
         tokens.skip(TokenType.KEYWORD_IF);
         tokens.skip(TokenType.SYMBOL_PAREN_OPEN);
         var condition = parseExpression(tokens);
         tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
         var body = parseBlock(tokens);
-        return new UntypedIfStatementNode.ConditionalBranch(condition, body);
+        return new UntypedConditionalBranchNode(condition, body);
     }
 
     private UntypedParamNode parseParam(TokenIterator<TokenType> tokens) {

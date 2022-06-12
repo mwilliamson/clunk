@@ -64,7 +64,7 @@ public class TypeChecker {
     ) {
         return new TypedConditionalBranchNode(
             typeCheckExpression(node.condition(), context),
-            List.of(),
+            typeCheckFunctionStatements(node.body(), context),
             node.source()
         );
     }

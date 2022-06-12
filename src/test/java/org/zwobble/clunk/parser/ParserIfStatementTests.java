@@ -47,4 +47,54 @@ public class ParserIfStatementTests {
                 isUntypedExpressionStatementNode(isUntypedIntLiteralNode(47))
             )));
     }
+
+    @Test
+    public void canParseIfStatementWithMultipleConditionalBranches() {
+        var source = "if (true) { 42; } else if (false) { 47; }";
+
+        var node = parseString(source, Parser::parseFunctionStatement);
+
+        assertThat(node, isUntypedIfStatementNode()
+            .withConditionalBranches(contains(
+                isUntypedConditionalBranch(
+                    isUntypedBoolLiteralNode(true),
+                    contains(
+                        isUntypedExpressionStatementNode(isUntypedIntLiteralNode(42))
+                    )
+                ),
+                isUntypedConditionalBranch(
+                    isUntypedBoolLiteralNode(false),
+                    contains(
+                        isUntypedExpressionStatementNode(isUntypedIntLiteralNode(47))
+                    )
+                )
+            ))
+            .withElseBody(empty()));
+    }
+
+    @Test
+    public void canParseIfStatementWithMultipleConditionalBranchesAndElseBranch() {
+        var source = "if (true) { 42; } else if (false) { 47; } else { 52; }";
+
+        var node = parseString(source, Parser::parseFunctionStatement);
+
+        assertThat(node, isUntypedIfStatementNode()
+            .withConditionalBranches(contains(
+                isUntypedConditionalBranch(
+                    isUntypedBoolLiteralNode(true),
+                    contains(
+                        isUntypedExpressionStatementNode(isUntypedIntLiteralNode(42))
+                    )
+                ),
+                isUntypedConditionalBranch(
+                    isUntypedBoolLiteralNode(false),
+                    contains(
+                        isUntypedExpressionStatementNode(isUntypedIntLiteralNode(47))
+                    )
+                )
+            ))
+            .withElseBody(contains(
+                isUntypedExpressionStatementNode(isUntypedIntLiteralNode(52))
+            )));
+    }
 }

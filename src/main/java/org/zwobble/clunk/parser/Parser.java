@@ -195,27 +195,37 @@ public class Parser {
 
     private UntypedFunctionStatementNode parseIfStatement(TokenIterator<TokenType> tokens) {
         var source = source(tokens);
+        var conditionalBranches = new ArrayList<UntypedIfStatementNode.ConditionalBranch>();
 
+        while (true) {
+            var conditionalBranch = parseConditionalBranch(tokens);
+            conditionalBranches.add(conditionalBranch);
+
+            if (!tokens.trySkip(TokenType.KEYWORD_ELSE)) {
+                return new UntypedIfStatementNode(
+                    conditionalBranches,
+                    List.of(),
+                    source
+                );
+            } else if (!tokens.isNext(TokenType.KEYWORD_IF)) {
+                var elseBody = parseBlock(tokens);
+
+                return new UntypedIfStatementNode(
+                    conditionalBranches,
+                    elseBody,
+                    source
+                );
+            }
+        }
+    }
+
+    private UntypedIfStatementNode.ConditionalBranch parseConditionalBranch(TokenIterator<TokenType> tokens) {
         tokens.skip(TokenType.KEYWORD_IF);
         tokens.skip(TokenType.SYMBOL_PAREN_OPEN);
-        var firstCondition = parseExpression(tokens);
+        var condition = parseExpression(tokens);
         tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
-        var firstBody = parseBlock(tokens);
-
-        List<UntypedFunctionStatementNode> elseBody;
-        if (tokens.trySkip(TokenType.KEYWORD_ELSE)) {
-            elseBody = parseBlock(tokens);
-        } else {
-            elseBody = List.of();
-        }
-
-        return new UntypedIfStatementNode(
-            List.of(
-                new UntypedIfStatementNode.ConditionalBranch(firstCondition, firstBody)
-            ),
-            elseBody,
-            source
-        );
+        var body = parseBlock(tokens);
+        return new UntypedIfStatementNode.ConditionalBranch(condition, body);
     }
 
     private UntypedParamNode parseParam(TokenIterator<TokenType> tokens) {

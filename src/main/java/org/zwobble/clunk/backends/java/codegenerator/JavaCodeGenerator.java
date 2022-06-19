@@ -131,8 +131,8 @@ public class JavaCodeGenerator {
             }
 
             @Override
-            public JavaStatementNode visit(TypedFunctionStatementNode node) {
-                throw new UnsupportedOperationException("TODO");
+            public JavaStatementNode visit(TypedIfStatementNode node) {
+                return compileIfStatement(node, context);
             }
 
             @Override
@@ -145,6 +145,25 @@ public class JavaCodeGenerator {
                 return compileVar(node, context);
             }
         });
+    }
+
+    private static JavaStatementNode compileIfStatement(
+        TypedIfStatementNode node,
+        JavaCodeGeneratorContext context
+    ) {
+        return new JavaIfStatementNode(
+            node.conditionalBranches().stream()
+                .map(conditionalBranch -> new JavaConditionalBranchNode(
+                    compileExpression(conditionalBranch.condition(), context),
+                    conditionalBranch.body().stream()
+                        .map(statement -> compileFunctionStatement(statement, context))
+                        .toList()
+                ))
+                .toList(),
+            node.elseBody().stream()
+                .map(statement -> compileFunctionStatement(statement, context))
+                .toList()
+        );
     }
 
     private static JavaExpressionNode compileIntLiteral(TypedIntLiteralNode node) {

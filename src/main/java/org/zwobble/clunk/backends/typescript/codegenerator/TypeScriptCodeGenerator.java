@@ -129,7 +129,7 @@ public class TypeScriptCodeGenerator {
             }
 
             @Override
-            public TypeScriptStatementNode visit(TypedFunctionStatementNode node) {
+            public TypeScriptStatementNode visit(TypedIfStatementNode node) {
                 throw new UnsupportedOperationException("TODO");
             }
 

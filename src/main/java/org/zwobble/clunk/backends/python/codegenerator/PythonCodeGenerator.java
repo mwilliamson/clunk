@@ -139,7 +139,7 @@ public class PythonCodeGenerator {
             }
 
             @Override
-            public PythonStatementNode visit(TypedFunctionStatementNode node) {
+            public PythonStatementNode visit(TypedIfStatementNode node) {
                 throw new UnsupportedOperationException("TODO");
             }
 

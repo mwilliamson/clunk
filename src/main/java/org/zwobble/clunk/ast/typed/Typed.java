@@ -20,8 +20,22 @@ public class Typed {
         return new TypedCallNode(receiver, args, type, NullSource.INSTANCE);
     }
 
+    public static TypedConditionalBranchNode conditionalBranch(
+        TypedExpressionNode condition,
+        List<TypedFunctionStatementNode> body
+    ) {
+        return new TypedConditionalBranchNode(condition, body, NullSource.INSTANCE);
+    }
+
     public static TypedExpressionStatementNode expressionStatement(TypedExpressionNode expression) {
         return new TypedExpressionStatementNode(expression, NullSource.INSTANCE);
+    }
+
+    public static TypedIfStatementNode ifStatement(
+        List<TypedConditionalBranchNode> conditionalBranches,
+        List<TypedFunctionStatementNode> elseBody
+    ) {
+        return new TypedIfStatementNode(conditionalBranches, elseBody, NullSource.INSTANCE);
     }
 
     public static TypedImportNode import_(NamespaceName name, Type type) {

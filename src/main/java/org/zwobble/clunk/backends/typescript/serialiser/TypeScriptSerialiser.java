@@ -3,11 +3,24 @@ package org.zwobble.clunk.backends.typescript.serialiser;
 import org.zwobble.clunk.backends.CodeBuilder;
 import org.zwobble.clunk.backends.typescript.ast.*;
 
+import java.util.List;
+
 import static org.zwobble.clunk.util.Iterables.forEachInterspersed;
 
 public class TypeScriptSerialiser {
     private static void serialiseBoolLiteral(TypeScriptBoolLiteralNode node, CodeBuilder builder) {
         builder.append(node.value() ? "true" : "false");
+    }
+
+    private static void serialiseBlock(List<TypeScriptStatementNode> statements, CodeBuilder builder) {
+        builder.append(" {");
+        builder.newLine();
+        builder.indent();
+        for (var statement : statements) {
+            serialiseStatement(statement, builder);
+        }
+        builder.dedent();
+        builder.append("}");
     }
 
     private static void serialiseCall(TypeScriptCallNode node, CodeBuilder builder) {
@@ -81,14 +94,7 @@ public class TypeScriptSerialiser {
         );
         builder.append("): ");
         serialiseExpression(node.returnType(), builder);
-        builder.append(" {");
-        builder.newLine();
-        builder.indent();
-        for (var statement : node.body()) {
-            serialiseStatement(statement, builder);
-        }
-        builder.dedent();
-        builder.append("}");
+        serialiseBlock(node.body(), builder);
     }
 
     private static void serialiseFunctionExpression(TypeScriptFunctionExpressionNode node, CodeBuilder builder) {
@@ -121,6 +127,28 @@ public class TypeScriptSerialiser {
         builder.append(node.name());
         builder.append(": ");
         serialiseExpression(node.type(), builder);
+    }
+
+    private static void serialiseIfStatement(TypeScriptIfStatementNode node, CodeBuilder builder) {
+        builder.append("if (");
+        var firstConditionalBranch = node.conditionalBranches().get(0);
+        serialiseExpression(firstConditionalBranch.condition(), builder);
+        builder.append(")");
+        serialiseBlock(firstConditionalBranch.body(), builder);
+
+        node.conditionalBranches().stream().skip(1).forEachOrdered(conditionalBranch -> {
+            builder.append(" else if (");
+            serialiseExpression(conditionalBranch.condition(), builder);
+            builder.append(")");
+            serialiseBlock(conditionalBranch.body(), builder);
+        });
+
+        if (node.elseBody().size() > 0) {
+            builder.append(" else");
+            serialiseBlock(node.elseBody(), builder);
+        }
+
+        builder.newLine();
     }
 
     private static void serialiseImport(TypeScriptImportNode node, CodeBuilder builder) {
@@ -194,6 +222,12 @@ public class TypeScriptSerialiser {
             @Override
             public Void visit(TypeScriptFunctionDeclarationNode node) {
                 serialiseFunctionDeclaration(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(TypeScriptIfStatementNode node) {
+                serialiseIfStatement(node, builder);
                 return null;
             }
 

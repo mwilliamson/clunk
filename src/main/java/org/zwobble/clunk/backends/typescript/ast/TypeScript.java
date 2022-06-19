@@ -22,8 +22,22 @@ public class TypeScript {
         return new TypeScriptCallNode(receiver, args);
     }
 
+    public static TypeScriptConditionalBranchNode conditionalBranch(
+        TypeScriptExpressionNode condition,
+        List<TypeScriptStatementNode> body
+    ) {
+        return new TypeScriptConditionalBranchNode(condition, body);
+    }
+
     public static TypeScriptStatementNode expressionStatement(TypeScriptExpressionNode expression) {
         return new TypeScriptExpressionStatementNode(expression);
+    }
+
+    public static TypeScriptIfStatementNode ifStatement(
+        List<TypeScriptConditionalBranchNode> conditionalBranches,
+        List<TypeScriptStatementNode> elseBody
+    ) {
+        return new TypeScriptIfStatementNode(conditionalBranches, elseBody);
     }
 
     public static TypeScriptImportNode import_(String module, List<String> exports) {

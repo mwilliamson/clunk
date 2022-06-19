@@ -5,6 +5,7 @@ public interface JavaStatementNode extends JavaNode {
 
     interface Visitor<T> {
         T visit(JavaExpressionStatementNode node);
+        T visit(JavaIfStatementNode node);
         T visit(JavaReturnNode node);
         T visit(JavaVariableDeclarationNode node);
     }

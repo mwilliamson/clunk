@@ -3,6 +3,8 @@ package org.zwobble.clunk.backends.java.serialiser;
 import org.zwobble.clunk.backends.CodeBuilder;
 import org.zwobble.clunk.backends.java.ast.*;
 
+import java.util.List;
+
 import static org.zwobble.clunk.util.Iterables.forEachInterspersed;
 
 public class JavaSerialiser {
@@ -25,6 +27,17 @@ public class JavaSerialiser {
                 return null;
             }
         });
+    }
+
+    private static void serialiseBlock(List<JavaStatementNode> statements, CodeBuilder builder) {
+        builder.append(" {");
+        builder.newLine();
+        builder.indent();
+        for (var statement : statements) {
+            serialiseStatement(statement, builder);
+        }
+        builder.dedent();
+        builder.append("}");
     }
 
     private static void serialiseBoolLiteral(JavaBoolLiteralNode node, CodeBuilder builder) {
@@ -117,6 +130,28 @@ public class JavaSerialiser {
         builder.append(node.typeName());
     }
 
+    private static void serialiseIfStatement(JavaIfStatementNode node, CodeBuilder builder) {
+        builder.append("if (");
+        var firstConditionalBranch = node.conditionalBranches().get(0);
+        serialiseExpression(firstConditionalBranch.condition(), builder);
+        builder.append(")");
+        serialiseBlock(firstConditionalBranch.body(), builder);
+
+        node.conditionalBranches().stream().skip(1).forEachOrdered(conditionalBranch -> {
+            builder.append(" else if (");
+            serialiseExpression(conditionalBranch.condition(), builder);
+            builder.append(")");
+            serialiseBlock(conditionalBranch.body(), builder);
+        });
+
+        if (node.elseBody().size() > 0) {
+            builder.append(" else");
+            serialiseBlock(node.elseBody(), builder);
+        }
+
+        builder.newLine();
+    }
+
     public static void serialiseImport(JavaImportNode node, CodeBuilder builder) {
         node.accept(new JavaImportNode.Visitor<Void>() {
             @Override
@@ -159,14 +194,8 @@ public class JavaSerialiser {
             param -> serialiseParam(param, builder),
             () -> builder.append(", ")
         );
-        builder.append(") {");
-        builder.newLine();
-        builder.indent();
-        for (var bodyStatement : node.body()) {
-            serialiseStatement(bodyStatement, builder);
-        }
-        builder.dedent();
-        builder.append("}");
+        builder.append(")");
+        serialiseBlock(node.body(), builder);
         builder.newLine();
     }
 
@@ -229,6 +258,12 @@ public class JavaSerialiser {
             @Override
             public Void visit(JavaExpressionStatementNode node) {
                 serialiseExpressionStatement(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(JavaIfStatementNode node) {
+                serialiseIfStatement(node, builder);
                 return null;
             }
 

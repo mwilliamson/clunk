@@ -23,12 +23,26 @@ public class Java {
         return new JavaCallNode(receiver, args);
     }
 
+    public static JavaConditionalBranchNode conditionalBranch(
+        JavaExpressionNode condition,
+        List<JavaStatementNode> body
+    ) {
+        return new JavaConditionalBranchNode(condition, body);
+    }
+
     public static JavaExpressionStatementNode expressionStatement(JavaExpressionNode expression) {
         return new JavaExpressionStatementNode(expression);
     }
 
     public static JavaTypeExpressionNode fullyQualifiedTypeReference(String packageName, String typeName) {
         return new JavaFullyQualifiedTypeReferenceNode(packageName, typeName);
+    }
+
+    public static JavaIfStatementNode ifStatement(
+        List<JavaConditionalBranchNode> conditionalBranches,
+        List<JavaStatementNode> elseBody
+    ) {
+        return new JavaIfStatementNode(conditionalBranches, elseBody);
     }
 
     public static JavaImportNode importStatic(String typeName, String identifier) {

@@ -156,6 +156,30 @@ public class PythonSerialiser {
         serialiseBlock(node.body(), builder);
     }
 
+    private static void serialiseIfStatement(PythonIfStatementNode node, CodeBuilder builder) {
+        var firstConditionalBranch = node.conditionalBranches().get(0);
+
+        builder.append("if ");
+        serialiseExpression(firstConditionalBranch.condition(), builder);
+        builder.append(":");
+        builder.newLine();
+        serialiseBlock(firstConditionalBranch.body(), builder);
+
+        node.conditionalBranches().stream().skip(1).forEachOrdered(conditionalBranch -> {
+            builder.append("elif ");
+            serialiseExpression(conditionalBranch.condition(), builder);
+            builder.append(":");
+            builder.newLine();
+            serialiseBlock(conditionalBranch.body(), builder);
+        });
+
+        if (node.elseBody().size() > 0) {
+            builder.append("else:");
+            builder.newLine();
+            serialiseBlock(node.elseBody(), builder);
+        }
+    }
+
     private static void serialiseImport(PythonImportNode node, CodeBuilder builder) {
         builder.append("import ");
         builder.append(node.moduleName());
@@ -223,6 +247,12 @@ public class PythonSerialiser {
             @Override
             public Void visit(PythonFunctionNode node) {
                 serialiseFunction(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(PythonIfStatementNode node) {
+                serialiseIfStatement(node, builder);
                 return null;
             }
 

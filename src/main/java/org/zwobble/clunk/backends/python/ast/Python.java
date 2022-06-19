@@ -32,12 +32,26 @@ public class Python {
         return new PythonCallNode(receiver, List.of(), kwargs);
     }
 
+    public static PythonConditionalBranchNode conditionalBranch(
+        PythonExpressionNode condition,
+        List<PythonStatementNode> body
+    ) {
+        return new PythonConditionalBranchNode(condition, body);
+    }
+
     public static PythonExpressionStatementNode expressionStatement(PythonExpressionNode expression) {
         return new PythonExpressionStatementNode(expression);
     }
 
     public static PythonKeywordArgumentNode kwarg(String name, PythonExpressionNode expression) {
         return new PythonKeywordArgumentNode(name, expression);
+    }
+
+    public static PythonIfStatementNode ifStatement(
+        List<PythonConditionalBranchNode> conditionalBranches,
+        List<PythonStatementNode> elseBody
+    ) {
+        return new PythonIfStatementNode(conditionalBranches, elseBody);
     }
 
     public static PythonExpressionNode intLiteral(int value) {

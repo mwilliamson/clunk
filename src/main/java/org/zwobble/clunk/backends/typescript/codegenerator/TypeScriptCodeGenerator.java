@@ -130,7 +130,7 @@ public class TypeScriptCodeGenerator {
 
             @Override
             public TypeScriptStatementNode visit(TypedIfStatementNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileIfStatement(node, context);
             }
 
             @Override
@@ -143,6 +143,25 @@ public class TypeScriptCodeGenerator {
                 return compileVar(node, context);
             }
         });
+    }
+
+    private static TypeScriptStatementNode compileIfStatement(
+        TypedIfStatementNode node,
+        TypeScriptCodeGeneratorContext context
+    ) {
+        return new TypeScriptIfStatementNode(
+            node.conditionalBranches().stream()
+                .map(conditionalBranch -> new TypeScriptConditionalBranchNode(
+                    compileExpression(conditionalBranch.condition(), context),
+                    conditionalBranch.body().stream()
+                        .map(statement -> compileFunctionStatement(statement, context))
+                        .toList()
+                ))
+                .toList(),
+            node.elseBody().stream()
+                .map(statement -> compileFunctionStatement(statement, context))
+                .toList()
+        );
     }
 
     private static TypeScriptExpressionNode compileIntLiteral(TypedIntLiteralNode node) {

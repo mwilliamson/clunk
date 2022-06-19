@@ -3,11 +3,13 @@ package org.zwobble.clunk.typechecker;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.TypedIfStatementNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
+import org.zwobble.clunk.types.Types;
 
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
 import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
 
@@ -29,6 +31,24 @@ public class TypeCheckIfStatementTests {
                 has("condition", isTypedBoolLiteralNode(false))
             ))
         ));
+    }
+
+    @Test
+    public void whenConditionIsNotBoolThenErrorIsThrown() {
+        var untypedNode = Untyped.ifStatement(
+            List.of(
+                Untyped.conditionalBranch(Untyped.intLiteral(42), List.of())
+            ),
+            List.of()
+        );
+
+        var result = assertThrows(
+            UnexpectedTypeError.class,
+            () -> TypeChecker.typeCheckFunctionStatement(untypedNode, TypeCheckerContext.stub())
+        );
+
+        assertThat(result.getExpected(), equalTo(Types.BOOL));
+        assertThat(result.getActual(), equalTo(Types.INT));
     }
 
     @Test

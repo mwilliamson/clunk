@@ -4,6 +4,7 @@ import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.ast.untyped.*;
 import org.zwobble.clunk.errors.SourceError;
 import org.zwobble.clunk.types.StaticFunctionType;
+import org.zwobble.clunk.types.Types;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,8 +63,14 @@ public class TypeChecker {
         UntypedConditionalBranchNode node,
         TypeCheckerContext context
     ) {
+        var typedConditionNode = typeCheckExpression(node.condition(), context);
+
+        if (!typedConditionNode.type().equals(Types.BOOL)) {
+            throw new UnexpectedTypeError(Types.BOOL, typedConditionNode.type(), typedConditionNode.source());
+        }
+
         return new TypedConditionalBranchNode(
-            typeCheckExpression(node.condition(), context),
+            typedConditionNode,
             typeCheckFunctionStatements(node.body(), context),
             node.source()
         );

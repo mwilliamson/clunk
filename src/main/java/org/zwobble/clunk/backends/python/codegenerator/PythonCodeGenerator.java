@@ -140,7 +140,7 @@ public class PythonCodeGenerator {
 
             @Override
             public PythonStatementNode visit(TypedIfStatementNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileIfStatement(node, context);
             }
 
             @Override
@@ -153,6 +153,25 @@ public class PythonCodeGenerator {
                 return compileVar(node, context);
             }
         });
+    }
+
+    private PythonStatementNode compileIfStatement(
+        TypedIfStatementNode node,
+        PythonCodeGeneratorContext context
+    ) {
+        return new PythonIfStatementNode(
+            node.conditionalBranches().stream()
+                .map(conditionalBranch -> new PythonConditionalBranchNode(
+                    compileExpression(conditionalBranch.condition(), context),
+                    conditionalBranch.body().stream()
+                        .map(statement -> compileFunctionStatement(statement, context))
+                        .toList()
+                ))
+                .toList(),
+            node.elseBody().stream()
+                .map(statement -> compileFunctionStatement(statement, context))
+                .toList()
+        );
     }
 
     private List<PythonStatementNode> compileImport(TypedImportNode import_) {

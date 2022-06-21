@@ -3,6 +3,7 @@ package org.zwobble.clunk.parser;
 import org.zwobble.clunk.ast.untyped.*;
 import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.tokeniser.TokenIterator;
+import org.zwobble.clunk.tokeniser.UnexpectedTokenException;
 import org.zwobble.clunk.types.NamespaceName;
 
 import java.util.ArrayList;
@@ -263,7 +264,7 @@ public class Parser {
         } else if (tokens.isNext(TokenType.KEYWORD_TEST)) {
             return parseTest(tokens);
         } else {
-            throw new RuntimeException("TODO");
+            throw new UnexpectedTokenException("namespace statement", tokens.peek().describe(), source(tokens));
         }
     }
 

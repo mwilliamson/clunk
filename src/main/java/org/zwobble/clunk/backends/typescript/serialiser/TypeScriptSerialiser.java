@@ -260,6 +260,12 @@ public class TypeScriptSerialiser {
                 serialiseReturn(node, builder);
                 return null;
             }
+
+            @Override
+            public Void visit(TypeScriptTypeDeclarationNode node) {
+                serialiseTypeDeclaration(node, builder);
+                return null;
+            }
         });
     }
 
@@ -280,6 +286,15 @@ public class TypeScriptSerialiser {
             .replace("\"", "\\\"");
         builder.append(escapedValue);
         builder.append("\"");
+    }
+
+    private static void serialiseTypeDeclaration(TypeScriptTypeDeclarationNode node, CodeBuilder builder) {
+        builder.append("type ");
+        builder.append(node.name());
+        builder.append(" = ");
+        serialiseExpression(node.value(), builder);
+        builder.append(";");
+        builder.newLine();
     }
 
     private static void serialiseUnion(TypeScriptUnionNode node, CodeBuilder builder) {

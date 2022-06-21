@@ -76,6 +76,10 @@ public class TypeScript {
         return new TypeScriptStringLiteralNode(value);
     }
 
+    public static TypeScriptTypeDeclarationNode typeDeclaration(String name, TypeScriptExpressionNode value) {
+        return new TypeScriptTypeDeclarationNode(name, value);
+    }
+
     public static TypeScriptUnionNode union(List<TypeScriptExpressionNode> members) {
         return new TypeScriptUnionNode(members);
     }

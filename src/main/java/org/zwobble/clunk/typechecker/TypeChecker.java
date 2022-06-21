@@ -3,6 +3,7 @@ package org.zwobble.clunk.typechecker;
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.ast.untyped.*;
 import org.zwobble.clunk.errors.SourceError;
+import org.zwobble.clunk.types.InterfaceType;
 import org.zwobble.clunk.types.RecordType;
 import org.zwobble.clunk.types.StaticFunctionType;
 import org.zwobble.clunk.types.Types;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.zwobble.clunk.types.Types.isSubType;
+import static org.zwobble.clunk.types.Types.metaType;
 
 public class TypeChecker {
     private static TypedParamNode typeCheckParam(
@@ -238,6 +240,11 @@ public class TypeChecker {
 
     private static TypeCheckResult<TypedNamespaceStatementNode> typeCheckInterface(UntypedInterfaceNode node, TypeCheckerContext context) {
         var typedNode = new TypedInterfaceNode(node.name(), node.source());
+
+        // TODO: handle missing namespace name
+        var interfaceType = new InterfaceType(context.namespaceName().get(), node.name());
+
+        context = context.updateType(node.name(), metaType(interfaceType));
 
         return new TypeCheckResult<>(typedNode, context);
     }

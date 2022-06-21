@@ -1,33 +1,21 @@
 package org.zwobble.clunk.backends.python;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.zwobble.clunk.backends.Backend;
+import org.zwobble.clunk.backends.ExampleTests;
+import org.zwobble.clunk.backends.TargetTestRunner;
+import org.zwobble.clunk.logging.Logger;
 import org.zwobble.clunk.testing.snapshots.SnapshotResolver;
-import org.zwobble.clunk.testing.snapshots.Snapshotter;
-
-import java.io.IOException;
-
-import static org.zwobble.clunk.backends.ExampleTests.runExampleTest;
 
 @ExtendWith(SnapshotResolver.class)
-public class PythonExampleTests {
-    @Test
-    public void simpleTest(Snapshotter snapshotter) throws IOException, InterruptedException {
-        runPythonExampleTest(
-            snapshotter,
-            "SimpleTest"
-        );
+public class PythonExampleTests extends ExampleTests {
+    @Override
+    protected Backend createBackend(Logger logger) {
+        return new PythonBackend(logger);
     }
 
-    @Test
-    public void nestedNamespaceTest(Snapshotter snapshotter) throws IOException, InterruptedException {
-        runPythonExampleTest(
-            snapshotter,
-            "NestedNamespaceTest"
-        );
-    }
-
-    private void runPythonExampleTest(Snapshotter snapshotter, String testName) throws IOException, InterruptedException {
-        runExampleTest(snapshotter, testName, logger -> new PythonBackend(logger), new PythonTestRunner());
+    @Override
+    protected TargetTestRunner targetTestRunner() {
+        return new PythonTestRunner();
     }
 }

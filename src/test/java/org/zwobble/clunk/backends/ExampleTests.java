@@ -1,5 +1,6 @@
 package org.zwobble.clunk.backends;
 
+import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.Compiler;
 import org.zwobble.clunk.logging.Logger;
 import org.zwobble.clunk.testing.snapshots.Snapshotter;
@@ -7,17 +8,49 @@ import org.zwobble.clunk.testing.snapshots.Snapshotter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.function.Function;
 
 import static org.zwobble.clunk.testing.ProjectRoot.findRoot;
 import static org.zwobble.clunk.util.DeleteRecursive.deleteRecursive;
 
-public class ExampleTests {
-    public static void runExampleTest(
+public abstract class ExampleTests {
+    @Test
+    public void simpleTest(Snapshotter snapshotter) throws IOException, InterruptedException {
+        runExampleTest(
+            snapshotter,
+            "SimpleTest"
+        );
+    }
+
+    @Test
+    public void nestedNamespaceTest(Snapshotter snapshotter) throws IOException, InterruptedException {
+        runExampleTest(
+            snapshotter,
+            "NestedNamespaceTest"
+        );
+    }
+
+    @Test
+    public void namespaceConfig(Snapshotter snapshotter) throws IOException, InterruptedException {
+        runExampleTest(
+            snapshotter,
+            "NamespaceConfig"
+        );
+    }
+
+    @Test
+    public void mammoth(Snapshotter snapshotter) throws IOException, InterruptedException {
+        runExampleTest(
+            snapshotter,
+            "mammoth"
+        );
+    }
+
+    protected abstract Backend createBackend(Logger logger);
+    protected abstract TargetTestRunner targetTestRunner();
+
+    private void runExampleTest(
         Snapshotter snapshotter,
-        String exampleName,
-        Function<Logger, Backend> createBackend,
-        TargetTestRunner targetTestRunner
+        String exampleName
     ) throws IOException, InterruptedException {
         var sourceRoot = findRoot().resolve("examples/" + exampleName);
 
@@ -44,9 +77,9 @@ public class ExampleTests {
                 }
             };
             var compiler = new Compiler(logger);
-            compiler.compile(sourceRoot, outputRoot, createBackend.apply(logger));
+            compiler.compile(sourceRoot, outputRoot, createBackend(logger));
 
-            var output = targetTestRunner.runTests(outputRoot);
+            var output = targetTestRunner().runTests(outputRoot);
 
             snapshot.append(output);
 

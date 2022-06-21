@@ -1,0 +1,39 @@
+Source path: src/SimpleTest.clunk
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+
+test "assert False" {
+    assertThat(false, equalTo(true));
+}
+
+
+==============
+
+Output path: SimpleTest.ts
+import {assertThat} from "@mwilliamson/precisely";
+import {equalTo} from "@mwilliamson/precisely";
+(test)("assert False", function () {
+    (assertThat)(false, (equalTo)(true));
+});
+
+
+==============
+
+
+
+  1) assert False
+
+  0 passing (TIME)
+  1 failing
+
+  1) assert False:
+     AssertionError: 
+Expected:
+  true
+but:
+  was false
+      at Object.assertThat (node_modules/@mwilliamson/precisely/lib/assertThat.js:14:15)
+      at Context.<anonymous> (src/SimpleTest.ts:4:17)
+      at processImmediate (node:internal/timers:466:21)
+
+

@@ -1,49 +1,21 @@
 package org.zwobble.clunk.backends.java;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.zwobble.clunk.backends.Backend;
+import org.zwobble.clunk.backends.ExampleTests;
+import org.zwobble.clunk.backends.TargetTestRunner;
+import org.zwobble.clunk.logging.Logger;
 import org.zwobble.clunk.testing.snapshots.SnapshotResolver;
-import org.zwobble.clunk.testing.snapshots.Snapshotter;
-
-import java.io.IOException;
-
-import static org.zwobble.clunk.backends.ExampleTests.runExampleTest;
 
 @ExtendWith(SnapshotResolver.class)
-public class JavaExampleTests {
-    @Test
-    public void simpleTest(Snapshotter snapshotter) throws IOException, InterruptedException {
-        runJavaExampleTest(
-            snapshotter,
-            "SimpleTest"
-        );
+public class JavaExampleTests extends ExampleTests {
+    @Override
+    protected Backend createBackend(Logger logger) {
+        return new JavaBackend(logger);
     }
 
-    @Test
-    public void nestedNamespaceTest(Snapshotter snapshotter) throws IOException, InterruptedException {
-        runJavaExampleTest(
-            snapshotter,
-            "NestedNamespaceTest"
-        );
-    }
-
-    @Test
-    public void namespaceConfig(Snapshotter snapshotter) throws IOException, InterruptedException {
-        runJavaExampleTest(
-            snapshotter,
-            "NamespaceConfig"
-        );
-    }
-
-    @Test
-    public void mammoth(Snapshotter snapshotter) throws IOException, InterruptedException {
-        runJavaExampleTest(
-            snapshotter,
-            "mammoth"
-        );
-    }
-
-    private void runJavaExampleTest(Snapshotter snapshotter, String testName) throws IOException, InterruptedException {
-        runExampleTest(snapshotter, testName, logger -> new JavaBackend(logger), new JavaTestRunner());
+    @Override
+    protected TargetTestRunner targetTestRunner() {
+        return new JavaTestRunner();
     }
 }

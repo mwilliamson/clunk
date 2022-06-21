@@ -1,0 +1,20 @@
+Source path: src/documents.clunk
+record Bookmark(name: String)
+
+
+==============
+
+Output path: documents.py
+import dataclasses
+@((dataclasses).dataclass)(frozen=True)
+class Bookmark:
+    name: str
+
+
+==============
+
+============================= test session starts ==============================
+rootdir: ROOTDIR, configfile: tox.ini
+collected 0 items
+
+============================ no tests ran in TIME =============================

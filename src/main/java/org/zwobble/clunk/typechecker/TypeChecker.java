@@ -239,10 +239,10 @@ public class TypeChecker {
     }
 
     private static TypeCheckResult<TypedNamespaceStatementNode> typeCheckInterface(UntypedInterfaceNode node, TypeCheckerContext context) {
-        var typedNode = new TypedInterfaceNode(node.name(), node.source());
-
         // TODO: handle missing namespace name
         var interfaceType = new InterfaceType(context.namespaceName().get(), node.name());
+
+        var typedNode = new TypedInterfaceNode(node.name(), interfaceType, node.source());
 
         context = context.updateType(node.name(), metaType(interfaceType));
 

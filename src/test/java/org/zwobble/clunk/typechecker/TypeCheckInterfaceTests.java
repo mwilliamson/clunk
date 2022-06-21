@@ -1,6 +1,7 @@
 package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.ast.typed.TypedInterfaceNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.InterfaceType;
@@ -44,6 +45,14 @@ public class TypeCheckInterfaceTests {
             TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"))
         );
 
-        assertThat(result.typedNode(), has("name", equalTo("DocumentElement")));
+        assertThat(result.typedNode(), cast(
+            TypedInterfaceNode.class,
+            has("name", equalTo("DocumentElement")),
+            has("type", cast(
+                InterfaceType.class,
+                has("namespaceName", equalTo(NamespaceName.fromParts("a", "b"))),
+                has("name", equalTo("DocumentElement"))
+            ))
+        ));
     }
 }

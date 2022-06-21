@@ -25,6 +25,7 @@ public enum TokenType {
     SYMBOL_PAREN_OPEN,
     SYMBOL_PAREN_CLOSE,
     SYMBOL_SEMICOLON,
+    SYMBOL_SUBTYPE,
 
     IDENTIFIER,
     INT,

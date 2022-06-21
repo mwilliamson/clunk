@@ -3,8 +3,7 @@ package org.zwobble.clunk.parser;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.*;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.*;
 import static org.zwobble.clunk.parser.Parsing.parseString;
 
@@ -54,5 +53,23 @@ public class ParserRecordTests {
             isUntypedRecordFieldNode().withName("name"),
             isUntypedRecordFieldNode().withName("emailAddress")
         )));
+    }
+
+    @Test
+    public void whenSupertypesAreNotSpecifiedThenSupertypesIsEmpty() {
+        var source = "record User()";
+
+        var node = parseString(source, Parser::parseNamespaceStatement);
+
+        assertThat(node, isUntypedRecordNode().withSupertypes(empty()));
+    }
+
+    @Test
+    public void canParseSingleSupertype() {
+        var source = "record User() <: Person";
+
+        var node = parseString(source, Parser::parseNamespaceStatement);
+
+        assertThat(node, isUntypedRecordNode().withSupertypes(contains(isUntypedStaticReferenceNode("Person"))));
     }
 }

@@ -28,6 +28,10 @@ public class UntypedRecordNodeMatcher extends CastMatcher<Object, UntypedRecordN
         return addMatcher(has("fields", matcher));
     }
 
+    public UntypedRecordNodeMatcher withSupertypes(Matcher<? extends Iterable<? extends UntypedStaticExpressionNode>> matcher) {
+        return addMatcher(has("supertypes", matcher));
+    }
+
     private UntypedRecordNodeMatcher addMatcher(Matcher<UntypedRecordNode> matcher) {
         return new UntypedRecordNodeMatcher(Lists.concatOne(matchers, matcher));
     }

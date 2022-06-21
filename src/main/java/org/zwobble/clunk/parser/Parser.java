@@ -283,7 +283,14 @@ public class Parser {
         );
         tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
 
-        return new UntypedRecordNode(name, fieldNodes, recordSource);
+        List<UntypedStaticExpressionNode> supertypes;
+        if (tokens.trySkip(TokenType.SYMBOL_SUBTYPE)) {
+            supertypes = List.of(parseType(tokens));
+        } else {
+            supertypes = List.of();
+        }
+
+        return new UntypedRecordNode(name, fieldNodes, supertypes, recordSource);
     }
 
     private UntypedRecordFieldNode parseRecordField(TokenIterator<TokenType> tokens) {

@@ -18,6 +18,7 @@ public class Tokeniser {
             RegexTokeniser.rule(TokenType.KEYWORD_FUN, "fun"),
             RegexTokeniser.rule(TokenType.KEYWORD_IF, "if"),
             RegexTokeniser.rule(TokenType.KEYWORD_IMPORT, "import"),
+            RegexTokeniser.rule(TokenType.KEYWORD_INTERFACE, "interface"),
             RegexTokeniser.rule(TokenType.KEYWORD_RECORD, "record"),
             RegexTokeniser.rule(TokenType.KEYWORD_RETURN, "return"),
             RegexTokeniser.rule(TokenType.KEYWORD_TEST, "test"),

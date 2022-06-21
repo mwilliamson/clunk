@@ -22,4 +22,8 @@ public class Types {
     public static MetaType metaType(Type type) {
         return new MetaType(type);
     }
+
+    public static Type interfaceType(NamespaceName namespaceName, String name) {
+        return new InterfaceType(namespaceName, name);
+    }
 }

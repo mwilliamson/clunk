@@ -3,6 +3,7 @@ package org.zwobble.clunk.typechecker;
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.ast.untyped.*;
 import org.zwobble.clunk.errors.SourceError;
+import org.zwobble.clunk.types.RecordType;
 import org.zwobble.clunk.types.StaticFunctionType;
 import org.zwobble.clunk.types.Types;
 
@@ -249,6 +250,8 @@ public class TypeChecker {
         UntypedNamespaceNode node,
         TypeCheckerContext context
     ) {
+        context = context.enterNamespace(node.name());
+
         var typedImports = new ArrayList<TypedImportNode>();
         for (var import_ : node.imports()) {
             var typeCheckImportResult = typeCheckImport(import_, context);
@@ -310,7 +313,20 @@ public class TypeChecker {
             node.source()
         );
 
-        return new TypeCheckResult<>(typedNode, context);
+        var supertypes = node.supertypes().stream()
+            .map(supertype -> typeCheckStaticExpressionNode(supertype, context))
+            .toList();
+
+        // TODO: handle missing namespace name
+        var recordType = new RecordType(context.namespaceName().get(), node.name());
+
+        var newContext = context;
+
+        for (var supertype : supertypes) {
+            newContext = newContext.addSubtypeRelation(recordType, supertype.type());
+        }
+
+        return new TypeCheckResult<>(typedNode, newContext);
     }
 
     private static TypedRecordFieldNode typeCheckRecordField(

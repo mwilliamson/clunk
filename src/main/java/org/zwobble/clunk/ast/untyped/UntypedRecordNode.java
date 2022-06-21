@@ -36,5 +36,11 @@ public record UntypedRecordNode(
             fields.add(field);
             return new Builder(name, fields, supertypes, source);
         }
+
+        public Builder addSupertype(UntypedStaticReferenceNode supertype) {
+            var supertypes = new ArrayList<>(this.supertypes);
+            supertypes.add(supertype);
+            return new Builder(name, fields, supertypes, source);
+        }
     }
 }

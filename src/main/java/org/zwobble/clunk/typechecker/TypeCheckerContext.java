@@ -8,19 +8,23 @@ import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.NamespaceType;
 import org.zwobble.clunk.types.Type;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public record TypeCheckerContext(
+    Optional<NamespaceName> namespaceName,
     Optional<Type> returnType,
     Map<String, Type> environment,
-    Map<NamespaceName, NamespaceType> namespaceTypes
+    Map<NamespaceName, NamespaceType> namespaceTypes,
+    List<SubtypeRelation> subtypeRelations
 ) {
-    public static final TypeCheckerContext EMPTY = new TypeCheckerContext(Optional.empty(), Map.of(), Map.of());
+    public static final TypeCheckerContext EMPTY = new TypeCheckerContext(Optional.empty(), Optional.empty(), Map.of(), Map.of(), List.of());
 
     public static TypeCheckerContext stub() {
-        return new TypeCheckerContext(Optional.empty(), Builtins.ENVIRONMENT, Map.of());
+        return new TypeCheckerContext(Optional.empty(), Optional.empty(), Builtins.ENVIRONMENT, Map.of(), List.of());
+    }
+
+    public TypeCheckerContext enterNamespace(NamespaceName namespaceName) {
+        return new TypeCheckerContext(Optional.of(namespaceName), returnType, environment, namespaceTypes, subtypeRelations);
     }
 
     public TypeCheckerContext enterFunction(Type returnType) {
@@ -32,13 +36,13 @@ public record TypeCheckerContext(
     }
 
     private TypeCheckerContext enter(Optional<Type> returnType) {
-        return new TypeCheckerContext(returnType, environment, namespaceTypes);
+        return new TypeCheckerContext(namespaceName, returnType, environment, namespaceTypes, subtypeRelations);
     }
 
     public TypeCheckerContext updateNamespaceType(NamespaceType namespaceType) {
         var namespaceTypes = new HashMap<>(this.namespaceTypes);
         namespaceTypes.put(namespaceType.name(), namespaceType);
-        return new TypeCheckerContext(returnType, environment, namespaceTypes);
+        return new TypeCheckerContext(namespaceName, returnType, environment, namespaceTypes, subtypeRelations);
     }
 
     public Optional<NamespaceType> typeOfNamespace(NamespaceName name) {
@@ -46,13 +50,13 @@ public record TypeCheckerContext(
     }
 
     public TypeCheckerContext withEnvironment(Map<String, Type> environment) {
-        return new TypeCheckerContext(returnType, environment, namespaceTypes);
+        return new TypeCheckerContext(namespaceName, returnType, environment, namespaceTypes, subtypeRelations);
     }
 
     public TypeCheckerContext updateType(String name, Type type) {
         var environment = new HashMap<>(this.environment);
         environment.put(name, type);
-        return new TypeCheckerContext(returnType, environment, namespaceTypes);
+        return new TypeCheckerContext(namespaceName, returnType, environment, namespaceTypes, subtypeRelations);
     }
 
     public Type resolveType(String name, Source source) {
@@ -70,5 +74,11 @@ public record TypeCheckerContext(
             throw new SourceError("unknown variable: " + name, source);
         }
         return type;
+    }
+
+    public TypeCheckerContext addSubtypeRelation(Type subtype, Type superType) {
+        var subtypeRelations = new ArrayList<>(this.subtypeRelations);
+        subtypeRelations.add(new SubtypeRelation(subtype, superType));
+        return new TypeCheckerContext(namespaceName, returnType, environment, namespaceTypes, subtypeRelations);
     }
 }

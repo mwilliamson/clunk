@@ -48,6 +48,10 @@ public class Untyped {
         return new UntypedImportNode(name, Optional.of(fieldName), NullSource.INSTANCE);
     }
 
+    public static UntypedInterfaceNode interface_(String name) {
+        return new UntypedInterfaceNode(name, NullSource.INSTANCE);
+    }
+
     public static UntypedIntLiteralNode intLiteral(int value) {
         return new UntypedIntLiteralNode(value, NullSource.INSTANCE);
     }

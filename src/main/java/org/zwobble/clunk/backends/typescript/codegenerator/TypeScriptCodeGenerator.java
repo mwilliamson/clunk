@@ -194,6 +194,11 @@ public class TypeScriptCodeGenerator {
             }
 
             @Override
+            public TypeScriptStatementNode visit(TypedInterfaceNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public TypeScriptStatementNode visit(TypedRecordNode node) {
                 return compileRecord(node);
             }

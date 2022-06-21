@@ -233,6 +233,10 @@ public class TypeChecker {
         }
     }
 
+    private static TypedNamespaceStatementNode typeCheckInterface(UntypedInterfaceNode node, TypeCheckerContext context) {
+        return new TypedInterfaceNode(node.name(), node.source());
+    }
+
     private static TypedExpressionNode typeCheckIntLiteral(UntypedIntLiteralNode node) {
         return new TypedIntLiteralNode(node.value(), node.source());
     }
@@ -273,7 +277,7 @@ public class TypeChecker {
 
             @Override
             public TypedNamespaceStatementNode visit(UntypedInterfaceNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return typeCheckInterface(node, context);
             }
 
             @Override

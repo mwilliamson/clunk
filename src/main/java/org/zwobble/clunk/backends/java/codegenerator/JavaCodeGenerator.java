@@ -184,6 +184,11 @@ public class JavaCodeGenerator {
                 }
 
                 @Override
+                public Void visit(TypedInterfaceNode node) {
+                    throw new UnsupportedOperationException("TODO");
+                }
+
+                @Override
                 public Void visit(TypedRecordNode recordNode) {
                     compilationUnits.add(compileRecord(node.name(), recordNode, context));
                     return null;

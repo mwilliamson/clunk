@@ -231,6 +231,11 @@ public class PythonCodeGenerator {
             }
 
             @Override
+            public PythonStatementNode visit(TypedInterfaceNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public PythonStatementNode visit(TypedRecordNode node) {
                 return compileRecord(node, context);
             }

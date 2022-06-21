@@ -1,11 +1,14 @@
 Source path: src/documents.clunk
-record Bookmark(name: String)
+sealed interface DocumentElement {
+}
 
-record BreakLine()
+record Bookmark(name: String) <: DocumentElement
 
-record BreakPage()
+record BreakLine() <: DocumentElement
 
-record BreakColumn()
+record BreakPage() <: DocumentElement
+
+record BreakColumn() <: DocumentElement
 
 
 

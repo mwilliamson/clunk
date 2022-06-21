@@ -185,7 +185,7 @@ public class JavaCodeGenerator {
 
                 @Override
                 public Void visit(TypedInterfaceNode node) {
-                    throw new UnsupportedOperationException("TODO");
+                    return null;
                 }
 
                 @Override

@@ -197,6 +197,10 @@ public class PythonCodeGenerator {
         }
     }
 
+    private PythonStatementNode compileInterface(TypedInterfaceNode node, PythonCodeGeneratorContext context) {
+        return new PythonClassDeclarationNode(node.name(), List.of(), List.of());
+    }
+
     private PythonExpressionNode compileIntLiteral(TypedIntLiteralNode node) {
         return new PythonIntLiteralNode(BigInteger.valueOf(node.value()));
     }
@@ -232,7 +236,7 @@ public class PythonCodeGenerator {
 
             @Override
             public PythonStatementNode visit(TypedInterfaceNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileInterface(node, context);
             }
 
             @Override

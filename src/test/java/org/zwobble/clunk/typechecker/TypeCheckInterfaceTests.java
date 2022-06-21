@@ -17,6 +17,6 @@ public class TypeCheckInterfaceTests {
             TypeCheckerContext.stub()
         );
 
-        assertThat(result, has("name", equalTo("DocumentElement")));
+        assertThat(result.typedNode(), has("name", equalTo("DocumentElement")));
     }
 }

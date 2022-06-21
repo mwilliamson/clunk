@@ -22,7 +22,7 @@ public class TypeCheckFunctionTests {
             TypeCheckerContext.stub()
         );
 
-        assertThat(result, isTypedFunctionNode().withName("f"));
+        assertThat(result.typedNode(), isTypedFunctionNode().withName("f"));
     }
 
     @Test
@@ -37,7 +37,7 @@ public class TypeCheckFunctionTests {
             TypeCheckerContext.stub()
         );
 
-        assertThat(result, isTypedFunctionNode().withParams(contains(
+        assertThat(result.typedNode(), isTypedFunctionNode().withParams(contains(
             isTypedParamNode().withName("x").withType(IntType.INSTANCE),
             isTypedParamNode().withName("y").withType(StringType.INSTANCE)
         )));
@@ -54,7 +54,7 @@ public class TypeCheckFunctionTests {
             TypeCheckerContext.stub()
         );
 
-        assertThat(result, isTypedFunctionNode().withReturnType(IntType.INSTANCE));
+        assertThat(result.typedNode(), isTypedFunctionNode().withReturnType(IntType.INSTANCE));
     }
 
     @Test
@@ -69,7 +69,7 @@ public class TypeCheckFunctionTests {
             TypeCheckerContext.stub()
         );
 
-        assertThat(result, isTypedFunctionNode().withBody(contains(
+        assertThat(result.typedNode(), isTypedFunctionNode().withBody(contains(
             isTypedReturnNode().withExpression(isTypedBoolLiteralNode(false))
         )));
     }

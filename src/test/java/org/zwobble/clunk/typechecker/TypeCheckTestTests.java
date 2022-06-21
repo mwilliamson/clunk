@@ -20,7 +20,7 @@ public class TypeCheckTestTests {
             TypeCheckerContext.stub()
         );
 
-        assertThat(result, isTypedTestNode().withBody(contains(
+        assertThat(result.typedNode(), isTypedTestNode().withBody(contains(
             isTypedVarNode().withExpression(isTypedBoolLiteralNode(false))
         )));
     }

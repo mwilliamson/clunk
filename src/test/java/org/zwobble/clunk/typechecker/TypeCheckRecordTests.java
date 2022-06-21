@@ -21,7 +21,7 @@ public class TypeCheckRecordTests {
             TypeCheckerContext.stub()
         );
 
-        assertThat(result, allOf(
+        assertThat(result.typedNode(), allOf(
             has("name", equalTo("Example")),
             has("fields", contains(
                 allOf(

@@ -122,7 +122,7 @@ public class TypeChecker {
         return new TypeCheckResult<>(typedStatement, context);
     }
 
-    private static TypedNamespaceStatementNode typeCheckFunction(
+    private static TypeCheckResult<TypedNamespaceStatementNode> typeCheckFunction(
         UntypedFunctionNode node,
         TypeCheckerContext context
     ) {
@@ -133,13 +133,15 @@ public class TypeChecker {
             context.enterFunction(returnType.type())
         );
 
-        return new TypedFunctionNode(
+        var typedNode = new TypedFunctionNode(
             node.name(),
             node.params().stream().map(param -> typeCheckParam(param, context)).toList(),
             returnType,
             typedStatements,
             node.source()
         );
+
+        return new TypeCheckResult<>(typedNode, context);
     }
 
     public static TypeCheckResult<TypedFunctionStatementNode> typeCheckFunctionStatement(
@@ -233,8 +235,10 @@ public class TypeChecker {
         }
     }
 
-    private static TypedNamespaceStatementNode typeCheckInterface(UntypedInterfaceNode node, TypeCheckerContext context) {
-        return new TypedInterfaceNode(node.name(), node.source());
+    private static TypeCheckResult<TypedNamespaceStatementNode> typeCheckInterface(UntypedInterfaceNode node, TypeCheckerContext context) {
+        var typedNode = new TypedInterfaceNode(node.name(), node.source());
+
+        return new TypeCheckResult<>(typedNode, context);
     }
 
     private static TypedExpressionNode typeCheckIntLiteral(UntypedIntLiteralNode node) {
@@ -254,7 +258,9 @@ public class TypeChecker {
 
         var typedBody = new ArrayList<TypedNamespaceStatementNode>();
         for (var statement : node.statements()) {
-            typedBody.add(typeCheckNamespaceStatement(statement, context));
+            var result = typeCheckNamespaceStatement(statement, context);
+            context = result.context();
+            typedBody.add(result.typedNode());
         }
 
         return new TypedNamespaceNode(
@@ -265,44 +271,46 @@ public class TypeChecker {
         );
     }
 
-    public static TypedNamespaceStatementNode typeCheckNamespaceStatement(
+    public static TypeCheckResult<TypedNamespaceStatementNode> typeCheckNamespaceStatement(
         UntypedNamespaceStatementNode node,
         TypeCheckerContext context
     ) {
-        return node.accept(new UntypedNamespaceStatementNode.Visitor<TypedNamespaceStatementNode>() {
+        return node.accept(new UntypedNamespaceStatementNode.Visitor<TypeCheckResult<TypedNamespaceStatementNode>>() {
             @Override
-            public TypedNamespaceStatementNode visit(UntypedFunctionNode node) {
+            public TypeCheckResult<TypedNamespaceStatementNode> visit(UntypedFunctionNode node) {
                 return typeCheckFunction(node, context);
             }
 
             @Override
-            public TypedNamespaceStatementNode visit(UntypedInterfaceNode node) {
+            public TypeCheckResult<TypedNamespaceStatementNode> visit(UntypedInterfaceNode node) {
                 return typeCheckInterface(node, context);
             }
 
             @Override
-            public TypedNamespaceStatementNode visit(UntypedRecordNode node) {
+            public TypeCheckResult<TypedNamespaceStatementNode> visit(UntypedRecordNode node) {
                 return typeCheckRecord(node, context);
             }
 
             @Override
-            public TypedNamespaceStatementNode visit(UntypedTestNode node) {
+            public TypeCheckResult<TypedNamespaceStatementNode> visit(UntypedTestNode node) {
                 return typeCheckTest(node, context);
             }
         });
     }
 
-    private static TypedRecordNode typeCheckRecord(
+    private static TypeCheckResult<TypedNamespaceStatementNode> typeCheckRecord(
         UntypedRecordNode node,
         TypeCheckerContext context
     ) {
-        return new TypedRecordNode(
+        var typedNode = new TypedRecordNode(
             node.name(),
             node.fields().stream()
                 .map(field -> typeCheckRecordField(field, context))
                 .collect(Collectors.toList()),
             node.source()
         );
+
+        return new TypeCheckResult<>(typedNode, context);
     }
 
     private static TypedRecordFieldNode typeCheckRecordField(
@@ -362,7 +370,7 @@ public class TypeChecker {
         return new TypedStringLiteralNode(node.value(), node.source());
     }
 
-    private static TypedNamespaceStatementNode typeCheckTest(
+    private static TypeCheckResult<TypedNamespaceStatementNode> typeCheckTest(
         UntypedTestNode node,
         TypeCheckerContext context
     ) {
@@ -371,11 +379,13 @@ public class TypeChecker {
             context.enterTest()
         );
 
-        return new TypedTestNode(
+        var typedNode = new TypedTestNode(
             node.name(),
             typedStatements,
             node.source()
         );
+
+        return new TypeCheckResult<>(typedNode, context);
     }
 
     private static TypeCheckResult<TypedFunctionStatementNode> typeCheckVar(

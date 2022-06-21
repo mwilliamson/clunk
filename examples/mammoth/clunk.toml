@@ -1,0 +1,2 @@
+[targets.java]
+package-prefix = "org.zwobble.mammoth.internal"

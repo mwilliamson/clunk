@@ -35,6 +35,14 @@ public class JavaExampleTests {
         );
     }
 
+    @Test
+    public void mammoth(Snapshotter snapshotter) throws IOException, InterruptedException {
+        runJavaExampleTest(
+            snapshotter,
+            "mammoth"
+        );
+    }
+
     private void runJavaExampleTest(Snapshotter snapshotter, String testName) throws IOException, InterruptedException {
         runExampleTest(snapshotter, testName, logger -> new JavaBackend(logger), new JavaTestRunner());
     }

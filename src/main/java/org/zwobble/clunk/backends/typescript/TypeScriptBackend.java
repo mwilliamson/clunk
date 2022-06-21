@@ -7,6 +7,8 @@ import org.zwobble.clunk.backends.typescript.codegenerator.TypeScriptCodeGenerat
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser;
 import org.zwobble.clunk.config.ProjectConfig;
 import org.zwobble.clunk.logging.Logger;
+import org.zwobble.clunk.typechecker.SubtypeLookup;
+import org.zwobble.clunk.typechecker.TypeCheckResult;
 import org.zwobble.clunk.types.NamespaceName;
 
 import java.io.IOException;
@@ -24,17 +26,19 @@ public class TypeScriptBackend implements Backend {
 
     @Override
     public void compile(
-        List<TypedNamespaceNode> typedNamespaceNodes,
+        TypeCheckResult<List<TypedNamespaceNode>> typeCheckResult,
         Path outputRoot,
         ProjectConfig projectConfig
     ) throws IOException {
-        for (var typedNamespaceNode : typedNamespaceNodes) {
-            compileNamespace(typedNamespaceNode, outputRoot);
+        var subtypeLookup = SubtypeLookup.fromSubtypeRelations(typeCheckResult.context().subtypeRelations());
+
+        for (var typedNamespaceNode : typeCheckResult.typedNode()) {
+            compileNamespace(typedNamespaceNode, outputRoot, subtypeLookup);
         }
     }
 
-    private void compileNamespace(TypedNamespaceNode typedNamespaceNode, Path outputRoot) throws IOException {
-        var typeScriptModule = TypeScriptCodeGenerator.compileNamespace(typedNamespaceNode);
+    private void compileNamespace(TypedNamespaceNode typedNamespaceNode, Path outputRoot, SubtypeLookup subtypeLookup) throws IOException {
+        var typeScriptModule = TypeScriptCodeGenerator.compileNamespace(typedNamespaceNode, subtypeLookup);
         var codeBuilder = new CodeBuilder();
         TypeScriptSerialiser.serialiseModule(typeScriptModule, codeBuilder);
 

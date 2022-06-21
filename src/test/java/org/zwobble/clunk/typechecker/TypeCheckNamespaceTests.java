@@ -27,7 +27,7 @@ public class TypeCheckNamespaceTests {
 
         var result = TypeChecker.typeCheckNamespace(untypedNode, TypeCheckerContext.stub());
 
-        assertThat(result, allOf(
+        assertThat(result.typedNode(), allOf(
             has("name", equalTo(NamespaceName.fromParts("example", "project"))),
             has("statements", contains(
                 isTypedRecordNode(has("name", equalTo("X")))
@@ -53,7 +53,7 @@ public class TypeCheckNamespaceTests {
 
         var result = TypeChecker.typeCheckNamespace(untypedNode, context);
 
-        assertThat(result, allOf(
+        assertThat(result.typedNode(), allOf(
             has("imports", contains(
                 isTypedImportNode(allOf(
                     has("namespaceName", equalTo(NamespaceName.fromParts("x", "y"))),

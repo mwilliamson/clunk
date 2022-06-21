@@ -1,24 +1,28 @@
 package org.zwobble.clunk.backends.typescript.codegenerator;
 
-import org.zwobble.clunk.backends.python.codegenerator.PythonCodeGeneratorContext;
 import org.zwobble.clunk.backends.typescript.ast.TypeScriptImportNode;
-import org.zwobble.clunk.backends.typescript.ast.TypeScriptStatementNode;
+import org.zwobble.clunk.typechecker.SubtypeLookup;
+import org.zwobble.clunk.types.RecordType;
+import org.zwobble.clunk.types.Type;
 
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class TypeScriptCodeGeneratorContext {
     public static TypeScriptCodeGeneratorContext stub() {
-        return new TypeScriptCodeGeneratorContext();
+        return new TypeScriptCodeGeneratorContext(new SubtypeLookup(Map.of()));
     }
 
     private record Import(String module, String export) {
     }
 
     private final Set<Import> imports;
+    private final SubtypeLookup subtypeLookup;
 
-    public TypeScriptCodeGeneratorContext() {
+    public TypeScriptCodeGeneratorContext(SubtypeLookup subtypeLookup) {
+        this.subtypeLookup = subtypeLookup;
         this.imports = new LinkedHashSet<>();
     }
 
@@ -30,5 +34,9 @@ public class TypeScriptCodeGeneratorContext {
         return imports.stream()
             .map(import_ -> new TypeScriptImportNode(import_.module(), List.of(import_.export())))
             .toList();
+    }
+
+    public List<RecordType> subtypesOf(Type supertype) {
+        return subtypeLookup.subtypesOf(supertype);
     }
 }

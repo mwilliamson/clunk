@@ -5,9 +5,8 @@ import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.ast.typed.TypedTestNode;
-import org.zwobble.clunk.backends.python.codegenerator.PythonCodeGenerator;
-import org.zwobble.clunk.backends.python.serialiser.PythonSerialiser;
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser;
+import org.zwobble.clunk.typechecker.SubtypeLookup;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.StaticFunctionType;
 import org.zwobble.clunk.types.Types;
@@ -27,7 +26,7 @@ public class TypeScriptCodeGeneratorNamespaceTests {
             .addStatement(TypedRecordNode.builder("Second").build())
             .build();
 
-        var result = TypeScriptCodeGenerator.compileNamespace(node);
+        var result = TypeScriptCodeGenerator.compileNamespace(node, SubtypeLookup.EMPTY);
 
         assertThat(result.path(), equalTo("example/project"));
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseModule);
@@ -56,7 +55,7 @@ public class TypeScriptCodeGeneratorNamespaceTests {
             ))
             .build();
 
-        var result = TypeScriptCodeGenerator.compileNamespace(node);
+        var result = TypeScriptCodeGenerator.compileNamespace(node, SubtypeLookup.EMPTY);
 
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseModule);
         assertThat(string, equalTo(""));
@@ -107,7 +106,7 @@ public class TypeScriptCodeGeneratorNamespaceTests {
             )
             .build();
 
-        var result = TypeScriptCodeGenerator.compileNamespace(node);
+        var result = TypeScriptCodeGenerator.compileNamespace(node, SubtypeLookup.EMPTY);
 
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseModule);
         assertThat(string, equalTo("""

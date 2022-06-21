@@ -1,6 +1,7 @@
 package org.zwobble.clunk.ast.typed;
 
 import org.zwobble.clunk.sources.NullSource;
+import org.zwobble.clunk.types.InterfaceType;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.Type;
 
@@ -44,6 +45,10 @@ public class Typed {
 
     public static TypedImportNode import_(NamespaceName name, String fieldName, Type type) {
         return new TypedImportNode(name, Optional.of(fieldName), type, NullSource.INSTANCE);
+    }
+
+    public static TypedInterfaceNode interface_(String name, InterfaceType type) {
+        return new TypedInterfaceNode(name, type, NullSource.INSTANCE);
     }
 
     public static TypedExpressionNode intLiteral(int value) {

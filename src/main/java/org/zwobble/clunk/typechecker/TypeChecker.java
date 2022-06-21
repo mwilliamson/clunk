@@ -253,7 +253,7 @@ public class TypeChecker {
         return new TypedIntLiteralNode(node.value(), node.source());
     }
 
-    public static TypedNamespaceNode typeCheckNamespace(
+    public static TypeCheckResult<TypedNamespaceNode> typeCheckNamespace(
         UntypedNamespaceNode node,
         TypeCheckerContext context
     ) {
@@ -273,12 +273,14 @@ public class TypeChecker {
             typedBody.add(result.typedNode());
         }
 
-        return new TypedNamespaceNode(
+        var typedNode = new TypedNamespaceNode(
             node.name(),
             typedImports,
             typedBody,
             node.source()
         );
+        // TODO: revert to original environment (probably elsewhere too)
+        return new TypeCheckResult<>(typedNode, context);
     }
 
     public static TypeCheckResult<TypedNamespaceStatementNode> typeCheckNamespaceStatement(

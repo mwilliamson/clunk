@@ -8,7 +8,9 @@ import org.zwobble.clunk.logging.Logger;
 import org.zwobble.clunk.parser.Parser;
 import org.zwobble.clunk.parser.Tokeniser;
 import org.zwobble.clunk.sources.FileFragmentSource;
+import org.zwobble.clunk.typechecker.TypeCheckResult;
 import org.zwobble.clunk.typechecker.TypeChecker;
+import org.zwobble.clunk.typechecker.TypeCheckerContext;
 import org.zwobble.clunk.types.NamespaceName;
 
 import java.io.IOException;
@@ -34,16 +36,18 @@ public class Compiler {
         var sourcePaths = collectSourceFiles(sourceRoot);
 
         var typedNamespaceNodes = new ArrayList<TypedNamespaceNode>();
+        var typeCheckerContext = Builtins.TYPE_CHECKER_CONTEXT;
         for (var sourcePath : sourcePaths) {
             var namespaceParts = sourceRoot.relativize(sourcePath).resolveSibling(
                 sourcePath.getFileName().toString().replaceAll("\\.clunk$", "")
             );
             var namespaceName = new NamespaceName(pathToParts(namespaceParts));
-            var typedNamespaceNode = readFile(sourcePath, namespaceName);
-            typedNamespaceNodes.add(typedNamespaceNode);
+            var result = readFile(sourcePath, namespaceName);
+            typedNamespaceNodes.add(result.typedNode());
+            typeCheckerContext = result.context();
         }
 
-        backend.compile(typedNamespaceNodes, outputRoot, projectConfig);
+        backend.compile(new TypeCheckResult<>(typedNamespaceNodes, typeCheckerContext), outputRoot, projectConfig);
     }
 
     private List<String> pathToParts(Path namespaceParts) {
@@ -79,7 +83,7 @@ public class Compiler {
         return paths;
     }
 
-    private TypedNamespaceNode readFile(
+    private TypeCheckResult<TypedNamespaceNode> readFile(
         Path sourcePath,
         NamespaceName namespaceName
     ) throws IOException {

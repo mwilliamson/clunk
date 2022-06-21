@@ -9,6 +9,7 @@ import org.zwobble.clunk.backends.java.config.JavaTargetConfig;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
 import org.zwobble.clunk.config.ProjectConfig;
 import org.zwobble.clunk.logging.Logger;
+import org.zwobble.clunk.typechecker.TypeCheckResult;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -25,11 +26,11 @@ public class JavaBackend implements Backend {
 
     @Override
     public void compile(
-        List<TypedNamespaceNode> typedNamespaceNodes,
+        TypeCheckResult<List<TypedNamespaceNode>> typeCheckResult,
         Path outputRoot,
         ProjectConfig projectConfig
     ) throws IOException {
-        for (var typedNamespaceNode : typedNamespaceNodes) {
+        for (var typedNamespaceNode : typeCheckResult.typedNode()) {
             compileNamespace(typedNamespaceNode, outputRoot, projectConfig);
         }
     }

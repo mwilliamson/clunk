@@ -2,6 +2,7 @@ package org.zwobble.clunk.backends.typescript.codegenerator;
 
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.typescript.ast.*;
+import org.zwobble.clunk.typechecker.SubtypeLookup;
 import org.zwobble.clunk.types.*;
 
 import java.util.ArrayList;
@@ -164,13 +165,27 @@ public class TypeScriptCodeGenerator {
         );
     }
 
+    private static TypeScriptStatementNode compileInterface(
+        TypedInterfaceNode node,
+        TypeScriptCodeGeneratorContext context
+    ) {
+        return new TypeScriptTypeDeclarationNode(
+            node.name(),
+            new TypeScriptUnionNode(
+                context.subtypesOf(node.type()).stream()
+                    .map(subtype -> new TypeScriptReferenceNode(subtype.name()))
+                    .toList()
+            )
+        );
+    }
+
     private static TypeScriptExpressionNode compileIntLiteral(TypedIntLiteralNode node) {
         return new TypeScriptNumberLiteralNode(node.value());
     }
 
-    public static TypeScriptModuleNode compileNamespace(TypedNamespaceNode node) {
+    public static TypeScriptModuleNode compileNamespace(TypedNamespaceNode node, SubtypeLookup subtypeLookup) {
         var name = String.join("/", node.name().parts());
-        var context = new TypeScriptCodeGeneratorContext();
+        var context = new TypeScriptCodeGeneratorContext(subtypeLookup);
 
         var statements = new ArrayList<TypeScriptStatementNode>();
 
@@ -195,7 +210,7 @@ public class TypeScriptCodeGenerator {
 
             @Override
             public TypeScriptStatementNode visit(TypedInterfaceNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileInterface(node, context);
             }
 
             @Override

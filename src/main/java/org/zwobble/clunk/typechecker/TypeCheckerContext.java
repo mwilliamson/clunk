@@ -3,10 +3,7 @@ package org.zwobble.clunk.typechecker;
 import org.zwobble.clunk.builtins.Builtins;
 import org.zwobble.clunk.errors.SourceError;
 import org.zwobble.clunk.sources.Source;
-import org.zwobble.clunk.types.MetaType;
-import org.zwobble.clunk.types.NamespaceName;
-import org.zwobble.clunk.types.NamespaceType;
-import org.zwobble.clunk.types.Type;
+import org.zwobble.clunk.types.*;
 
 import java.util.*;
 
@@ -76,7 +73,7 @@ public record TypeCheckerContext(
         return type;
     }
 
-    public TypeCheckerContext addSubtypeRelation(Type subtype, Type superType) {
+    public TypeCheckerContext addSubtypeRelation(RecordType subtype, Type superType) {
         var subtypeRelations = new ArrayList<>(this.subtypeRelations);
         subtypeRelations.add(new SubtypeRelation(subtype, superType));
         return new TypeCheckerContext(namespaceName, returnType, environment, namespaceTypes, subtypeRelations);

@@ -292,7 +292,7 @@ public class TypeChecker {
         });
     }
 
-    public static TypedRecordNode typeCheckRecord(
+    private static TypedRecordNode typeCheckRecord(
         UntypedRecordNode node,
         TypeCheckerContext context
     ) {

@@ -16,7 +16,7 @@ public class TypeCheckRecordTests {
             .addField(Untyped.recordField("x", Untyped.staticReference("String")))
             .build();
 
-        var result = TypeChecker.typeCheckRecord(
+        var result = TypeChecker.typeCheckNamespaceStatement(
             untypedNode,
             TypeCheckerContext.stub()
         );

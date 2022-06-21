@@ -239,9 +239,25 @@ public class Parser {
         return new UntypedParamNode(name, type, source);
     }
 
+    private UntypedNamespaceStatementNode parseInterface(TokenIterator<TokenType> tokens) {
+        var source = source(tokens);
+
+        tokens.skip(TokenType.KEYWORD_SEALED);
+        tokens.skip(TokenType.KEYWORD_INTERFACE);
+
+        var name = tokens.nextValue(TokenType.IDENTIFIER);
+
+        tokens.skip(TokenType.SYMBOL_BRACE_OPEN);
+        tokens.skip(TokenType.SYMBOL_BRACE_CLOSE);
+
+        return new UntypedInterfaceNode(name, source);
+    }
+
     public UntypedNamespaceStatementNode parseNamespaceStatement(TokenIterator<TokenType> tokens) {
         if (tokens.isNext(TokenType.KEYWORD_FUN)) {
             return parseFunction(tokens);
+        } else if (tokens.isNext(TokenType.KEYWORD_SEALED)) {
+            return parseInterface(tokens);
         } else if (tokens.isNext(TokenType.KEYWORD_RECORD)) {
             return parseRecord(tokens);
         } else if (tokens.isNext(TokenType.KEYWORD_TEST)) {

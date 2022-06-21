@@ -52,6 +52,12 @@ public class TypeScriptSerialiser {
             }
 
             @Override
+            public Void visit(TypeScriptUnionNode node) {
+                serialiseUnion(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(TypeScriptNumberLiteralNode node) {
                 serialiseNumberLiteral(node, builder);
                 return null;
@@ -274,5 +280,13 @@ public class TypeScriptSerialiser {
             .replace("\"", "\\\"");
         builder.append(escapedValue);
         builder.append("\"");
+    }
+
+    private static void serialiseUnion(TypeScriptUnionNode node, CodeBuilder builder) {
+        forEachInterspersed(
+            node.members(),
+            member -> serialiseExpression(member, builder),
+            () -> builder.append(" | ")
+        );
     }
 }

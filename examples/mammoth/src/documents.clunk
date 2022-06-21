@@ -1,1 +1,9 @@
 record Bookmark(name: String)
+
+record BreakLine()
+
+record BreakPage()
+
+record BreakColumn()
+
+

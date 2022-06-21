@@ -1,6 +1,14 @@
 Source path: src/documents.clunk
 record Bookmark(name: String)
 
+record BreakLine()
+
+record BreakPage()
+
+record BreakColumn()
+
+
+
 
 ==============
 
@@ -9,6 +17,15 @@ import dataclasses
 @((dataclasses).dataclass)(frozen=True)
 class Bookmark:
     name: str
+@((dataclasses).dataclass)(frozen=True)
+class BreakLine:
+    pass
+@((dataclasses).dataclass)(frozen=True)
+class BreakPage:
+    pass
+@((dataclasses).dataclass)(frozen=True)
+class BreakColumn:
+    pass
 
 
 ==============

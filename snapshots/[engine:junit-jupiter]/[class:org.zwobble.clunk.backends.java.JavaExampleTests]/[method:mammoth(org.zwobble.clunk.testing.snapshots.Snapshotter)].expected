@@ -1,6 +1,14 @@
 Source path: src/documents.clunk
 record Bookmark(name: String)
 
+record BreakLine()
+
+record BreakPage()
+
+record BreakColumn()
+
+
+
 
 ==============
 
@@ -8,6 +16,30 @@ Output path: org/zwobble/mammoth/internaldocuments/Bookmark.java
 package org.zwobble.mammoth.internaldocuments;
 
 public record Bookmark(String name) {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internaldocuments/BreakLine.java
+package org.zwobble.mammoth.internaldocuments;
+
+public record BreakLine() {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internaldocuments/BreakPage.java
+package org.zwobble.mammoth.internaldocuments;
+
+public record BreakPage() {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internaldocuments/BreakColumn.java
+package org.zwobble.mammoth.internaldocuments;
+
+public record BreakColumn() {
 }
 
 ==============

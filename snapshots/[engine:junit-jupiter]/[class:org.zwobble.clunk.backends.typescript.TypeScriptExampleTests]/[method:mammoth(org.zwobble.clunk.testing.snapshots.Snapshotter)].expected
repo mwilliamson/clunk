@@ -1,12 +1,26 @@
 Source path: src/documents.clunk
 record Bookmark(name: String)
 
+record BreakLine()
+
+record BreakPage()
+
+record BreakColumn()
+
+
+
 
 ==============
 
 Output path: documents.ts
 interface Bookmark {
     readonly name: string;
+}
+interface BreakLine {
+}
+interface BreakPage {
+}
+interface BreakColumn {
 }
 
 

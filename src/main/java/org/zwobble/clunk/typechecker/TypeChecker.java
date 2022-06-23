@@ -314,11 +314,14 @@ public class TypeChecker {
         UntypedRecordNode node,
         TypeCheckerContext context
     ) {
+        var recordType = new RecordType(context.namespaceName().get(), node.name());
+
         var typedNode = new TypedRecordNode(
             node.name(),
             node.fields().stream()
                 .map(field -> typeCheckRecordField(field, context))
                 .collect(Collectors.toList()),
+            recordType,
             node.source()
         );
 
@@ -327,7 +330,6 @@ public class TypeChecker {
             .toList();
 
         // TODO: handle missing namespace name
-        var recordType = new RecordType(context.namespaceName().get(), node.name());
 
         var newContext = context;
 

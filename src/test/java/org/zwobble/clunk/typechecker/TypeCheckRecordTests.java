@@ -30,7 +30,8 @@ public class TypeCheckRecordTests {
                     has("name", equalTo("x")),
                     has("type", has("type", equalTo(StringType.INSTANCE)))
                 )
-            ))
+            )),
+            has("type", isRecordType(NamespaceName.fromParts("a", "b"), "Example"))
         ));
     }
 

@@ -172,8 +172,20 @@ public class JavaSerialiser {
     }
 
     private static void serialiseInterfaceDeclaration(JavaInterfaceDeclarationNode node, CodeBuilder builder) {
-        builder.append("public interface ");
+        builder.append("public ");
+        if (node.permits().isPresent()) {
+            builder.append("sealed ");
+        }
+        builder.append("interface ");
         builder.append(node.name());
+        if (node.permits().isPresent()) {
+            builder.append(" permits ");
+            forEachInterspersed(
+                node.permits().get(),
+                permit -> serialiseTypeExpression(permit, builder),
+                () -> builder.append(", ")
+            );
+        }
         builder.append(" {");
         builder.newLine();
         builder.append("}");

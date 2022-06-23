@@ -18,13 +18,17 @@ record BreakColumn() <: DocumentElement
 Output path: documents.ts
 type DocumentElement = Bookmark | BreakLine | BreakPage | BreakColumn;
 interface Bookmark {
+    readonly type: "Bookmark";
     readonly name: string;
 }
 interface BreakLine {
+    readonly type: "BreakLine";
 }
 interface BreakPage {
+    readonly type: "BreakPage";
 }
 interface BreakColumn {
+    readonly type: "BreakColumn";
 }
 
 

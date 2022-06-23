@@ -215,7 +215,7 @@ public class TypeScriptCodeGenerator {
 
             @Override
             public TypeScriptStatementNode visit(TypedRecordNode node) {
-                return compileRecord(node);
+                return compileRecord(node, context);
             }
 
             @Override
@@ -229,10 +229,20 @@ public class TypeScriptCodeGenerator {
         return new TypeScriptParamNode(node.name(), compileStaticExpression(node.type()));
     }
 
-    private static TypeScriptInterfaceDeclarationNode compileRecord(TypedRecordNode node) {
-        var fields = node.fields().stream()
+    private static TypeScriptInterfaceDeclarationNode compileRecord(
+        TypedRecordNode node,
+        TypeScriptCodeGeneratorContext context
+    ) {
+        var fields = new ArrayList<TypeScriptInterfaceFieldNode>();
+
+        var supertypes = context.supertypesOf(node.type());
+        if (!supertypes.isEmpty()) {
+            fields.add(new TypeScriptInterfaceFieldNode("type", new TypeScriptStringLiteralNode(node.name())));
+        }
+
+        node.fields().stream()
             .map(field -> new TypeScriptInterfaceFieldNode(field.name(), compileStaticExpression(field.type())))
-            .collect(Collectors.toList());
+            .collect(Collectors.toCollection(() -> fields));
 
         return new TypeScriptInterfaceDeclarationNode(node.name(), fields);
     }

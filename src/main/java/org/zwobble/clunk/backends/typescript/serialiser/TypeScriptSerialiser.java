@@ -182,7 +182,7 @@ public class TypeScriptSerialiser {
             builder.append("readonly ");
             builder.append(field.name());
             builder.append(": ");
-            serialiseReference(field.type(), builder);
+            serialiseExpression(field.type(), builder);
             builder.append(";");
             builder.newLine();
         }

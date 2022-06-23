@@ -7,12 +7,11 @@ import org.zwobble.clunk.types.Type;
 
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class TypeScriptCodeGeneratorContext {
     public static TypeScriptCodeGeneratorContext stub() {
-        return new TypeScriptCodeGeneratorContext(new SubtypeLookup(Map.of()));
+        return new TypeScriptCodeGeneratorContext(SubtypeLookup.EMPTY);
     }
 
     private record Import(String module, String export) {
@@ -38,5 +37,9 @@ public class TypeScriptCodeGeneratorContext {
 
     public List<RecordType> subtypesOf(Type supertype) {
         return subtypeLookup.subtypesOf(supertype);
+    }
+
+    public List<Type> supertypesOf(Type subtype) {
+        return subtypeLookup.supertypesOf(subtype);
     }
 }

@@ -1,6 +1,5 @@
 package org.zwobble.clunk.backends.java.codegenerator;
 
-import com.electronwill.nightconfig.core.Config;
 import org.zwobble.clunk.backends.java.ast.JavaImportNode;
 import org.zwobble.clunk.backends.java.ast.JavaImportStaticNode;
 import org.zwobble.clunk.backends.java.config.JavaTargetConfig;
@@ -10,7 +9,7 @@ import java.util.Set;
 
 public class JavaCodeGeneratorContext {
     public static JavaCodeGeneratorContext stub() {
-        return new JavaCodeGeneratorContext(new JavaTargetConfig(Config.inMemory()));
+        return new JavaCodeGeneratorContext(JavaTargetConfig.stub());
     }
 
     private final JavaTargetConfig config;

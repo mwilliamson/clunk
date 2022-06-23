@@ -40,7 +40,7 @@ public class JavaBackend implements Backend {
         Path outputRoot,
         ProjectConfig projectConfig
     ) throws IOException {
-        var javaConfig = new JavaTargetConfig(projectConfig.target("java"));
+        var javaConfig = JavaTargetConfig.load(projectConfig.target("java"));
         var javaCompilationUnits = JavaCodeGenerator.compileNamespace(typedNamespaceNode, javaConfig);
 
         for (var javaCompilationUnit : javaCompilationUnits) {

@@ -15,32 +15,32 @@ record BreakColumn() <: DocumentElement
 
 ==============
 
-Output path: org/zwobble/mammoth/internaldocuments/Bookmark.java
-package org.zwobble.mammoth.internaldocuments;
+Output path: org/zwobble/mammoth/internal/documents/Bookmark.java
+package org.zwobble.mammoth.internal.documents;
 
 public record Bookmark(String name) {
 }
 
 ==============
 
-Output path: org/zwobble/mammoth/internaldocuments/BreakLine.java
-package org.zwobble.mammoth.internaldocuments;
+Output path: org/zwobble/mammoth/internal/documents/BreakLine.java
+package org.zwobble.mammoth.internal.documents;
 
 public record BreakLine() {
 }
 
 ==============
 
-Output path: org/zwobble/mammoth/internaldocuments/BreakPage.java
-package org.zwobble.mammoth.internaldocuments;
+Output path: org/zwobble/mammoth/internal/documents/BreakPage.java
+package org.zwobble.mammoth.internal.documents;
 
 public record BreakPage() {
 }
 
 ==============
 
-Output path: org/zwobble/mammoth/internaldocuments/BreakColumn.java
-package org.zwobble.mammoth.internaldocuments;
+Output path: org/zwobble/mammoth/internal/documents/BreakColumn.java
+package org.zwobble.mammoth.internal.documents;
 
 public record BreakColumn() {
 }

@@ -1,2 +1,2 @@
 [targets.java]
-package-prefix = "org.zwobble.mammoth.internal"
+package-prefix = "org.zwobble.mammoth.internal."

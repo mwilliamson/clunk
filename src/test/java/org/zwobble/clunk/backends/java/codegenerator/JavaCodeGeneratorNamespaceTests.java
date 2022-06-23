@@ -5,6 +5,7 @@ import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.java.ast.JavaOrdinaryCompilationUnitNode;
 import org.zwobble.clunk.backends.java.config.JavaTargetConfig;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
+import org.zwobble.clunk.typechecker.SubtypeLookup;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.StaticFunctionType;
 import org.zwobble.clunk.types.StringType;
@@ -27,7 +28,7 @@ public class JavaCodeGeneratorNamespaceTests {
             .addStatement(TypedRecordNode.builder("Second").build())
             .build();
 
-        var result = JavaCodeGenerator.compileNamespace(node, JavaTargetConfig.stub());
+        var result = JavaCodeGenerator.compileNamespace(node, JavaTargetConfig.stub(), SubtypeLookup.EMPTY);
 
         assertThat(serialise(result), contains(
             equalTo(
@@ -55,7 +56,7 @@ public class JavaCodeGeneratorNamespaceTests {
             .addStatement(TypedFunctionNode.builder().name("g").returnType(StringType.INSTANCE).build())
             .build();
 
-        var result = JavaCodeGenerator.compileNamespace(node, JavaTargetConfig.stub());
+        var result = JavaCodeGenerator.compileNamespace(node, JavaTargetConfig.stub(), SubtypeLookup.EMPTY);
 
         assertThat(serialise(result), contains(
             equalTo(
@@ -80,7 +81,7 @@ public class JavaCodeGeneratorNamespaceTests {
             .addStatement(TypedTestNode.builder().name("g").build())
             .build();
 
-        var result = JavaCodeGenerator.compileNamespace(node, JavaTargetConfig.stub());
+        var result = JavaCodeGenerator.compileNamespace(node, JavaTargetConfig.stub(), SubtypeLookup.EMPTY);
 
         assertThat(serialise(result), contains(
             equalTo(
@@ -146,7 +147,7 @@ public class JavaCodeGeneratorNamespaceTests {
             )
             .build();
 
-        var result = JavaCodeGenerator.compileNamespace(node, JavaTargetConfig.stub());
+        var result = JavaCodeGenerator.compileNamespace(node, JavaTargetConfig.stub(), SubtypeLookup.EMPTY);
 
         assertThat(serialise(result), contains(
             equalTo(

@@ -15,8 +15,9 @@ public class JavaCodeGeneratorStaticExpressionTests {
     @Test
     public void boolTypeIsCompiledToJavaBooleanType() {
         var node = Typed.staticExpression(BoolType.INSTANCE);
+        var context = JavaCodeGeneratorContext.stub();
 
-        var result = JavaCodeGenerator.compileStaticExpression(node);
+        var result = JavaCodeGenerator.compileStaticExpression(node, context);
 
         var string = serialiseToString(result, JavaSerialiser::serialiseTypeExpression);
         assertThat(string, equalTo("boolean"));
@@ -25,8 +26,9 @@ public class JavaCodeGeneratorStaticExpressionTests {
     @Test
     public void intTypeIsCompiledToJavaIntType() {
         var node = Typed.staticExpression(IntType.INSTANCE);
+        var context = JavaCodeGeneratorContext.stub();
 
-        var result = JavaCodeGenerator.compileStaticExpression(node);
+        var result = JavaCodeGenerator.compileStaticExpression(node, context);
 
         var string = serialiseToString(result, JavaSerialiser::serialiseTypeExpression);
         assertThat(string, equalTo("int"));
@@ -35,8 +37,9 @@ public class JavaCodeGeneratorStaticExpressionTests {
     @Test
     public void stringTypeIsCompiledToJavaStringType() {
         var node = Typed.staticExpression(StringType.INSTANCE);
+        var context = JavaCodeGeneratorContext.stub();
 
-        var result = JavaCodeGenerator.compileStaticExpression(node);
+        var result = JavaCodeGenerator.compileStaticExpression(node, context);
 
         var string = serialiseToString(result, JavaSerialiser::serialiseTypeExpression);
         assertThat(string, equalTo("String"));

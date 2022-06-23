@@ -15,10 +15,19 @@ record BreakColumn() <: DocumentElement
 
 ==============
 
+Output path: org/zwobble/mammoth/internal/documents/DocumentElement.java
+package org.zwobble.mammoth.internal.documents;
+
+public sealed interface DocumentElement permits org.zwobble.mammoth.internal.documents.Bookmark, org.zwobble.mammoth.internal.documents.BreakLine, org.zwobble.mammoth.internal.documents.BreakPage, org.zwobble.mammoth.internal.documents.BreakColumn {
+}
+
+
+==============
+
 Output path: org/zwobble/mammoth/internal/documents/Bookmark.java
 package org.zwobble.mammoth.internal.documents;
 
-public record Bookmark(String name) {
+public record Bookmark(String name) implements org.zwobble.mammoth.internal.documents.DocumentElement {
 }
 
 ==============
@@ -26,7 +35,7 @@ public record Bookmark(String name) {
 Output path: org/zwobble/mammoth/internal/documents/BreakLine.java
 package org.zwobble.mammoth.internal.documents;
 
-public record BreakLine() {
+public record BreakLine() implements org.zwobble.mammoth.internal.documents.DocumentElement {
 }
 
 ==============
@@ -34,7 +43,7 @@ public record BreakLine() {
 Output path: org/zwobble/mammoth/internal/documents/BreakPage.java
 package org.zwobble.mammoth.internal.documents;
 
-public record BreakPage() {
+public record BreakPage() implements org.zwobble.mammoth.internal.documents.DocumentElement {
 }
 
 ==============
@@ -42,7 +51,7 @@ public record BreakPage() {
 Output path: org/zwobble/mammoth/internal/documents/BreakColumn.java
 package org.zwobble.mammoth.internal.documents;
 
-public record BreakColumn() {
+public record BreakColumn() implements org.zwobble.mammoth.internal.documents.DocumentElement {
 }
 
 ==============

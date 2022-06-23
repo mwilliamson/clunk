@@ -3,6 +3,7 @@ package org.zwobble.clunk.backends.java.codegenerator;
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.java.ast.*;
 import org.zwobble.clunk.backends.java.config.JavaTargetConfig;
+import org.zwobble.clunk.typechecker.SubtypeLookup;
 import org.zwobble.clunk.types.*;
 
 import java.util.ArrayList;
@@ -116,9 +117,9 @@ public class JavaCodeGenerator {
         return new JavaMethodDeclarationNode(
             List.of(),
             true,
-            compileStaticExpression(node.returnType()),
+            compileStaticExpression(node.returnType(), context),
             node.name(),
-            node.params().stream().map(param -> compileParam(param)).toList(),
+            node.params().stream().map(param -> compileParam(param, context)).toList(),
             node.body().stream().map(statement -> compileFunctionStatement(statement, context)).toList()
         );
     }
@@ -166,12 +167,36 @@ public class JavaCodeGenerator {
         );
     }
 
+    public static JavaOrdinaryCompilationUnitNode compileInterface(
+        NamespaceName namespaceName,
+        TypedInterfaceNode node,
+        JavaCodeGeneratorContext context
+    ) {
+        var permits = context.subtypesOf(node.type()).stream()
+            .map(subtype -> compileTypeReference(subtype, context))
+            .toList();
+
+        return new JavaOrdinaryCompilationUnitNode(
+            namespaceToPackage(namespaceName, context),
+            List.of(),
+            new JavaInterfaceDeclarationNode(
+                node.name(),
+                Optional.of(permits)
+            )
+        );
+    }
+
+
     private static JavaExpressionNode compileIntLiteral(TypedIntLiteralNode node) {
         return new JavaIntLiteralNode(node.value());
     }
 
-    public static List<JavaOrdinaryCompilationUnitNode> compileNamespace(TypedNamespaceNode node, JavaTargetConfig config) {
-        var context = new JavaCodeGeneratorContext(config);
+    public static List<JavaOrdinaryCompilationUnitNode> compileNamespace(
+        TypedNamespaceNode node,
+        JavaTargetConfig config,
+        SubtypeLookup subtypeLookup
+    ) {
+        var context = new JavaCodeGeneratorContext(config, subtypeLookup);
         var compilationUnits = new ArrayList<JavaOrdinaryCompilationUnitNode>();
         var functions = new ArrayList<JavaClassBodyDeclarationNode>();
 
@@ -184,7 +209,8 @@ public class JavaCodeGenerator {
                 }
 
                 @Override
-                public Void visit(TypedInterfaceNode node) {
+                public Void visit(TypedInterfaceNode interfaceNode) {
+                    compilationUnits.add(compileInterface(node.name(), interfaceNode, context));
                     return null;
                 }
 
@@ -213,26 +239,30 @@ public class JavaCodeGenerator {
         return compilationUnits;
     }
 
-    private static JavaParamNode compileParam(TypedParamNode node) {
-        return new JavaParamNode(compileStaticExpression(node.type()), node.name());
+    private static JavaParamNode compileParam(TypedParamNode node, JavaCodeGeneratorContext context) {
+        return new JavaParamNode(compileStaticExpression(node.type(), context), node.name());
     }
 
     public static JavaOrdinaryCompilationUnitNode compileRecord(
-        NamespaceName namespace,
+        NamespaceName namespaceName,
         TypedRecordNode node,
         JavaCodeGeneratorContext context
     ) {
         var components = node.fields().stream()
-            .map(field -> new JavaRecordComponentNode(compileStaticExpression(field.type()), field.name()))
+            .map(field -> new JavaRecordComponentNode(compileStaticExpression(field.type(), context), field.name()))
             .collect(Collectors.toList());
 
+        var implements_ = context.supertypesOf(node.type()).stream()
+            .map(implementsType -> compileTypeReference(implementsType, context))
+            .toList();
+
         return new JavaOrdinaryCompilationUnitNode(
-            namespaceToPackage(namespace, context),
+            namespaceToPackage(namespaceName, context),
             List.of(),
             new JavaRecordDeclarationNode(
                 node.name(),
                 components,
-                List.of()
+                implements_
             )
         );
     }
@@ -245,8 +275,11 @@ public class JavaCodeGenerator {
         return new JavaReturnNode(compileExpression(node.expression(), context));
     }
 
-    public static JavaTypeVariableReferenceNode compileStaticExpression(TypedStaticExpressionNode node) {
-        return new JavaTypeVariableReferenceNode(compileType(node.type()));
+    public static JavaTypeExpressionNode compileStaticExpression(
+        TypedStaticExpressionNode node,
+        JavaCodeGeneratorContext context
+    ) {
+        return compileTypeReference(node.type(), context);
     }
 
     private static JavaStringLiteralNode compileStringLiteral(TypedStringLiteralNode node) {
@@ -274,19 +307,25 @@ public class JavaCodeGenerator {
         return new JavaVariableDeclarationNode(node.name(), compileExpression(node.expression(), context));
     }
 
-    private static String compileType(Type type) {
+    private static JavaTypeExpressionNode compileTypeReference(Type type, JavaCodeGeneratorContext context) {
         if (type == BoolType.INSTANCE) {
-            return "boolean";
+            return new JavaTypeVariableReferenceNode("boolean");
         } else if (type == IntType.INSTANCE) {
-            return "int";
+            return new JavaTypeVariableReferenceNode("int");
         } else if (type == StringType.INSTANCE) {
-            return "String";
+            return new JavaTypeVariableReferenceNode("String");
+        } else if (type instanceof InterfaceType interfaceType) {
+            var packageName = namespaceToPackage(interfaceType.namespaceName(), context);
+            return new JavaFullyQualifiedTypeReferenceNode(packageName, interfaceType.name());
+        } else if (type instanceof RecordType recordType) {
+            var packageName = namespaceToPackage(recordType.namespaceName(), context);
+            return new JavaFullyQualifiedTypeReferenceNode(packageName, recordType.name());
         } else {
             throw new RuntimeException("TODO");
         }
     }
 
-    private static String namespaceToPackage(NamespaceName namespace, JavaCodeGeneratorContext context) {
-        return context.packagePrefix() + String.join(".", namespace.parts());
+    private static String namespaceToPackage(NamespaceName namespaceName, JavaCodeGeneratorContext context) {
+        return context.packagePrefix() + String.join(".", namespaceName.parts());
     }
 }

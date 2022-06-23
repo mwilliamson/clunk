@@ -171,6 +171,15 @@ public class JavaSerialiser {
         builder.newLine();
     }
 
+    private static void serialiseInterfaceDeclaration(JavaInterfaceDeclarationNode node, CodeBuilder builder) {
+        builder.append("public interface ");
+        builder.append(node.name());
+        builder.append(" {");
+        builder.newLine();
+        builder.append("}");
+        builder.newLine();
+    }
+
     private static void serialiseIntLiteral(JavaIntLiteralNode node, CodeBuilder builder) {
         builder.append(Integer.toString(node.value()));
     }
@@ -300,6 +309,12 @@ public class JavaSerialiser {
             @Override
             public Void visit(JavaClassDeclarationNode node) {
                 serialiseClassDeclaration(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(JavaInterfaceDeclarationNode node) {
+                serialiseInterfaceDeclaration(node, builder);
                 return null;
             }
 

@@ -260,7 +260,19 @@ public class JavaSerialiser {
             () -> builder.append(", ")
         );
 
-        builder.append(") {\n}");
+        builder.append(") ");
+
+        if (!node.implements_().isEmpty()) {
+            builder.append("implements ");
+            forEachInterspersed(
+                node.implements_(),
+                implementsType -> serialiseTypeExpression(implementsType, builder),
+                () -> builder.append(", ")
+            );
+            builder.append(" ");
+        }
+
+        builder.append("{\n}");
     }
 
     private static void serialiseReference(JavaReferenceNode node, CodeBuilder builder) {

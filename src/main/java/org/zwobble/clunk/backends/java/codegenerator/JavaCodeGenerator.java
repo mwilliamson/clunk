@@ -231,7 +231,8 @@ public class JavaCodeGenerator {
             List.of(),
             new JavaRecordDeclarationNode(
                 node.name(),
-                components
+                components,
+                List.of()
             )
         );
     }

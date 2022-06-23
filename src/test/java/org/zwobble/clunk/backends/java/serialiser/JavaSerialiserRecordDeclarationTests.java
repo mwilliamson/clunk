@@ -53,4 +53,20 @@ public class JavaSerialiserRecordDeclarationTests {
             }"""
         ));
     }
+
+    @Test
+    public void recordImplementingOtherTypes() {
+        var node = JavaRecordDeclarationNode.builder("Example")
+            .addImplements(Java.typeVariableReference("A"))
+            .addImplements(Java.typeVariableReference("B"))
+            .build();
+
+        var result = serialiseToString(node, JavaSerialiser::serialiseTypeDeclaration);
+
+        assertThat(result, equalTo(
+            """
+            public record Example() implements A, B {
+            }"""
+        ));
+    }
 }

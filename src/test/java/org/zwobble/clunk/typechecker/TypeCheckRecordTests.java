@@ -8,6 +8,7 @@ import org.zwobble.clunk.types.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.matchers.CastMatcher.cast;
 import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
 
@@ -54,6 +55,23 @@ public class TypeCheckRecordTests {
                 has("supertype", isInterfaceType(NamespaceName.fromParts("a", "b"), "Person"))
             )
         ));
+    }
+
+    @Test
+    public void canOnlySubtypeSealedInterfacesInSameNamespace() {
+        var untypedNode = UntypedRecordNode.builder("User")
+            .addSupertype(Untyped.staticReference("Person"))
+            .build();
+
+        assertThrows(
+            CannotExtendSealedInterfaceFromDifferentNamespaceError.class,
+            () -> TypeChecker.typeCheckNamespaceStatement(
+                untypedNode,
+                TypeCheckerContext.stub()
+                    .enterNamespace(NamespaceName.fromParts("a", "b"))
+                    .updateType("Person", Types.metaType(Types.interfaceType(NamespaceName.fromParts("d", "e"), "Person")))
+            )
+        );
     }
 
     private Matcher<?> isInterfaceType(NamespaceName namespaceName, String name) {

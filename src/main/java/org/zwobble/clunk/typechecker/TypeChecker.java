@@ -328,11 +328,12 @@ public class TypeChecker {
         var supertypes = node.supertypes().stream()
             .map(untypedSupertypeNode -> {
                 var typedSupertypeNode = typeCheckStaticExpressionNode(untypedSupertypeNode, context);
-                if (
-                    typedSupertypeNode.type() instanceof InterfaceType supertype &&
-                    !supertype.namespaceName().equals(context.namespaceName().get())
-                ) {
-                    throw new CannotExtendSealedInterfaceFromDifferentNamespaceError(untypedSupertypeNode.source());
+                if (typedSupertypeNode.type() instanceof InterfaceType supertype) {
+                    if (!supertype.namespaceName().equals(context.namespaceName().get())) {
+                        throw new CannotExtendSealedInterfaceFromDifferentNamespaceError(untypedSupertypeNode.source());
+                    }
+                } else {
+                    throw new CannotExtendFinalTypeError(untypedSupertypeNode.source());
                 }
                 return typedSupertypeNode;
             })

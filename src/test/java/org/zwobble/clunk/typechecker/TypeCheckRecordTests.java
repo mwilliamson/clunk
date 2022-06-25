@@ -58,7 +58,24 @@ public class TypeCheckRecordTests {
     }
 
     @Test
-    public void canOnlySubtypeSealedInterfacesInSameNamespace() {
+    public void whenSupertypeIsNotInterfaceThenErrorIsThrown() {
+        var untypedNode = UntypedRecordNode.builder("User")
+            .addSupertype(Untyped.staticReference("Bool"))
+            .build();
+
+        assertThrows(
+            CannotExtendFinalTypeError.class,
+            () -> TypeChecker.typeCheckNamespaceStatement(
+                untypedNode,
+                TypeCheckerContext.stub()
+                    .enterNamespace(NamespaceName.fromParts("a", "b"))
+                    .updateType("Bool", Types.metaType(Types.BOOL))
+            )
+        );
+    }
+
+    @Test
+    public void whenSupertypeIsSealedInterfaceFromDifferentNamespaceThenErrorIsThrown() {
         var untypedNode = UntypedRecordNode.builder("User")
             .addSupertype(Untyped.staticReference("Person"))
             .build();

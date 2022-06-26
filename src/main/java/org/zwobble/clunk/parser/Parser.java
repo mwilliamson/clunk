@@ -283,7 +283,7 @@ public class Parser {
         );
         tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
 
-        List<UntypedStaticExpressionNode> supertypes;
+        List<UntypedTypeLevelExpressionNode> supertypes;
         if (tokens.trySkip(TokenType.SYMBOL_SUBTYPE)) {
             supertypes = List.of(parseType(tokens));
         } else {
@@ -323,10 +323,10 @@ public class Parser {
         return new UntypedTestNode(name, body, source);
     }
 
-    private UntypedStaticExpressionNode parseType(TokenIterator<TokenType> tokens) {
+    private UntypedTypeLevelExpressionNode parseType(TokenIterator<TokenType> tokens) {
         var referenceSource = source(tokens);
         var identifier = tokens.nextValue(TokenType.IDENTIFIER);
-        return new UntypedStaticReferenceNode(identifier, referenceSource);
+        return new UntypedTypeLevelReferenceNode(identifier, referenceSource);
     }
 
     private UntypedFunctionStatementNode parseVar(TokenIterator<TokenType> tokens) {

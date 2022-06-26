@@ -22,7 +22,7 @@ public class UntypedParamNodeMatcher extends CastMatcher<Object, UntypedParamNod
         return addMatcher(has("name", equalTo(name)));
     }
 
-    public UntypedParamNodeMatcher withType(Matcher<UntypedStaticExpressionNode> type) {
+    public UntypedParamNodeMatcher withType(Matcher<UntypedTypeLevelExpressionNode> type) {
         return addMatcher(has("type", type));
     }
 

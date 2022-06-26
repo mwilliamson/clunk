@@ -4,7 +4,7 @@ import org.zwobble.clunk.sources.Source;
 
 public record TypedRecordFieldNode(
     String name,
-    TypedStaticExpressionNode type,
+    TypedTypeLevelExpressionNode type,
     Source source
 ) implements TypedNode {
 }

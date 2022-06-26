@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
-import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedStaticExpressionNode;
+import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedTypeLevelExpressionNode;
 import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
 
 public class TypedFunctionNodeMatcher extends CastMatcher<Object, TypedFunctionNode> {
@@ -29,7 +29,7 @@ public class TypedFunctionNodeMatcher extends CastMatcher<Object, TypedFunctionN
     }
 
     public TypedFunctionNodeMatcher withReturnType(Type type) {
-        return addMatcher(has("returnType", isTypedStaticExpressionNode(type)));
+        return addMatcher(has("returnType", isTypedTypeLevelExpressionNode(type)));
     }
 
     public TypedFunctionNodeMatcher withBody(Matcher<Iterable<? extends TypedFunctionStatementNode>> body) {

@@ -26,7 +26,7 @@ public class UntypedFunctionNodeMatcher extends CastMatcher<Object, UntypedFunct
         return addMatcher(has("params", params));
     }
 
-    public UntypedFunctionNodeMatcher withReturnType(Matcher<UntypedStaticExpressionNode> returnType) {
+    public UntypedFunctionNodeMatcher withReturnType(Matcher<UntypedTypeLevelExpressionNode> returnType) {
         return addMatcher(has("returnType", returnType));
     }
 

@@ -117,7 +117,7 @@ public class JavaCodeGenerator {
         return new JavaMethodDeclarationNode(
             List.of(),
             true,
-            compileStaticExpression(node.returnType(), context),
+            compileTypeLevelExpression(node.returnType(), context),
             node.name(),
             node.params().stream().map(param -> compileParam(param, context)).toList(),
             node.body().stream().map(statement -> compileFunctionStatement(statement, context)).toList()
@@ -240,7 +240,7 @@ public class JavaCodeGenerator {
     }
 
     private static JavaParamNode compileParam(TypedParamNode node, JavaCodeGeneratorContext context) {
-        return new JavaParamNode(compileStaticExpression(node.type(), context), node.name());
+        return new JavaParamNode(compileTypeLevelExpression(node.type(), context), node.name());
     }
 
     public static JavaOrdinaryCompilationUnitNode compileRecord(
@@ -249,7 +249,7 @@ public class JavaCodeGenerator {
         JavaCodeGeneratorContext context
     ) {
         var components = node.fields().stream()
-            .map(field -> new JavaRecordComponentNode(compileStaticExpression(field.type(), context), field.name()))
+            .map(field -> new JavaRecordComponentNode(compileTypeLevelExpression(field.type(), context), field.name()))
             .collect(Collectors.toList());
 
         var implements_ = context.supertypesOf(node.type()).stream()
@@ -275,13 +275,6 @@ public class JavaCodeGenerator {
         return new JavaReturnNode(compileExpression(node.expression(), context));
     }
 
-    public static JavaTypeExpressionNode compileStaticExpression(
-        TypedStaticExpressionNode node,
-        JavaCodeGeneratorContext context
-    ) {
-        return compileTypeReference(node.type(), context);
-    }
-
     private static JavaStringLiteralNode compileStringLiteral(TypedStringLiteralNode node) {
         return new JavaStringLiteralNode(node.value());
     }
@@ -303,8 +296,11 @@ public class JavaCodeGenerator {
         return method.build();
     }
 
-    private static JavaStatementNode compileVar(TypedVarNode node, JavaCodeGeneratorContext context) {
-        return new JavaVariableDeclarationNode(node.name(), compileExpression(node.expression(), context));
+    public static JavaTypeExpressionNode compileTypeLevelExpression(
+        TypedTypeLevelExpressionNode node,
+        JavaCodeGeneratorContext context
+    ) {
+        return compileTypeReference(node.type(), context);
     }
 
     private static JavaTypeExpressionNode compileTypeReference(Type type, JavaCodeGeneratorContext context) {
@@ -323,6 +319,10 @@ public class JavaCodeGenerator {
         } else {
             throw new RuntimeException("TODO");
         }
+    }
+
+    private static JavaStatementNode compileVar(TypedVarNode node, JavaCodeGeneratorContext context) {
+        return new JavaVariableDeclarationNode(node.name(), compileExpression(node.expression(), context));
     }
 
     private static String namespaceToPackage(NamespaceName namespaceName, JavaCodeGeneratorContext context) {

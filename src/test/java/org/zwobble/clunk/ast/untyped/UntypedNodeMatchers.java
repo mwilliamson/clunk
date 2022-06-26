@@ -90,16 +90,16 @@ public class UntypedNodeMatchers {
         return new UntypedReturnNodeMatcher(List.of());
     }
 
-    public static Matcher<UntypedStaticExpressionNode> isUntypedStaticReferenceNode(String value) {
-        return cast(UntypedStaticExpressionNode.class, has("value", equalTo(value)));
-    }
-
     public static Matcher<UntypedExpressionNode> isUntypedStringLiteralNode(String value) {
         return cast(UntypedStringLiteralNode.class, has("value", equalTo(value)));
     }
 
     public static UntypedTestNodeMatcher isUntypedTestNode() {
         return new UntypedTestNodeMatcher(List.of());
+    }
+
+    public static Matcher<UntypedTypeLevelExpressionNode> isUntypedTypeLevelReferenceNode(String value) {
+        return cast(UntypedTypeLevelExpressionNode.class, has("value", equalTo(value)));
     }
 
     public static UntypedVarNodeMatcher isUntypedVarNode() {

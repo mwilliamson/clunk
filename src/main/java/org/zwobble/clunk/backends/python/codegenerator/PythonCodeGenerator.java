@@ -269,7 +269,7 @@ public class PythonCodeGenerator {
         );
 
         var statements = node.fields().stream()
-            .map(field -> Python.variableType(field.name(), compileStaticExpression(field.type())))
+            .map(field -> Python.variableType(field.name(), compileTypeLevelExpression(field.type())))
             .toList();
 
         return new PythonClassDeclarationNode(node.name(), decorators, statements);
@@ -283,10 +283,6 @@ public class PythonCodeGenerator {
         return new PythonReturnNode(compileExpression(node.expression(), context));
     }
 
-    public PythonReferenceNode compileStaticExpression(TypedStaticExpressionNode node) {
-        return new PythonReferenceNode(compileType(node.type()));
-    }
-
     private PythonExpressionNode compileStringLiteral(TypedStringLiteralNode node) {
         return new PythonStringLiteralNode(node.value());
     }
@@ -297,6 +293,10 @@ public class PythonCodeGenerator {
             List.of(),
             node.body().stream().map(statement -> compileFunctionStatement(statement, context)).toList()
         );
+    }
+
+    public PythonReferenceNode compileTypeLevelExpression(TypedTypeLevelExpressionNode node) {
+        return new PythonReferenceNode(compileType(node.type()));
     }
 
     private PythonStatementNode compileVar(TypedVarNode node, PythonCodeGeneratorContext context) {

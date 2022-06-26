@@ -22,7 +22,7 @@ public class TypeChecker {
     ) {
         return new TypedParamNode(
             node.name(),
-            typeCheckStaticExpressionNode(node.type(), context),
+            typeCheckTypeLevelExpressionNode(node.type(), context),
             node.source()
         );
     }
@@ -129,7 +129,7 @@ public class TypeChecker {
         UntypedFunctionNode node,
         TypeCheckerContext context
     ) {
-        var returnType = typeCheckStaticExpressionNode(node.returnType(), context);
+        var returnType = typeCheckTypeLevelExpressionNode(node.returnType(), context);
 
         var typedStatements = typeCheckFunctionStatements(
             node.body(),
@@ -327,7 +327,7 @@ public class TypeChecker {
 
         var supertypes = node.supertypes().stream()
             .map(untypedSupertypeNode -> {
-                var typedSupertypeNode = typeCheckStaticExpressionNode(untypedSupertypeNode, context);
+                var typedSupertypeNode = typeCheckTypeLevelExpressionNode(untypedSupertypeNode, context);
                 if (typedSupertypeNode.type() instanceof InterfaceType supertype) {
                     if (!supertype.namespaceName().equals(context.namespaceName().get())) {
                         throw new CannotExtendSealedInterfaceFromDifferentNamespaceError(untypedSupertypeNode.source());
@@ -356,7 +356,7 @@ public class TypeChecker {
     ) {
         return new TypedRecordFieldNode(
             node.name(),
-            typeCheckStaticExpressionNode(node.type(), context),
+            typeCheckTypeLevelExpressionNode(node.type(), context),
             node.source()
         );
     }
@@ -383,26 +383,6 @@ public class TypeChecker {
         return new TypeCheckResult<>(typedNode, context);
     }
 
-    private static TypedStaticExpressionNode typeCheckStaticExpressionNode(
-        UntypedStaticExpressionNode node,
-        TypeCheckerContext context
-    ) {
-        return node.accept(new UntypedStaticExpressionNode.Visitor<TypedStaticExpressionNode>() {
-            @Override
-            public TypedStaticExpressionNode visit(UntypedStaticReferenceNode node) {
-                return typeCheckStaticReferenceNode(node, context);
-            }
-        });
-    }
-
-    public static TypedStaticExpressionNode typeCheckStaticReferenceNode(
-        UntypedStaticReferenceNode node,
-        TypeCheckerContext context
-    ) {
-        var type = context.resolveType(node.value(), node.source());
-        return new TypedStaticExpressionNode(type, node.source());
-    }
-
     private static TypedExpressionNode typeCheckStringLiteral(UntypedStringLiteralNode node) {
         return new TypedStringLiteralNode(node.value(), node.source());
     }
@@ -423,6 +403,26 @@ public class TypeChecker {
         );
 
         return new TypeCheckResult<>(typedNode, context);
+    }
+
+    private static TypedTypeLevelExpressionNode typeCheckTypeLevelExpressionNode(
+        UntypedTypeLevelExpressionNode node,
+        TypeCheckerContext context
+    ) {
+        return node.accept(new UntypedTypeLevelExpressionNode.Visitor<TypedTypeLevelExpressionNode>() {
+            @Override
+            public TypedTypeLevelExpressionNode visit(UntypedTypeLevelReferenceNode node) {
+                return typeCheckTypeLevelReferenceNode(node, context);
+            }
+        });
+    }
+
+    public static TypedTypeLevelExpressionNode typeCheckTypeLevelReferenceNode(
+        UntypedTypeLevelReferenceNode node,
+        TypeCheckerContext context
+    ) {
+        var type = context.resolveType(node.value(), node.source());
+        return new TypedTypeLevelExpressionNode(type, node.source());
     }
 
     private static TypeCheckResult<TypedFunctionStatementNode> typeCheckVar(

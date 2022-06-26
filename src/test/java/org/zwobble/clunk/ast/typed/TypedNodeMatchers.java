@@ -62,12 +62,12 @@ public class TypedNodeMatchers {
         return new TypedReturnNodeMatcher(List.of());
     }
 
-    public static Matcher<TypedStaticExpressionNode> isTypedStaticExpressionNode(Type type) {
-        return has("type", equalTo(type));
-    }
-
     public static TypedTestNodeMatcher isTypedTestNode() {
         return new TypedTestNodeMatcher(List.of());
+    }
+
+    public static Matcher<TypedTypeLevelExpressionNode> isTypedTypeLevelExpressionNode(Type type) {
+        return has("type", equalTo(type));
     }
 
     public static TypedVarNodeMatcher isTypedVarNode() {

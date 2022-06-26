@@ -9,7 +9,7 @@ import java.util.List;
 public record UntypedRecordNode(
     String name,
     List<UntypedRecordFieldNode> fields,
-    List<UntypedStaticExpressionNode> supertypes,
+    List<UntypedTypeLevelExpressionNode> supertypes,
     Source source
 ) implements UntypedNamespaceStatementNode {
     @Override
@@ -24,7 +24,7 @@ public record UntypedRecordNode(
     public static record Builder(
         String name,
         List<UntypedRecordFieldNode> fields,
-        List<UntypedStaticExpressionNode> supertypes,
+        List<UntypedTypeLevelExpressionNode> supertypes,
         Source source
     ) {
         public UntypedRecordNode build() {
@@ -37,7 +37,7 @@ public record UntypedRecordNode(
             return new Builder(name, fields, supertypes, source);
         }
 
-        public Builder addSupertype(UntypedStaticReferenceNode supertype) {
+        public Builder addSupertype(UntypedTypeLevelReferenceNode supertype) {
             var supertypes = new ArrayList<>(this.supertypes);
             supertypes.add(supertype);
             return new Builder(name, fields, supertypes, source);

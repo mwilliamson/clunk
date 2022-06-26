@@ -14,9 +14,9 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class TypeScriptCodeGeneratorStaticExpressionTests {
     @Test
     public void boolTypeIsCompiledToJavaBooleanType() {
-        var node = Typed.staticExpression(BoolType.INSTANCE);
+        var node = Typed.typeLevelExpression(BoolType.INSTANCE);
 
-        var result = TypeScriptCodeGenerator.compileStaticExpression(node);
+        var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
 
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
         assertThat(string, equalTo("boolean"));
@@ -24,9 +24,9 @@ public class TypeScriptCodeGeneratorStaticExpressionTests {
 
     @Test
     public void intTypeIsCompiledToJavaIntType() {
-        var node = Typed.staticExpression(IntType.INSTANCE);
+        var node = Typed.typeLevelExpression(IntType.INSTANCE);
 
-        var result = TypeScriptCodeGenerator.compileStaticExpression(node);
+        var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
 
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
         assertThat(string, equalTo("number"));
@@ -34,9 +34,9 @@ public class TypeScriptCodeGeneratorStaticExpressionTests {
 
     @Test
     public void stringTypeIsCompiledToJavaStringType() {
-        var node = Typed.staticExpression(StringType.INSTANCE);
+        var node = Typed.typeLevelExpression(StringType.INSTANCE);
 
-        var result = TypeScriptCodeGenerator.compileStaticExpression(node);
+        var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
 
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
         assertThat(string, equalTo("string"));

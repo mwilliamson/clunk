@@ -56,11 +56,11 @@ public class Untyped {
         return new UntypedIntLiteralNode(value, NullSource.INSTANCE);
     }
 
-    public static UntypedParamNode param(String name, UntypedStaticExpressionNode type) {
+    public static UntypedParamNode param(String name, UntypedTypeLevelExpressionNode type) {
         return new UntypedParamNode(name, type, NullSource.INSTANCE);
     }
 
-    public static UntypedRecordFieldNode recordField(String name, UntypedStaticExpressionNode type) {
+    public static UntypedRecordFieldNode recordField(String name, UntypedTypeLevelExpressionNode type) {
         return new UntypedRecordFieldNode(name, type, NullSource.INSTANCE);
     }
 
@@ -76,8 +76,8 @@ public class Untyped {
         return new UntypedReturnNode(expression, NullSource.INSTANCE);
     }
 
-    public static UntypedStaticReferenceNode staticReference(String value) {
-        return new UntypedStaticReferenceNode(value, NullSource.INSTANCE);
+    public static UntypedTypeLevelReferenceNode staticReference(String value) {
+        return new UntypedTypeLevelReferenceNode(value, NullSource.INSTANCE);
     }
 
     public static UntypedStringLiteralNode string(String value) {

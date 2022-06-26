@@ -114,7 +114,7 @@ public class TypeScriptCodeGenerator {
         return new TypeScriptFunctionDeclarationNode(
             node.name(),
             node.params().stream().map(param -> compileParam(param)).toList(),
-            compileStaticExpression(node.returnType()),
+            compileTypeLevelExpression(node.returnType()),
             node.body().stream().map(statement -> compileFunctionStatement(statement, context)).toList()
         );
     }
@@ -226,7 +226,7 @@ public class TypeScriptCodeGenerator {
     }
 
     private static TypeScriptParamNode compileParam(TypedParamNode node) {
-        return new TypeScriptParamNode(node.name(), compileStaticExpression(node.type()));
+        return new TypeScriptParamNode(node.name(), compileTypeLevelExpression(node.type()));
     }
 
     private static TypeScriptInterfaceDeclarationNode compileRecord(
@@ -241,7 +241,7 @@ public class TypeScriptCodeGenerator {
         }
 
         node.fields().stream()
-            .map(field -> new TypeScriptInterfaceFieldNode(field.name(), compileStaticExpression(field.type())))
+            .map(field -> new TypeScriptInterfaceFieldNode(field.name(), compileTypeLevelExpression(field.type())))
             .collect(Collectors.toCollection(() -> fields));
 
         return new TypeScriptInterfaceDeclarationNode(node.name(), fields);
@@ -253,10 +253,6 @@ public class TypeScriptCodeGenerator {
 
     private static TypeScriptStatementNode compileReturn(TypedReturnNode node, TypeScriptCodeGeneratorContext context) {
         return new TypeScriptReturnNode(compileExpression(node.expression(), context));
-    }
-
-    public static TypeScriptReferenceNode compileStaticExpression(TypedStaticExpressionNode node) {
-        return new TypeScriptReferenceNode(compileType(node.type()));
     }
 
     private static TypeScriptExpressionNode compileStringLiteral(TypedStringLiteralNode node) {
@@ -273,6 +269,10 @@ public class TypeScriptCodeGenerator {
                     .build()
             )
         ));
+    }
+
+    public static TypeScriptReferenceNode compileTypeLevelExpression(TypedTypeLevelExpressionNode node) {
+        return new TypeScriptReferenceNode(compileType(node.type()));
     }
 
     private static TypeScriptStatementNode compileVar(TypedVarNode node, TypeScriptCodeGeneratorContext context) {

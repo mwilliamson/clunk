@@ -4,7 +4,7 @@ import org.zwobble.clunk.sources.Source;
 
 public record UntypedParamNode(
     String name,
-    UntypedStaticExpressionNode type,
+    UntypedTypeLevelExpressionNode type,
     Source source
 ) implements UntypedNode {
 }

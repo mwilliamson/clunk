@@ -28,7 +28,7 @@ public class UntypedRecordNodeMatcher extends CastMatcher<Object, UntypedRecordN
         return addMatcher(has("fields", matcher));
     }
 
-    public UntypedRecordNodeMatcher withSupertypes(Matcher<? extends Iterable<? extends UntypedStaticExpressionNode>> matcher) {
+    public UntypedRecordNodeMatcher withSupertypes(Matcher<? extends Iterable<? extends UntypedTypeLevelExpressionNode>> matcher) {
         return addMatcher(has("supertypes", matcher));
     }
 

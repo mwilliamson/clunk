@@ -14,9 +14,9 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class PythonCodeGeneratorStaticExpressionTests {
     @Test
     public void boolTypeIsCompiledToJavaBooleanType() {
-        var node = Typed.staticExpression(BoolType.INSTANCE);
+        var node = Typed.typeLevelExpression(BoolType.INSTANCE);
 
-        var result = PythonCodeGenerator.DEFAULT.compileStaticExpression(node);
+        var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node);
 
         var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
         assertThat(string, equalTo("bool"));
@@ -24,9 +24,9 @@ public class PythonCodeGeneratorStaticExpressionTests {
 
     @Test
     public void intTypeIsCompiledToJavaIntType() {
-        var node = Typed.staticExpression(IntType.INSTANCE);
+        var node = Typed.typeLevelExpression(IntType.INSTANCE);
 
-        var result = PythonCodeGenerator.DEFAULT.compileStaticExpression(node);
+        var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node);
 
         var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
         assertThat(string, equalTo("int"));
@@ -34,9 +34,9 @@ public class PythonCodeGeneratorStaticExpressionTests {
 
     @Test
     public void stringTypeIsCompiledToJavaStringType() {
-        var node = Typed.staticExpression(StringType.INSTANCE);
+        var node = Typed.typeLevelExpression(StringType.INSTANCE);
 
-        var result = PythonCodeGenerator.DEFAULT.compileStaticExpression(node);
+        var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node);
 
         var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
         assertThat(string, equalTo("str"));

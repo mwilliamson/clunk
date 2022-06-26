@@ -9,7 +9,7 @@ import java.util.List;
 public record UntypedFunctionNode(
     String name,
     List<UntypedParamNode> params,
-    UntypedStaticExpressionNode returnType,
+    UntypedTypeLevelExpressionNode returnType,
     List<UntypedFunctionStatementNode> body,
     Source source
 ) implements UntypedNamespaceStatementNode {
@@ -31,7 +31,7 @@ public record UntypedFunctionNode(
     public static record Builder(
         String name,
         List<UntypedParamNode> params,
-        UntypedStaticExpressionNode returnType,
+        UntypedTypeLevelExpressionNode returnType,
         List<UntypedFunctionStatementNode> body,
         Source source
     ) {
@@ -49,7 +49,7 @@ public record UntypedFunctionNode(
             return new Builder(name, params, returnType, body, source);
         }
 
-        public Builder returnType(UntypedStaticExpressionNode returnType) {
+        public Builder returnType(UntypedTypeLevelExpressionNode returnType) {
             return new Builder(name, params, returnType, body, source);
         }
 

@@ -22,7 +22,7 @@ public class UntypedRecordFieldNodeMatcher extends CastMatcher<Object, UntypedRe
         return addMatcher(has("name", equalTo(name)));
     }
 
-    public UntypedRecordFieldNodeMatcher withType(Matcher<UntypedStaticExpressionNode> type) {
+    public UntypedRecordFieldNodeMatcher withType(Matcher<UntypedTypeLevelExpressionNode> type) {
         return addMatcher(has("type", type));
     }
 

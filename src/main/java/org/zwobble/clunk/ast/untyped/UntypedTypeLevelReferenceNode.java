@@ -2,7 +2,7 @@ package org.zwobble.clunk.ast.untyped;
 
 import org.zwobble.clunk.sources.Source;
 
-public record UntypedStaticReferenceNode(String value, Source source) implements UntypedStaticExpressionNode {
+public record UntypedTypeLevelReferenceNode(String value, Source source) implements UntypedTypeLevelExpressionNode {
     @Override
     public <T> T accept(Visitor<T> visitor) {
         return visitor.visit(this);

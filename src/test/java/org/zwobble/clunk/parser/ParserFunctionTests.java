@@ -17,7 +17,7 @@ public class ParserFunctionTests {
 
         assertThat(node, isUntypedFunctionNode()
             .withName("f")
-            .withReturnType(isUntypedStaticReferenceNode("String"))
+            .withReturnType(isUntypedTypeLevelReferenceNode("String"))
         );
     }
 
@@ -37,7 +37,7 @@ public class ParserFunctionTests {
         var node = parseString(source, Parser::parseNamespaceStatement);
 
         assertThat(node, isUntypedFunctionNode().withParams(contains(
-            isUntypedParamNode().withName("x").withType(isUntypedStaticReferenceNode("Int"))
+            isUntypedParamNode().withName("x").withType(isUntypedTypeLevelReferenceNode("Int"))
         )));
     }
 
@@ -48,8 +48,8 @@ public class ParserFunctionTests {
         var node = parseString(source, Parser::parseNamespaceStatement);
 
         assertThat(node, isUntypedFunctionNode().withParams(contains(
-            isUntypedParamNode().withName("x").withType(isUntypedStaticReferenceNode("Int")),
-            isUntypedParamNode().withName("y").withType(isUntypedStaticReferenceNode("String"))
+            isUntypedParamNode().withName("x").withType(isUntypedTypeLevelReferenceNode("Int")),
+            isUntypedParamNode().withName("y").withType(isUntypedTypeLevelReferenceNode("String"))
         )));
     }
 

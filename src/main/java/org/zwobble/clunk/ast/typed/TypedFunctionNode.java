@@ -11,7 +11,7 @@ import java.util.List;
 public record TypedFunctionNode(
     String name,
     List<TypedParamNode> params,
-    TypedStaticExpressionNode returnType,
+    TypedTypeLevelExpressionNode returnType,
     List<TypedFunctionStatementNode> body,
     Source source
 ) implements TypedNamespaceStatementNode {
@@ -22,13 +22,13 @@ public record TypedFunctionNode(
 
 
     public static Builder builder() {
-        return new Builder("f", List.of(), Typed.staticExpression(IntType.INSTANCE), List.of());
+        return new Builder("f", List.of(), Typed.typeLevelExpression(IntType.INSTANCE), List.of());
     }
 
     public static record Builder(
         String name,
         List<TypedParamNode> params,
-        TypedStaticExpressionNode returnType,
+        TypedTypeLevelExpressionNode returnType,
         List<TypedFunctionStatementNode> body
     ) {
         public TypedFunctionNode build() {
@@ -46,7 +46,7 @@ public record TypedFunctionNode(
         }
 
         public Builder returnType(Type returnType) {
-            return new Builder(name, params, Typed.staticExpression(returnType), body);
+            return new Builder(name, params, Typed.typeLevelExpression(returnType), body);
         }
 
         public Builder addBodyStatement(TypedFunctionStatementNode statement) {

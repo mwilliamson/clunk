@@ -15,7 +15,7 @@ public class TypeCheckStaticReferenceTests {
     public void staticReferenceToBoolHasBoolType() {
         var untypedNode = Untyped.staticReference("Bool");
 
-        var typedNode = TypeChecker.typeCheckStaticReferenceNode(
+        var typedNode = TypeChecker.typeCheckTypeLevelReferenceNode(
             untypedNode,
             TypeCheckerContext.stub()
         );
@@ -27,7 +27,7 @@ public class TypeCheckStaticReferenceTests {
     public void staticReferenceToIntHasIntType() {
         var untypedNode = Untyped.staticReference("Int");
 
-        var typedNode = TypeChecker.typeCheckStaticReferenceNode(
+        var typedNode = TypeChecker.typeCheckTypeLevelReferenceNode(
             untypedNode,
             TypeCheckerContext.stub()
         );
@@ -39,7 +39,7 @@ public class TypeCheckStaticReferenceTests {
     public void staticReferenceToStringHasStringType() {
         var untypedNode = Untyped.staticReference("String");
 
-        var typedNode = TypeChecker.typeCheckStaticReferenceNode(
+        var typedNode = TypeChecker.typeCheckTypeLevelReferenceNode(
             untypedNode,
             TypeCheckerContext.stub()
         );

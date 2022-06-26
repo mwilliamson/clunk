@@ -176,7 +176,7 @@ public class Parser {
         );
         tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
         tokens.skip(TokenType.SYMBOL_ARROW);
-        var returnType = parseType(tokens);
+        var returnType = parseTypeLevelExpression(tokens);
         var body = parseBlock(tokens);
 
         return new UntypedFunctionNode(name, params, returnType, body, source);
@@ -235,7 +235,7 @@ public class Parser {
 
         var name = tokens.nextValue(TokenType.IDENTIFIER);
         tokens.skip(TokenType.SYMBOL_COLON);
-        var type = parseType(tokens);
+        var type = parseTypeLevelExpression(tokens);
 
         return new UntypedParamNode(name, type, source);
     }
@@ -285,7 +285,7 @@ public class Parser {
 
         List<UntypedTypeLevelExpressionNode> supertypes;
         if (tokens.trySkip(TokenType.SYMBOL_SUBTYPE)) {
-            supertypes = List.of(parseType(tokens));
+            supertypes = List.of(parseTypeLevelExpression(tokens));
         } else {
             supertypes = List.of();
         }
@@ -298,7 +298,7 @@ public class Parser {
 
         var fieldName = tokens.nextValue(TokenType.IDENTIFIER);
         tokens.skip(TokenType.SYMBOL_COLON);
-        var fieldType = parseType(tokens);
+        var fieldType = parseTypeLevelExpression(tokens);
 
         return new UntypedRecordFieldNode(fieldName, fieldType, fieldSource);
     }
@@ -323,7 +323,7 @@ public class Parser {
         return new UntypedTestNode(name, body, source);
     }
 
-    private UntypedTypeLevelExpressionNode parseType(TokenIterator<TokenType> tokens) {
+    public UntypedTypeLevelExpressionNode parseTypeLevelExpression(TokenIterator<TokenType> tokens) {
         var referenceSource = source(tokens);
         var identifier = tokens.nextValue(TokenType.IDENTIFIER);
         return new UntypedTypeLevelReferenceNode(identifier, referenceSource);

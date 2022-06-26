@@ -20,4 +20,20 @@ public class ParserParameterizedTypeTests {
             contains(isUntypedTypeLevelReferenceNode("String"))
         ));
     }
+
+    @Test
+    public void canParseParameterizedTypeWithMultipleArguments() {
+        var source = "A[B, C, D]";
+
+        var node = parseString(source, Parser::parseTypeLevelExpression);
+
+        assertThat(node, isUntypedParameterizedTypeNode(
+            isUntypedTypeLevelReferenceNode("A"),
+            contains(
+                isUntypedTypeLevelReferenceNode("B"),
+                isUntypedTypeLevelReferenceNode("C"),
+                isUntypedTypeLevelReferenceNode("D")
+            )
+        ));
+    }
 }

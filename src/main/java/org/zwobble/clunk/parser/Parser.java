@@ -329,9 +329,14 @@ public class Parser {
         var left = new UntypedTypeLevelReferenceNode(leftIdentifier, leftSource);
 
         if (tokens.trySkip(TokenType.SYMBOL_SQUARE_OPEN)) {
-            var arg = parseTypeLevelExpression(tokens);
+            var args = parseMany(
+                () -> tokens.isNext(TokenType.SYMBOL_SQUARE_CLOSE),
+                () -> parseTypeLevelExpression(tokens),
+                () -> tokens.trySkip(TokenType.SYMBOL_COMMA)
+            );
+
             tokens.skip(TokenType.SYMBOL_SQUARE_CLOSE);
-            return new UntypedParameterizedTypeNode(left, List.of(arg), leftSource);
+            return new UntypedParameterizedTypeNode(left, args, leftSource);
         } else {
             return left;
         }

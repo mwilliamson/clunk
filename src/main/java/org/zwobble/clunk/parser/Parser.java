@@ -324,9 +324,17 @@ public class Parser {
     }
 
     public UntypedTypeLevelExpressionNode parseTypeLevelExpression(TokenIterator<TokenType> tokens) {
-        var referenceSource = source(tokens);
-        var identifier = tokens.nextValue(TokenType.IDENTIFIER);
-        return new UntypedTypeLevelReferenceNode(identifier, referenceSource);
+        var leftSource = source(tokens);
+        var leftIdentifier = tokens.nextValue(TokenType.IDENTIFIER);
+        var left = new UntypedTypeLevelReferenceNode(leftIdentifier, leftSource);
+
+        if (tokens.trySkip(TokenType.SYMBOL_SQUARE_OPEN)) {
+            var arg = parseTypeLevelExpression(tokens);
+            tokens.skip(TokenType.SYMBOL_SQUARE_CLOSE);
+            return new UntypedParameterizedTypeNode(left, List.of(arg), leftSource);
+        } else {
+            return left;
+        }
     }
 
     private UntypedFunctionStatementNode parseVar(TokenIterator<TokenType> tokens) {

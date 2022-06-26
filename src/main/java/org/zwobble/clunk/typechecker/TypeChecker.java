@@ -413,6 +413,11 @@ public class TypeChecker {
     ) {
         return node.accept(new UntypedTypeLevelExpressionNode.Visitor<TypedTypeLevelExpressionNode>() {
             @Override
+            public TypedTypeLevelExpressionNode visit(UntypedParameterizedTypeNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public TypedTypeLevelExpressionNode visit(UntypedTypeLevelReferenceNode node) {
                 return typeCheckTypeLevelReferenceNode(node, context);
             }

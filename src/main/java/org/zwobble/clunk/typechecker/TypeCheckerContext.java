@@ -56,15 +56,6 @@ public record TypeCheckerContext(
         return new TypeCheckerContext(namespaceName, returnType, environment, namespaceTypes, subtypeRelations);
     }
 
-    public Type resolveType(String name, Source source) {
-        var type = typeOf(name, source);
-        if (type instanceof MetaType) {
-            return ((MetaType) type).type();
-        } else {
-            throw new RuntimeException("TODO");
-        }
-    }
-
     public Type typeOf(String name, Source source) {
         var type = environment.get(name);
         if (type == null) {

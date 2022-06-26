@@ -272,14 +272,10 @@ public class TypeScriptCodeGenerator {
     }
 
     public static TypeScriptReferenceNode compileTypeLevelExpression(TypedTypeLevelExpressionNode node) {
-        return new TypeScriptReferenceNode(compileType(node.type()));
+        return new TypeScriptReferenceNode(compileTypeLevelValue(node.value()));
     }
 
-    private static TypeScriptStatementNode compileVar(TypedVarNode node, TypeScriptCodeGeneratorContext context) {
-        return new TypeScriptLetNode(node.name(), compileExpression(node.expression(), context));
-    }
-
-    private static String compileType(Type type) {
+    private static String compileTypeLevelValue(TypeLevelValue type) {
         if (type == BoolType.INSTANCE) {
             return "boolean";
         } else if (type == IntType.INSTANCE) {
@@ -289,5 +285,9 @@ public class TypeScriptCodeGenerator {
         } else {
             throw new RuntimeException("TODO");
         }
+    }
+
+    private static TypeScriptStatementNode compileVar(TypedVarNode node, TypeScriptCodeGeneratorContext context) {
+        return new TypeScriptLetNode(node.name(), compileExpression(node.expression(), context));
     }
 }

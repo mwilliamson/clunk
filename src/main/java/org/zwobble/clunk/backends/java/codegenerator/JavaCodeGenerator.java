@@ -173,7 +173,7 @@ public class JavaCodeGenerator {
         JavaCodeGeneratorContext context
     ) {
         var permits = context.subtypesOf(node.type()).stream()
-            .map(subtype -> compileTypeReference(subtype, context))
+            .map(subtype -> compileTypeLevelValue(subtype, context))
             .toList();
 
         return new JavaOrdinaryCompilationUnitNode(
@@ -253,7 +253,7 @@ public class JavaCodeGenerator {
             .collect(Collectors.toList());
 
         var implements_ = context.supertypesOf(node.type()).stream()
-            .map(implementsType -> compileTypeReference(implementsType, context))
+            .map(implementsType -> compileTypeLevelValue(implementsType, context))
             .toList();
 
         return new JavaOrdinaryCompilationUnitNode(
@@ -300,20 +300,20 @@ public class JavaCodeGenerator {
         TypedTypeLevelExpressionNode node,
         JavaCodeGeneratorContext context
     ) {
-        return compileTypeReference(node.type(), context);
+        return compileTypeLevelValue(node.value(), context);
     }
 
-    private static JavaTypeExpressionNode compileTypeReference(Type type, JavaCodeGeneratorContext context) {
-        if (type == BoolType.INSTANCE) {
+    private static JavaTypeExpressionNode compileTypeLevelValue(TypeLevelValue value, JavaCodeGeneratorContext context) {
+        if (value == BoolType.INSTANCE) {
             return new JavaTypeVariableReferenceNode("boolean");
-        } else if (type == IntType.INSTANCE) {
+        } else if (value == IntType.INSTANCE) {
             return new JavaTypeVariableReferenceNode("int");
-        } else if (type == StringType.INSTANCE) {
+        } else if (value == StringType.INSTANCE) {
             return new JavaTypeVariableReferenceNode("String");
-        } else if (type instanceof InterfaceType interfaceType) {
+        } else if (value instanceof InterfaceType interfaceType) {
             var packageName = namespaceToPackage(interfaceType.namespaceName(), context);
             return new JavaFullyQualifiedTypeReferenceNode(packageName, interfaceType.name());
-        } else if (type instanceof RecordType recordType) {
+        } else if (value instanceof RecordType recordType) {
             var packageName = namespaceToPackage(recordType.namespaceName(), context);
             return new JavaFullyQualifiedTypeReferenceNode(packageName, recordType.name());
         } else {

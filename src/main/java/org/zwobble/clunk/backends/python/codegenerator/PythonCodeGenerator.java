@@ -296,18 +296,10 @@ public class PythonCodeGenerator {
     }
 
     public PythonReferenceNode compileTypeLevelExpression(TypedTypeLevelExpressionNode node) {
-        return new PythonReferenceNode(compileType(node.type()));
+        return new PythonReferenceNode(compileTypeLevelValue(node.value()));
     }
 
-    private PythonStatementNode compileVar(TypedVarNode node, PythonCodeGeneratorContext context) {
-        return new PythonAssignmentNode(
-            node.name(),
-            Optional.empty(),
-            Optional.of(compileExpression(node.expression(), context))
-        );
-    }
-
-    private String compileType(Type type) {
+    private String compileTypeLevelValue(TypeLevelValue type) {
         if (type == BoolType.INSTANCE) {
             return "bool";
         } else if (type == IntType.INSTANCE) {
@@ -317,6 +309,14 @@ public class PythonCodeGenerator {
         } else {
             throw new RuntimeException("TODO");
         }
+    }
+
+    private PythonStatementNode compileVar(TypedVarNode node, PythonCodeGeneratorContext context) {
+        return new PythonAssignmentNode(
+            node.name(),
+            Optional.empty(),
+            Optional.of(compileExpression(node.expression(), context))
+        );
     }
 
     private String namespaceNameToModuleName(NamespaceName name) {

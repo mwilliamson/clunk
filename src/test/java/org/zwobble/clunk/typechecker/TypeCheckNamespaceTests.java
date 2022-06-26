@@ -13,8 +13,7 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedImportNode;
-import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedRecordNode;
+import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
 import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
 
 public class TypeCheckNamespaceTests {
@@ -63,7 +62,7 @@ public class TypeCheckNamespaceTests {
             has("statements", contains(
                 isTypedRecordNode(has("fields", contains(
                     allOf(
-                        has("type", has("type", equalTo(Types.INT)))
+                        has("type", isTypedTypeLevelExpressionNode(Types.INT))
                     )
                 )))
             ))

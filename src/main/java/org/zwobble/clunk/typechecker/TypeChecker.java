@@ -3,10 +3,8 @@ package org.zwobble.clunk.typechecker;
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.ast.untyped.*;
 import org.zwobble.clunk.errors.SourceError;
-import org.zwobble.clunk.types.InterfaceType;
-import org.zwobble.clunk.types.RecordType;
-import org.zwobble.clunk.types.StaticFunctionType;
-import org.zwobble.clunk.types.Types;
+import org.zwobble.clunk.sources.Source;
+import org.zwobble.clunk.types.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -129,17 +127,19 @@ public class TypeChecker {
         UntypedFunctionNode node,
         TypeCheckerContext context
     ) {
-        var returnType = typeCheckTypeLevelExpressionNode(node.returnType(), context);
+        var typedReturnTypeNode = typeCheckTypeLevelExpressionNode(node.returnType(), context);
+        // TODO: handle not a type
+        var returnType = (Type) typedReturnTypeNode.value();
 
         var typedStatements = typeCheckFunctionStatements(
             node.body(),
-            context.enterFunction(returnType.type())
+            context.enterFunction(returnType)
         );
 
         var typedNode = new TypedFunctionNode(
             node.name(),
             node.params().stream().map(param -> typeCheckParam(param, context)).toList(),
-            returnType,
+            typedReturnTypeNode,
             typedStatements,
             node.source()
         );
@@ -325,10 +325,11 @@ public class TypeChecker {
             node.source()
         );
 
-        var supertypes = node.supertypes().stream()
+        var typedSupertypeNodes = node.supertypes().stream()
             .map(untypedSupertypeNode -> {
                 var typedSupertypeNode = typeCheckTypeLevelExpressionNode(untypedSupertypeNode, context);
-                if (typedSupertypeNode.type() instanceof InterfaceType supertype) {
+                // TODO: handle non-type type-level values
+                if (typedSupertypeNode.value() instanceof InterfaceType supertype) {
                     if (!supertype.namespaceName().equals(context.namespaceName().get())) {
                         throw new CannotExtendSealedInterfaceFromDifferentNamespaceError(untypedSupertypeNode.source());
                     }
@@ -343,8 +344,9 @@ public class TypeChecker {
 
         var newContext = context;
 
-        for (var supertype : supertypes) {
-            newContext = newContext.addSubtypeRelation(recordType, supertype.type());
+        for (var typedSupertypeNode : typedSupertypeNodes) {
+            // TODO: handle type-level values that aren't types
+            newContext = newContext.addSubtypeRelation(recordType, (Type) typedSupertypeNode.value());
         }
 
         return new TypeCheckResult<>(typedNode, newContext);
@@ -421,7 +423,7 @@ public class TypeChecker {
         UntypedTypeLevelReferenceNode node,
         TypeCheckerContext context
     ) {
-        var type = context.resolveType(node.value(), node.source());
+        var type = resolveTypeLevelValue(node.value(), node.source(), context);
         return new TypedTypeLevelExpressionNode(type, node.source());
     }
 
@@ -437,5 +439,14 @@ public class TypeChecker {
         );
         var updatedContext = context.updateType(node.name(), typedExpression.type());
         return new TypeCheckResult<>(typedNode, updatedContext);
+    }
+
+    private static TypeLevelValue resolveTypeLevelValue(String name, Source source, TypeCheckerContext context) {
+        var type = context.typeOf(name, source);
+        if (type instanceof MetaType) {
+            return ((MetaType) type).type();
+        } else {
+            throw new RuntimeException("TODO");
+        }
     }
 }

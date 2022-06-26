@@ -9,6 +9,7 @@ import org.zwobble.clunk.types.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedTypeLevelExpressionNode;
 import static org.zwobble.clunk.matchers.CastMatcher.cast;
 import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
 
@@ -29,7 +30,7 @@ public class TypeCheckRecordTests {
             has("fields", contains(
                 allOf(
                     has("name", equalTo("x")),
-                    has("type", has("type", equalTo(StringType.INSTANCE)))
+                    has("type", isTypedTypeLevelExpressionNode(StringType.INSTANCE))
                 )
             )),
             has("type", isRecordType(NamespaceName.fromParts("a", "b"), "Example"))

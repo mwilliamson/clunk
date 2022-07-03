@@ -10,7 +10,12 @@ record BreakPage() <: DocumentElement
 
 record BreakColumn() <: DocumentElement
 
-
+record Comment(
+    commentId: String,
+    body: List[DocumentElement],
+    authorName: Option[String],
+    authorInitials: Option[String],
+) <: DocumentElement
 
 
 ==============
@@ -18,7 +23,7 @@ record BreakColumn() <: DocumentElement
 Output path: org/zwobble/mammoth/internal/documents/DocumentElement.java
 package org.zwobble.mammoth.internal.documents;
 
-public sealed interface DocumentElement permits org.zwobble.mammoth.internal.documents.Bookmark, org.zwobble.mammoth.internal.documents.BreakLine, org.zwobble.mammoth.internal.documents.BreakPage, org.zwobble.mammoth.internal.documents.BreakColumn {
+public sealed interface DocumentElement permits org.zwobble.mammoth.internal.documents.Bookmark, org.zwobble.mammoth.internal.documents.BreakLine, org.zwobble.mammoth.internal.documents.BreakPage, org.zwobble.mammoth.internal.documents.BreakColumn, org.zwobble.mammoth.internal.documents.Comment {
 }
 
 
@@ -52,6 +57,14 @@ Output path: org/zwobble/mammoth/internal/documents/BreakColumn.java
 package org.zwobble.mammoth.internal.documents;
 
 public record BreakColumn() implements org.zwobble.mammoth.internal.documents.DocumentElement {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/documents/Comment.java
+package org.zwobble.mammoth.internal.documents;
+
+public record Comment(String commentId, java.util.List<org.zwobble.mammoth.internal.documents.DocumentElement> body, java.util.Optional<String> authorName, java.util.Optional<String> authorInitials) implements org.zwobble.mammoth.internal.documents.DocumentElement {
 }
 
 ==============

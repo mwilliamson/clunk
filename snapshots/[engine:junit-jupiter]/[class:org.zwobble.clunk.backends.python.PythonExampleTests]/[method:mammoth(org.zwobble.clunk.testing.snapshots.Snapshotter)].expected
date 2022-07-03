@@ -10,13 +10,19 @@ record BreakPage() <: DocumentElement
 
 record BreakColumn() <: DocumentElement
 
-
+record Comment(
+    commentId: String,
+    body: List[DocumentElement],
+    authorName: Option[String],
+    authorInitials: Option[String],
+) <: DocumentElement
 
 
 ==============
 
 Output path: documents.py
 import dataclasses
+import typing
 class DocumentElement:
     pass
 @((dataclasses).dataclass)(frozen=True)
@@ -31,6 +37,12 @@ class BreakPage:
 @((dataclasses).dataclass)(frozen=True)
 class BreakColumn:
     pass
+@((dataclasses).dataclass)(frozen=True)
+class Comment:
+    commentId: str
+    body: (typing).List[DocumentElement]
+    authorName: (typing).Optional[str]
+    authorInitials: (typing).Optional[str]
 
 
 ==============

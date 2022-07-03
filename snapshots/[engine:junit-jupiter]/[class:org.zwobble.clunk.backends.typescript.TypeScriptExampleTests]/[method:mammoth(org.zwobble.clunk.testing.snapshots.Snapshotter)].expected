@@ -10,13 +10,18 @@ record BreakPage() <: DocumentElement
 
 record BreakColumn() <: DocumentElement
 
-
+record Comment(
+    commentId: String,
+    body: List[DocumentElement],
+    authorName: Option[String],
+    authorInitials: Option[String],
+) <: DocumentElement
 
 
 ==============
 
 Output path: documents.ts
-type DocumentElement = Bookmark | BreakLine | BreakPage | BreakColumn;
+type DocumentElement = Bookmark | BreakLine | BreakPage | BreakColumn | Comment;
 interface Bookmark {
     readonly type: "Bookmark";
     readonly name: string;
@@ -29,6 +34,13 @@ interface BreakPage {
 }
 interface BreakColumn {
     readonly type: "BreakColumn";
+}
+interface Comment {
+    readonly type: "Comment";
+    readonly commentId: string;
+    readonly body: (Array)<DocumentElement>;
+    readonly authorName: string | null;
+    readonly authorInitials: string | null;
 }
 
 

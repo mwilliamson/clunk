@@ -131,6 +131,12 @@ public class PythonSerialiser {
                 serialiseStringLiteral(node, builder);
                 return null;
             }
+
+            @Override
+            public Void visit(PythonSubscriptionNode node) {
+                serialiseSubscription(node, builder);
+                return null;
+            }
         });
     }
 
@@ -289,5 +295,12 @@ public class PythonSerialiser {
             .replace("\"", "\\\"");
         builder.append(escapedValue);
         builder.append("\"");
+    }
+
+    private static void serialiseSubscription(PythonSubscriptionNode node, CodeBuilder builder) {
+        serialiseExpression(node.receiver(), builder);
+        builder.append("[");
+        serialiseExpression(node.arg(), builder);
+        builder.append("]");
     }
 }

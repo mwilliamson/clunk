@@ -70,6 +70,13 @@ public class Python {
         return new PythonReturnNode(expression);
     }
 
+    public static PythonExpressionNode subscription(
+        PythonExpressionNode receiver,
+        PythonExpressionNode arg
+    ) {
+        return new PythonSubscriptionNode(receiver, arg);
+    }
+
     public static PythonAssignmentNode variableType(String name, PythonExpressionNode type) {
         return new PythonAssignmentNode(name, Optional.of(type), Optional.empty());
     }

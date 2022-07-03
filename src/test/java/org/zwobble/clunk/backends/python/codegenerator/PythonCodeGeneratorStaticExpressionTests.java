@@ -13,7 +13,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class PythonCodeGeneratorStaticExpressionTests {
     @Test
-    public void boolTypeIsCompiledToJavaBooleanType() {
+    public void boolTypeIsCompiledToBoolType() {
         var node = Typed.typeLevelExpression(BoolType.INSTANCE);
 
         var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node);
@@ -23,7 +23,7 @@ public class PythonCodeGeneratorStaticExpressionTests {
     }
 
     @Test
-    public void intTypeIsCompiledToJavaIntType() {
+    public void intTypeIsCompiledToIntType() {
         var node = Typed.typeLevelExpression(IntType.INSTANCE);
 
         var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node);
@@ -33,7 +33,7 @@ public class PythonCodeGeneratorStaticExpressionTests {
     }
 
     @Test
-    public void stringTypeIsCompiledToJavaStringType() {
+    public void stringTypeIsCompiledToStrType() {
         var node = Typed.typeLevelExpression(StringType.INSTANCE);
 
         var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node);

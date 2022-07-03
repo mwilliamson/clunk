@@ -307,6 +307,8 @@ public class PythonCodeGenerator {
             return new PythonReferenceNode("bool");
         } else if (type == IntType.INSTANCE) {
             return new PythonReferenceNode("int");
+        } else if (type instanceof InterfaceType interfaceType) {
+            return new PythonReferenceNode(interfaceType.name());
         } else if (type instanceof ListType listType) {
             context.addImport(List.of("typing"));
             return new PythonSubscriptionNode(

@@ -44,6 +44,16 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
     }
 
     @Test
+    public void optionTypeIsCompiledToUnionWithNull() {
+        var node = Typed.typeLevelExpression(Types.option(Types.INT));
+
+        var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
+
+        var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
+        assertThat(string, equalTo("number | null"));
+    }
+
+    @Test
     public void stringTypeIsCompiledToStringType() {
         var node = Typed.typeLevelExpression(StringType.INSTANCE);
 

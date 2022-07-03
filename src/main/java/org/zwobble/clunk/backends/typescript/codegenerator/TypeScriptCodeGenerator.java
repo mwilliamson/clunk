@@ -285,6 +285,11 @@ public class TypeScriptCodeGenerator {
                 new TypeScriptReferenceNode("Array"),
                 List.of(compileTypeLevelValue(listType.elementType()))
             );
+        } else if (type instanceof OptionType optionType) {
+            return new TypeScriptUnionNode(List.of(
+                compileTypeLevelValue(optionType.elementType()),
+                new TypeScriptReferenceNode("null")
+            ));
         } else if (type == StringType.INSTANCE) {
             return new TypeScriptReferenceNode("string");
         } else {

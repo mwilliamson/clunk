@@ -6,6 +6,7 @@ import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser;
 import org.zwobble.clunk.types.BoolType;
 import org.zwobble.clunk.types.IntType;
 import org.zwobble.clunk.types.StringType;
+import org.zwobble.clunk.types.Types;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -30,6 +31,16 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
 
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
         assertThat(string, equalTo("number"));
+    }
+
+    @Test
+    public void listTypeIsCompiledToArrayType() {
+        var node = Typed.typeLevelExpression(Types.list(Types.INT));
+
+        var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
+
+        var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
+        assertThat(string, equalTo("(Array)<number>"));
     }
 
     @Test

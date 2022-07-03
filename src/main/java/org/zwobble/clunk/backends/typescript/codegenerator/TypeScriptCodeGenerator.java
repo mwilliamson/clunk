@@ -271,17 +271,22 @@ public class TypeScriptCodeGenerator {
         ));
     }
 
-    public static TypeScriptReferenceNode compileTypeLevelExpression(TypedTypeLevelExpressionNode node) {
-        return new TypeScriptReferenceNode(compileTypeLevelValue(node.value()));
+    public static TypeScriptExpressionNode compileTypeLevelExpression(TypedTypeLevelExpressionNode node) {
+        return compileTypeLevelValue(node.value());
     }
 
-    private static String compileTypeLevelValue(TypeLevelValue type) {
+    private static TypeScriptExpressionNode compileTypeLevelValue(TypeLevelValue type) {
         if (type == BoolType.INSTANCE) {
-            return "boolean";
+            return new TypeScriptReferenceNode("boolean");
         } else if (type == IntType.INSTANCE) {
-            return "number";
+            return new TypeScriptReferenceNode("number");
+        } else if (type instanceof ListType listType) {
+            return new TypeScriptConstructedTypeNode(
+                new TypeScriptReferenceNode("Array"),
+                List.of(compileTypeLevelValue(listType.elementType()))
+            );
         } else if (type == StringType.INSTANCE) {
-            return "string";
+            return new TypeScriptReferenceNode("string");
         } else {
             throw new RuntimeException("TODO");
         }

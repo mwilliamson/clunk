@@ -3,10 +3,7 @@ package org.zwobble.clunk.backends.typescript.codegenerator;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser;
-import org.zwobble.clunk.types.BoolType;
-import org.zwobble.clunk.types.IntType;
-import org.zwobble.clunk.types.StringType;
-import org.zwobble.clunk.types.Types;
+import org.zwobble.clunk.types.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -31,6 +28,16 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
 
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
         assertThat(string, equalTo("number"));
+    }
+
+    @Test
+    public void interfaceTypeIsCompiledToReference() {
+        var node = Typed.typeLevelExpression(Types.interfaceType(NamespaceName.fromParts("a", "b"), "C"));
+
+        var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
+
+        var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
+        assertThat(string, equalTo("C"));
     }
 
     @Test

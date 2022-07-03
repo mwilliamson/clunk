@@ -280,6 +280,8 @@ public class TypeScriptCodeGenerator {
             return new TypeScriptReferenceNode("boolean");
         } else if (type == IntType.INSTANCE) {
             return new TypeScriptReferenceNode("number");
+        } else if (type instanceof InterfaceType interfaceType) {
+            return new TypeScriptReferenceNode(interfaceType.name());
         } else if (type instanceof ListType listType) {
             return new TypeScriptConstructedTypeNode(
                 new TypeScriptReferenceNode("Array"),

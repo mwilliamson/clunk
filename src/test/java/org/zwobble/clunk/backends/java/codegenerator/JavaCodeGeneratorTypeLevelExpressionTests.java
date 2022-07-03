@@ -55,6 +55,17 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
     }
 
     @Test
+    public void optionTypeIsCompiledToOptionalType() {
+        var node = Typed.typeLevelExpression(Types.option(Types.STRING));
+        var context = JavaCodeGeneratorContext.stub();
+
+        var result = JavaCodeGenerator.compileTypeLevelExpression(node, context);
+
+        var string = serialiseToString(result, JavaSerialiser::serialiseTypeExpression);
+        assertThat(string, equalTo("java.util.Optional<String>"));
+    }
+
+    @Test
     public void stringTypeIsCompiledToJavaStringType() {
         var node = Typed.typeLevelExpression(StringType.INSTANCE);
         var context = JavaCodeGeneratorContext.stub();

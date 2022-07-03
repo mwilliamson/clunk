@@ -314,9 +314,16 @@ public class JavaCodeGenerator {
             var packageName = namespaceToPackage(interfaceType.namespaceName(), context);
             return new JavaFullyQualifiedTypeReferenceNode(packageName, interfaceType.name());
         } else if (value instanceof ListType listType) {
+            // TODO: handle boxing
             return new JavaParameterizedType(
                 new JavaFullyQualifiedTypeReferenceNode("java.util", "List"),
                 List.of(compileTypeLevelValue(listType.elementType(), context))
+            );
+        } else if (value instanceof OptionType optionType) {
+            // TODO: handle boxing
+            return new JavaParameterizedType(
+                new JavaFullyQualifiedTypeReferenceNode("java.util", "Optional"),
+                List.of(compileTypeLevelValue(optionType.elementType(), context))
             );
         } else if (value instanceof RecordType recordType) {
             var packageName = namespaceToPackage(recordType.namespaceName(), context);

@@ -269,7 +269,7 @@ public class PythonCodeGenerator {
         );
 
         var statements = node.fields().stream()
-            .map(field -> Python.variableType(field.name(), compileTypeLevelExpression(field.type())))
+            .map(field -> Python.variableType(field.name(), compileTypeLevelExpression(field.type(), context)))
             .toList();
 
         return new PythonClassDeclarationNode(node.name(), decorators, statements);
@@ -295,17 +295,29 @@ public class PythonCodeGenerator {
         );
     }
 
-    public PythonReferenceNode compileTypeLevelExpression(TypedTypeLevelExpressionNode node) {
-        return new PythonReferenceNode(compileTypeLevelValue(node.value()));
+    public PythonExpressionNode compileTypeLevelExpression(
+        TypedTypeLevelExpressionNode node,
+        PythonCodeGeneratorContext context
+    ) {
+        return compileTypeLevelValue(node.value(), context);
     }
 
-    private String compileTypeLevelValue(TypeLevelValue type) {
+    private PythonExpressionNode compileTypeLevelValue(TypeLevelValue type, PythonCodeGeneratorContext context) {
         if (type == BoolType.INSTANCE) {
-            return "bool";
+            return new PythonReferenceNode("bool");
         } else if (type == IntType.INSTANCE) {
-            return "int";
+            return new PythonReferenceNode("int");
+        } else if (type instanceof ListType listType) {
+            context.addImport(List.of("typing"));
+            return new PythonSubscriptionNode(
+                new PythonAttrAccessNode(
+                    new PythonReferenceNode("typing"),
+                    "List"
+                ),
+                compileTypeLevelValue(listType.elementType(), context)
+            );
         } else if (type == StringType.INSTANCE) {
-            return "str";
+            return new PythonReferenceNode("str");
         } else {
             throw new RuntimeException("TODO");
         }

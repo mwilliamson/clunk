@@ -6,6 +6,7 @@ import org.zwobble.clunk.backends.python.serialiser.PythonSerialiser;
 import org.zwobble.clunk.types.BoolType;
 import org.zwobble.clunk.types.IntType;
 import org.zwobble.clunk.types.StringType;
+import org.zwobble.clunk.types.Types;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -15,8 +16,9 @@ public class PythonCodeGeneratorStaticExpressionTests {
     @Test
     public void boolTypeIsCompiledToBoolType() {
         var node = Typed.typeLevelExpression(BoolType.INSTANCE);
+        var context = PythonCodeGeneratorContext.stub();
 
-        var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node);
+        var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node, context);
 
         var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
         assertThat(string, equalTo("bool"));
@@ -25,18 +27,31 @@ public class PythonCodeGeneratorStaticExpressionTests {
     @Test
     public void intTypeIsCompiledToIntType() {
         var node = Typed.typeLevelExpression(IntType.INSTANCE);
+        var context = PythonCodeGeneratorContext.stub();
 
-        var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node);
+        var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node, context);
 
         var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
         assertThat(string, equalTo("int"));
     }
 
     @Test
+    public void listTypeIsCompiledToListType() {
+        var node = Typed.typeLevelExpression(Types.list(Types.INT));
+        var context = PythonCodeGeneratorContext.stub();
+
+        var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node, context);
+
+        var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
+        assertThat(string, equalTo("(typing).List[int]"));
+    }
+
+    @Test
     public void stringTypeIsCompiledToStrType() {
         var node = Typed.typeLevelExpression(StringType.INSTANCE);
+        var context = PythonCodeGeneratorContext.stub();
 
-        var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node);
+        var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node, context);
 
         var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
         assertThat(string, equalTo("str"));

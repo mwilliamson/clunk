@@ -37,6 +37,20 @@ public class TypeScriptSerialiser {
         builder.append(")");
     }
 
+    private static void serialiseConstructedType(TypeScriptConstructedTypeNode node, CodeBuilder builder) {
+        builder.append("(");
+        serialiseExpression(node.receiver(), builder);
+        builder.append(")");
+
+        builder.append("<");
+        forEachInterspersed(
+            node.args(),
+            arg -> serialiseExpression(arg, builder),
+            () -> builder.append(", ")
+        );
+        builder.append(">");
+    }
+
     public static void serialiseExpression(TypeScriptExpressionNode node, CodeBuilder builder) {
         node.accept(new TypeScriptExpressionNode.Visitor<Void>() {
             @Override
@@ -48,6 +62,12 @@ public class TypeScriptSerialiser {
             @Override
             public Void visit(TypeScriptCallNode node) {
                 serialiseCall(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(TypeScriptConstructedTypeNode node) {
+                serialiseConstructedType(node, builder);
                 return null;
             }
 

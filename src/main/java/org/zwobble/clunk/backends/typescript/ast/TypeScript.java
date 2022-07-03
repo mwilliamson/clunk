@@ -29,6 +29,13 @@ public class TypeScript {
         return new TypeScriptConditionalBranchNode(condition, body);
     }
 
+    public static TypeScriptExpressionNode constructedType(
+        TypeScriptReferenceNode receiver,
+        List<TypeScriptExpressionNode> args
+    ) {
+        return new TypeScriptConstructedTypeNode(receiver, args);
+    }
+
     public static TypeScriptStatementNode expressionStatement(TypeScriptExpressionNode expression) {
         return new TypeScriptExpressionStatementNode(expression);
     }

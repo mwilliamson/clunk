@@ -3,15 +3,13 @@ package org.zwobble.clunk.backends.java.codegenerator;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
-import org.zwobble.clunk.types.BoolType;
-import org.zwobble.clunk.types.IntType;
-import org.zwobble.clunk.types.StringType;
+import org.zwobble.clunk.types.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
-public class JavaCodeGeneratorStaticExpressionTests {
+public class JavaCodeGeneratorTypeLevelExpressionTests {
     @Test
     public void boolTypeIsCompiledToJavaBooleanType() {
         var node = Typed.typeLevelExpression(BoolType.INSTANCE);
@@ -32,6 +30,17 @@ public class JavaCodeGeneratorStaticExpressionTests {
 
         var string = serialiseToString(result, JavaSerialiser::serialiseTypeExpression);
         assertThat(string, equalTo("int"));
+    }
+
+    @Test
+    public void interfaceTypeIsCompiledToFullyQualifiedReference() {
+        var node = Typed.typeLevelExpression(Types.interfaceType(NamespaceName.fromParts("a", "b"), "C"));
+        var context = JavaCodeGeneratorContext.stub();
+
+        var result = JavaCodeGenerator.compileTypeLevelExpression(node, context);
+
+        var string = serialiseToString(result, JavaSerialiser::serialiseTypeExpression);
+        assertThat(string, equalTo("a.b.C"));
     }
 
     @Test

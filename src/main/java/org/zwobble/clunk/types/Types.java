@@ -19,8 +19,16 @@ public class Types {
         return subType.equals(superType);
     }
 
+    public static Type list(Type elementType) {
+        return new ListType(elementType);
+    }
+
     public static MetaType metaType(Type type) {
         return new MetaType(type);
+    }
+
+    public static MetaType typeConstructorType(TypeConstructor typeConstructor) {
+        return new MetaType(typeConstructor);
     }
 
     public static InterfaceType interfaceType(NamespaceName namespaceName, String name) {

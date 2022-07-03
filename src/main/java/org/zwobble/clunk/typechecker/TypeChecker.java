@@ -83,6 +83,14 @@ public class TypeChecker {
     ) {
         var receiverType = typeCheckTypeLevelExpressionNode(node.receiver(), context).value();
 
+        if (receiverType instanceof TypeConstructor typeConstructor) {
+            // TODO: handle non-type args
+            var args = node.args().stream().map(arg -> (Type)typeCheckTypeLevelExpressionNode(arg, context).value()).toList();
+            var constructedType = typeConstructor.call(args);
+
+            return new TypedTypeLevelExpressionNode(constructedType, node.source());
+        }
+
         throw new UnexpectedTypeError(
             TypeConstructorTypeSet.INSTANCE,
             // TODO: remove cast
@@ -463,7 +471,7 @@ public class TypeChecker {
     private static TypeLevelValue resolveTypeLevelValue(String name, Source source, TypeCheckerContext context) {
         var type = context.typeOf(name, source);
         if (type instanceof MetaType) {
-            return ((MetaType) type).type();
+            return ((MetaType) type).value();
         } else {
             throw new RuntimeException("TODO");
         }

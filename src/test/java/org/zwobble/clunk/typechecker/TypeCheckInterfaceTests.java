@@ -27,7 +27,7 @@ public class TypeCheckInterfaceTests {
             result.context().typeOf("DocumentElement", NullSource.INSTANCE),
             cast(
                 MetaType.class,
-                has("type", cast(
+                has("value", cast(
                     InterfaceType.class,
                     has("namespaceName", equalTo(NamespaceName.fromParts("a", "b"))),
                     has("name", equalTo("DocumentElement"))

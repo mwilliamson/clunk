@@ -11,9 +11,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
-public class TypeScriptCodeGeneratorStaticExpressionTests {
+public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
     @Test
-    public void boolTypeIsCompiledToJavaBooleanType() {
+    public void boolTypeIsCompiledToBooleanType() {
         var node = Typed.typeLevelExpression(BoolType.INSTANCE);
 
         var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
@@ -23,7 +23,7 @@ public class TypeScriptCodeGeneratorStaticExpressionTests {
     }
 
     @Test
-    public void intTypeIsCompiledToJavaIntType() {
+    public void intTypeIsCompiledToNumberType() {
         var node = Typed.typeLevelExpression(IntType.INSTANCE);
 
         var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
@@ -33,7 +33,7 @@ public class TypeScriptCodeGeneratorStaticExpressionTests {
     }
 
     @Test
-    public void stringTypeIsCompiledToJavaStringType() {
+    public void stringTypeIsCompiledToStringType() {
         var node = Typed.typeLevelExpression(StringType.INSTANCE);
 
         var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);

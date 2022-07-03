@@ -12,7 +12,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
-public class PythonCodeGeneratorStaticExpressionTests {
+public class PythonCodeGeneratorTypeLevelExpressionTests {
     @Test
     public void boolTypeIsCompiledToBoolType() {
         var node = Typed.typeLevelExpression(BoolType.INSTANCE);
@@ -44,6 +44,17 @@ public class PythonCodeGeneratorStaticExpressionTests {
 
         var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
         assertThat(string, equalTo("(typing).List[int]"));
+    }
+
+    @Test
+    public void optionTypeIsCompiledToOptionalType() {
+        var node = Typed.typeLevelExpression(Types.option(Types.INT));
+        var context = PythonCodeGeneratorContext.stub();
+
+        var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node, context);
+
+        var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
+        assertThat(string, equalTo("(typing).Optional[int]"));
     }
 
     @Test

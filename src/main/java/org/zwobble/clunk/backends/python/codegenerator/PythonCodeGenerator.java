@@ -316,6 +316,15 @@ public class PythonCodeGenerator {
                 ),
                 compileTypeLevelValue(listType.elementType(), context)
             );
+        } else if (type instanceof OptionType optionType) {
+            context.addImport(List.of("typing"));
+            return new PythonSubscriptionNode(
+                new PythonAttrAccessNode(
+                    new PythonReferenceNode("typing"),
+                    "Optional"
+                ),
+                compileTypeLevelValue(optionType.elementType(), context)
+            );
         } else if (type == StringType.INSTANCE) {
             return new PythonReferenceNode("str");
         } else {

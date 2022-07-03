@@ -23,6 +23,10 @@ public class Types {
         return new ListType(elementType);
     }
 
+    public static Type option(Type elementType) {
+        return new OptionType(elementType);
+    }
+
     public static TypeLevelValueType metaType(Type type) {
         return new TypeLevelValueType(type);
     }

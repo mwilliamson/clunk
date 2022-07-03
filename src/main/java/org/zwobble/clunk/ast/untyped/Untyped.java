@@ -29,6 +29,13 @@ public class Untyped {
         return new UntypedConditionalBranchNode(condition, body, NullSource.INSTANCE);
     }
 
+    public static UntypedConstructedTypeNode constructedType(
+        UntypedTypeLevelReferenceNode receiver,
+        List<UntypedTypeLevelExpressionNode> args
+    ) {
+        return new UntypedConstructedTypeNode(receiver, args, NullSource.INSTANCE);
+    }
+
     public static UntypedExpressionStatementNode expressionStatement(UntypedExpressionNode expression) {
         return new UntypedExpressionStatementNode(expression, NullSource.INSTANCE);
     }

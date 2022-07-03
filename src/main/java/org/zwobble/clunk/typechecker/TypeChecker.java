@@ -77,6 +77,20 @@ public class TypeChecker {
         );
     }
 
+    private static TypedTypeLevelExpressionNode typeCheckConstructedTypeNode(
+        UntypedConstructedTypeNode node,
+        TypeCheckerContext context
+    ) {
+        var receiverType = typeCheckTypeLevelExpressionNode(node.receiver(), context).value();
+
+        throw new UnexpectedTypeError(
+            TypeConstructorTypeSet.INSTANCE,
+            // TODO: remove cast
+            (Type) receiverType,
+            node.receiver().source()
+        );
+    }
+
     public static TypedExpressionNode typeCheckExpression(
         UntypedExpressionNode node,
         TypeCheckerContext context
@@ -407,14 +421,14 @@ public class TypeChecker {
         return new TypeCheckResult<>(typedNode, context);
     }
 
-    private static TypedTypeLevelExpressionNode typeCheckTypeLevelExpressionNode(
+    public static TypedTypeLevelExpressionNode typeCheckTypeLevelExpressionNode(
         UntypedTypeLevelExpressionNode node,
         TypeCheckerContext context
     ) {
         return node.accept(new UntypedTypeLevelExpressionNode.Visitor<TypedTypeLevelExpressionNode>() {
             @Override
-            public TypedTypeLevelExpressionNode visit(UntypedParameterizedTypeNode node) {
-                throw new UnsupportedOperationException("TODO");
+            public TypedTypeLevelExpressionNode visit(UntypedConstructedTypeNode node) {
+                return typeCheckConstructedTypeNode(node, context);
             }
 
             @Override

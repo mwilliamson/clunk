@@ -336,7 +336,7 @@ public class Parser {
             );
 
             tokens.skip(TokenType.SYMBOL_SQUARE_CLOSE);
-            return new UntypedParameterizedTypeNode(left, args, leftSource);
+            return new UntypedConstructedTypeNode(left, args, leftSource);
         } else {
             return left;
         }

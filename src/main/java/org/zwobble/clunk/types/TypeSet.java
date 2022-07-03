@@ -1,5 +1,5 @@
 package org.zwobble.clunk.types;
 
-public interface Type extends TypeLevelValue, TypeSet {
+public interface TypeSet {
     String describe();
 }

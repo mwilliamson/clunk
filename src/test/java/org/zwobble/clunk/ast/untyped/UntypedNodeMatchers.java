@@ -102,11 +102,11 @@ public class UntypedNodeMatchers {
         return cast(UntypedTypeLevelExpressionNode.class, has("value", equalTo(value)));
     }
 
-    public static Matcher<UntypedTypeLevelExpressionNode> isUntypedParameterizedTypeNode(
+    public static Matcher<UntypedTypeLevelExpressionNode> isUntypedConstructedTypeNode(
         Matcher<UntypedTypeLevelExpressionNode> receiver,
         Matcher<? extends Iterable<? extends UntypedTypeLevelExpressionNode>> args
     ) {
-        return cast(UntypedParameterizedTypeNode.class, allOf(
+        return cast(UntypedConstructedTypeNode.class, allOf(
             has("receiver", receiver),
             has("args", args)
         ));

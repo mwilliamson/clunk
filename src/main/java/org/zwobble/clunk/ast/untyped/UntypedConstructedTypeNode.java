@@ -4,7 +4,7 @@ import org.zwobble.clunk.sources.Source;
 
 import java.util.List;
 
-public record UntypedParameterizedTypeNode(
+public record UntypedConstructedTypeNode(
     UntypedTypeLevelExpressionNode receiver,
     List<UntypedTypeLevelExpressionNode> args,
     Source source

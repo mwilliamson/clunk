@@ -44,6 +44,17 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
     }
 
     @Test
+    public void listTypeIsCompiledToListType() {
+        var node = Typed.typeLevelExpression(Types.list(Types.STRING));
+        var context = JavaCodeGeneratorContext.stub();
+
+        var result = JavaCodeGenerator.compileTypeLevelExpression(node, context);
+
+        var string = serialiseToString(result, JavaSerialiser::serialiseTypeExpression);
+        assertThat(string, equalTo("java.util.List<String>"));
+    }
+
+    @Test
     public void stringTypeIsCompiledToJavaStringType() {
         var node = Typed.typeLevelExpression(StringType.INSTANCE);
         var context = JavaCodeGeneratorContext.stub();

@@ -313,6 +313,11 @@ public class JavaCodeGenerator {
         } else if (value instanceof InterfaceType interfaceType) {
             var packageName = namespaceToPackage(interfaceType.namespaceName(), context);
             return new JavaFullyQualifiedTypeReferenceNode(packageName, interfaceType.name());
+        } else if (value instanceof ListType listType) {
+            return new JavaParameterizedType(
+                new JavaFullyQualifiedTypeReferenceNode("java.util", "List"),
+                List.of(compileTypeLevelValue(listType.elementType(), context))
+            );
         } else if (value instanceof RecordType recordType) {
             var packageName = namespaceToPackage(recordType.namespaceName(), context);
             return new JavaFullyQualifiedTypeReferenceNode(packageName, recordType.name());

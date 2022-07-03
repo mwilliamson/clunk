@@ -5,7 +5,7 @@ import org.zwobble.clunk.ast.typed.TypedInterfaceNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.InterfaceType;
-import org.zwobble.clunk.types.MetaType;
+import org.zwobble.clunk.types.TypeLevelValueType;
 import org.zwobble.clunk.types.NamespaceName;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -26,7 +26,7 @@ public class TypeCheckInterfaceTests {
         assertThat(
             result.context().typeOf("DocumentElement", NullSource.INSTANCE),
             cast(
-                MetaType.class,
+                TypeLevelValueType.class,
                 has("value", cast(
                     InterfaceType.class,
                     has("namespaceName", equalTo(NamespaceName.fromParts("a", "b"))),

@@ -23,12 +23,12 @@ public class Types {
         return new ListType(elementType);
     }
 
-    public static MetaType metaType(Type type) {
-        return new MetaType(type);
+    public static TypeLevelValueType metaType(Type type) {
+        return new TypeLevelValueType(type);
     }
 
-    public static MetaType typeConstructorType(TypeConstructor typeConstructor) {
-        return new MetaType(typeConstructor);
+    public static TypeLevelValueType typeConstructorType(TypeConstructor typeConstructor) {
+        return new TypeLevelValueType(typeConstructor);
     }
 
     public static InterfaceType interfaceType(NamespaceName namespaceName, String name) {

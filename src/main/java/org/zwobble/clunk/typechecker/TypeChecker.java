@@ -470,8 +470,8 @@ public class TypeChecker {
 
     private static TypeLevelValue resolveTypeLevelValue(String name, Source source, TypeCheckerContext context) {
         var type = context.typeOf(name, source);
-        if (type instanceof MetaType) {
-            return ((MetaType) type).value();
+        if (type instanceof TypeLevelValueType) {
+            return ((TypeLevelValueType) type).value();
         } else {
             throw new RuntimeException("TODO");
         }

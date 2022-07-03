@@ -5,6 +5,7 @@ public interface JavaTypeExpressionNode extends JavaNode {
 
     interface Visitor<T> {
         T visit(JavaFullyQualifiedTypeReferenceNode node);
+        T visit(JavaParameterizedType node);
         T visit(JavaTypeVariableReferenceNode node);
     }
 }

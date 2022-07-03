@@ -65,6 +65,13 @@ public class Java {
         return new JavaParamNode(type, name);
     }
 
+    public static JavaParameterizedType parameterizedType(
+        JavaTypeExpressionNode receiver,
+        List<JavaTypeExpressionNode> args
+    ) {
+        return new JavaParameterizedType(receiver, args);
+    }
+
     public static JavaReferenceNode reference(String name) {
         return new JavaReferenceNode(name);
     }

@@ -245,6 +245,17 @@ public class JavaSerialiser {
         builder.append(param.name());
     }
 
+    private static void serialiseParameterizedType(JavaParameterizedType node, CodeBuilder builder) {
+        serialiseTypeExpression(node.receiver(), builder);
+        builder.append("<");
+        forEachInterspersed(
+            node.args(),
+            arg -> serialiseTypeExpression(arg, builder),
+            () -> builder.append(", ")
+        );
+        builder.append(">");
+    }
+
     private static void serialiseRecordDeclaration(JavaRecordDeclarationNode node, CodeBuilder builder) {
         builder.append("public record ");
         builder.append(node.name());
@@ -355,6 +366,12 @@ public class JavaSerialiser {
             @Override
             public Void visit(JavaFullyQualifiedTypeReferenceNode node) {
                 serialiseFullyQualifiedTypeReference(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(JavaParameterizedType node) {
+                serialiseParameterizedType(node, builder);
                 return null;
             }
 

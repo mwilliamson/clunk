@@ -5,6 +5,7 @@ import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.java.ast.JavaOrdinaryCompilationUnitNode;
 import org.zwobble.clunk.backends.java.config.JavaTargetConfig;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
+import org.zwobble.clunk.typechecker.FieldsLookup;
 import org.zwobble.clunk.typechecker.SubtypeLookup;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.StaticFunctionType;
@@ -12,6 +13,7 @@ import org.zwobble.clunk.types.StringType;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -22,13 +24,19 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class JavaCodeGeneratorNamespaceTests {
     @Test
     public void recordsInNamespaceAreCompiledToSeparateJavaCompilationUnits() {
+        var record1 = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "First").build();
+        var record2 = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "Second").build();
         var node = TypedNamespaceNode
             .builder(NamespaceName.fromParts("example", "project"))
-            .addStatement(TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "First").build())
-            .addStatement(TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "Second").build())
+            .addStatement(record1)
+            .addStatement(record2)
             .build();
+        var fieldsLookup = new FieldsLookup(Map.ofEntries(
+            Map.entry(record1.type(), List.of()),
+            Map.entry(record2.type(), List.of())
+        ));
 
-        var result = JavaCodeGenerator.compileNamespace(node, JavaTargetConfig.stub(), SubtypeLookup.EMPTY);
+        var result = JavaCodeGenerator.compileNamespace(node, JavaTargetConfig.stub(), fieldsLookup, SubtypeLookup.EMPTY);
 
         assertThat(serialise(result), contains(
             equalTo(
@@ -56,7 +64,7 @@ public class JavaCodeGeneratorNamespaceTests {
             .addStatement(TypedFunctionNode.builder().name("g").returnType(StringType.INSTANCE).build())
             .build();
 
-        var result = JavaCodeGenerator.compileNamespace(node, JavaTargetConfig.stub(), SubtypeLookup.EMPTY);
+        var result = JavaCodeGenerator.compileNamespace(node, JavaTargetConfig.stub(), FieldsLookup.EMPTY, SubtypeLookup.EMPTY);
 
         assertThat(serialise(result), contains(
             equalTo(
@@ -81,7 +89,7 @@ public class JavaCodeGeneratorNamespaceTests {
             .addStatement(TypedTestNode.builder().name("g").build())
             .build();
 
-        var result = JavaCodeGenerator.compileNamespace(node, JavaTargetConfig.stub(), SubtypeLookup.EMPTY);
+        var result = JavaCodeGenerator.compileNamespace(node, JavaTargetConfig.stub(), FieldsLookup.EMPTY, SubtypeLookup.EMPTY);
 
         assertThat(serialise(result), contains(
             equalTo(
@@ -147,7 +155,7 @@ public class JavaCodeGeneratorNamespaceTests {
             )
             .build();
 
-        var result = JavaCodeGenerator.compileNamespace(node, JavaTargetConfig.stub(), SubtypeLookup.EMPTY);
+        var result = JavaCodeGenerator.compileNamespace(node, JavaTargetConfig.stub(), FieldsLookup.EMPTY, SubtypeLookup.EMPTY);
 
         assertThat(serialise(result), contains(
             equalTo(

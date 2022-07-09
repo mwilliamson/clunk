@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.backends.java.config.JavaTargetConfig;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
+import org.zwobble.clunk.typechecker.FieldsLookup;
 import org.zwobble.clunk.typechecker.SubtypeLookup;
 import org.zwobble.clunk.typechecker.SubtypeRelation;
 import org.zwobble.clunk.types.NamespaceName;
@@ -25,7 +26,7 @@ public class JavaCodeGeneratorInterfaceTests {
             new SubtypeRelation(new RecordType(NamespaceName.fromParts("one", "two"), "A"), interfaceType),
             new SubtypeRelation(new RecordType(NamespaceName.fromParts("one", "two"), "B"), interfaceType)
         ));
-        var context = new JavaCodeGeneratorContext(JavaTargetConfig.stub(), subtypeLookup);
+        var context = new JavaCodeGeneratorContext(JavaTargetConfig.stub(), FieldsLookup.EMPTY, subtypeLookup);
 
         var result = JavaCodeGenerator.compileInterface(
             node,

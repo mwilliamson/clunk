@@ -6,12 +6,14 @@ import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.ast.typed.TypedTestNode;
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser;
+import org.zwobble.clunk.typechecker.FieldsLookup;
 import org.zwobble.clunk.typechecker.SubtypeLookup;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.StaticFunctionType;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -20,13 +22,19 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class TypeScriptCodeGeneratorNamespaceTests {
     @Test
     public void namespaceIsCompiledToTypeScriptModule() {
+        var record1 = TypedRecordNode.builder("First").build();
+        var record2 = TypedRecordNode.builder("Second").build();
         var node = TypedNamespaceNode
             .builder(NamespaceName.fromParts("example", "project"))
-            .addStatement(TypedRecordNode.builder("First").build())
-            .addStatement(TypedRecordNode.builder("Second").build())
+            .addStatement(record1)
+            .addStatement(record2)
             .build();
+        var fieldsLookup = new FieldsLookup(Map.ofEntries(
+            Map.entry(record1.type(), List.of()),
+            Map.entry(record2.type(), List.of())
+        ));
 
-        var result = TypeScriptCodeGenerator.compileNamespace(node, SubtypeLookup.EMPTY);
+        var result = TypeScriptCodeGenerator.compileNamespace(node, fieldsLookup, SubtypeLookup.EMPTY);
 
         assertThat(result.path(), equalTo("example/project"));
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseModule);
@@ -55,7 +63,7 @@ public class TypeScriptCodeGeneratorNamespaceTests {
             ))
             .build();
 
-        var result = TypeScriptCodeGenerator.compileNamespace(node, SubtypeLookup.EMPTY);
+        var result = TypeScriptCodeGenerator.compileNamespace(node, FieldsLookup.EMPTY, SubtypeLookup.EMPTY);
 
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseModule);
         assertThat(string, equalTo(""));
@@ -106,7 +114,7 @@ public class TypeScriptCodeGeneratorNamespaceTests {
             )
             .build();
 
-        var result = TypeScriptCodeGenerator.compileNamespace(node, SubtypeLookup.EMPTY);
+        var result = TypeScriptCodeGenerator.compileNamespace(node, FieldsLookup.EMPTY, SubtypeLookup.EMPTY);
 
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseModule);
         assertThat(string, equalTo("""

@@ -9,6 +9,7 @@ import org.zwobble.clunk.backends.java.config.JavaTargetConfig;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
 import org.zwobble.clunk.config.ProjectConfig;
 import org.zwobble.clunk.logging.Logger;
+import org.zwobble.clunk.typechecker.FieldsLookup;
 import org.zwobble.clunk.typechecker.SubtypeLookup;
 import org.zwobble.clunk.typechecker.TypeCheckResult;
 
@@ -31,10 +32,11 @@ public class JavaBackend implements Backend {
         Path outputRoot,
         ProjectConfig projectConfig
     ) throws IOException {
+        var fieldsLookup = typeCheckResult.context().fieldsLookup();
         var subtypeLookup = SubtypeLookup.fromSubtypeRelations(typeCheckResult.context().subtypeRelations());
 
         for (var typedNamespaceNode : typeCheckResult.typedNode()) {
-            compileNamespace(typedNamespaceNode, outputRoot, projectConfig, subtypeLookup);
+            compileNamespace(typedNamespaceNode, outputRoot, projectConfig, fieldsLookup, subtypeLookup);
         }
     }
 
@@ -42,10 +44,11 @@ public class JavaBackend implements Backend {
         TypedNamespaceNode typedNamespaceNode,
         Path outputRoot,
         ProjectConfig projectConfig,
+        FieldsLookup fieldsLookup,
         SubtypeLookup subtypeLookup
     ) throws IOException {
         var javaConfig = JavaTargetConfig.load(projectConfig.target("java"));
-        var javaCompilationUnits = JavaCodeGenerator.compileNamespace(typedNamespaceNode, javaConfig, subtypeLookup);
+        var javaCompilationUnits = JavaCodeGenerator.compileNamespace(typedNamespaceNode, javaConfig, fieldsLookup, subtypeLookup);
 
         for (var javaCompilationUnit : javaCompilationUnits) {
             var codeBuilder = new CodeBuilder();

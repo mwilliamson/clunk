@@ -2,6 +2,7 @@ package org.zwobble.clunk.backends.python.codegenerator;
 
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.python.ast.*;
+import org.zwobble.clunk.typechecker.FieldsLookup;
 import org.zwobble.clunk.types.*;
 
 import java.math.BigInteger;
@@ -205,8 +206,8 @@ public class PythonCodeGenerator {
         return new PythonIntLiteralNode(BigInteger.valueOf(node.value()));
     }
 
-    public PythonModuleNode compileNamespace(TypedNamespaceNode node) {
-        var context = new PythonCodeGeneratorContext();
+    public PythonModuleNode compileNamespace(TypedNamespaceNode node, FieldsLookup fieldsLookup) {
+        var context = new PythonCodeGeneratorContext(fieldsLookup);
         var moduleName = namespaceNameToModuleName(node.name());
 
         var statements = new ArrayList<PythonStatementNode>();
@@ -268,7 +269,7 @@ public class PythonCodeGenerator {
             )
         );
 
-        var statements = node.fields().stream()
+        var statements = context.fieldsOf(node.type()).stream()
             .map(field -> Python.variableType(field.name(), compileTypeLevelExpression(field.type(), context)))
             .toList();
 

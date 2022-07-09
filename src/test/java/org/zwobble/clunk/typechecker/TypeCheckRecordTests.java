@@ -2,6 +2,7 @@ package org.zwobble.clunk.typechecker;
 
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.ast.untyped.UntypedRecordNode;
 import org.zwobble.clunk.types.*;
@@ -25,15 +26,16 @@ public class TypeCheckRecordTests {
             TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"))
         );
 
-        assertThat(result.typedNode(), allOf(
+        var typedNode = (TypedRecordNode) result.typedNode();
+        assertThat(typedNode, allOf(
             has("name", equalTo("Example")),
-            has("fields", contains(
-                allOf(
-                    has("name", equalTo("x")),
-                    has("type", isTypedTypeLevelExpressionNode(StringType.INSTANCE))
-                )
-            )),
             has("type", isRecordType(NamespaceName.fromParts("a", "b"), "Example"))
+        ));
+        assertThat(result.context().fieldsLookup().fieldsOf(typedNode.type()), contains(
+            allOf(
+                has("name", equalTo("x")),
+                has("type", isTypedTypeLevelExpressionNode(StringType.INSTANCE))
+            )
         ));
     }
 

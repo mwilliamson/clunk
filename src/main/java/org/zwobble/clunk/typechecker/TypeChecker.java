@@ -340,12 +340,13 @@ public class TypeChecker {
 
         var typedNode = new TypedRecordNode(
             node.name(),
-            node.fields().stream()
-                .map(field -> typeCheckRecordField(field, context))
-                .collect(Collectors.toList()),
             recordType,
             node.source()
         );
+
+        var newContext = context.addFields(recordType, node.fields().stream()
+            .map(field -> typeCheckRecordField(field, context))
+            .collect(Collectors.toList()));
 
         var typedSupertypeNodes = node.supertypes().stream()
             .map(untypedSupertypeNode -> {
@@ -364,7 +365,6 @@ public class TypeChecker {
 
         // TODO: handle missing namespace name
 
-        var newContext = context;
 
         for (var typedSupertypeNode : typedSupertypeNodes) {
             // TODO: handle type-level values that aren't types

@@ -1,6 +1,7 @@
 package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.ast.untyped.UntypedNamespaceNode;
 import org.zwobble.clunk.ast.untyped.UntypedRecordNode;
@@ -58,14 +59,13 @@ public class TypeCheckNamespaceTests {
                     has("namespaceName", equalTo(NamespaceName.fromParts("x", "y"))),
                     has("fieldName", equalTo(Optional.of("IntAlias")))
                 ))
-            )),
-            has("statements", contains(
-                isTypedRecordNode(has("fields", contains(
-                    allOf(
-                        has("type", isTypedTypeLevelExpressionNode(Types.INT))
-                    )
-                )))
             ))
+        ));
+        var typedRecordNode = (TypedRecordNode) result.typedNode().statements().get(0);
+        assertThat(result.context().fieldsLookup().fieldsOf(typedRecordNode.type()), contains(
+            allOf(
+                has("type", isTypedTypeLevelExpressionNode(Types.INT))
+            )
         ));
     }
 }

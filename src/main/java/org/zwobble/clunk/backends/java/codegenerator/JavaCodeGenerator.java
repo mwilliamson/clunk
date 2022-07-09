@@ -168,7 +168,6 @@ public class JavaCodeGenerator {
     }
 
     public static JavaOrdinaryCompilationUnitNode compileInterface(
-        NamespaceName namespaceName,
         TypedInterfaceNode node,
         JavaCodeGeneratorContext context
     ) {
@@ -177,7 +176,7 @@ public class JavaCodeGenerator {
             .toList();
 
         return new JavaOrdinaryCompilationUnitNode(
-            namespaceToPackage(namespaceName, context),
+            namespaceToPackage(((InterfaceType) node.type()).namespaceName(), context),
             List.of(),
             new JavaInterfaceDeclarationNode(
                 node.name(),
@@ -210,13 +209,13 @@ public class JavaCodeGenerator {
 
                 @Override
                 public Void visit(TypedInterfaceNode interfaceNode) {
-                    compilationUnits.add(compileInterface(node.name(), interfaceNode, context));
+                    compilationUnits.add(compileInterface(interfaceNode, context));
                     return null;
                 }
 
                 @Override
                 public Void visit(TypedRecordNode recordNode) {
-                    compilationUnits.add(compileRecord(node.name(), recordNode, context));
+                    compilationUnits.add(compileRecord(recordNode, context));
                     return null;
                 }
 
@@ -244,7 +243,6 @@ public class JavaCodeGenerator {
     }
 
     public static JavaOrdinaryCompilationUnitNode compileRecord(
-        NamespaceName namespaceName,
         TypedRecordNode node,
         JavaCodeGeneratorContext context
     ) {
@@ -257,7 +255,7 @@ public class JavaCodeGenerator {
             .toList();
 
         return new JavaOrdinaryCompilationUnitNode(
-            namespaceToPackage(namespaceName, context),
+            namespaceToPackage(node.type().namespaceName(), context),
             List.of(),
             new JavaRecordDeclarationNode(
                 node.name(),

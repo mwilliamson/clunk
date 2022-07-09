@@ -20,7 +20,11 @@ public record TypedRecordNode(
     }
 
     public static Builder builder(String name) {
-        return new Builder(name, List.of(), new RecordType(NamespaceName.fromParts(), name), NullSource.INSTANCE);
+        return builder(NamespaceName.fromParts(), name);
+    }
+
+    public static Builder builder(NamespaceName namespaceName, String name) {
+        return new Builder(name, List.of(), new RecordType(namespaceName, name), NullSource.INSTANCE);
     }
 
     public static record Builder(String name, List<TypedRecordFieldNode> fields, RecordType type, Source source) {

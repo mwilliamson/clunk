@@ -24,8 +24,8 @@ public class JavaCodeGeneratorNamespaceTests {
     public void recordsInNamespaceAreCompiledToSeparateJavaCompilationUnits() {
         var node = TypedNamespaceNode
             .builder(NamespaceName.fromParts("example", "project"))
-            .addStatement(TypedRecordNode.builder("First").build())
-            .addStatement(TypedRecordNode.builder("Second").build())
+            .addStatement(TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "First").build())
+            .addStatement(TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "Second").build())
             .build();
 
         var result = JavaCodeGenerator.compileNamespace(node, JavaTargetConfig.stub(), SubtypeLookup.EMPTY);

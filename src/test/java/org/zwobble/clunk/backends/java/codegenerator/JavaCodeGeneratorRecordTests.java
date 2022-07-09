@@ -21,13 +21,12 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class JavaCodeGeneratorRecordTests {
     @Test
     public void recordIsCompiledToJavaRecord() {
-        var node = TypedRecordNode.builder("Example")
+        var node = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "Example")
             .addField(Typed.recordField("first", StringType.INSTANCE))
             .addField(Typed.recordField("second", IntType.INSTANCE))
             .build();
 
         var result = JavaCodeGenerator.compileRecord(
-            NamespaceName.fromParts("example", "project"),
             node,
             JavaCodeGeneratorContext.stub()
         );
@@ -44,7 +43,7 @@ public class JavaCodeGeneratorRecordTests {
 
     @Test
     public void whenRecordHasInterfaceAsSupertypeThenJavaRecordImplementsInterface() {
-        var node = TypedRecordNode.builder("Example").build();
+        var node = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "Example").build();
         var subtypeLookup = SubtypeLookup.fromSubtypeRelations(List.of(
             new SubtypeRelation(node.type(), new InterfaceType(NamespaceName.fromParts("a", "b"), "X")),
             new SubtypeRelation(node.type(), new InterfaceType(NamespaceName.fromParts("a", "b"), "Y"))
@@ -52,7 +51,6 @@ public class JavaCodeGeneratorRecordTests {
         var context = new JavaCodeGeneratorContext(JavaTargetConfig.stub(), subtypeLookup);
 
         var result = JavaCodeGenerator.compileRecord(
-            NamespaceName.fromParts("example", "project"),
             node,
             context
         );

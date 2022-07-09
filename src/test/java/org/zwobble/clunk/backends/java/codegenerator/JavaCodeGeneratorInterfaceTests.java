@@ -28,7 +28,6 @@ public class JavaCodeGeneratorInterfaceTests {
         var context = new JavaCodeGeneratorContext(JavaTargetConfig.stub(), subtypeLookup);
 
         var result = JavaCodeGenerator.compileInterface(
-            NamespaceName.fromParts("example", "project"),
             node,
             context
         );
@@ -36,7 +35,7 @@ public class JavaCodeGeneratorInterfaceTests {
         var string = serialiseToString(result, JavaSerialiser::serialiseOrdinaryCompilationUnit);
         assertThat(string, equalTo(
             """
-                package example.project;
+                package one.two;
                 
                 public sealed interface X permits one.two.A, one.two.B {
                 }

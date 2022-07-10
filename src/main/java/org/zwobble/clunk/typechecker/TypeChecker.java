@@ -337,6 +337,7 @@ public class TypeChecker {
         TypeCheckerContext context
     ) {
         var recordType = new RecordType(context.namespaceName().get(), node.name());
+        var newContext = context.updateType(node.name(), metaType(recordType));
 
         var typedNode = new TypedRecordNode(
             node.name(),
@@ -344,7 +345,7 @@ public class TypeChecker {
             node.source()
         );
 
-        var newContext = context.addFields(recordType, node.fields().stream()
+        newContext = newContext.addFields(recordType, node.fields().stream()
             .map(field -> typeCheckRecordField(field, context))
             .collect(Collectors.toList()));
 

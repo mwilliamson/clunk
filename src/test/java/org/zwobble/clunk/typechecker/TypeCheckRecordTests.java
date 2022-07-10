@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.ast.untyped.UntypedRecordNode;
+import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -15,6 +16,28 @@ import static org.zwobble.clunk.matchers.CastMatcher.cast;
 import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
 
 public class TypeCheckRecordTests {
+    @Test
+    public void recordTypeIsAddedToEnvironment() {
+        var untypedNode = UntypedRecordNode.builder("Example").build();
+
+        var result = TypeChecker.typeCheckNamespaceStatement(
+            untypedNode,
+            TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"))
+        );
+
+        assertThat(
+            result.context().typeOf("Example", NullSource.INSTANCE),
+            cast(
+                TypeLevelValueType.class,
+                has("value", cast(
+                    RecordType.class,
+                    has("namespaceName", equalTo(NamespaceName.fromParts("a", "b"))),
+                    has("name", equalTo("Example"))
+                ))
+            )
+        );
+    }
+
     @Test
     public void recordIsTypeChecked() {
         var untypedNode = UntypedRecordNode.builder("Example")

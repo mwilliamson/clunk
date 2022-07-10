@@ -328,6 +328,8 @@ public class PythonCodeGenerator {
                 ),
                 compileTypeLevelValue(optionType.elementType(), context)
             );
+        } else if (type instanceof RecordType recordType) {
+            return new PythonReferenceNode(recordType.name());
         } else if (type == StringType.INSTANCE) {
             return new PythonReferenceNode("str");
         } else {

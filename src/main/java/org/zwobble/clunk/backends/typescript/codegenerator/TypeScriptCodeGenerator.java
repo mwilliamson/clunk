@@ -293,6 +293,8 @@ public class TypeScriptCodeGenerator {
                 compileTypeLevelValue(optionType.elementType()),
                 new TypeScriptReferenceNode("null")
             ));
+        } else if (type instanceof RecordType recordType) {
+            return new TypeScriptReferenceNode(recordType.name());
         } else if (type == StringType.INSTANCE) {
             return new TypeScriptReferenceNode("string");
         } else {

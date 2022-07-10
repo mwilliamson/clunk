@@ -61,6 +61,16 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
     }
 
     @Test
+    public void recordTypeIsCompiledToReference() {
+        var node = Typed.typeLevelExpression(Types.recordType(NamespaceName.fromParts("a", "b"), "C"));
+
+        var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
+
+        var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
+        assertThat(string, equalTo("C"));
+    }
+
+    @Test
     public void stringTypeIsCompiledToStringType() {
         var node = Typed.typeLevelExpression(StringType.INSTANCE);
 

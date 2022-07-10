@@ -66,6 +66,17 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
     }
 
     @Test
+    public void recordTypeIsCompiledToFullyQualifiedReference() {
+        var node = Typed.typeLevelExpression(Types.recordType(NamespaceName.fromParts("a", "b"), "C"));
+        var context = JavaCodeGeneratorContext.stub();
+
+        var result = JavaCodeGenerator.compileTypeLevelExpression(node, context);
+
+        var string = serialiseToString(result, JavaSerialiser::serialiseTypeExpression);
+        assertThat(string, equalTo("a.b.C"));
+    }
+
+    @Test
     public void stringTypeIsCompiledToJavaStringType() {
         var node = Typed.typeLevelExpression(StringType.INSTANCE);
         var context = JavaCodeGeneratorContext.stub();

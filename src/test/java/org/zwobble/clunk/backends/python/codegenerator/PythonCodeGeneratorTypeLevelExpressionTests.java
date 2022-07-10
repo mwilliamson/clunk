@@ -66,6 +66,17 @@ public class PythonCodeGeneratorTypeLevelExpressionTests {
     }
 
     @Test
+    public void recordTypeIsCompiledToReference() {
+        var node = Typed.typeLevelExpression(Types.recordType(NamespaceName.fromParts("a", "b"), "C"));
+        var context = PythonCodeGeneratorContext.stub();
+
+        var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node, context);
+
+        var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
+        assertThat(string, equalTo("C"));
+    }
+
+    @Test
     public void stringTypeIsCompiledToStrType() {
         var node = Typed.typeLevelExpression(StringType.INSTANCE);
         var context = PythonCodeGeneratorContext.stub();

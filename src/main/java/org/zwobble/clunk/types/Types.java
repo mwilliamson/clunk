@@ -38,4 +38,8 @@ public class Types {
     public static InterfaceType interfaceType(NamespaceName namespaceName, String name) {
         return new InterfaceType(namespaceName, name);
     }
+
+    public static RecordType recordType(NamespaceName namespaceName, String name) {
+        return new RecordType(namespaceName, name);
+    }
 }

@@ -14,4 +14,100 @@ record Comment(
     body: List[DocumentElement],
     authorName: Option[String],
     authorInitials: Option[String],
+)
+
+record CommentReference(commentId: String) <: DocumentElement
+
+record Document(
+    children: List[DocumentElement],
+    notes: List[Note],
+    comments: List[Comment],
+)
+
+record Hyperlink(
+    href: String,
+    targetFrame: Option[String],
+    children: List[DocumentElement],
 ) <: DocumentElement
+
+record Image(
+    altText: Option[String],
+    contentType: Option[String],
+) <: DocumentElement
+
+record Note(
+    noteType: NoteType,
+    id: String,
+    body: List[DocumentElement],
+)
+
+record NoteType()
+
+record NoteReference(
+    noteType: NoteType,
+    noteId: String,
+) <: DocumentElement
+
+record NumberingLevel(
+    levelIndex: String,
+    isOrdered: Bool,
+)
+
+record NumberingStyle(
+    numId: String,
+)
+
+record Paragraph(
+    style: Option[String],
+    numbering: Option[NumberingLevel],
+    indent: ParagraphIndent,
+    children: List[DocumentElement],
+) <: DocumentElement
+
+record ParagraphIndent(
+    start: Option[String],
+    end: Option[String],
+    firstLine: Option[String],
+    hanging: Option[String],
+)
+
+record Run(
+    isBold: Bool,
+    isItalic: Bool,
+    isUnderline: Bool,
+    isStrikethrough: Bool,
+    isAllCaps: Bool,
+    isSmallCaps: Bool,
+    verticalAlignment: VerticalAlignment,
+    style: Option[String],
+    children: List[DocumentElement],
+) <: DocumentElement
+
+record Style(
+    styleId: String,
+    name: Option[String],
+)
+
+record Tab() <: DocumentElement
+
+record Table(
+    style: Option[Style],
+    children: List[DocumentElement],
+) <: DocumentElement
+
+record TableCell(
+    rowspan: Int,
+    colspan: Int,
+    children: List[DocumentElement],
+) <: DocumentElement
+
+record TableRow(
+    children: List[DocumentElement],
+    isHeader: Bool,
+) <: DocumentElement
+
+record Text(
+    value: String,
+) <: DocumentElement
+
+record VerticalAlignment()

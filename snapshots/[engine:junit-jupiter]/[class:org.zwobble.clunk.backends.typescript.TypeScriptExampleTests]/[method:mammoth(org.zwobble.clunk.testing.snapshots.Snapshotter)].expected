@@ -15,13 +15,109 @@ record Comment(
     body: List[DocumentElement],
     authorName: Option[String],
     authorInitials: Option[String],
+)
+
+record CommentReference(commentId: String) <: DocumentElement
+
+record Document(
+    children: List[DocumentElement],
+    notes: List[Note],
+    comments: List[Comment],
+)
+
+record Hyperlink(
+    href: String,
+    targetFrame: Option[String],
+    children: List[DocumentElement],
 ) <: DocumentElement
+
+record Image(
+    altText: Option[String],
+    contentType: Option[String],
+) <: DocumentElement
+
+record Note(
+    noteType: NoteType,
+    id: String,
+    body: List[DocumentElement],
+)
+
+record NoteType()
+
+record NoteReference(
+    noteType: NoteType,
+    noteId: String,
+) <: DocumentElement
+
+record NumberingLevel(
+    levelIndex: String,
+    isOrdered: Bool,
+)
+
+record NumberingStyle(
+    numId: String,
+)
+
+record Paragraph(
+    style: Option[String],
+    numbering: Option[NumberingLevel],
+    indent: ParagraphIndent,
+    children: List[DocumentElement],
+) <: DocumentElement
+
+record ParagraphIndent(
+    start: Option[String],
+    end: Option[String],
+    firstLine: Option[String],
+    hanging: Option[String],
+)
+
+record Run(
+    isBold: Bool,
+    isItalic: Bool,
+    isUnderline: Bool,
+    isStrikethrough: Bool,
+    isAllCaps: Bool,
+    isSmallCaps: Bool,
+    verticalAlignment: VerticalAlignment,
+    style: Option[String],
+    children: List[DocumentElement],
+) <: DocumentElement
+
+record Style(
+    styleId: String,
+    name: Option[String],
+)
+
+record Tab() <: DocumentElement
+
+record Table(
+    style: Option[Style],
+    children: List[DocumentElement],
+) <: DocumentElement
+
+record TableCell(
+    rowspan: Int,
+    colspan: Int,
+    children: List[DocumentElement],
+) <: DocumentElement
+
+record TableRow(
+    children: List[DocumentElement],
+    isHeader: Bool,
+) <: DocumentElement
+
+record Text(
+    value: String,
+) <: DocumentElement
+
+record VerticalAlignment()
 
 
 ==============
 
 Output path: documents.ts
-type DocumentElement = Bookmark | BreakLine | BreakPage | BreakColumn | Comment;
+type DocumentElement = Bookmark | BreakLine | BreakPage | BreakColumn | CommentReference | Hyperlink | Image | NoteReference | Paragraph | Run | Tab | Table | TableCell | TableRow | Text;
 interface Bookmark {
     readonly type: "Bookmark";
     readonly name: string;
@@ -36,11 +132,103 @@ interface BreakColumn {
     readonly type: "BreakColumn";
 }
 interface Comment {
-    readonly type: "Comment";
     readonly commentId: string;
     readonly body: (Array)<DocumentElement>;
     readonly authorName: string | null;
     readonly authorInitials: string | null;
+}
+interface CommentReference {
+    readonly type: "CommentReference";
+    readonly commentId: string;
+}
+interface Document {
+    readonly children: (Array)<DocumentElement>;
+    readonly notes: (Array)<Note>;
+    readonly comments: (Array)<Comment>;
+}
+interface Hyperlink {
+    readonly type: "Hyperlink";
+    readonly href: string;
+    readonly targetFrame: string | null;
+    readonly children: (Array)<DocumentElement>;
+}
+interface Image {
+    readonly type: "Image";
+    readonly altText: string | null;
+    readonly contentType: string | null;
+}
+interface Note {
+    readonly noteType: NoteType;
+    readonly id: string;
+    readonly body: (Array)<DocumentElement>;
+}
+interface NoteType {
+}
+interface NoteReference {
+    readonly type: "NoteReference";
+    readonly noteType: NoteType;
+    readonly noteId: string;
+}
+interface NumberingLevel {
+    readonly levelIndex: string;
+    readonly isOrdered: boolean;
+}
+interface NumberingStyle {
+    readonly numId: string;
+}
+interface Paragraph {
+    readonly type: "Paragraph";
+    readonly style: string | null;
+    readonly numbering: NumberingLevel | null;
+    readonly indent: ParagraphIndent;
+    readonly children: (Array)<DocumentElement>;
+}
+interface ParagraphIndent {
+    readonly start: string | null;
+    readonly end: string | null;
+    readonly firstLine: string | null;
+    readonly hanging: string | null;
+}
+interface Run {
+    readonly type: "Run";
+    readonly isBold: boolean;
+    readonly isItalic: boolean;
+    readonly isUnderline: boolean;
+    readonly isStrikethrough: boolean;
+    readonly isAllCaps: boolean;
+    readonly isSmallCaps: boolean;
+    readonly verticalAlignment: VerticalAlignment;
+    readonly style: string | null;
+    readonly children: (Array)<DocumentElement>;
+}
+interface Style {
+    readonly styleId: string;
+    readonly name: string | null;
+}
+interface Tab {
+    readonly type: "Tab";
+}
+interface Table {
+    readonly type: "Table";
+    readonly style: Style | null;
+    readonly children: (Array)<DocumentElement>;
+}
+interface TableCell {
+    readonly type: "TableCell";
+    readonly rowspan: number;
+    readonly colspan: number;
+    readonly children: (Array)<DocumentElement>;
+}
+interface TableRow {
+    readonly type: "TableRow";
+    readonly children: (Array)<DocumentElement>;
+    readonly isHeader: boolean;
+}
+interface Text {
+    readonly type: "Text";
+    readonly value: string;
+}
+interface VerticalAlignment {
 }
 
 

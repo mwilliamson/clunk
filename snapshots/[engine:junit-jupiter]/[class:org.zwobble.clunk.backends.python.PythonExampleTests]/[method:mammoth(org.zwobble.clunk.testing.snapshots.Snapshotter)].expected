@@ -15,7 +15,103 @@ record Comment(
     body: List[DocumentElement],
     authorName: Option[String],
     authorInitials: Option[String],
+)
+
+record CommentReference(commentId: String) <: DocumentElement
+
+record Document(
+    children: List[DocumentElement],
+    notes: List[Note],
+    comments: List[Comment],
+)
+
+record Hyperlink(
+    href: String,
+    targetFrame: Option[String],
+    children: List[DocumentElement],
 ) <: DocumentElement
+
+record Image(
+    altText: Option[String],
+    contentType: Option[String],
+) <: DocumentElement
+
+record Note(
+    noteType: NoteType,
+    id: String,
+    body: List[DocumentElement],
+)
+
+record NoteType()
+
+record NoteReference(
+    noteType: NoteType,
+    noteId: String,
+) <: DocumentElement
+
+record NumberingLevel(
+    levelIndex: String,
+    isOrdered: Bool,
+)
+
+record NumberingStyle(
+    numId: String,
+)
+
+record Paragraph(
+    style: Option[String],
+    numbering: Option[NumberingLevel],
+    indent: ParagraphIndent,
+    children: List[DocumentElement],
+) <: DocumentElement
+
+record ParagraphIndent(
+    start: Option[String],
+    end: Option[String],
+    firstLine: Option[String],
+    hanging: Option[String],
+)
+
+record Run(
+    isBold: Bool,
+    isItalic: Bool,
+    isUnderline: Bool,
+    isStrikethrough: Bool,
+    isAllCaps: Bool,
+    isSmallCaps: Bool,
+    verticalAlignment: VerticalAlignment,
+    style: Option[String],
+    children: List[DocumentElement],
+) <: DocumentElement
+
+record Style(
+    styleId: String,
+    name: Option[String],
+)
+
+record Tab() <: DocumentElement
+
+record Table(
+    style: Option[Style],
+    children: List[DocumentElement],
+) <: DocumentElement
+
+record TableCell(
+    rowspan: Int,
+    colspan: Int,
+    children: List[DocumentElement],
+) <: DocumentElement
+
+record TableRow(
+    children: List[DocumentElement],
+    isHeader: Bool,
+) <: DocumentElement
+
+record Text(
+    value: String,
+) <: DocumentElement
+
+record VerticalAlignment()
 
 
 ==============
@@ -43,6 +139,91 @@ class Comment:
     body: (typing).List[DocumentElement]
     authorName: (typing).Optional[str]
     authorInitials: (typing).Optional[str]
+@((dataclasses).dataclass)(frozen=True)
+class CommentReference:
+    commentId: str
+@((dataclasses).dataclass)(frozen=True)
+class Document:
+    children: (typing).List[DocumentElement]
+    notes: (typing).List[Note]
+    comments: (typing).List[Comment]
+@((dataclasses).dataclass)(frozen=True)
+class Hyperlink:
+    href: str
+    targetFrame: (typing).Optional[str]
+    children: (typing).List[DocumentElement]
+@((dataclasses).dataclass)(frozen=True)
+class Image:
+    altText: (typing).Optional[str]
+    contentType: (typing).Optional[str]
+@((dataclasses).dataclass)(frozen=True)
+class Note:
+    noteType: NoteType
+    id: str
+    body: (typing).List[DocumentElement]
+@((dataclasses).dataclass)(frozen=True)
+class NoteType:
+    pass
+@((dataclasses).dataclass)(frozen=True)
+class NoteReference:
+    noteType: NoteType
+    noteId: str
+@((dataclasses).dataclass)(frozen=True)
+class NumberingLevel:
+    levelIndex: str
+    isOrdered: bool
+@((dataclasses).dataclass)(frozen=True)
+class NumberingStyle:
+    numId: str
+@((dataclasses).dataclass)(frozen=True)
+class Paragraph:
+    style: (typing).Optional[str]
+    numbering: (typing).Optional[NumberingLevel]
+    indent: ParagraphIndent
+    children: (typing).List[DocumentElement]
+@((dataclasses).dataclass)(frozen=True)
+class ParagraphIndent:
+    start: (typing).Optional[str]
+    end: (typing).Optional[str]
+    firstLine: (typing).Optional[str]
+    hanging: (typing).Optional[str]
+@((dataclasses).dataclass)(frozen=True)
+class Run:
+    isBold: bool
+    isItalic: bool
+    isUnderline: bool
+    isStrikethrough: bool
+    isAllCaps: bool
+    isSmallCaps: bool
+    verticalAlignment: VerticalAlignment
+    style: (typing).Optional[str]
+    children: (typing).List[DocumentElement]
+@((dataclasses).dataclass)(frozen=True)
+class Style:
+    styleId: str
+    name: (typing).Optional[str]
+@((dataclasses).dataclass)(frozen=True)
+class Tab:
+    pass
+@((dataclasses).dataclass)(frozen=True)
+class Table:
+    style: (typing).Optional[Style]
+    children: (typing).List[DocumentElement]
+@((dataclasses).dataclass)(frozen=True)
+class TableCell:
+    rowspan: int
+    colspan: int
+    children: (typing).List[DocumentElement]
+@((dataclasses).dataclass)(frozen=True)
+class TableRow:
+    children: (typing).List[DocumentElement]
+    isHeader: bool
+@((dataclasses).dataclass)(frozen=True)
+class Text:
+    value: str
+@((dataclasses).dataclass)(frozen=True)
+class VerticalAlignment:
+    pass
 
 
 ==============

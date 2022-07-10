@@ -15,7 +15,103 @@ record Comment(
     body: List[DocumentElement],
     authorName: Option[String],
     authorInitials: Option[String],
+)
+
+record CommentReference(commentId: String) <: DocumentElement
+
+record Document(
+    children: List[DocumentElement],
+    notes: List[Note],
+    comments: List[Comment],
+)
+
+record Hyperlink(
+    href: String,
+    targetFrame: Option[String],
+    children: List[DocumentElement],
 ) <: DocumentElement
+
+record Image(
+    altText: Option[String],
+    contentType: Option[String],
+) <: DocumentElement
+
+record Note(
+    noteType: NoteType,
+    id: String,
+    body: List[DocumentElement],
+)
+
+record NoteType()
+
+record NoteReference(
+    noteType: NoteType,
+    noteId: String,
+) <: DocumentElement
+
+record NumberingLevel(
+    levelIndex: String,
+    isOrdered: Bool,
+)
+
+record NumberingStyle(
+    numId: String,
+)
+
+record Paragraph(
+    style: Option[String],
+    numbering: Option[NumberingLevel],
+    indent: ParagraphIndent,
+    children: List[DocumentElement],
+) <: DocumentElement
+
+record ParagraphIndent(
+    start: Option[String],
+    end: Option[String],
+    firstLine: Option[String],
+    hanging: Option[String],
+)
+
+record Run(
+    isBold: Bool,
+    isItalic: Bool,
+    isUnderline: Bool,
+    isStrikethrough: Bool,
+    isAllCaps: Bool,
+    isSmallCaps: Bool,
+    verticalAlignment: VerticalAlignment,
+    style: Option[String],
+    children: List[DocumentElement],
+) <: DocumentElement
+
+record Style(
+    styleId: String,
+    name: Option[String],
+)
+
+record Tab() <: DocumentElement
+
+record Table(
+    style: Option[Style],
+    children: List[DocumentElement],
+) <: DocumentElement
+
+record TableCell(
+    rowspan: Int,
+    colspan: Int,
+    children: List[DocumentElement],
+) <: DocumentElement
+
+record TableRow(
+    children: List[DocumentElement],
+    isHeader: Bool,
+) <: DocumentElement
+
+record Text(
+    value: String,
+) <: DocumentElement
+
+record VerticalAlignment()
 
 
 ==============
@@ -23,7 +119,7 @@ record Comment(
 Output path: org/zwobble/mammoth/internal/documents/DocumentElement.java
 package org.zwobble.mammoth.internal.documents;
 
-public sealed interface DocumentElement permits org.zwobble.mammoth.internal.documents.Bookmark, org.zwobble.mammoth.internal.documents.BreakLine, org.zwobble.mammoth.internal.documents.BreakPage, org.zwobble.mammoth.internal.documents.BreakColumn, org.zwobble.mammoth.internal.documents.Comment {
+public sealed interface DocumentElement permits org.zwobble.mammoth.internal.documents.Bookmark, org.zwobble.mammoth.internal.documents.BreakLine, org.zwobble.mammoth.internal.documents.BreakPage, org.zwobble.mammoth.internal.documents.BreakColumn, org.zwobble.mammoth.internal.documents.CommentReference, org.zwobble.mammoth.internal.documents.Hyperlink, org.zwobble.mammoth.internal.documents.Image, org.zwobble.mammoth.internal.documents.NoteReference, org.zwobble.mammoth.internal.documents.Paragraph, org.zwobble.mammoth.internal.documents.Run, org.zwobble.mammoth.internal.documents.Tab, org.zwobble.mammoth.internal.documents.Table, org.zwobble.mammoth.internal.documents.TableCell, org.zwobble.mammoth.internal.documents.TableRow, org.zwobble.mammoth.internal.documents.Text {
 }
 
 
@@ -64,7 +160,159 @@ public record BreakColumn() implements org.zwobble.mammoth.internal.documents.Do
 Output path: org/zwobble/mammoth/internal/documents/Comment.java
 package org.zwobble.mammoth.internal.documents;
 
-public record Comment(String commentId, java.util.List<org.zwobble.mammoth.internal.documents.DocumentElement> body, java.util.Optional<String> authorName, java.util.Optional<String> authorInitials) implements org.zwobble.mammoth.internal.documents.DocumentElement {
+public record Comment(String commentId, java.util.List<org.zwobble.mammoth.internal.documents.DocumentElement> body, java.util.Optional<String> authorName, java.util.Optional<String> authorInitials) {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/documents/CommentReference.java
+package org.zwobble.mammoth.internal.documents;
+
+public record CommentReference(String commentId) implements org.zwobble.mammoth.internal.documents.DocumentElement {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/documents/Document.java
+package org.zwobble.mammoth.internal.documents;
+
+public record Document(java.util.List<org.zwobble.mammoth.internal.documents.DocumentElement> children, java.util.List<org.zwobble.mammoth.internal.documents.Note> notes, java.util.List<org.zwobble.mammoth.internal.documents.Comment> comments) {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/documents/Hyperlink.java
+package org.zwobble.mammoth.internal.documents;
+
+public record Hyperlink(String href, java.util.Optional<String> targetFrame, java.util.List<org.zwobble.mammoth.internal.documents.DocumentElement> children) implements org.zwobble.mammoth.internal.documents.DocumentElement {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/documents/Image.java
+package org.zwobble.mammoth.internal.documents;
+
+public record Image(java.util.Optional<String> altText, java.util.Optional<String> contentType) implements org.zwobble.mammoth.internal.documents.DocumentElement {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/documents/Note.java
+package org.zwobble.mammoth.internal.documents;
+
+public record Note(org.zwobble.mammoth.internal.documents.NoteType noteType, String id, java.util.List<org.zwobble.mammoth.internal.documents.DocumentElement> body) {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/documents/NoteType.java
+package org.zwobble.mammoth.internal.documents;
+
+public record NoteType() {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/documents/NoteReference.java
+package org.zwobble.mammoth.internal.documents;
+
+public record NoteReference(org.zwobble.mammoth.internal.documents.NoteType noteType, String noteId) implements org.zwobble.mammoth.internal.documents.DocumentElement {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/documents/NumberingLevel.java
+package org.zwobble.mammoth.internal.documents;
+
+public record NumberingLevel(String levelIndex, boolean isOrdered) {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/documents/NumberingStyle.java
+package org.zwobble.mammoth.internal.documents;
+
+public record NumberingStyle(String numId) {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/documents/Paragraph.java
+package org.zwobble.mammoth.internal.documents;
+
+public record Paragraph(java.util.Optional<String> style, java.util.Optional<org.zwobble.mammoth.internal.documents.NumberingLevel> numbering, org.zwobble.mammoth.internal.documents.ParagraphIndent indent, java.util.List<org.zwobble.mammoth.internal.documents.DocumentElement> children) implements org.zwobble.mammoth.internal.documents.DocumentElement {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/documents/ParagraphIndent.java
+package org.zwobble.mammoth.internal.documents;
+
+public record ParagraphIndent(java.util.Optional<String> start, java.util.Optional<String> end, java.util.Optional<String> firstLine, java.util.Optional<String> hanging) {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/documents/Run.java
+package org.zwobble.mammoth.internal.documents;
+
+public record Run(boolean isBold, boolean isItalic, boolean isUnderline, boolean isStrikethrough, boolean isAllCaps, boolean isSmallCaps, org.zwobble.mammoth.internal.documents.VerticalAlignment verticalAlignment, java.util.Optional<String> style, java.util.List<org.zwobble.mammoth.internal.documents.DocumentElement> children) implements org.zwobble.mammoth.internal.documents.DocumentElement {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/documents/Style.java
+package org.zwobble.mammoth.internal.documents;
+
+public record Style(String styleId, java.util.Optional<String> name) {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/documents/Tab.java
+package org.zwobble.mammoth.internal.documents;
+
+public record Tab() implements org.zwobble.mammoth.internal.documents.DocumentElement {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/documents/Table.java
+package org.zwobble.mammoth.internal.documents;
+
+public record Table(java.util.Optional<org.zwobble.mammoth.internal.documents.Style> style, java.util.List<org.zwobble.mammoth.internal.documents.DocumentElement> children) implements org.zwobble.mammoth.internal.documents.DocumentElement {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/documents/TableCell.java
+package org.zwobble.mammoth.internal.documents;
+
+public record TableCell(int rowspan, int colspan, java.util.List<org.zwobble.mammoth.internal.documents.DocumentElement> children) implements org.zwobble.mammoth.internal.documents.DocumentElement {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/documents/TableRow.java
+package org.zwobble.mammoth.internal.documents;
+
+public record TableRow(java.util.List<org.zwobble.mammoth.internal.documents.DocumentElement> children, boolean isHeader) implements org.zwobble.mammoth.internal.documents.DocumentElement {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/documents/Text.java
+package org.zwobble.mammoth.internal.documents;
+
+public record Text(String value) implements org.zwobble.mammoth.internal.documents.DocumentElement {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/documents/VerticalAlignment.java
+package org.zwobble.mammoth.internal.documents;
+
+public record VerticalAlignment() {
 }
 
 ==============

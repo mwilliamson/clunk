@@ -10,13 +10,15 @@ import org.zwobble.clunk.types.RecordType;
 import org.zwobble.clunk.types.Type;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public record TypeCheckerContext(
     Optional<NamespaceName> namespaceName,
     Optional<Type> returnType,
     Map<String, Type> environment,
     Map<NamespaceName, NamespaceType> namespaceTypes,
-    Map<RecordType, List<TypedRecordFieldNode>> typeToFields,
+    Map<RecordType, Function<TypeCheckerContext, List<TypedRecordFieldNode>>> typeToFields,
     List<SubtypeRelation> subtypeRelations
 ) {
     public static final TypeCheckerContext EMPTY = new TypeCheckerContext(
@@ -83,7 +85,7 @@ public record TypeCheckerContext(
         return type;
     }
 
-    public TypeCheckerContext addFields(RecordType type, List<TypedRecordFieldNode> fields) {
+    public TypeCheckerContext addFields(RecordType type, Function<TypeCheckerContext, List<TypedRecordFieldNode>> fields) {
         var typeToFields = new HashMap<>(this.typeToFields);
         typeToFields.put(type, fields);
         return new TypeCheckerContext(namespaceName, returnType, environment, namespaceTypes, typeToFields, subtypeRelations);
@@ -96,6 +98,10 @@ public record TypeCheckerContext(
     }
 
     public FieldsLookup fieldsLookup() {
-        return new FieldsLookup(typeToFields);
+        return new FieldsLookup(typeToFields.entrySet().stream()
+            .collect(Collectors.toMap(
+                entry -> entry.getKey(),
+                entry -> entry.getValue().apply(this)
+            )));
     }
 }

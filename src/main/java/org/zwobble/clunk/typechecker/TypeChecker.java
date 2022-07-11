@@ -149,7 +149,19 @@ public class TypeChecker {
         UntypedFunctionNode node,
         TypeCheckerContext context
     ) {
-        return context;
+        // TODO: handle not a type
+        var params = node.params().stream().map(param -> (Type) typeCheckParam(param, context).type().value()).toList();
+        var typedReturnTypeNode = typeCheckTypeLevelExpressionNode(node.returnType(), context);
+        // TODO: handle not a type
+        var returnType = (Type) typedReturnTypeNode.value();
+
+        var type = new StaticFunctionType(
+            context.currentFrame().namespaceName().get(),
+            node.name(),
+            params,
+            returnType
+        );
+        return context.updateType(node.name(), type, node.source());
     }
 
     private static TypeCheckResult<TypedNamespaceStatementNode> typeCheckFunction(

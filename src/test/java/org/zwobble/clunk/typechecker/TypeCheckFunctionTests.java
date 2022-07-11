@@ -3,11 +3,14 @@ package org.zwobble.clunk.typechecker;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.ast.untyped.UntypedFunctionNode;
-import org.zwobble.clunk.types.IntType;
-import org.zwobble.clunk.types.StringType;
+import org.zwobble.clunk.sources.NullSource;
+import org.zwobble.clunk.types.*;
+
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
 
 public class TypeCheckFunctionTests {
@@ -72,5 +75,31 @@ public class TypeCheckFunctionTests {
         assertThat(result.typedNode(), isTypedFunctionNode().withBody(contains(
             isTypedReturnNode().withExpression(isTypedBoolLiteralNode(false))
         )));
+    }
+
+    @Test
+    public void functionTypeIsAddedToEnvironment() {
+        var untypedNode = UntypedFunctionNode.builder()
+            .name("f")
+            .addParam(Untyped.param("x", Untyped.staticReference("Int")))
+            .returnType(Untyped.staticReference("String"))
+            .build();
+        var context = TypeCheckerContext.stub()
+            .enterNamespace(NamespaceName.fromParts("a", "b"));
+
+        var result = TypeChecker.defineVariablesForNamespaceStatement(
+            untypedNode,
+            context
+        );
+
+        assertThat(
+            result.typeOf("f", NullSource.INSTANCE),
+            equalTo(new StaticFunctionType(
+                NamespaceName.fromParts("a", "b"),
+                "f",
+                List.of(Types.INT),
+                Types.STRING
+            ))
+        );
     }
 }

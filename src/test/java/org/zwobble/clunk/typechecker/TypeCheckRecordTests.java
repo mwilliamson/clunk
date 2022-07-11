@@ -19,10 +19,11 @@ public class TypeCheckRecordTests {
     @Test
     public void recordTypeIsAddedToEnvironment() {
         var untypedNode = UntypedRecordNode.builder("Example").build();
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
 
         var result = TypeChecker.typeCheckNamespaceStatement(
             untypedNode,
-            TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"))
+            TypeChecker.defineVariablesForNamespaceStatement(untypedNode, context)
         );
 
         assertThat(
@@ -43,10 +44,11 @@ public class TypeCheckRecordTests {
         var untypedNode = UntypedRecordNode.builder("Example")
             .addField(Untyped.recordField("x", Untyped.staticReference("String")))
             .build();
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
 
         var result = TypeChecker.typeCheckNamespaceStatement(
             untypedNode,
-            TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"))
+            TypeChecker.defineVariablesForNamespaceStatement(untypedNode, context)
         );
 
         var typedNode = (TypedRecordNode) result.typedNode();
@@ -67,12 +69,13 @@ public class TypeCheckRecordTests {
         var untypedNode = UntypedRecordNode.builder("User")
             .addSupertype(Untyped.staticReference("Person"))
             .build();
+        var context = TypeCheckerContext.stub()
+            .enterNamespace(NamespaceName.fromParts("a", "b"))
+            .updateType("Person", Types.metaType(Types.interfaceType(NamespaceName.fromParts("a", "b"), "Person")), NullSource.INSTANCE);
 
         var result = TypeChecker.typeCheckNamespaceStatement(
             untypedNode,
-            TypeCheckerContext.stub()
-                .enterNamespace(NamespaceName.fromParts("a", "b"))
-                .updateType("Person", Types.metaType(Types.interfaceType(NamespaceName.fromParts("a", "b"), "Person")), NullSource.INSTANCE)
+            TypeChecker.defineVariablesForNamespaceStatement(untypedNode, context)
         );
 
         assertThat(result.context().subtypeRelations(), containsInAnyOrder(
@@ -88,14 +91,15 @@ public class TypeCheckRecordTests {
         var untypedNode = UntypedRecordNode.builder("User")
             .addSupertype(Untyped.staticReference("Bool"))
             .build();
+        var context = TypeCheckerContext.stub()
+            .enterNamespace(NamespaceName.fromParts("a", "b"))
+            .updateType("Bool", Types.metaType(Types.BOOL), NullSource.INSTANCE);
 
         assertThrows(
             CannotExtendFinalTypeError.class,
             () -> TypeChecker.typeCheckNamespaceStatement(
                 untypedNode,
-                TypeCheckerContext.stub()
-                    .enterNamespace(NamespaceName.fromParts("a", "b"))
-                    .updateType("Bool", Types.metaType(Types.BOOL), NullSource.INSTANCE)
+                TypeChecker.defineVariablesForNamespaceStatement(untypedNode, context)
             )
         );
     }
@@ -105,14 +109,15 @@ public class TypeCheckRecordTests {
         var untypedNode = UntypedRecordNode.builder("User")
             .addSupertype(Untyped.staticReference("Person"))
             .build();
+        var context = TypeCheckerContext.stub()
+            .enterNamespace(NamespaceName.fromParts("a", "b"))
+            .updateType("Person", Types.metaType(Types.interfaceType(NamespaceName.fromParts("d", "e"), "Person")), NullSource.INSTANCE);
 
         assertThrows(
             CannotExtendSealedInterfaceFromDifferentNamespaceError.class,
             () -> TypeChecker.typeCheckNamespaceStatement(
                 untypedNode,
-                TypeCheckerContext.stub()
-                    .enterNamespace(NamespaceName.fromParts("a", "b"))
-                    .updateType("Person", Types.metaType(Types.interfaceType(NamespaceName.fromParts("d", "e"), "Person")), NullSource.INSTANCE)
+                TypeChecker.defineVariablesForNamespaceStatement(untypedNode, context)
             )
         );
     }

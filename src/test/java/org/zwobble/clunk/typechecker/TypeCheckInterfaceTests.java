@@ -17,10 +17,11 @@ public class TypeCheckInterfaceTests {
     @Test
     public void interfaceTypeIsAddedToEnvironment() {
         var untypedNode = Untyped.interface_("DocumentElement");
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
 
         var result = TypeChecker.typeCheckNamespaceStatement(
             untypedNode,
-            TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"))
+            TypeChecker.defineVariablesForNamespaceStatement(untypedNode, context)
         );
 
         assertThat(
@@ -39,10 +40,11 @@ public class TypeCheckInterfaceTests {
     @Test
     public void canTypeCheckedEmptyInterface() {
         var untypedNode = Untyped.interface_("DocumentElement");
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
 
         var result = TypeChecker.typeCheckNamespaceStatement(
             untypedNode,
-            TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"))
+            TypeChecker.defineVariablesForNamespaceStatement(untypedNode, context)
         );
 
         assertThat(result.typedNode(), cast(

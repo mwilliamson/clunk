@@ -1,10 +1,13 @@
 package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.ast.typed.TypedFunctionNode;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
+import org.zwobble.clunk.ast.untyped.UntypedFunctionNode;
 import org.zwobble.clunk.ast.untyped.UntypedNamespaceNode;
 import org.zwobble.clunk.ast.untyped.UntypedRecordNode;
+import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.NamespaceType;
 import org.zwobble.clunk.types.Types;
@@ -81,5 +84,22 @@ public class TypeCheckNamespaceTests {
         var result = assertThrows(VariableAlreadyDefinedError.class, () -> TypeChecker.typeCheckNamespace(untypedNode, TypeCheckerContext.stub()));
 
         assertThat(result.variableName(), equalTo("X"));
+    }
+
+    @Test
+    public void whenVariableShadowsBuiltinThenEarlierReferencesUsesVariable() {
+        var untypedNode = UntypedNamespaceNode
+            .builder(NamespaceName.fromParts("example", "project"))
+            .addStatement(UntypedFunctionNode.builder().returnType(Untyped.staticReference("X")).build())
+            .addStatement(UntypedRecordNode.builder("X").build())
+            .build();
+        var context = TypeCheckerContext.stub()
+            .updateType("X", Types.metaType(Types.INT), NullSource.INSTANCE);
+
+        var result = TypeChecker.typeCheckNamespace(untypedNode, context);
+
+        var typedFunctionNode = (TypedFunctionNode) result.typedNode().statements().get(0);
+        var typedRecordNode = (TypedRecordNode) result.typedNode().statements().get(1);
+        assertThat(typedFunctionNode.returnType().value(), equalTo(typedRecordNode.type()));
     }
 }

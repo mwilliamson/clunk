@@ -168,18 +168,19 @@ public class TypeChecker {
         UntypedFunctionNode node,
         TypeCheckerContext context
     ) {
+        var functionType = (StaticFunctionType) context.typeOf(node.name(), node.source());
+
+        var typedParamNodes = node.params().stream().map(param -> typeCheckParam(param, context)).toList();
         var typedReturnTypeNode = typeCheckTypeLevelExpressionNode(node.returnType(), context);
-        // TODO: handle not a type
-        var returnType = (Type) typedReturnTypeNode.value();
 
         var typedStatements = typeCheckFunctionStatements(
             node.body(),
-            context.enterFunction(returnType)
+            context.enterFunction(functionType.returnType())
         );
 
         var typedNode = new TypedFunctionNode(
             node.name(),
-            node.params().stream().map(param -> typeCheckParam(param, context)).toList(),
+            typedParamNodes,
             typedReturnTypeNode,
             typedStatements,
             node.source()

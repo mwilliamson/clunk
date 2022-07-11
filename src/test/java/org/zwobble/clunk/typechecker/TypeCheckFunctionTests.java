@@ -22,7 +22,7 @@ public class TypeCheckFunctionTests {
 
         var result = TypeChecker.typeCheckNamespaceStatement(
             untypedNode,
-            TypeCheckerContext.stub()
+            TypeChecker.defineVariablesForNamespaceStatement(untypedNode, TypeCheckerContext.stub())
         );
 
         assertThat(result.typedNode(), isTypedFunctionNode().withName("f"));
@@ -37,7 +37,7 @@ public class TypeCheckFunctionTests {
 
         var result = TypeChecker.typeCheckNamespaceStatement(
             untypedNode,
-            TypeCheckerContext.stub()
+            TypeChecker.defineVariablesForNamespaceStatement(untypedNode, TypeCheckerContext.stub())
         );
 
         assertThat(result.typedNode(), isTypedFunctionNode().withParams(contains(
@@ -54,7 +54,7 @@ public class TypeCheckFunctionTests {
 
         var result = TypeChecker.typeCheckNamespaceStatement(
             untypedNode,
-            TypeCheckerContext.stub()
+            TypeChecker.defineVariablesForNamespaceStatement(untypedNode, TypeCheckerContext.stub())
         );
 
         assertThat(result.typedNode(), isTypedFunctionNode().withReturnType(IntType.INSTANCE));
@@ -69,7 +69,7 @@ public class TypeCheckFunctionTests {
 
         var result = TypeChecker.typeCheckNamespaceStatement(
             untypedNode,
-            TypeCheckerContext.stub()
+            TypeChecker.defineVariablesForNamespaceStatement(untypedNode, TypeCheckerContext.stub())
         );
 
         assertThat(result.typedNode(), isTypedFunctionNode().withBody(contains(

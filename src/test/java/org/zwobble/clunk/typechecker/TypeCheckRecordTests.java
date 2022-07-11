@@ -72,7 +72,7 @@ public class TypeCheckRecordTests {
             untypedNode,
             TypeCheckerContext.stub()
                 .enterNamespace(NamespaceName.fromParts("a", "b"))
-                .updateType("Person", Types.metaType(Types.interfaceType(NamespaceName.fromParts("a", "b"), "Person")))
+                .updateType("Person", Types.metaType(Types.interfaceType(NamespaceName.fromParts("a", "b"), "Person")), NullSource.INSTANCE)
         );
 
         assertThat(result.context().subtypeRelations(), containsInAnyOrder(
@@ -95,7 +95,7 @@ public class TypeCheckRecordTests {
                 untypedNode,
                 TypeCheckerContext.stub()
                     .enterNamespace(NamespaceName.fromParts("a", "b"))
-                    .updateType("Bool", Types.metaType(Types.BOOL))
+                    .updateType("Bool", Types.metaType(Types.BOOL), NullSource.INSTANCE)
             )
         );
     }
@@ -112,7 +112,7 @@ public class TypeCheckRecordTests {
                 untypedNode,
                 TypeCheckerContext.stub()
                     .enterNamespace(NamespaceName.fromParts("a", "b"))
-                    .updateType("Person", Types.metaType(Types.interfaceType(NamespaceName.fromParts("d", "e"), "Person")))
+                    .updateType("Person", Types.metaType(Types.interfaceType(NamespaceName.fromParts("d", "e"), "Person")), NullSource.INSTANCE)
             )
         );
     }

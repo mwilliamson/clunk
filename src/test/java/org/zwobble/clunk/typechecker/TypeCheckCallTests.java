@@ -2,6 +2,7 @@ package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.untyped.Untyped;
+import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.*;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class TypeCheckCallTests {
             Types.INT
         );
         var context = TypeCheckerContext.stub()
-            .updateType("abs", functionType);
+            .updateType("abs", functionType, NullSource.INSTANCE);
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 
@@ -50,7 +51,7 @@ public class TypeCheckCallTests {
             Types.INT
         );
         var context = TypeCheckerContext.stub()
-            .updateType("abs", functionType);
+            .updateType("abs", functionType, NullSource.INSTANCE);
 
         var error = assertThrows(UnexpectedTypeError.class, () -> TypeChecker.typeCheckExpression(untypedNode, context));
 
@@ -71,7 +72,7 @@ public class TypeCheckCallTests {
             Types.INT
         );
         var context = TypeCheckerContext.stub()
-            .updateType("abs", functionType);
+            .updateType("abs", functionType, NullSource.INSTANCE);
 
         var error = assertThrows(WrongNumberOfArgumentsError.class, () -> TypeChecker.typeCheckExpression(untypedNode, context));
 
@@ -92,7 +93,7 @@ public class TypeCheckCallTests {
             Types.INT
         );
         var context = TypeCheckerContext.stub()
-            .updateType("abs", functionType);
+            .updateType("abs", functionType, NullSource.INSTANCE);
 
         var error = assertThrows(WrongNumberOfArgumentsError.class, () -> TypeChecker.typeCheckExpression(untypedNode, context));
 

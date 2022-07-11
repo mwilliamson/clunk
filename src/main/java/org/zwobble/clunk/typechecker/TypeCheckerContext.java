@@ -79,9 +79,9 @@ public record TypeCheckerContext(
         return enter(StackFrame.builtins(environment));
     }
 
-    public TypeCheckerContext updateType(String name, Type type) {
+    public TypeCheckerContext updateType(String name, Type type, Source source) {
         return new TypeCheckerContext(
-            Lists.updateLast(stack, frame -> frame.updateType(name, type)),
+            Lists.updateLast(stack, frame -> frame.updateType(name, type, source)),
             namespaceTypes,
             typeToFields,
             subtypeRelations

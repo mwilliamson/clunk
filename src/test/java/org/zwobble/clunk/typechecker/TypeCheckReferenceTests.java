@@ -2,6 +2,7 @@ package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.untyped.Untyped;
+import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.IntType;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -12,7 +13,7 @@ public class TypeCheckReferenceTests {
     public void referenceHasTypeOfNameInEnvironment() {
         var untypedNode = Untyped.reference("x");
         var context = TypeCheckerContext.stub()
-            .updateType("x", IntType.INSTANCE);
+            .updateType("x", IntType.INSTANCE, NullSource.INSTANCE);
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 

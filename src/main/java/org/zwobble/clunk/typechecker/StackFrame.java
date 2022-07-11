@@ -1,5 +1,6 @@
 package org.zwobble.clunk.typechecker;
 
+import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.Type;
 
@@ -48,7 +49,11 @@ public record StackFrame(
         );
     }
 
-    public StackFrame updateType(String name, Type type) {
+    public StackFrame updateType(String name, Type type, Source source) {
+        if (this.environment.containsKey(name)) {
+            throw new VariableAlreadyDefinedError(name, source);
+        }
+
         var environment = new HashMap<>(this.environment);
         environment.put(name, type);
         return new StackFrame(namespaceName, returnType, environment);

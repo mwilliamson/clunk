@@ -250,7 +250,7 @@ public class TypeChecker {
                 );
             }
 
-            var newContext = context.updateType(fieldName, importType);
+            var newContext = context.updateType(fieldName, importType, import_.source());
 
             var typedNode = new TypedImportNode(import_.namespaceName(), import_.fieldName(), importType, import_.source());
 
@@ -266,7 +266,7 @@ public class TypeChecker {
 
         var typedNode = new TypedInterfaceNode(node.name(), interfaceType, node.source());
 
-        context = context.updateType(node.name(), metaType(interfaceType));
+        context = context.updateType(node.name(), metaType(interfaceType), node.source());
 
         return new TypeCheckResult<>(typedNode, context);
     }
@@ -337,7 +337,7 @@ public class TypeChecker {
         TypeCheckerContext context
     ) {
         var recordType = new RecordType(context.currentFrame().namespaceName().get(), node.name());
-        var newContext = context.updateType(node.name(), metaType(recordType));
+        var newContext = context.updateType(node.name(), metaType(recordType), node.source());
 
         var typedNode = new TypedRecordNode(
             node.name(),
@@ -465,7 +465,7 @@ public class TypeChecker {
             typedExpression,
             node.source()
         );
-        var updatedContext = context.updateType(node.name(), typedExpression.type());
+        var updatedContext = context.updateType(node.name(), typedExpression.type(), node.source());
         return new TypeCheckResult<>(typedNode, updatedContext);
     }
 

@@ -14,6 +14,7 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
 import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
 
@@ -67,5 +68,18 @@ public class TypeCheckNamespaceTests {
                 has("type", isTypedTypeLevelExpressionNode(Types.INT))
             )
         ));
+    }
+
+    @Test
+    public void cannotDefineMultipleTypesWithSameName() {
+        var untypedNode = UntypedNamespaceNode
+            .builder(NamespaceName.fromParts("example", "project"))
+            .addStatement(UntypedRecordNode.builder("X").build())
+            .addStatement(UntypedRecordNode.builder("X").build())
+            .build();
+
+        var result = assertThrows(VariableAlreadyDefinedError.class, () -> TypeChecker.typeCheckNamespace(untypedNode, TypeCheckerContext.stub()));
+
+        assertThat(result.variableName(), equalTo("X"));
     }
 }

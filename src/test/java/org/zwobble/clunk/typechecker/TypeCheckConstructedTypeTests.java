@@ -2,7 +2,6 @@ package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.untyped.Untyped;
-import org.zwobble.clunk.types.ListTypeConstructor;
 import org.zwobble.clunk.types.TypeConstructorTypeSet;
 import org.zwobble.clunk.types.Types;
 
@@ -11,7 +10,6 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.zwobble.clunk.types.Types.typeConstructorType;
 
 public class TypeCheckConstructedTypeTests {
     @Test
@@ -36,8 +34,7 @@ public class TypeCheckConstructedTypeTests {
             Untyped.staticReference("List"),
             List.of(Untyped.staticReference("Int"))
         );
-        var context = TypeCheckerContext.stub()
-            .updateType("List", typeConstructorType(ListTypeConstructor.INSTANCE));
+        var context = TypeCheckerContext.stub();
 
         var result = TypeChecker.typeCheckTypeLevelExpressionNode(untypedNode, context);
 

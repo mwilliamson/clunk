@@ -262,7 +262,7 @@ public class TypeChecker {
 
     private static TypeCheckResult<TypedNamespaceStatementNode> typeCheckInterface(UntypedInterfaceNode node, TypeCheckerContext context) {
         // TODO: handle missing namespace name
-        var interfaceType = new InterfaceType(context.namespaceName().get(), node.name());
+        var interfaceType = new InterfaceType(context.currentFrame().namespaceName().get(), node.name());
 
         var typedNode = new TypedInterfaceNode(node.name(), interfaceType, node.source());
 
@@ -336,7 +336,7 @@ public class TypeChecker {
         UntypedRecordNode node,
         TypeCheckerContext context
     ) {
-        var recordType = new RecordType(context.namespaceName().get(), node.name());
+        var recordType = new RecordType(context.currentFrame().namespaceName().get(), node.name());
         var newContext = context.updateType(node.name(), metaType(recordType));
 
         var typedNode = new TypedRecordNode(
@@ -354,7 +354,7 @@ public class TypeChecker {
                 var typedSupertypeNode = typeCheckTypeLevelExpressionNode(untypedSupertypeNode, context);
                 // TODO: handle non-type type-level values
                 if (typedSupertypeNode.value() instanceof InterfaceType supertype) {
-                    if (!supertype.namespaceName().equals(context.namespaceName().get())) {
+                    if (!supertype.namespaceName().equals(recordType.namespaceName())) {
                         throw new CannotExtendSealedInterfaceFromDifferentNamespaceError(untypedSupertypeNode.source());
                     }
                 } else {

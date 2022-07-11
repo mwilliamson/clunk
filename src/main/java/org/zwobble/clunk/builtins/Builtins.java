@@ -35,5 +35,5 @@ public class Builtins {
                 Types.UNIT
             ))
         )))
-        .withEnvironment(Builtins.ENVIRONMENT);
+        .withBuiltins(Builtins.ENVIRONMENT);
 }

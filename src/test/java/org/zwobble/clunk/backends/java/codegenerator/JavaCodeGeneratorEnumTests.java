@@ -15,7 +15,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class JavaCodeGeneratorEnumTests {
     @Test
-    public void recordIsCompiledToJavaRecord() {
+    public void enumIsCompiledToEnum() {
         var enumType = new EnumType(NamespaceName.fromParts("example", "project"), "NoteType", List.of("FOOTNOTE"));
         var node = new TypedEnumNode(enumType, NullSource.INSTANCE);
         var context = JavaCodeGeneratorContext.stub();

@@ -5,6 +5,8 @@ import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser;
 import org.zwobble.clunk.types.*;
 
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.util.Serialisation.serialiseToString;
@@ -18,6 +20,16 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
 
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
         assertThat(string, equalTo("boolean"));
+    }
+
+    @Test
+    public void enumTypeIsCompiledToReference() {
+        var node = Typed.typeLevelExpression(Types.enumType(NamespaceName.fromParts("a", "b"), "C", List.of()));
+
+        var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
+
+        var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
+        assertThat(string, equalTo("C"));
     }
 
     @Test

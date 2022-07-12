@@ -291,6 +291,8 @@ public class TypeScriptCodeGenerator {
     private static TypeScriptExpressionNode compileTypeLevelValue(TypeLevelValue type) {
         if (type == BoolType.INSTANCE) {
             return new TypeScriptReferenceNode("boolean");
+        } else if (type instanceof EnumType enumType) {
+            return new TypeScriptReferenceNode(enumType.name());
         } else if (type == IntType.INSTANCE) {
             return new TypeScriptReferenceNode("number");
         } else if (type instanceof InterfaceType interfaceType) {

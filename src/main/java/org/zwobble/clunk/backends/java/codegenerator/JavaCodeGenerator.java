@@ -81,6 +81,16 @@ public class JavaCodeGenerator {
         }
     }
 
+    public static JavaOrdinaryCompilationUnitNode compileEnum(TypedEnumNode node, JavaCodeGeneratorContext context) {
+        var packageDeclaration = namespaceToPackage(node.type().namespaceName(), context);
+        var typeDeclaration = new JavaEnumDeclarationNode(
+            node.type().name(),
+            node.type().members()
+        );
+        return new JavaOrdinaryCompilationUnitNode(packageDeclaration, List.of(), typeDeclaration);
+    }
+
+
     public static JavaExpressionNode compileExpression(TypedExpressionNode node, JavaCodeGeneratorContext context) {
         return node.accept(new TypedExpressionNode.Visitor<JavaExpressionNode>() {
             @Override
@@ -205,7 +215,8 @@ public class JavaCodeGenerator {
             statement.accept(new TypedNamespaceStatementNode.Visitor<Void>() {
                 @Override
                 public Void visit(TypedEnumNode node) {
-                    throw new UnsupportedOperationException("TODO");
+                    compilationUnits.add(compileEnum(node, context));
+                    return null;
                 }
 
                 @Override

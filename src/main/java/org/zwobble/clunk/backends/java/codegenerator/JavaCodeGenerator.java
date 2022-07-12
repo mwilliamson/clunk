@@ -326,6 +326,9 @@ public class JavaCodeGenerator {
             return new JavaTypeVariableReferenceNode("int");
         } else if (value == StringType.INSTANCE) {
             return new JavaTypeVariableReferenceNode("String");
+        } else if (value instanceof EnumType enumType) {
+            var packageName = namespaceToPackage(enumType.namespaceName(), context);
+            return new JavaFullyQualifiedTypeReferenceNode(packageName, enumType.name());
         } else if (value instanceof InterfaceType interfaceType) {
             var packageName = namespaceToPackage(interfaceType.namespaceName(), context);
             return new JavaFullyQualifiedTypeReferenceNode(packageName, interfaceType.name());

@@ -1,5 +1,7 @@
 package org.zwobble.clunk.types;
 
+import java.util.List;
+
 public class Types {
     private Types() {
 
@@ -33,6 +35,10 @@ public class Types {
 
     public static TypeLevelValueType typeConstructorType(TypeConstructor typeConstructor) {
         return new TypeLevelValueType(typeConstructor);
+    }
+
+    public static Type enumType(NamespaceName namespaceName, String name, List<String> members) {
+        return new EnumType(namespaceName, name, members);
     }
 
     public static InterfaceType interfaceType(NamespaceName namespaceName, String name) {

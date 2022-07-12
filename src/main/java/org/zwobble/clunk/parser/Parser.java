@@ -30,6 +30,20 @@ public class Parser {
         return body;
     }
 
+    private UntypedNamespaceStatementNode parseEnum(TokenIterator<TokenType> tokens) {
+        var source = source(tokens);
+        tokens.skip(TokenType.KEYWORD_ENUM);
+        var name = tokens.nextValue(TokenType.IDENTIFIER);
+        tokens.skip(TokenType.SYMBOL_BRACE_OPEN);
+        var members = parseMany(
+            () -> tokens.isNext(TokenType.SYMBOL_BRACE_CLOSE),
+            () -> tokens.nextValue(TokenType.IDENTIFIER),
+            () -> tokens.trySkip(TokenType.SYMBOL_COMMA)
+        );
+        tokens.skip(TokenType.SYMBOL_BRACE_CLOSE);
+        return new UntypedEnumNode(name, members, source);
+    }
+
     public UntypedExpressionNode parseExpression(TokenIterator<TokenType> tokens) {
         var expression = parsePrimaryExpression(tokens);
 
@@ -255,7 +269,9 @@ public class Parser {
     }
 
     public UntypedNamespaceStatementNode parseNamespaceStatement(TokenIterator<TokenType> tokens) {
-        if (tokens.isNext(TokenType.KEYWORD_FUN)) {
+        if (tokens.isNext(TokenType.KEYWORD_ENUM)) {
+            return parseEnum(tokens);
+        } else if (tokens.isNext(TokenType.KEYWORD_FUN)) {
             return parseFunction(tokens);
         } else if (tokens.isNext(TokenType.KEYWORD_SEALED)) {
             return parseInterface(tokens);

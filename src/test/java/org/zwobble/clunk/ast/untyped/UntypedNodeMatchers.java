@@ -3,6 +3,7 @@ package org.zwobble.clunk.ast.untyped;
 import org.hamcrest.Matcher;
 import org.zwobble.clunk.types.NamespaceName;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +28,17 @@ public class UntypedNodeMatchers {
         return allOf(
             has("condition", condition),
             has("body", body)
+        );
+    }
+
+    public static Matcher<UntypedNamespaceStatementNode> isUntypedEnumNode(
+        Matcher<String> name,
+        Matcher<? extends Iterable<? extends String>> members
+    ) {
+        return cast(
+            UntypedEnumNode.class,
+            has("name", name),
+            has("members", members)
         );
     }
 

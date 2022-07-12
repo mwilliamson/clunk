@@ -344,6 +344,11 @@ public class TypeChecker {
     ) {
         return node.accept(new UntypedNamespaceStatementNode.Visitor<TypeCheckerContext>() {
             @Override
+            public TypeCheckerContext visit(UntypedEnumNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public TypeCheckerContext visit(UntypedFunctionNode node) {
                 return defineVariablesForFunction(node, context);
             }
@@ -370,6 +375,11 @@ public class TypeChecker {
         TypeCheckerContext context
     ) {
         return node.accept(new UntypedNamespaceStatementNode.Visitor<TypeCheckResult<TypedNamespaceStatementNode>>() {
+            @Override
+            public TypeCheckResult<TypedNamespaceStatementNode> visit(UntypedEnumNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
             @Override
             public TypeCheckResult<TypedNamespaceStatementNode> visit(UntypedFunctionNode node) {
                 return typeCheckFunction(node, context);

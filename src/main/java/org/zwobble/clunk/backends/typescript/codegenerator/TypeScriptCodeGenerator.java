@@ -75,6 +75,13 @@ public class TypeScriptCodeGenerator {
         }
     }
 
+    private static TypeScriptStatementNode compileEnum(TypedEnumNode node, TypeScriptCodeGeneratorContext context) {
+        return new TypeScriptEnumDeclarationNode(
+            node.type().name(),
+            node.type().members()
+        );
+    }
+
     public static TypeScriptExpressionNode compileExpression(TypedExpressionNode node, TypeScriptCodeGeneratorContext context) {
         return node.accept(new TypedExpressionNode.Visitor<TypeScriptExpressionNode>() {
             @Override
@@ -206,7 +213,7 @@ public class TypeScriptCodeGenerator {
         return node.accept(new TypedNamespaceStatementNode.Visitor<TypeScriptStatementNode>() {
             @Override
             public TypeScriptStatementNode visit(TypedEnumNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileEnum(node, context);
             }
 
             @Override

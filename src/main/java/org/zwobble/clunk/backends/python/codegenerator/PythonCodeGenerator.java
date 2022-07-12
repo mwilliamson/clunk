@@ -231,6 +231,11 @@ public class PythonCodeGenerator {
     ) {
         return node.accept(new TypedNamespaceStatementNode.Visitor<PythonStatementNode>() {
             @Override
+            public PythonStatementNode visit(TypedEnumNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public PythonStatementNode visit(TypedFunctionNode node) {
                 return compileFunction(node, context);
             }

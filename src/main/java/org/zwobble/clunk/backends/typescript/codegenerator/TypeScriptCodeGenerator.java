@@ -205,6 +205,11 @@ public class TypeScriptCodeGenerator {
     ) {
         return node.accept(new TypedNamespaceStatementNode.Visitor<TypeScriptStatementNode>() {
             @Override
+            public TypeScriptStatementNode visit(TypedEnumNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public TypeScriptStatementNode visit(TypedFunctionNode node) {
                 return compileFunction(node, context);
             }

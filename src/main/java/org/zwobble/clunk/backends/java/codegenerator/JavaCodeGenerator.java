@@ -204,6 +204,11 @@ public class JavaCodeGenerator {
         for (var statement : node.statements()) {
             statement.accept(new TypedNamespaceStatementNode.Visitor<Void>() {
                 @Override
+                public Void visit(TypedEnumNode node) {
+                    throw new UnsupportedOperationException("TODO");
+                }
+
+                @Override
                 public Void visit(TypedFunctionNode functionNode) {
                     functions.add(compileFunction(functionNode, context));
                     return null;

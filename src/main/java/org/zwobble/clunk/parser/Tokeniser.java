@@ -14,6 +14,7 @@ public class Tokeniser {
         TokenType.UNKNOWN,
         List.of(
             RegexTokeniser.rule(TokenType.KEYWORD_ELSE, "else"),
+            RegexTokeniser.rule(TokenType.KEYWORD_ENUM, "enum"),
             RegexTokeniser.rule(TokenType.KEYWORD_FALSE, "false"),
             RegexTokeniser.rule(TokenType.KEYWORD_FUN, "fun"),
             RegexTokeniser.rule(TokenType.KEYWORD_IF, "if"),

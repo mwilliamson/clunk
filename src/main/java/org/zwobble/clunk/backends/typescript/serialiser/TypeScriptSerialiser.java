@@ -51,6 +51,25 @@ public class TypeScriptSerialiser {
         builder.append(">");
     }
 
+    private static void serialiseEnumDeclaration(
+        TypeScriptEnumDeclarationNode node,
+        CodeBuilder builder
+    ) {
+        builder.append("enum ");
+        builder.append(node.name());
+        builder.append(" {");
+        builder.newLine();
+        builder.indent();
+        for (var member : node.members()) {
+            builder.append(member);
+            builder.append(",");
+            builder.newLine();
+        }
+        builder.dedent();
+        builder.append("}");
+        builder.newLine();
+    }
+
     public static void serialiseExpression(TypeScriptExpressionNode node, CodeBuilder builder) {
         node.accept(new TypeScriptExpressionNode.Visitor<Void>() {
             @Override
@@ -239,6 +258,12 @@ public class TypeScriptSerialiser {
 
     public static void serialiseStatement(TypeScriptStatementNode node, CodeBuilder builder) {
         node.accept(new TypeScriptStatementNode.Visitor<Void>() {
+            @Override
+            public Void visit(TypeScriptEnumDeclarationNode node) {
+                serialiseEnumDeclaration(node, builder);
+                return null;
+            }
+
             @Override
             public Void visit(TypeScriptExpressionStatementNode node) {
                 serialiseExpressionStatement(node, builder);

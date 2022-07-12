@@ -310,7 +310,15 @@ public class TypeChecker {
         }
 
         for (var statement : node.statements()) {
-            context = defineVariablesForNamespaceStatement(statement, context);
+            if (statement.isTypeDefinition()) {
+                context = defineVariablesForNamespaceStatement(statement, context);
+            }
+        }
+
+        for (var statement : node.statements()) {
+            if (!statement.isTypeDefinition()) {
+                context = defineVariablesForNamespaceStatement(statement, context);
+            }
         }
 
         var typedBody = new ArrayList<TypedNamespaceStatementNode>();

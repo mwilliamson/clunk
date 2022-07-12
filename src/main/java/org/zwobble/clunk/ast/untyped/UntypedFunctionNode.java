@@ -14,6 +14,11 @@ public record UntypedFunctionNode(
     Source source
 ) implements UntypedNamespaceStatementNode {
     @Override
+    public boolean isTypeDefinition() {
+        return false;
+    }
+
+    @Override
     public <T> T accept(Visitor<T> visitor) {
         return visitor.visit(this);
     }

@@ -311,6 +311,8 @@ public class PythonCodeGenerator {
     private PythonExpressionNode compileTypeLevelValue(TypeLevelValue type, PythonCodeGeneratorContext context) {
         if (type == BoolType.INSTANCE) {
             return new PythonReferenceNode("bool");
+        } else if (type instanceof EnumType enumType) {
+            return new PythonReferenceNode(enumType.name());
         } else if (type == IntType.INSTANCE) {
             return new PythonReferenceNode("int");
         } else if (type instanceof InterfaceType interfaceType) {

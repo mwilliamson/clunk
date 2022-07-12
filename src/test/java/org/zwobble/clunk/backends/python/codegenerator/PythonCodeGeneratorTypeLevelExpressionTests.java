@@ -5,6 +5,8 @@ import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.backends.python.serialiser.PythonSerialiser;
 import org.zwobble.clunk.types.*;
 
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.util.Serialisation.serialiseToString;
@@ -19,6 +21,17 @@ public class PythonCodeGeneratorTypeLevelExpressionTests {
 
         var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
         assertThat(string, equalTo("bool"));
+    }
+
+    @Test
+    public void enumTypeIsCompiledToReference() {
+        var node = Typed.typeLevelExpression(Types.enumType(NamespaceName.fromParts("a", "b"), "C", List.of()));
+        var context = PythonCodeGeneratorContext.stub();
+
+        var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node, context);
+
+        var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
+        assertThat(string, equalTo("C"));
     }
 
     @Test

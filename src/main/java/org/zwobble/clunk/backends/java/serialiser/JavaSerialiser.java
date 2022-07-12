@@ -78,6 +78,24 @@ public class JavaSerialiser {
         });
     }
 
+    private static void serialiseEnumDeclaration(JavaEnumDeclarationNode node, CodeBuilder builder) {
+        builder.append("public enum ");
+        builder.append(node.name());
+        builder.append(" {");
+        builder.indent();
+        forEachInterspersed(
+            node.members(),
+            member -> {
+                builder.newLine();
+                builder.append(member);
+            },
+            () -> builder.append(",")
+        );
+        builder.dedent();
+        builder.newLine();
+        builder.append("}");
+    }
+
     public static void serialiseExpression(JavaExpressionNode node, CodeBuilder builder) {
         node.accept(new JavaExpressionNode.Visitor<Void>() {
             @Override
@@ -344,6 +362,12 @@ public class JavaSerialiser {
             @Override
             public Void visit(JavaClassDeclarationNode node) {
                 serialiseClassDeclaration(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(JavaEnumDeclarationNode node) {
+                serialiseEnumDeclaration(node, builder);
                 return null;
             }
 

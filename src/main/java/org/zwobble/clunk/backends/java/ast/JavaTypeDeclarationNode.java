@@ -6,6 +6,7 @@ public interface JavaTypeDeclarationNode extends JavaNode {
 
     interface Visitor<T> {
         T visit(JavaClassDeclarationNode node);
+        T visit(JavaEnumDeclarationNode node);
         T visit(JavaInterfaceDeclarationNode node);
         T visit(JavaRecordDeclarationNode node);
     }

@@ -99,6 +99,23 @@ public class TypeChecker {
         );
     }
 
+    private static TypeCheckerContext defineVariablesForEnum(
+        UntypedEnumNode node,
+        TypeCheckerContext context
+    ) {
+        var type = new EnumType(context.currentFrame().namespaceName().get(), node.name(), node.members());
+        return context.updateType(node.name(), Types.metaType(type), node.source());
+    }
+
+    private static TypeCheckResult<TypedNamespaceStatementNode> typeCheckEnum(
+        UntypedEnumNode node,
+        TypeCheckerContext context
+    ) {
+        var type = (EnumType) resolveTypeLevelValue(node.name(), node.source(), context);
+        var typedNode = new TypedEnumNode(type, node.source());
+        return new TypeCheckResult<>(typedNode, context);
+    }
+
     public static TypedExpressionNode typeCheckExpression(
         UntypedExpressionNode node,
         TypeCheckerContext context
@@ -345,7 +362,7 @@ public class TypeChecker {
         return node.accept(new UntypedNamespaceStatementNode.Visitor<TypeCheckerContext>() {
             @Override
             public TypeCheckerContext visit(UntypedEnumNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return defineVariablesForEnum(node, context);
             }
 
             @Override
@@ -377,7 +394,7 @@ public class TypeChecker {
         return node.accept(new UntypedNamespaceStatementNode.Visitor<TypeCheckResult<TypedNamespaceStatementNode>>() {
             @Override
             public TypeCheckResult<TypedNamespaceStatementNode> visit(UntypedEnumNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return typeCheckEnum(node, context);
             }
 
             @Override

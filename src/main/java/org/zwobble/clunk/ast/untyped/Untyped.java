@@ -36,6 +36,10 @@ public class Untyped {
         return new UntypedConstructedTypeNode(receiver, args, NullSource.INSTANCE);
     }
 
+    public static UntypedEnumNode enum_(String name) {
+        return new UntypedEnumNode(name, List.of(), NullSource.INSTANCE);
+    }
+
     public static UntypedExpressionStatementNode expressionStatement(UntypedExpressionNode expression) {
         return new UntypedExpressionStatementNode(expression, NullSource.INSTANCE);
     }

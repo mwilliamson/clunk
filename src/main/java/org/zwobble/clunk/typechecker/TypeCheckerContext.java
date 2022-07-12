@@ -1,5 +1,8 @@
 package org.zwobble.clunk.typechecker;
 
+import org.pcollections.PMap;
+import org.pcollections.PStack;
+import org.pcollections.PVector;
 import org.zwobble.clunk.ast.typed.TypedRecordFieldNode;
 import org.zwobble.clunk.builtins.Builtins;
 import org.zwobble.clunk.errors.SourceError;
@@ -8,31 +11,33 @@ import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.NamespaceType;
 import org.zwobble.clunk.types.RecordType;
 import org.zwobble.clunk.types.Type;
-import org.zwobble.clunk.util.Lists;
+import org.zwobble.clunk.util.P;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public record TypeCheckerContext(
-    List<StackFrame> stack,
-    Map<NamespaceName, NamespaceType> namespaceTypes,
-    Map<RecordType, Function<TypeCheckerContext, List<TypedRecordFieldNode>>> typeToFields,
-    List<SubtypeRelation> subtypeRelations
+    PStack<StackFrame> stack,
+    PMap<NamespaceName, NamespaceType> namespaceTypes,
+    PMap<RecordType, Function<TypeCheckerContext, List<TypedRecordFieldNode>>> typeToFields,
+    PVector<SubtypeRelation> subtypeRelations
 ) {
     public static final TypeCheckerContext EMPTY = new TypeCheckerContext(
-        List.of(),
-        Map.of(),
-        Map.of(),
-        List.of()
+        P.stack(),
+        P.map(),
+        P.map(),
+        P.vector()
     );
 
     public static TypeCheckerContext stub() {
         return new TypeCheckerContext(
-            List.of(StackFrame.namespace(NamespaceName.fromParts(), Builtins.ENVIRONMENT)),
-            Map.of(),
-            Map.of(),
-            List.of()
+            P.stack(StackFrame.namespace(NamespaceName.fromParts(), Builtins.ENVIRONMENT)),
+            P.map(),
+            P.map(),
+            P.vector()
         );
     }
 
@@ -50,7 +55,7 @@ public record TypeCheckerContext(
 
     private TypeCheckerContext enter(StackFrame stackFrame) {
         return new TypeCheckerContext(
-            Lists.concatOne(stack, stackFrame),
+            stack.plus(stackFrame),
             namespaceTypes,
             typeToFields,
             subtypeRelations
@@ -58,7 +63,7 @@ public record TypeCheckerContext(
     }
 
     public StackFrame currentFrame() {
-        return Lists.last(stack);
+        return stack.get(0);
     }
 
     public Optional<Type> returnType() {
@@ -66,8 +71,7 @@ public record TypeCheckerContext(
     }
 
     public TypeCheckerContext updateNamespaceType(NamespaceType namespaceType) {
-        var namespaceTypes = new HashMap<>(this.namespaceTypes);
-        namespaceTypes.put(namespaceType.name(), namespaceType);
+        var namespaceTypes = this.namespaceTypes.plus(namespaceType.name(), namespaceType);
         return new TypeCheckerContext(stack, namespaceTypes, typeToFields, subtypeRelations);
     }
 
@@ -81,7 +85,7 @@ public record TypeCheckerContext(
 
     public TypeCheckerContext updateType(String name, Type type, Source source) {
         return new TypeCheckerContext(
-            Lists.updateLast(stack, frame -> frame.updateType(name, type, source)),
+            P.stackUpdateTop(stack, frame -> frame.updateType(name, type, source)),
             namespaceTypes,
             typeToFields,
             subtypeRelations
@@ -89,9 +93,7 @@ public record TypeCheckerContext(
     }
 
     public Type typeOf(String name, Source source) {
-        for (var i = stack.size() - 1; i >= 0; i--) {
-            var callFrame = stack.get(i);
-
+        for (var callFrame : stack) {
             var type = callFrame.environment().get(name);
             if (type != null) {
                 return type;
@@ -101,14 +103,12 @@ public record TypeCheckerContext(
     }
 
     public TypeCheckerContext addFields(RecordType type, Function<TypeCheckerContext, List<TypedRecordFieldNode>> fields) {
-        var typeToFields = new HashMap<>(this.typeToFields);
-        typeToFields.put(type, fields);
+        var typeToFields = this.typeToFields.plus(type, fields);
         return new TypeCheckerContext(stack, namespaceTypes, typeToFields, subtypeRelations);
     }
 
     public TypeCheckerContext addSubtypeRelation(RecordType subtype, Type superType) {
-        var subtypeRelations = new ArrayList<>(this.subtypeRelations);
-        subtypeRelations.add(new SubtypeRelation(subtype, superType));
+        var subtypeRelations = this.subtypeRelations.plus(new SubtypeRelation(subtype, superType));
         return new TypeCheckerContext(stack, namespaceTypes, typeToFields, subtypeRelations);
     }
 

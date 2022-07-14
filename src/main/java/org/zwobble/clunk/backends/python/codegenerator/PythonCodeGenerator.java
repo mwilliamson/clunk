@@ -85,6 +85,30 @@ public class PythonCodeGenerator {
         }
     }
 
+    private PythonStatementNode compileEnum(
+        TypedEnumNode node,
+        PythonCodeGeneratorContext context
+    ) {
+        context.addImport(List.of("enum"));
+
+        return new PythonClassDeclarationNode(
+            node.type().name(),
+            List.of(),
+            List.of(new PythonAttrAccessNode(new PythonReferenceNode("enum"), "Enum")),
+            node.type().members().stream()
+                .map(member -> new PythonAssignmentNode(
+                    member,
+                    Optional.empty(),
+                    Optional.of(new PythonCallNode(
+                        new PythonAttrAccessNode(new PythonReferenceNode("enum"), "auto"),
+                        List.of(),
+                        List.of()
+                    ))
+                ))
+                .toList()
+        );
+    }
+
     public PythonExpressionNode compileExpression(
         TypedExpressionNode node,
         PythonCodeGeneratorContext context
@@ -232,7 +256,7 @@ public class PythonCodeGenerator {
         return node.accept(new TypedNamespaceStatementNode.Visitor<PythonStatementNode>() {
             @Override
             public PythonStatementNode visit(TypedEnumNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileEnum(node, context);
             }
 
             @Override

@@ -199,7 +199,7 @@ public class PythonCodeGenerator {
     }
 
     private PythonStatementNode compileInterface(TypedInterfaceNode node, PythonCodeGeneratorContext context) {
-        return new PythonClassDeclarationNode(node.name(), List.of(), List.of());
+        return new PythonClassDeclarationNode(node.name(), List.of(), List.of(), List.of());
     }
 
     private PythonExpressionNode compileIntLiteral(TypedIntLiteralNode node) {
@@ -278,7 +278,7 @@ public class PythonCodeGenerator {
             .map(field -> Python.variableType(field.name(), compileTypeLevelExpression(field.type(), context)))
             .toList();
 
-        return new PythonClassDeclarationNode(node.name(), decorators, statements);
+        return new PythonClassDeclarationNode(node.name(), decorators, List.of(), statements);
     }
 
     private PythonExpressionNode compileReference(TypedReferenceNode node) {

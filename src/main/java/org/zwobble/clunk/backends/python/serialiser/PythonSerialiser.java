@@ -89,6 +89,15 @@ public class PythonSerialiser {
         }
         builder.append("class ");
         builder.append(node.name());
+        if (!node.baseClasses().isEmpty()) {
+            builder.append("(");
+            forEachInterspersed(
+                node.baseClasses(),
+                baseClass -> serialiseExpression(baseClass, builder),
+                () -> builder.append(", ")
+            );
+            builder.append(")");
+        }
         builder.append(":");
         builder.newLine();
         serialiseBlock(node.statements(), builder);

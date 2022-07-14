@@ -54,6 +54,35 @@ public class PythonSerialiserClassDeclarationTests {
     }
 
     @Test
+    public void oneBaseClass() {
+        var node = PythonClassDeclarationNode.builder("Example")
+            .addBaseClass(Python.reference("A"))
+            .build();
+
+        var result = serialiseToString(node, PythonSerialiser::serialiseStatement);
+
+        assertThat(result, equalTo("""
+            class Example(A):
+                pass
+            """));
+    }
+
+    @Test
+    public void manyBaseClasses() {
+        var node = PythonClassDeclarationNode.builder("Example")
+            .addBaseClass(Python.reference("A"))
+            .addBaseClass(Python.reference("B"))
+            .build();
+
+        var result = serialiseToString(node, PythonSerialiser::serialiseStatement);
+
+        assertThat(result, equalTo("""
+            class Example(A, B):
+                pass
+            """));
+    }
+
+    @Test
     public void oneStatement() {
         var node = PythonClassDeclarationNode.builder("Example")
             .addStatement(Python.variableType("first", Python.reference("str")))

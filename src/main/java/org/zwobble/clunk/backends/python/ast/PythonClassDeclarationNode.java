@@ -1,6 +1,8 @@
 package org.zwobble.clunk.backends.python.ast;
 
-import java.util.ArrayList;
+import org.pcollections.PVector;
+import org.zwobble.clunk.util.P;
+
 import java.util.List;
 
 public record PythonClassDeclarationNode(
@@ -14,28 +16,24 @@ public record PythonClassDeclarationNode(
     }
 
     public static Builder builder(String name) {
-        return new Builder(name, List.of(), List.of());
+        return new Builder(name, P.vector(), P.vector());
     }
 
     public static record Builder(
         String name,
-        List<PythonExpressionNode> decorators,
-        List<PythonStatementNode> statements
+        PVector<PythonExpressionNode> decorators,
+        PVector<PythonStatementNode> statements
     ) {
         public PythonClassDeclarationNode build() {
             return new PythonClassDeclarationNode(name, decorators, statements);
         }
 
         public Builder addDecorator(PythonExpressionNode expression) {
-            var decorators = new ArrayList<>(this.decorators);
-            decorators.add(expression);
-            return new Builder(name, decorators, statements);
+            return new Builder(name, decorators.plus(expression), statements);
         }
 
         public Builder addStatement(PythonStatementNode statement) {
-            var statements = new ArrayList<>(this.statements);
-            statements.add(statement);
-            return new Builder(name, decorators, statements);
+            return new Builder(name, decorators, statements.plus(statement));
         }
     }
 }

@@ -42,7 +42,10 @@ record Note(
     body: List[DocumentElement],
 )
 
-record NoteType()
+enum NoteType {
+    FOOTNOTE,
+    ENDNOTE,
+}
 
 record NoteReference(
     noteType: NoteType,
@@ -111,7 +114,11 @@ record Text(
     value: String,
 ) <: DocumentElement
 
-record VerticalAlignment()
+enum VerticalAlignment {
+    SUPERSCRIPT,
+    SUBSCRIPT,
+    BASELINE
+}
 
 
 ==============
@@ -162,7 +169,9 @@ interface Note {
     readonly id: string;
     readonly body: (Array)<DocumentElement>;
 }
-interface NoteType {
+enum NoteType {
+    FOOTNOTE,
+    ENDNOTE,
 }
 interface NoteReference {
     readonly type: "NoteReference";
@@ -228,7 +237,10 @@ interface Text {
     readonly type: "Text";
     readonly value: string;
 }
-interface VerticalAlignment {
+enum VerticalAlignment {
+    SUPERSCRIPT,
+    SUBSCRIPT,
+    BASELINE,
 }
 
 

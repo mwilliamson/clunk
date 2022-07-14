@@ -41,7 +41,10 @@ record Note(
     body: List[DocumentElement],
 )
 
-record NoteType()
+enum NoteType {
+    FOOTNOTE,
+    ENDNOTE,
+}
 
 record NoteReference(
     noteType: NoteType,
@@ -110,4 +113,8 @@ record Text(
     value: String,
 ) <: DocumentElement
 
-record VerticalAlignment()
+enum VerticalAlignment {
+    SUPERSCRIPT,
+    SUBSCRIPT,
+    BASELINE
+}

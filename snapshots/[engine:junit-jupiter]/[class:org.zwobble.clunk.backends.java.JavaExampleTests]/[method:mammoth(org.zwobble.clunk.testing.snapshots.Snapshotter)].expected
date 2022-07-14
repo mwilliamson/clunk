@@ -42,7 +42,10 @@ record Note(
     body: List[DocumentElement],
 )
 
-record NoteType()
+enum NoteType {
+    FOOTNOTE,
+    ENDNOTE,
+}
 
 record NoteReference(
     noteType: NoteType,
@@ -111,7 +114,11 @@ record Text(
     value: String,
 ) <: DocumentElement
 
-record VerticalAlignment()
+enum VerticalAlignment {
+    SUPERSCRIPT,
+    SUBSCRIPT,
+    BASELINE
+}
 
 
 ==============
@@ -208,7 +215,9 @@ public record Note(org.zwobble.mammoth.internal.documents.NoteType noteType, Str
 Output path: org/zwobble/mammoth/internal/documents/NoteType.java
 package org.zwobble.mammoth.internal.documents;
 
-public record NoteType() {
+public enum NoteType {
+    FOOTNOTE,
+    ENDNOTE
 }
 
 ==============
@@ -312,7 +321,10 @@ public record Text(String value) implements org.zwobble.mammoth.internal.documen
 Output path: org/zwobble/mammoth/internal/documents/VerticalAlignment.java
 package org.zwobble.mammoth.internal.documents;
 
-public record VerticalAlignment() {
+public enum VerticalAlignment {
+    SUPERSCRIPT,
+    SUBSCRIPT,
+    BASELINE
 }
 
 ==============

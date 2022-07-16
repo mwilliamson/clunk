@@ -14,7 +14,8 @@ public class Builtins {
         Map.entry("Int", metaType(Types.INT)),
         Map.entry("List", Types.typeConstructorType(ListTypeConstructor.INSTANCE)),
         Map.entry("Option", Types.typeConstructorType(OptionTypeConstructor.INSTANCE)),
-        Map.entry("String", metaType(Types.STRING))
+        Map.entry("String", metaType(Types.STRING)),
+        Map.entry("Unit", metaType(Types.UNIT))
     );
 
     // TODO: proper typing for builtin modules

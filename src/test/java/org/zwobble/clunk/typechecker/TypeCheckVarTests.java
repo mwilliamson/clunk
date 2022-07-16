@@ -18,7 +18,7 @@ public class TypeCheckVarTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
-        assertThat(result.typedNode(), isTypedVarNode().withName("x").withExpression(isTypedBoolLiteralNode(false)));
+        assertThat(result.value(), isTypedVarNode().withName("x").withExpression(isTypedBoolLiteralNode(false)));
     }
 
     @Test

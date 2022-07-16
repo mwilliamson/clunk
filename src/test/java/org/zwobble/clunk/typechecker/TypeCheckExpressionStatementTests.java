@@ -16,7 +16,7 @@ public class TypeCheckExpressionStatementTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, TypeCheckerContext.stub());
 
-        assertThat(result.typedNode(), allOf(
+        assertThat(result.value(), allOf(
             isA(TypedExpressionStatementNode.class),
             has("expression", allOf(
                 isA(TypedBoolLiteralNode.class),

@@ -72,7 +72,7 @@ public class TypeChecker {
 
         return new TypedConditionalBranchNode(
             typedConditionNode,
-            typeCheckFunctionStatements(node.body(), context),
+            typeCheckFunctionStatements(node.body(), context).value(),
             node.source()
         );
     }
@@ -153,13 +153,13 @@ public class TypeChecker {
         });
     }
 
-    private static TypeCheckResult<TypedFunctionStatementNode> typeCheckExpressionStatement(
+    private static TypeCheckStatementResult<TypedFunctionStatementNode> typeCheckExpressionStatement(
         UntypedExpressionStatementNode node,
         TypeCheckerContext context
     ) {
         var typedExpression = typeCheckExpression(node.expression(), context);
         var typedStatement = new TypedExpressionStatementNode(typedExpression, node.source());
-        return new TypeCheckResult<>(typedStatement, context);
+        return new TypeCheckStatementResult<>(typedStatement, false, context);
     }
 
     private static TypeCheckerContext defineVariablesForFunction(
@@ -190,65 +190,71 @@ public class TypeChecker {
         var typedParamNodes = node.params().stream().map(param -> typeCheckParam(param, context)).toList();
         var typedReturnTypeNode = typeCheckTypeLevelExpressionNode(node.returnType(), context);
 
-        var typedStatements = typeCheckFunctionStatements(
+        var typeCheckStatementsResult = typeCheckFunctionStatements(
             node.body(),
             context.enterFunction(functionType.returnType())
         );
+
+        if (!typeCheckStatementsResult.returns() && !functionType.returnType().equals(Types.UNIT)) {
+            throw new MissingReturnError(node.source());
+        }
 
         var typedNode = new TypedFunctionNode(
             node.name(),
             typedParamNodes,
             typedReturnTypeNode,
-            typedStatements,
+            typeCheckStatementsResult.value(),
             node.source()
         );
 
         return new TypeCheckResult<>(typedNode, context);
     }
 
-    public static TypeCheckResult<TypedFunctionStatementNode> typeCheckFunctionStatement(
+    public static TypeCheckStatementResult<TypedFunctionStatementNode> typeCheckFunctionStatement(
         UntypedFunctionStatementNode node,
         TypeCheckerContext context
     ) {
         return node.accept(new UntypedFunctionStatementNode.Visitor<>() {
             @Override
-            public TypeCheckResult<TypedFunctionStatementNode> visit(UntypedExpressionStatementNode node) {
+            public TypeCheckStatementResult<TypedFunctionStatementNode> visit(UntypedExpressionStatementNode node) {
                 return typeCheckExpressionStatement(node, context);
             }
 
             @Override
-            public TypeCheckResult<TypedFunctionStatementNode> visit(UntypedIfStatementNode node) {
+            public TypeCheckStatementResult<TypedFunctionStatementNode> visit(UntypedIfStatementNode node) {
                 return typeCheckIfStatement(node, context);
             }
 
             @Override
-            public TypeCheckResult<TypedFunctionStatementNode> visit(UntypedReturnNode node) {
+            public TypeCheckStatementResult<TypedFunctionStatementNode> visit(UntypedReturnNode node) {
                 return typeCheckReturn(node, context);
             }
 
             @Override
-            public TypeCheckResult<TypedFunctionStatementNode> visit(UntypedVarNode node) {
+            public TypeCheckStatementResult<TypedFunctionStatementNode> visit(UntypedVarNode node) {
                 return typeCheckVar(node, context);
             }
         });
     }
 
-    private static List<TypedFunctionStatementNode> typeCheckFunctionStatements(
+    private static TypeCheckStatementResult<List<TypedFunctionStatementNode>> typeCheckFunctionStatements(
         List<UntypedFunctionStatementNode> body,
         TypeCheckerContext context
     ) {
         var typedStatements = new ArrayList<TypedFunctionStatementNode>();
+        var returns = false;
 
         for (var statement : body) {
             var statementResult = typeCheckFunctionStatement(statement, context);
             context = statementResult.context();
-            typedStatements.add(statementResult.typedNode());
+            typedStatements.add(statementResult.value());
+            returns = returns || statementResult.returns();
         }
 
-        return typedStatements;
+        return new TypeCheckStatementResult<>(typedStatements, returns, context);
     }
 
-    private static TypeCheckResult<TypedFunctionStatementNode> typeCheckIfStatement(
+    private static TypeCheckStatementResult<TypedFunctionStatementNode> typeCheckIfStatement(
         UntypedIfStatementNode node,
         TypeCheckerContext context
     ) {
@@ -256,11 +262,11 @@ public class TypeChecker {
             node.conditionalBranches().stream()
                 .map(branch -> typeCheckConditionalBranch(branch, context))
                 .toList(),
-            typeCheckFunctionStatements(node.elseBody(), context),
+            typeCheckFunctionStatements(node.elseBody(), context).value(),
             node.source()
         );
 
-        return new TypeCheckResult<>(typedNode, context);
+        return new TypeCheckStatementResult<>(typedNode, false, context);
     }
 
     public record TypeCheckImportResult(TypedImportNode node, TypeCheckerContext context) {
@@ -485,7 +491,7 @@ public class TypeChecker {
         return new TypedReferenceNode(node.name(), type, node.source());
     }
 
-    private static TypeCheckResult<TypedFunctionStatementNode> typeCheckReturn(UntypedReturnNode node, TypeCheckerContext context) {
+    private static TypeCheckStatementResult<TypedFunctionStatementNode> typeCheckReturn(UntypedReturnNode node, TypeCheckerContext context) {
         var expression = typeCheckExpression(node.expression(), context);
 
         if (context.returnType().isEmpty()) {
@@ -499,7 +505,7 @@ public class TypeChecker {
 
         var typedNode = new TypedReturnNode(expression, node.source());
 
-        return new TypeCheckResult<>(typedNode, context);
+        return new TypeCheckStatementResult<>(typedNode, true, context);
     }
 
     private static TypedExpressionNode typeCheckStringLiteral(UntypedStringLiteralNode node) {
@@ -520,7 +526,7 @@ public class TypeChecker {
         var typedStatements = typeCheckFunctionStatements(
             node.body(),
             context.enterTest()
-        );
+        ).value();
 
         var typedNode = new TypedTestNode(
             node.name(),
@@ -556,7 +562,7 @@ public class TypeChecker {
         return new TypedTypeLevelExpressionNode(type, node.source());
     }
 
-    private static TypeCheckResult<TypedFunctionStatementNode> typeCheckVar(
+    private static TypeCheckStatementResult<TypedFunctionStatementNode> typeCheckVar(
         UntypedVarNode node,
         TypeCheckerContext context
     ) {
@@ -567,7 +573,7 @@ public class TypeChecker {
             node.source()
         );
         var updatedContext = context.updateType(node.name(), typedExpression.type(), node.source());
-        return new TypeCheckResult<>(typedNode, updatedContext);
+        return new TypeCheckStatementResult<>(typedNode, false, updatedContext);
     }
 
     private static TypeLevelValue resolveTypeLevelValue(String name, Source source, TypeCheckerContext context) {

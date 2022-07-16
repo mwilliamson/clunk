@@ -25,7 +25,7 @@ public class TypeCheckIfStatementTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, TypeCheckerContext.stub());
 
-        assertThat(result.typedNode(), allOf(
+        assertThat(result.value(), allOf(
             isA(TypedIfStatementNode.class),
             has("conditionalBranches", contains(
                 has("condition", isTypedBoolLiteralNode(false))
@@ -64,7 +64,7 @@ public class TypeCheckIfStatementTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, TypeCheckerContext.stub());
 
-        assertThat(result.typedNode(), allOf(
+        assertThat(result.value(), allOf(
             isA(TypedIfStatementNode.class),
             has("conditionalBranches", contains(
                 has("body", contains(isTypedExpressionStatement(isTypedIntLiteralNode(42))))
@@ -83,7 +83,7 @@ public class TypeCheckIfStatementTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, TypeCheckerContext.stub());
 
-        assertThat(result.typedNode(), allOf(
+        assertThat(result.value(), allOf(
             isA(TypedIfStatementNode.class),
             has("elseBody", contains(isTypedExpressionStatement(isTypedIntLiteralNode(42))))
         ));

@@ -90,7 +90,7 @@ public class TypeCheckNamespaceTests {
     public void whenVariableShadowsBuiltinThenEarlierReferencesUsesVariable() {
         var untypedNode = UntypedNamespaceNode
             .builder(NamespaceName.fromParts("example", "project"))
-            .addStatement(UntypedFunctionNode.builder().returnType(Untyped.staticReference("X")).build())
+            .addStatement(UntypedFunctionNode.builder().addParam(Untyped.param("x", Untyped.staticReference("X"))).build())
             .addStatement(UntypedRecordNode.builder("X").build())
             .build();
         var context = TypeCheckerContext.stub()
@@ -100,6 +100,6 @@ public class TypeCheckNamespaceTests {
 
         var typedFunctionNode = (TypedFunctionNode) result.typedNode().statements().get(0);
         var typedRecordNode = (TypedRecordNode) result.typedNode().statements().get(1);
-        assertThat(typedFunctionNode.returnType().value(), equalTo(typedRecordNode.type()));
+        assertThat(typedFunctionNode.params().get(0).type().value(), equalTo(typedRecordNode.type()));
     }
 }

@@ -1,6 +1,7 @@
 package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.ast.typed.TypedFunctionNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.ast.untyped.UntypedFunctionNode;
 import org.zwobble.clunk.sources.NullSource;
@@ -9,8 +10,8 @@ import org.zwobble.clunk.types.*;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
 
 public class TypeCheckFunctionTests {
@@ -50,6 +51,7 @@ public class TypeCheckFunctionTests {
     public void returnTypeIsTyped() {
         var untypedNode = UntypedFunctionNode.builder()
             .returnType(Untyped.staticReference("Int"))
+            .addBodyStatement(Untyped.returnStatement(Untyped.intLiteral()))
             .build();
 
         var result = TypeChecker.typeCheckNamespaceStatement(
@@ -75,6 +77,33 @@ public class TypeCheckFunctionTests {
         assertThat(result.typedNode(), isTypedFunctionNode().withBody(contains(
             isTypedReturnNode().withExpression(isTypedBoolLiteralNode(false))
         )));
+    }
+
+    @Test
+    public void givenFunctionHasUnitReturnTypeWhenBodyDoesNotReturnThenFunctionTypeChecks() {
+        var untypedNode = UntypedFunctionNode.builder()
+            .returnType(Untyped.staticReference("Unit"))
+            .build();
+
+        var result = TypeChecker.typeCheckNamespaceStatement(
+            untypedNode,
+            TypeChecker.defineVariablesForNamespaceStatement(untypedNode, TypeCheckerContext.stub())
+        );
+
+        var typedNode = (TypedFunctionNode) result.typedNode();
+        assertThat(typedNode.body(), empty());
+    }
+
+    @Test
+    public void givenFunctionHasNonUnitReturnTypeWhenBodyDoesNotReturnThenErrorIsThrown() {
+        var untypedNode = UntypedFunctionNode.builder()
+            .returnType(Untyped.staticReference("Bool"))
+            .build();
+
+        assertThrows(MissingReturnError.class, () -> TypeChecker.typeCheckNamespaceStatement(
+            untypedNode,
+            TypeChecker.defineVariablesForNamespaceStatement(untypedNode, TypeCheckerContext.stub())
+        ));
     }
 
     @Test

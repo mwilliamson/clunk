@@ -63,6 +63,10 @@ public class Untyped {
         return new UntypedInterfaceNode(name, NullSource.INSTANCE);
     }
 
+    public static UntypedIntLiteralNode intLiteral() {
+        return intLiteral(0);
+    }
+
     public static UntypedIntLiteralNode intLiteral(int value) {
         return new UntypedIntLiteralNode(value, NullSource.INSTANCE);
     }

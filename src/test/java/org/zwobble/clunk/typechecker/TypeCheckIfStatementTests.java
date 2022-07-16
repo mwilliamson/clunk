@@ -88,4 +88,51 @@ public class TypeCheckIfStatementTests {
             has("elseBody", contains(isTypedExpressionStatement(isTypedIntLiteralNode(42))))
         ));
     }
+
+    @Test
+    public void whenElseBranchDoesNotReturnThenIfStatementDoesNotReturn() {
+        var untypedNode = Untyped.ifStatement(
+            List.of(
+                Untyped.conditionalBranch(Untyped.boolFalse(), List.of(Untyped.returnStatement(Untyped.intLiteral())))
+            ),
+            List.of()
+        );
+        var context = TypeCheckerContext.stub().enterFunction(Types.INT);
+
+        var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
+
+        assertThat(result.returns(), equalTo(false));
+    }
+
+    @Test
+    public void whenAnyConditionalBranchDoesNotReturnThenIfStatementDoesNotReturn() {
+        var untypedNode = Untyped.ifStatement(
+            List.of(
+                Untyped.conditionalBranch(Untyped.boolFalse(), List.of()),
+                Untyped.conditionalBranch(Untyped.boolTrue(), List.of(Untyped.returnStatement(Untyped.intLiteral())))
+            ),
+            List.of(Untyped.returnStatement(Untyped.intLiteral()))
+        );
+        var context = TypeCheckerContext.stub().enterFunction(Types.INT);
+
+        var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
+
+        assertThat(result.returns(), equalTo(false));
+    }
+
+    @Test
+    public void whenAllConditionalBranchesAndElseBranchReturnThenIfStatementReturns() {
+        var untypedNode = Untyped.ifStatement(
+            List.of(
+                Untyped.conditionalBranch(Untyped.boolFalse(), List.of(Untyped.returnStatement(Untyped.intLiteral()))),
+                Untyped.conditionalBranch(Untyped.boolTrue(), List.of(Untyped.returnStatement(Untyped.intLiteral())))
+            ),
+            List.of(Untyped.returnStatement(Untyped.intLiteral()))
+        );
+        var context = TypeCheckerContext.stub().enterFunction(Types.INT);
+
+        var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
+
+        assertThat(result.returns(), equalTo(true));
+    }
 }

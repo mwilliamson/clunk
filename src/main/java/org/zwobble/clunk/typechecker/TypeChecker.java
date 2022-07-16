@@ -60,7 +60,7 @@ public class TypeChecker {
         );
     }
 
-    private static TypedConditionalBranchNode typeCheckConditionalBranch(
+    private static TypeCheckStatementResult<TypedConditionalBranchNode> typeCheckConditionalBranch(
         UntypedConditionalBranchNode node,
         TypeCheckerContext context
     ) {
@@ -70,11 +70,14 @@ public class TypeChecker {
             throw new UnexpectedTypeError(Types.BOOL, typedConditionNode.type(), typedConditionNode.source());
         }
 
-        return new TypedConditionalBranchNode(
+        var typeCheckBodyResults = typeCheckFunctionStatements(node.body(), context);
+        var typedNode = new TypedConditionalBranchNode(
             typedConditionNode,
-            typeCheckFunctionStatements(node.body(), context).value(),
+            typeCheckBodyResults.value(),
             node.source()
         );
+
+        return new TypeCheckStatementResult<>(typedNode, typeCheckBodyResults.returns(), typeCheckBodyResults.context());
     }
 
     private static TypedTypeLevelExpressionNode typeCheckConstructedTypeNode(
@@ -258,15 +261,25 @@ public class TypeChecker {
         UntypedIfStatementNode node,
         TypeCheckerContext context
     ) {
+        var typedConditionalBranches = new ArrayList<TypedConditionalBranchNode>();
+        var allBranchesReturn = true;
+
+        for (var untypedConditionalBranch : node.conditionalBranches()) {
+            var result = typeCheckConditionalBranch(untypedConditionalBranch, context);
+            typedConditionalBranches.add(result.value());
+            allBranchesReturn = allBranchesReturn && result.returns();
+        }
+
+        var typeCheckElseResult = typeCheckFunctionStatements(node.elseBody(), context);
+        allBranchesReturn = allBranchesReturn && typeCheckElseResult.returns();
+
         var typedNode = new TypedIfStatementNode(
-            node.conditionalBranches().stream()
-                .map(branch -> typeCheckConditionalBranch(branch, context))
-                .toList(),
-            typeCheckFunctionStatements(node.elseBody(), context).value(),
+            typedConditionalBranches,
+            typeCheckElseResult.value(),
             node.source()
         );
 
-        return new TypeCheckStatementResult<>(typedNode, false, context);
+        return new TypeCheckStatementResult<>(typedNode, allBranchesReturn, context);
     }
 
     public record TypeCheckImportResult(TypedImportNode node, TypeCheckerContext context) {

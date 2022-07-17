@@ -1,0 +1,30 @@
+Source path: src/varStatementsTest.clunk
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+
+test "var statement" {
+    var result = 5;
+
+    assertThat(result, equalTo(5));
+}
+
+
+==============
+
+Output path: varStatementsTest.py
+from precisely import assert_that
+from precisely import equal_to
+def test_var_statement():
+    result = 5
+    (assert_that)(result, (equal_to)(5))
+
+
+==============
+
+============================= test session starts ==============================
+rootdir: ROOTDIR, configfile: tox.ini
+collected 1 item
+
+varStatementsTest.py .                                                   [100%]
+
+============================== 1 passed in TIME ===============================

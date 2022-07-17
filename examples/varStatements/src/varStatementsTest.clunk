@@ -1,0 +1,8 @@
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+
+test "var statement" {
+    var result = 5;
+
+    assertThat(result, equalTo(5));
+}

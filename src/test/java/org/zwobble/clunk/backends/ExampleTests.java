@@ -38,6 +38,14 @@ public abstract class ExampleTests {
     }
 
     @Test
+    public void varStatements(Snapshotter snapshotter) throws IOException, InterruptedException {
+        runExampleTest(
+            snapshotter,
+            "varStatements"
+        );
+    }
+
+    @Test
     public void mammoth(Snapshotter snapshotter) throws IOException, InterruptedException {
         runExampleTest(
             snapshotter,

@@ -13,6 +13,8 @@ public class Tokeniser {
     private static final RegexTokeniser<TokenType> tokeniser = new RegexTokeniser<>(
         TokenType.UNKNOWN,
         List.of(
+            RegexTokeniser.rule(TokenType.COMMENT_SINGLE_LINE, "//.*"),
+
             RegexTokeniser.rule(TokenType.KEYWORD_ELSE, "else"),
             RegexTokeniser.rule(TokenType.KEYWORD_ENUM, "enum"),
             RegexTokeniser.rule(TokenType.KEYWORD_FALSE, "false"),
@@ -52,7 +54,7 @@ public class Tokeniser {
 
     public static TokenIterator<TokenType> tokenise(FileFragmentSource source) {
         var tokens = tokeniser.tokenise(source).stream()
-            .filter(token -> token.tokenType() != TokenType.WHITESPACE)
+            .filter(token -> token.tokenType() != TokenType.WHITESPACE && token.tokenType() != TokenType.COMMENT_SINGLE_LINE)
             .collect(Collectors.toList());
 
         return new TokenIterator<>(tokens, token(source.end(), TokenType.END, ""));

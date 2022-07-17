@@ -3,6 +3,7 @@ package org.zwobble.clunk.backends.java.codegenerator;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedCallNode;
+import org.zwobble.clunk.backends.java.ast.Java;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.NamespaceName;
@@ -13,6 +14,7 @@ import org.zwobble.clunk.types.Types;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
@@ -55,5 +57,6 @@ public class JavaCodeGeneratorCallTests {
 
         var string = serialiseToString(result, JavaSerialiser::serialiseExpression);
         assertThat(string, equalTo("new Id(123)"));
+        assertThat(context.imports(), contains(equalTo(Java.importType("example.Id"))));
     }
 }

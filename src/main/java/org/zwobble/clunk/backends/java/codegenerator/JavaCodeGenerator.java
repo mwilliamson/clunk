@@ -68,7 +68,9 @@ public class JavaCodeGenerator {
             .map(arg -> compileExpression(arg, context))
             .toList();
 
-        if (node.receiver().type() instanceof TypeLevelValueType) {
+        if (node.receiver().type() instanceof TypeLevelValueType typeLevelValueType) {
+            var recordType = (RecordType) typeLevelValueType.value();
+            context.addImportType(typeToJavaTypeName(recordType, context));
             return new JavaCallNewNode(javaReceiver, javaArgs);
         } else {
             return new JavaCallNode(javaReceiver, javaArgs);
@@ -377,5 +379,9 @@ public class JavaCodeGenerator {
 
     private static String namespaceToPackage(NamespaceName namespaceName, JavaCodeGeneratorContext context) {
         return context.packagePrefix() + String.join(".", namespaceName.parts());
+    }
+
+    private static String typeToJavaTypeName(RecordType recordType, JavaCodeGeneratorContext context) {
+        return namespaceToPackage(recordType.namespaceName(), context) + "." + recordType.name();
     }
 }

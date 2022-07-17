@@ -1,0 +1,75 @@
+Source path: src/recordsTest.clunk
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+
+record Add(left: Int, right: Int) {
+    property sum: Int {
+        //return left + right;
+        return 5;
+    }
+}
+
+test "assert field" {
+    var add = Add(2, 3);
+
+    assertThat(add.left, equalTo(2));
+    assertThat(add.right, equalTo(3));
+}
+
+//test "assert sum" {
+//    var add = Add(2, 3);
+
+//    var result = add.sum;
+
+//    assertThat(result, equalTo(5));
+//}
+
+
+==============
+
+Output path: recordsTest/Add.java
+package recordsTest;
+
+public record Add(int left, int right) {
+}
+
+==============
+
+Output path: recordsTest/RecordsTest.java
+package recordsTest;
+
+import recordsTest.Add;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+
+public class RecordsTest {
+    @org.junit.jupiter.api.Test
+    @org.junit.jupiter.api.DisplayName("assert field")
+    public void assertField() {
+        var add = new Add(2, 3);
+        assertThat((add).left(), equalTo(2));
+        assertThat((add).right(), equalTo(3));
+    }
+}
+
+==============
+
+╷
+├─ JUnit Jupiter ✔
+│  └─ RecordsTest ✔
+│     └─ assert field ✔
+└─ JUnit Vintage ✔
+
+Test run finished after TIME ms
+[         3 containers found      ]
+[         0 containers skipped    ]
+[         3 containers started    ]
+[         0 containers aborted    ]
+[         3 containers successful ]
+[         0 containers failed     ]
+[         1 tests found           ]
+[         0 tests skipped         ]
+[         1 tests started         ]
+[         0 tests aborted         ]
+[         1 tests successful      ]
+[         0 tests failed          ]

@@ -3,6 +3,7 @@ package org.zwobble.clunk.backends.java.codegenerator;
 import org.zwobble.clunk.ast.typed.TypedRecordFieldNode;
 import org.zwobble.clunk.backends.java.ast.JavaImportNode;
 import org.zwobble.clunk.backends.java.ast.JavaImportStaticNode;
+import org.zwobble.clunk.backends.java.ast.JavaImportTypeNode;
 import org.zwobble.clunk.backends.java.config.JavaTargetConfig;
 import org.zwobble.clunk.typechecker.FieldsLookup;
 import org.zwobble.clunk.typechecker.SubtypeLookup;
@@ -36,6 +37,10 @@ public class JavaCodeGeneratorContext {
 
     public void addImportStatic(String packageName, String identifier) {
         imports.add(new JavaImportStaticNode(packageName, identifier));
+    }
+
+    public void addImportType(String typeName) {
+        imports.add(new JavaImportTypeNode(typeName));
     }
 
     public Set<JavaImportNode> imports() {

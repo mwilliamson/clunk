@@ -6,6 +6,7 @@ import org.zwobble.clunk.ast.untyped.UntypedTestNode;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
 
 public class TypeCheckTestTests {
@@ -23,5 +24,19 @@ public class TypeCheckTestTests {
         assertThat(result.typedNode(), isTypedTestNode().withBody(contains(
             isTypedVarNode().withExpression(isTypedBoolLiteralNode(false))
         )));
+    }
+
+    @Test
+    public void returnedContextLeavesTestEnvironment() {
+        var untypedNode = UntypedTestNode.builder()
+            .addBodyStatement(Untyped.var("x", Untyped.boolFalse()))
+            .build();
+
+        var result = TypeChecker.typeCheckNamespaceStatement(
+            untypedNode,
+            TypeCheckerContext.stub()
+        );
+
+        assertThat(result.context().currentFrame().environment().containsKey("x"), equalTo(false));
     }
 }

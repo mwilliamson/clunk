@@ -181,10 +181,17 @@ public class TypeChecker {
         var typedReceiverNode = typeCheckExpression(node.receiver(), context);
         // TODO: handle not a record
         // TODO: handle missing field
-        var fieldType = (Type) context.fieldsOf((RecordType) typedReceiverNode.type())
+        var recordType = (RecordType) typedReceiverNode.type();
+        var field = context.fieldsOf(recordType)
             .stream()
-            .filter(field -> field.name().equals(node.fieldName()))
-            .findFirst()
+            .filter(f -> f.name().equals(node.fieldName()))
+            .findFirst();
+
+        if (field.isEmpty()) {
+            throw new UnknownFieldError(recordType, node.fieldName(), node.source());
+        }
+
+        var fieldType = (Type) field
             .get()
             .type()
             .value();

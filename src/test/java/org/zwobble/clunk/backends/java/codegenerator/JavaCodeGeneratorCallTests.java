@@ -6,6 +6,7 @@ import org.zwobble.clunk.ast.typed.TypedCallNode;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.RecordType;
 import org.zwobble.clunk.types.StaticFunctionType;
 import org.zwobble.clunk.types.Types;
 
@@ -37,5 +38,22 @@ public class JavaCodeGeneratorCallTests {
 
         var string = serialiseToString(result, JavaSerialiser::serialiseExpression);
         assertThat(string, equalTo("abs(123)"));
+    }
+
+    @Test
+    public void callToRecordConstructorsAreCompiledToConstructorCalls() {
+        var recordType = new RecordType(NamespaceName.fromParts("example"), "Id");
+        var node = new TypedCallNode(
+            Typed.reference("Id", Types.metaType(recordType)),
+            List.of(Typed.intLiteral(123)),
+            Types.INT,
+            NullSource.INSTANCE
+        );
+        var context = JavaCodeGeneratorContext.stub();
+
+        var result = JavaCodeGenerator.compileExpression(node, context);
+
+        var string = serialiseToString(result, JavaSerialiser::serialiseExpression);
+        assertThat(string, equalTo("new Id(123)"));
     }
 }

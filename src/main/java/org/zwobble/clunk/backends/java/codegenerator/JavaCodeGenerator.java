@@ -63,12 +63,16 @@ public class JavaCodeGenerator {
     }
 
     private static JavaExpressionNode compileCall(TypedCallNode node, JavaCodeGeneratorContext context) {
-        return new JavaCallNode(
-            compileCallReceiver(node.receiver(), context),
-            node.positionalArgs().stream()
-                .map(arg -> compileExpression(arg, context))
-                .toList()
-        );
+        var javaReceiver = compileCallReceiver(node.receiver(), context);
+        var javaArgs = node.positionalArgs().stream()
+            .map(arg -> compileExpression(arg, context))
+            .toList();
+
+        if (node.receiver().type() instanceof TypeLevelValueType) {
+            return new JavaCallNewNode(javaReceiver, javaArgs);
+        } else {
+            return new JavaCallNode(javaReceiver, javaArgs);
+        }
     }
 
     private static JavaExpressionNode compileCallReceiver(TypedExpressionNode receiver, JavaCodeGeneratorContext context) {

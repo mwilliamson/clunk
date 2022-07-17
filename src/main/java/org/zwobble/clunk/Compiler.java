@@ -93,7 +93,7 @@ public class Compiler {
         var source = FileFragmentSource.create(sourcePath.toString(), sourceContents);
         var tokens = Tokeniser.tokenise(source);
         var parser = new Parser(source);
-        var untypedNamespaceNode = parser.parseNamespaceName(tokens, namespaceName);
+        var untypedNamespaceNode = parser.parseNamespace(tokens, namespaceName);
 
         return TypeChecker.typeCheckNamespace(untypedNamespaceNode, context);
     }

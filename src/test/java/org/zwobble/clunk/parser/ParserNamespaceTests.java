@@ -17,7 +17,7 @@ public class ParserNamespaceTests {
 
         var node = parseString(
             source,
-            (parser, tokens) -> parser.parseNamespaceName(
+            (parser, tokens) -> parser.parseNamespace(
                 tokens,
                 NamespaceName.fromParts("example", "project")
             )
@@ -36,7 +36,7 @@ public class ParserNamespaceTests {
 
         var node = parseString(
             source,
-            (parser, tokens) -> parser.parseNamespaceName(
+            (parser, tokens) -> parser.parseNamespace(
                 tokens,
                 NamespaceName.fromParts("example", "project")
             )
@@ -55,7 +55,7 @@ public class ParserNamespaceTests {
 
         var node = parseString(
             source,
-            (parser, tokens) -> parser.parseNamespaceName(
+            (parser, tokens) -> parser.parseNamespace(
                 tokens,
                 NamespaceName.fromParts("example", "project")
             )

@@ -131,7 +131,7 @@ public class Parser {
         };
     }
 
-    public UntypedNamespaceNode parseNamespaceName(TokenIterator<TokenType> tokens, NamespaceName name) {
+    public UntypedNamespaceNode parseNamespace(TokenIterator<TokenType> tokens, NamespaceName name) {
         var source = source(tokens);
 
         var imports = parseMany(

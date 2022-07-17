@@ -306,7 +306,32 @@ public class Parser {
             supertypes = List.of();
         }
 
-        return new UntypedRecordNode(name, fieldNodes, supertypes, recordSource);
+        List<UntypedRecordBodyDeclarationNode> body;
+        if (tokens.trySkip(TokenType.SYMBOL_BRACE_OPEN)) {
+            body = parseMany(
+                () -> tokens.isNext(TokenType.SYMBOL_BRACE_CLOSE),
+                () -> parseRecordBodyDeclaration(tokens),
+                () -> true
+            );
+
+            tokens.skip(TokenType.SYMBOL_BRACE_CLOSE);
+        } else {
+            body = List.of();
+        }
+
+        return new UntypedRecordNode(name, fieldNodes, supertypes, body, recordSource);
+    }
+
+    private UntypedRecordBodyDeclarationNode parseRecordBodyDeclaration(TokenIterator<TokenType> tokens) {
+        var source = source(tokens);
+
+        tokens.skip(TokenType.KEYWORD_PROPERTY);
+        var name = tokens.nextValue(TokenType.IDENTIFIER);
+        tokens.skip(TokenType.SYMBOL_COLON);
+        var type = parseTypeLevelExpression(tokens);
+        var body = parseBlock(tokens);
+
+        return new UntypedPropertyNode(name, type, body, source);
     }
 
     private UntypedRecordFieldNode parseRecordField(TokenIterator<TokenType> tokens) {

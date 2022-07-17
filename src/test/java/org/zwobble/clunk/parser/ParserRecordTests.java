@@ -1,10 +1,13 @@
 package org.zwobble.clunk.parser;
 
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.ast.untyped.UntypedPropertyNode;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.*;
+import static org.zwobble.clunk.matchers.CastMatcher.cast;
+import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
 import static org.zwobble.clunk.parser.Parsing.parseString;
 
 public class ParserRecordTests {
@@ -71,5 +74,27 @@ public class ParserRecordTests {
         var node = parseString(source, Parser::parseNamespaceStatement);
 
         assertThat(node, isUntypedRecordNode().withSupertypes(contains(isUntypedTypeLevelReferenceNode("Person"))));
+    }
+
+    @Test
+    public void canParseSingleProperty() {
+        var source = """
+            record User() {
+                property active: Bool {
+                    return true;
+                }
+            }
+            """;
+
+        var node = parseString(source, Parser::parseNamespaceStatement);
+
+        assertThat(node, isUntypedRecordNode().withBody(contains(
+            cast(
+                UntypedPropertyNode.class,
+                has("name", equalTo("active")),
+                has("type", isUntypedTypeLevelReferenceNode("Bool")),
+                has("body", contains(isUntypedReturnNode().withExpression(isUntypedBoolLiteralNode(true))))
+            )
+        )));
     }
 }

@@ -11,6 +11,7 @@ public record UntypedRecordNode(
     String name,
     List<UntypedRecordFieldNode> fields,
     List<UntypedTypeLevelExpressionNode> supertypes,
+    List<UntypedRecordBodyDeclarationNode> body,
     Source source
 ) implements UntypedNamespaceStatementNode {
     @Override
@@ -24,27 +25,33 @@ public record UntypedRecordNode(
     }
 
     public static Builder builder(String name) {
-        return new Builder(name, P.vector(), P.vector(), NullSource.INSTANCE);
+        return new Builder(name, P.vector(), P.vector(), P.vector(), NullSource.INSTANCE);
     }
 
     public static record Builder(
         String name,
         PVector<UntypedRecordFieldNode> fields,
         PVector<UntypedTypeLevelExpressionNode> supertypes,
+        PVector<UntypedRecordBodyDeclarationNode> body,
         Source source
     ) {
         public UntypedRecordNode build() {
-            return new UntypedRecordNode(name, fields, supertypes, source);
+            return new UntypedRecordNode(name, fields, supertypes, body, source);
         }
 
         public Builder addField(UntypedRecordFieldNode field) {
             var fields = this.fields.plus(field);
-            return new Builder(name, fields, supertypes, source);
+            return new Builder(name, fields, supertypes, body, source);
         }
 
         public Builder addSupertype(UntypedTypeLevelReferenceNode supertype) {
             var supertypes = this.supertypes.plus(supertype);
-            return new Builder(name, fields, supertypes, source);
+            return new Builder(name, fields, supertypes, body, source);
+        }
+
+        public Builder addBodyDeclaration(UntypedRecordBodyDeclarationNode declaration) {
+            var body = this.body.plus(declaration);
+            return new Builder(name, fields, supertypes, body, source);
         }
     }
 }

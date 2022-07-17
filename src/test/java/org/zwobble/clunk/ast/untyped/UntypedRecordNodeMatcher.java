@@ -32,6 +32,12 @@ public class UntypedRecordNodeMatcher extends CastMatcher<Object, UntypedRecordN
         return addMatcher(has("supertypes", matcher));
     }
 
+    public UntypedRecordNodeMatcher withBody(
+        Matcher<Iterable<? extends UntypedRecordBodyDeclarationNode>> matcher
+    ) {
+        return addMatcher(has("body", matcher));
+    }
+
     private UntypedRecordNodeMatcher addMatcher(Matcher<UntypedRecordNode> matcher) {
         return new UntypedRecordNodeMatcher(Lists.concatOne(matchers, matcher));
     }

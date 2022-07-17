@@ -16,13 +16,11 @@ import org.zwobble.clunk.util.P;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public record TypeCheckerContext(
     PStack<StackFrame> stack,
     PMap<NamespaceName, NamespaceType> namespaceTypes,
-    PMap<RecordType, Function<TypeCheckerContext, List<TypedRecordFieldNode>>> typeToFields,
+    PMap<RecordType, List<TypedRecordFieldNode>> typeToFields,
     PVector<SubtypeRelation> subtypeRelations
 ) {
     public static final TypeCheckerContext EMPTY = new TypeCheckerContext(
@@ -102,7 +100,7 @@ public record TypeCheckerContext(
         throw new SourceError("unknown variable: " + name, source);
     }
 
-    public TypeCheckerContext addFields(RecordType type, Function<TypeCheckerContext, List<TypedRecordFieldNode>> fields) {
+    public TypeCheckerContext addFields(RecordType type, List<TypedRecordFieldNode> fields) {
         var typeToFields = this.typeToFields.plus(type, fields);
         return new TypeCheckerContext(stack, namespaceTypes, typeToFields, subtypeRelations);
     }
@@ -113,10 +111,6 @@ public record TypeCheckerContext(
     }
 
     public FieldsLookup fieldsLookup() {
-        return new FieldsLookup(typeToFields.entrySet().stream()
-            .collect(Collectors.toMap(
-                entry -> entry.getKey(),
-                entry -> entry.getValue().apply(this)
-            )));
+        return new FieldsLookup(typeToFields);
     }
 }

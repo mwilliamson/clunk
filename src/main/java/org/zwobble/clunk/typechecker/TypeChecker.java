@@ -458,8 +458,8 @@ public class TypeChecker {
             node.source()
         );
 
-        var newContext = context.addFields(recordType, fieldsContext -> node.fields().stream()
-            .map(field -> typeCheckRecordField(field, fieldsContext))
+        var newContext = context.addFields(recordType, node.fields().stream()
+            .map(field -> typeCheckRecordField(field, context))
             .collect(Collectors.toList()));
 
         var typedSupertypeNodes = node.supertypes().stream()

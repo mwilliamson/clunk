@@ -96,7 +96,7 @@ public class TypeScriptCodeGenerator {
 
             @Override
             public TypeScriptExpressionNode visit(TypedFieldAccessNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileFieldAccess(node, context);
             }
 
             @Override
@@ -121,6 +121,16 @@ public class TypeScriptCodeGenerator {
         TypeScriptCodeGeneratorContext context
     ) {
         return new TypeScriptExpressionStatementNode(compileExpression(node.expression(), context));
+    }
+
+    private static TypeScriptExpressionNode compileFieldAccess(
+        TypedFieldAccessNode node,
+        TypeScriptCodeGeneratorContext context
+    ) {
+        return new TypeScriptPropertyAccessNode(
+            compileExpression(node.receiver(), context),
+            node.fieldName()
+        );
     }
 
     private static TypeScriptStatementNode compileFunction(TypedFunctionNode node, TypeScriptCodeGeneratorContext context) {

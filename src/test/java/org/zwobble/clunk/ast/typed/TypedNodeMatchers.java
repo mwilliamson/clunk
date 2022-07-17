@@ -3,6 +3,7 @@ package org.zwobble.clunk.ast.typed;
 import org.hamcrest.Matcher;
 import org.zwobble.clunk.types.NamespaceType;
 import org.zwobble.clunk.types.TypeLevelValue;
+import org.zwobble.clunk.util.P;
 
 import java.util.List;
 
@@ -22,6 +23,10 @@ public class TypedNodeMatchers {
 
     public static Matcher<TypedFunctionStatementNode> isTypedExpressionStatement(Matcher<TypedExpressionNode> expression) {
         return cast(TypedExpressionStatementNode.class, has("expression", expression));
+    }
+
+    public static TypedFieldAccessNodeMatcher isTypedFieldAccessNode() {
+        return new TypedFieldAccessNodeMatcher(P.vector());
     }
 
     public static TypedFunctionNodeMatcher isTypedFunctionNode() {

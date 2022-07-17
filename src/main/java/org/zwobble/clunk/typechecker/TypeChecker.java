@@ -148,7 +148,7 @@ public class TypeChecker {
 
             @Override
             public TypedExpressionNode visit(UntypedFieldAccessNode node) {
-                throw new RuntimeException("TODO: Not implemented");
+                return typeCheckFieldAccess(node, context);
             }
 
             @Override
@@ -175,6 +175,26 @@ public class TypeChecker {
         var typedExpression = typeCheckExpression(node.expression(), context);
         var typedStatement = new TypedExpressionStatementNode(typedExpression, node.source());
         return new TypeCheckStatementResult<>(typedStatement, false, context);
+    }
+
+    private static TypedExpressionNode typeCheckFieldAccess(UntypedFieldAccessNode node, TypeCheckerContext context) {
+        var typedReceiverNode = typeCheckExpression(node.receiver(), context);
+        // TODO: handle not a record
+        // TODO: handle missing field
+        var fieldType = (Type) context.fieldsOf((RecordType) typedReceiverNode.type())
+            .stream()
+            .filter(field -> field.name().equals(node.fieldName()))
+            .findFirst()
+            .get()
+            .type()
+            .value();
+
+        return new TypedFieldAccessNode(
+            typedReceiverNode,
+            node.fieldName(),
+            fieldType,
+            node.source()
+        );
     }
 
     private static TypeCheckerContext defineVariablesForFunction(

@@ -95,6 +95,11 @@ public class TypeScriptCodeGenerator {
             }
 
             @Override
+            public TypeScriptExpressionNode visit(TypedFieldAccessNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public TypeScriptExpressionNode visit(TypedIntLiteralNode node) {
                 return compileIntLiteral(node);
             }

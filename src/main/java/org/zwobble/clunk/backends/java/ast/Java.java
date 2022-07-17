@@ -23,6 +23,10 @@ public class Java {
         return new JavaCallNode(receiver, args);
     }
 
+    public static JavaCallNewNode callNew(JavaExpressionNode receiver, List<JavaExpressionNode> args) {
+        return new JavaCallNewNode(receiver, args);
+    }
+
     public static JavaConditionalBranchNode conditionalBranch(
         JavaExpressionNode condition,
         List<JavaStatementNode> body

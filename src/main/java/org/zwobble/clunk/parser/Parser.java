@@ -78,7 +78,7 @@ public class Parser {
         } else if (tokens.isNext(TokenType.IDENTIFIER)) {
             return new UntypedReferenceNode(tokens.nextValue(TokenType.IDENTIFIER), source);
         } else {
-            throw new RuntimeException("TODO");
+            throw new UnexpectedTokenException("primary expression", tokens.peek().describe(), source);
         }
     }
 

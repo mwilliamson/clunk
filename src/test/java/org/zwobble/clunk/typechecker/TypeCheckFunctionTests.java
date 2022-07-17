@@ -133,7 +133,7 @@ public class TypeCheckFunctionTests {
     }
 
     @Test
-    public void returnedContextLeavesTestEnvironment() {
+    public void returnedContextLeavesBodyEnvironment() {
         var untypedNode = UntypedFunctionNode.builder()
             .addBodyStatement(Untyped.var("x", Untyped.boolFalse()))
             .build();

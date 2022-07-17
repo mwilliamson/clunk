@@ -27,7 +27,7 @@ public class TypeCheckTestTests {
     }
 
     @Test
-    public void returnedContextLeavesTestEnvironment() {
+    public void returnedContextLeavesBodyEnvironment() {
         var untypedNode = UntypedTestNode.builder()
             .addBodyStatement(Untyped.var("x", Untyped.boolFalse()))
             .build();

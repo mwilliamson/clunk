@@ -109,6 +109,12 @@ public class TypeScriptSerialiser {
             }
 
             @Override
+            public Void visit(TypeScriptPropertyAccessNode node) {
+                serialisePropertyAccess(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(TypeScriptReferenceNode node) {
                 serialiseReference(node, builder);
                 return null;
@@ -243,6 +249,14 @@ public class TypeScriptSerialiser {
         for (var statement : node.statements()) {
             serialiseStatement(statement, builder);
         }
+    }
+
+    private static void serialisePropertyAccess(TypeScriptPropertyAccessNode node, CodeBuilder builder) {
+        builder.append("(");
+        serialiseExpression(node.receiver(), builder);
+        builder.append(")");
+        builder.append(".");
+        builder.append(node.propertyName());
     }
 
     private static void serialiseReference(TypeScriptReferenceNode node, CodeBuilder builder) {

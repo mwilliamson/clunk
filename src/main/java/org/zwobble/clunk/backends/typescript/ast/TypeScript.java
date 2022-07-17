@@ -90,4 +90,8 @@ public class TypeScript {
     public static TypeScriptUnionNode union(List<TypeScriptExpressionNode> members) {
         return new TypeScriptUnionNode(members);
     }
+
+    public static TypeScriptPropertyAccessNode propertyAccess(TypeScriptReferenceNode receiver, String propertyName) {
+        return new TypeScriptPropertyAccessNode(receiver, propertyName);
+    }
 }

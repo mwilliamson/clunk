@@ -126,7 +126,7 @@ public class PythonCodeGenerator {
 
             @Override
             public PythonExpressionNode visit(TypedFieldAccessNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileFieldAccess(node, context);
             }
 
             @Override
@@ -151,6 +151,16 @@ public class PythonCodeGenerator {
         PythonCodeGeneratorContext context
     ) {
         return new PythonExpressionStatementNode(compileExpression(node.expression(), context));
+    }
+
+    private PythonExpressionNode compileFieldAccess(
+        TypedFieldAccessNode node,
+        PythonCodeGeneratorContext context
+    ) {
+        return new PythonAttrAccessNode(
+            compileExpression(node.receiver(), context),
+            node.fieldName()
+        );
     }
 
     private PythonStatementNode compileFunction(TypedFunctionNode node, PythonCodeGeneratorContext context) {

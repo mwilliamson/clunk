@@ -71,6 +71,10 @@ public class TypeScript {
         return new TypeScriptParamNode(name, type);
     }
 
+    public static TypeScriptPropertyAccessNode propertyAccess(TypeScriptReferenceNode receiver, String propertyName) {
+        return new TypeScriptPropertyAccessNode(receiver, propertyName);
+    }
+
     public static TypeScriptReferenceNode reference(String name) {
         return new TypeScriptReferenceNode(name);
     }
@@ -89,9 +93,5 @@ public class TypeScript {
 
     public static TypeScriptUnionNode union(List<TypeScriptExpressionNode> members) {
         return new TypeScriptUnionNode(members);
-    }
-
-    public static TypeScriptPropertyAccessNode propertyAccess(TypeScriptReferenceNode receiver, String propertyName) {
-        return new TypeScriptPropertyAccessNode(receiver, propertyName);
     }
 }

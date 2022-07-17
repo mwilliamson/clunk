@@ -131,4 +131,18 @@ public class TypeCheckFunctionTests {
             ))
         );
     }
+
+    @Test
+    public void returnedContextLeavesTestEnvironment() {
+        var untypedNode = UntypedFunctionNode.builder()
+            .addBodyStatement(Untyped.var("x", Untyped.boolFalse()))
+            .build();
+
+        var result = TypeChecker.typeCheckNamespaceStatement(
+            untypedNode,
+            TypeChecker.defineVariablesForNamespaceStatement(untypedNode, TypeCheckerContext.stub())
+        );
+
+        assertThat(result.context().currentFrame().environment().containsKey("x"), equalTo(false));
+    }
 }

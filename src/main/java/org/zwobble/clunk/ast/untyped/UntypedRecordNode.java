@@ -1,9 +1,10 @@
 package org.zwobble.clunk.ast.untyped;
 
+import org.pcollections.PVector;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.sources.Source;
+import org.zwobble.clunk.util.P;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public record UntypedRecordNode(
@@ -23,13 +24,13 @@ public record UntypedRecordNode(
     }
 
     public static Builder builder(String name) {
-        return new Builder(name, List.of(), List.of(), NullSource.INSTANCE);
+        return new Builder(name, P.vector(), P.vector(), NullSource.INSTANCE);
     }
 
     public static record Builder(
         String name,
-        List<UntypedRecordFieldNode> fields,
-        List<UntypedTypeLevelExpressionNode> supertypes,
+        PVector<UntypedRecordFieldNode> fields,
+        PVector<UntypedTypeLevelExpressionNode> supertypes,
         Source source
     ) {
         public UntypedRecordNode build() {
@@ -37,14 +38,12 @@ public record UntypedRecordNode(
         }
 
         public Builder addField(UntypedRecordFieldNode field) {
-            var fields = new ArrayList<>(this.fields);
-            fields.add(field);
+            var fields = this.fields.plus(field);
             return new Builder(name, fields, supertypes, source);
         }
 
         public Builder addSupertype(UntypedTypeLevelReferenceNode supertype) {
-            var supertypes = new ArrayList<>(this.supertypes);
-            supertypes.add(supertype);
+            var supertypes = this.supertypes.plus(supertype);
             return new Builder(name, fields, supertypes, source);
         }
     }

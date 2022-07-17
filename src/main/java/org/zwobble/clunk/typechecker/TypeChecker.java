@@ -370,8 +370,7 @@ public class TypeChecker {
             typedBody,
             node.source()
         );
-        // TODO: revert to original environment (probably elsewhere too)
-        return new TypeCheckResult<>(typedNode, context);
+        return new TypeCheckResult<>(typedNode, context.leave());
     }
 
     public static TypeCheckerContext defineVariablesForNamespaceStatement(

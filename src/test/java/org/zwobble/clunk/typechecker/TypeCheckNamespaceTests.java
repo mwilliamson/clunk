@@ -102,4 +102,17 @@ public class TypeCheckNamespaceTests {
         var typedRecordNode = (TypedRecordNode) result.typedNode().statements().get(1);
         assertThat(typedFunctionNode.params().get(0).type().value(), equalTo(typedRecordNode.type()));
     }
+
+    @Test
+    public void returnedContextLeavesBodyEnvironment() {
+        var untypedNode = UntypedNamespaceNode
+            .builder(NamespaceName.fromParts("example", "project"))
+            .addStatement(UntypedRecordNode.builder("X").build())
+            .build();
+        var context = TypeCheckerContext.stub();
+
+        var result = TypeChecker.typeCheckNamespace(untypedNode, context);
+
+        assertThat(result.context().currentFrame().environment().containsKey("X"), equalTo(false));
+    }
 }

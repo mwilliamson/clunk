@@ -60,6 +60,15 @@ public record TypeCheckerContext(
         );
     }
 
+    public TypeCheckerContext leave() {
+        return new TypeCheckerContext(
+            stack.minus(0),
+            namespaceTypes,
+            typeToFields,
+            subtypeRelations
+        );
+    }
+
     public StackFrame currentFrame() {
         return stack.get(0);
     }

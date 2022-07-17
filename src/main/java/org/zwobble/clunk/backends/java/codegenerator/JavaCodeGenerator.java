@@ -105,7 +105,7 @@ public class JavaCodeGenerator {
 
             @Override
             public JavaExpressionNode visit(TypedFieldAccessNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileFieldAccess(node, context);
             }
 
             @Override
@@ -127,6 +127,16 @@ public class JavaCodeGenerator {
 
     private static JavaStatementNode compileExpressionStatement(TypedExpressionStatementNode node, JavaCodeGeneratorContext context) {
         return new JavaExpressionStatementNode(compileExpression(node.expression(), context));
+    }
+
+    private static JavaExpressionNode compileFieldAccess(TypedFieldAccessNode node, JavaCodeGeneratorContext context) {
+        return new JavaCallNode(
+            new JavaMemberAccessNode(
+                compileExpression(node.receiver(), context),
+                node.fieldName()
+            ),
+            List.of()
+        );
     }
 
     public static JavaClassBodyDeclarationNode compileFunction(TypedFunctionNode node, JavaCodeGeneratorContext context) {

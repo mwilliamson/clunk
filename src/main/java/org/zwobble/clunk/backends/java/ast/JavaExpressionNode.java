@@ -7,6 +7,7 @@ public interface JavaExpressionNode extends JavaNode {
         T visit(JavaBoolLiteralNode node);
         T visit(JavaCallNode node);
         T visit(JavaIntLiteralNode node);
+        T visit(JavaMemberAccessNode node);
         T visit(JavaReferenceNode node);
         T visit(JavaStringLiteralNode node);
     }

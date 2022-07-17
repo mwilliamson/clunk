@@ -53,6 +53,10 @@ public class Java {
         return new JavaIntLiteralNode(value);
     }
 
+    public static JavaMemberAccessNode memberAccess(JavaExpressionNode receiver, String memberName) {
+        return new JavaMemberAccessNode(receiver, memberName);
+    }
+
     public static JavaStringLiteralNode string(String value) {
         return new JavaStringLiteralNode(value);
     }

@@ -117,6 +117,12 @@ public class JavaSerialiser {
             }
 
             @Override
+            public Void visit(JavaMemberAccessNode node) {
+                serialiseMemberAccess(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(JavaReferenceNode node) {
                 serialiseReference(node, builder);
                 return null;
@@ -212,6 +218,14 @@ public class JavaSerialiser {
 
     private static void serialiseIntLiteral(JavaIntLiteralNode node, CodeBuilder builder) {
         builder.append(Integer.toString(node.value()));
+    }
+
+    private static void serialiseMemberAccess(JavaMemberAccessNode node, CodeBuilder builder) {
+        builder.append("(");
+        serialiseExpression(node.receiver(), builder);
+        builder.append(")");
+        builder.append(".");
+        builder.append(node.memberName());
     }
 
     public static void serialiseMethodDeclaration(JavaMethodDeclarationNode node, CodeBuilder builder) {

@@ -180,7 +180,6 @@ public class TypeChecker {
     private static TypedExpressionNode typeCheckFieldAccess(UntypedFieldAccessNode node, TypeCheckerContext context) {
         var typedReceiverNode = typeCheckExpression(node.receiver(), context);
         // TODO: handle not a record
-        // TODO: handle missing field
         var recordType = (RecordType) typedReceiverNode.type();
         var field = context.fieldsOf(recordType)
             .stream()

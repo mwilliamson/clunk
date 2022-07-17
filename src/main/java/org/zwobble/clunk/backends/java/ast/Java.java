@@ -53,6 +53,10 @@ public class Java {
         return new JavaImportStaticNode(typeName, identifier);
     }
 
+    public static JavaImportTypeNode importType(String typeName) {
+        return new JavaImportTypeNode(typeName);
+    }
+
     public static JavaExpressionNode intLiteral(int value) {
         return new JavaIntLiteralNode(value);
     }

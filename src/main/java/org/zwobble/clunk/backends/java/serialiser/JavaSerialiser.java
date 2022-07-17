@@ -201,6 +201,12 @@ public class JavaSerialiser {
                 serialiseImportStatic(node, builder);
                 return null;
             }
+
+            @Override
+            public Void visit(JavaImportTypeNode node) {
+                serialiseImportType(node, builder);
+                return null;
+            }
         });
     }
 
@@ -209,6 +215,13 @@ public class JavaSerialiser {
         builder.append(node.typeName());
         builder.append(".");
         builder.append(node.identifier());
+        builder.append(";");
+        builder.newLine();
+    }
+
+    private static void serialiseImportType(JavaImportTypeNode node, CodeBuilder builder) {
+        builder.append("import ");
+        builder.append(node.typeName());
         builder.append(";");
         builder.newLine();
     }

@@ -7,13 +7,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
-public class JavaSerialiserImportStaticTests {
+public class JavaSerialiserImportTypeTests {
     @Test
-    public void canSerialiseStaticImport() {
-        var node = Java.importStatic("com.example", "assertThat");
+    public void canSerialiseImportOfType() {
+        var node = Java.importType("com.example.User");
 
         var result = serialiseToString(node, JavaSerialiser::serialiseImport);
 
-        assertThat(result, equalTo("import static com.example.assertThat;\n"));
+        assertThat(result, equalTo("import com.example.User;\n"));
     }
 }

@@ -32,20 +32,32 @@ public class TypeChecker {
     private static TypedExpressionNode typeCheckCall(UntypedCallNode node, TypeCheckerContext context) {
         var receiver = typeCheckExpression(node.receiver(), context);
 
-        // TODO: handle not a StaticFunctionType
-        var receiverType = (StaticFunctionType) receiver.type();
+        // TODO: handle not callable
+        List<Type> positionalParams;
+        Type returnType;
+        if (receiver.type() instanceof StaticFunctionType functionType) {
+            positionalParams = functionType.positionalParams();
+            returnType = functionType.returnType();
+        } else if (receiver.type() instanceof TypeLevelValueType typeLevelValueType && typeLevelValueType.value() instanceof RecordType recordType) {
+            positionalParams = context.fieldsOf(recordType).stream()
+                .map(field -> (Type)field.type().value())
+                .toList();
+            returnType = recordType;
+        } else {
+            throw new UnsupportedOperationException("TODO");
+        }
 
-        if (node.positionalArgs().size() != receiverType.positionalParams().size()) {
+        if (node.positionalArgs().size() != positionalParams.size()) {
             throw new WrongNumberOfArgumentsError(
-                receiverType.positionalParams().size(),
+                positionalParams.size(),
                 node.positionalArgs().size(),
                 node.source()
             );
         }
         var typedPositionalArgs = node.positionalArgs().stream().map(arg -> typeCheckExpression(arg, context)).toList();
 
-        for (var argIndex = 0; argIndex < receiverType.positionalParams().size(); argIndex++) {
-            var paramType = receiverType.positionalParams().get(argIndex);
+        for (var argIndex = 0; argIndex < positionalParams.size(); argIndex++) {
+            var paramType = positionalParams.get(argIndex);
             var argNode = typedPositionalArgs.get(argIndex);
             var argType = argNode.type();
             if (!isSubType(argType, paramType)) {
@@ -55,7 +67,7 @@ public class TypeChecker {
         return new TypedCallNode(
             receiver,
             typedPositionalArgs,
-            receiverType.returnType(),
+            returnType,
             node.source()
         );
     }

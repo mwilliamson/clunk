@@ -1,6 +1,7 @@
 package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.*;
@@ -35,6 +36,26 @@ public class TypeCheckCallTests {
             .withReceiver(isTypedReferenceNode().withName("abs").withType(functionType))
             .withPositionalArgs(contains(isTypedIntLiteralNode(123)))
             .withType(Types.INT)
+        );
+    }
+
+    @Test
+    public void canTypeCheckCallToRecordConstructor() {
+        var untypedNode = Untyped.call(
+            Untyped.reference("Id"),
+            List.of(Untyped.intLiteral(123))
+        );
+        var recordType = Types.recordType(NamespaceName.fromParts("example"), "Id");
+        var context = TypeCheckerContext.stub()
+            .updateType("Id", Types.metaType(recordType), NullSource.INSTANCE)
+            .addFields(recordType, List.of(Typed.recordField("value", Types.INT)));
+
+        var result = TypeChecker.typeCheckExpression(untypedNode, context);
+
+        assertThat(result, isTypedCallNode()
+            .withReceiver(isTypedReferenceNode().withName("Id").withType(Types.metaType(recordType)))
+            .withPositionalArgs(contains(isTypedIntLiteralNode(123)))
+            .withType(recordType)
         );
     }
 

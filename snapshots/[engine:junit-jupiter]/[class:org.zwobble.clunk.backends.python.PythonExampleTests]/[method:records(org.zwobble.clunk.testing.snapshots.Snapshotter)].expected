@@ -1,0 +1,52 @@
+Source path: src/recordsTest.clunk
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+
+record Add(left: Int, right: Int) {
+    property sum: Int {
+        //return left + right;
+        return 5;
+    }
+}
+
+test "assert field" {
+    var add = Add(2, 3);
+
+    assertThat(add.left, equalTo(2));
+    assertThat(add.right, equalTo(3));
+}
+
+//test "assert sum" {
+//    var add = Add(2, 3);
+
+//    var result = add.sum;
+
+//    assertThat(result, equalTo(5));
+//}
+
+
+==============
+
+Output path: recordsTest.py
+import dataclasses
+from precisely import assert_that
+from precisely import equal_to
+@((dataclasses).dataclass)(frozen=True)
+class Add:
+    left: int
+    right: int
+def test_assert_field():
+    add = (Add)(2, 3)
+    (assert_that)((add).left, (equal_to)(2))
+    (assert_that)((add).right, (equal_to)(3))
+
+
+==============
+
+============================= test session starts ==============================
+rootdir: ROOTDIR, configfile: tox.ini
+collected 1 item
+
+recordsTest.py .                                                         [100%]
+
+============================== 1 passed in TIME ===============================

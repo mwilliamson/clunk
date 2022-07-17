@@ -46,6 +46,14 @@ public abstract class ExampleTests {
     }
 
     @Test
+    public void records(Snapshotter snapshotter) throws IOException, InterruptedException {
+        runExampleTest(
+            snapshotter,
+            "records"
+        );
+    }
+
+    @Test
     public void mammoth(Snapshotter snapshotter) throws IOException, InterruptedException {
         runExampleTest(
             snapshotter,

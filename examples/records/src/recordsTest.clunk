@@ -1,0 +1,24 @@
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+
+record Add(left: Int, right: Int) {
+    property sum: Int {
+        //return left + right;
+        return 5;
+    }
+}
+
+test "assert field" {
+    var add = Add(2, 3);
+
+    assertThat(add.left, equalTo(2));
+    assertThat(add.right, equalTo(3));
+}
+
+//test "assert sum" {
+//    var add = Add(2, 3);
+
+//    var result = add.sum;
+
+//    assertThat(result, equalTo(5));
+//}

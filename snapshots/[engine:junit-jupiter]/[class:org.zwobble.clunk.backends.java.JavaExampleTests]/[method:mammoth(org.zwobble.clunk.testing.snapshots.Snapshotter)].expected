@@ -1,3 +1,25 @@
+Source path: src/html.clunk
+sealed interface HtmlNode {
+}
+
+record HtmlAttribute(name: String, value: String)
+
+record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode
+
+record HtmlForceWrite() <: HtmlNode
+
+record HtmlTag(
+    tagNames: List[String],
+    attributes: List[HtmlAttribute],
+    isCollapsible: Bool,
+    separator: String,
+) <: HtmlNode
+
+record HtmlText(value: String)
+
+
+==============
+
 Source path: src/documents.clunk
 sealed interface DocumentElement {
 }
@@ -120,6 +142,55 @@ enum VerticalAlignment {
     BASELINE
 }
 
+
+==============
+
+Output path: org/zwobble/mammoth/internal/html/HtmlNode.java
+package org.zwobble.mammoth.internal.html;
+
+public sealed interface HtmlNode permits org.zwobble.mammoth.internal.html.HtmlElement, org.zwobble.mammoth.internal.html.HtmlForceWrite, org.zwobble.mammoth.internal.html.HtmlTag {
+}
+
+
+==============
+
+Output path: org/zwobble/mammoth/internal/html/HtmlAttribute.java
+package org.zwobble.mammoth.internal.html;
+
+public record HtmlAttribute(String name, String value) {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/html/HtmlElement.java
+package org.zwobble.mammoth.internal.html;
+
+public record HtmlElement(org.zwobble.mammoth.internal.html.HtmlTag tag, java.util.List<org.zwobble.mammoth.internal.html.HtmlNode> children) implements org.zwobble.mammoth.internal.html.HtmlNode {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/html/HtmlForceWrite.java
+package org.zwobble.mammoth.internal.html;
+
+public record HtmlForceWrite() implements org.zwobble.mammoth.internal.html.HtmlNode {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/html/HtmlTag.java
+package org.zwobble.mammoth.internal.html;
+
+public record HtmlTag(java.util.List<String> tagNames, java.util.List<org.zwobble.mammoth.internal.html.HtmlAttribute> attributes, boolean isCollapsible, String separator) implements org.zwobble.mammoth.internal.html.HtmlNode {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/html/HtmlText.java
+package org.zwobble.mammoth.internal.html;
+
+public record HtmlText(String value) {
+}
 
 ==============
 

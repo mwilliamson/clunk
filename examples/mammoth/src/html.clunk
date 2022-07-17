@@ -1,0 +1,17 @@
+sealed interface HtmlNode {
+}
+
+record HtmlAttribute(name: String, value: String)
+
+record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode
+
+record HtmlForceWrite() <: HtmlNode
+
+record HtmlTag(
+    tagNames: List[String],
+    attributes: List[HtmlAttribute],
+    isCollapsible: Bool,
+    separator: String,
+) <: HtmlNode
+
+record HtmlText(value: String)

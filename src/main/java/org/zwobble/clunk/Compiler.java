@@ -42,7 +42,7 @@ public class Compiler {
                 sourcePath.getFileName().toString().replaceAll("\\.clunk$", "")
             );
             var namespaceName = new NamespaceName(pathToParts(namespaceParts));
-            var result = readFile(sourcePath, namespaceName);
+            var result = readFile(sourcePath, namespaceName, typeCheckerContext);
             typedNamespaceNodes.add(result.typedNode());
             typeCheckerContext = result.context();
         }
@@ -85,7 +85,8 @@ public class Compiler {
 
     private TypeCheckResult<TypedNamespaceNode> readFile(
         Path sourcePath,
-        NamespaceName namespaceName
+        NamespaceName namespaceName,
+        TypeCheckerContext context
     ) throws IOException {
         var sourceContents = Files.readString(sourcePath);
         logger.sourceFile(sourcePath, sourceContents);
@@ -94,6 +95,6 @@ public class Compiler {
         var parser = new Parser(source);
         var untypedNamespaceNode = parser.parseNamespaceName(tokens, namespaceName);
 
-        return TypeChecker.typeCheckNamespace(untypedNamespaceNode, Builtins.TYPE_CHECKER_CONTEXT);
+        return TypeChecker.typeCheckNamespace(untypedNamespaceNode, context);
     }
 }

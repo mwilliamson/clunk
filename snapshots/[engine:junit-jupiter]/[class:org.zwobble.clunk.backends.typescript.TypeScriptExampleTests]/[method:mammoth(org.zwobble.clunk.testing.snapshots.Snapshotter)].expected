@@ -1,3 +1,25 @@
+Source path: src/html.clunk
+sealed interface HtmlNode {
+}
+
+record HtmlAttribute(name: String, value: String)
+
+record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode
+
+record HtmlForceWrite() <: HtmlNode
+
+record HtmlTag(
+    tagNames: List[String],
+    attributes: List[HtmlAttribute],
+    isCollapsible: Bool,
+    separator: String,
+) <: HtmlNode
+
+record HtmlText(value: String)
+
+
+==============
+
 Source path: src/documents.clunk
 sealed interface DocumentElement {
 }
@@ -118,6 +140,34 @@ enum VerticalAlignment {
     SUPERSCRIPT,
     SUBSCRIPT,
     BASELINE
+}
+
+
+==============
+
+Output path: html.ts
+type HtmlNode = HtmlElement | HtmlForceWrite | HtmlTag;
+interface HtmlAttribute {
+    readonly name: string;
+    readonly value: string;
+}
+interface HtmlElement {
+    readonly type: "HtmlElement";
+    readonly tag: HtmlTag;
+    readonly children: (Array)<HtmlNode>;
+}
+interface HtmlForceWrite {
+    readonly type: "HtmlForceWrite";
+}
+interface HtmlTag {
+    readonly type: "HtmlTag";
+    readonly tagNames: (Array)<string>;
+    readonly attributes: (Array)<HtmlAttribute>;
+    readonly isCollapsible: boolean;
+    readonly separator: string;
+}
+interface HtmlText {
+    readonly value: string;
 }
 
 

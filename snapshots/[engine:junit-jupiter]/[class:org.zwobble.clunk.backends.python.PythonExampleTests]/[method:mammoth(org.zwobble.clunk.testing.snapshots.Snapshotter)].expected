@@ -1,3 +1,25 @@
+Source path: src/html.clunk
+sealed interface HtmlNode {
+}
+
+record HtmlAttribute(name: String, value: String)
+
+record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode
+
+record HtmlForceWrite() <: HtmlNode
+
+record HtmlTag(
+    tagNames: List[String],
+    attributes: List[HtmlAttribute],
+    isCollapsible: Bool,
+    separator: String,
+) <: HtmlNode
+
+record HtmlText(value: String)
+
+
+==============
+
 Source path: src/documents.clunk
 sealed interface DocumentElement {
 }
@@ -119,6 +141,35 @@ enum VerticalAlignment {
     SUBSCRIPT,
     BASELINE
 }
+
+
+==============
+
+Output path: html.py
+import dataclasses
+import typing
+class HtmlNode:
+    pass
+@((dataclasses).dataclass)(frozen=True)
+class HtmlAttribute:
+    name: str
+    value: str
+@((dataclasses).dataclass)(frozen=True)
+class HtmlElement:
+    tag: HtmlTag
+    children: (typing).List[HtmlNode]
+@((dataclasses).dataclass)(frozen=True)
+class HtmlForceWrite:
+    pass
+@((dataclasses).dataclass)(frozen=True)
+class HtmlTag:
+    tagNames: (typing).List[str]
+    attributes: (typing).List[HtmlAttribute]
+    isCollapsible: bool
+    separator: str
+@((dataclasses).dataclass)(frozen=True)
+class HtmlText:
+    value: str
 
 
 ==============

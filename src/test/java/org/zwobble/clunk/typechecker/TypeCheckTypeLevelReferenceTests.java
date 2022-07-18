@@ -7,7 +7,7 @@ import org.zwobble.clunk.types.IntType;
 import org.zwobble.clunk.types.StringType;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedTypeLevelExpressionNode;
+import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedTypeLevelReferenceNode;
 
 public class TypeCheckTypeLevelReferenceTests {
     @Test
@@ -19,7 +19,7 @@ public class TypeCheckTypeLevelReferenceTests {
             TypeCheckerContext.stub()
         );
 
-        assertThat(typedNode, isTypedTypeLevelExpressionNode(BoolType.INSTANCE));
+        assertThat(typedNode, isTypedTypeLevelReferenceNode(BoolType.INSTANCE));
     }
 
     @Test
@@ -31,7 +31,7 @@ public class TypeCheckTypeLevelReferenceTests {
             TypeCheckerContext.stub()
         );
 
-        assertThat(typedNode, isTypedTypeLevelExpressionNode(IntType.INSTANCE));
+        assertThat(typedNode, isTypedTypeLevelReferenceNode(IntType.INSTANCE));
     }
 
     @Test
@@ -43,6 +43,6 @@ public class TypeCheckTypeLevelReferenceTests {
             TypeCheckerContext.stub()
         );
 
-        assertThat(typedNode, isTypedTypeLevelExpressionNode(StringType.INSTANCE));
+        assertThat(typedNode, isTypedTypeLevelReferenceNode(StringType.INSTANCE));
     }
 }

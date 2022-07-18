@@ -75,6 +75,10 @@ public class TypedNodeMatchers {
         return has("value", equalTo(value));
     }
 
+    public static Matcher<TypedTypeLevelExpressionNode> isTypedTypeLevelReferenceNode(TypeLevelValue value) {
+        return cast(TypedTypeLevelReferenceNode.class, has("value", equalTo(value)));
+    }
+
     public static TypedVarNodeMatcher isTypedVarNode() {
         return new TypedVarNodeMatcher(List.of());
     }

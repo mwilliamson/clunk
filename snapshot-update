@@ -73,7 +73,7 @@ def _render_diff(actual_path):
     name = _path_to_name(actual_path)
     code = _name_to_code(name)
     print("Code:", code)
-    print("Name:", name)
+    print("Name:", name, flush=True)
     subprocess.run(["colordiff", "-u", "--new-file", expected_path, actual_path])
 
 

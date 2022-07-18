@@ -119,4 +119,16 @@ public record TypeCheckerContext(
     public List<TypedRecordFieldNode> fieldsOf(RecordType type) {
         return typeToFields.get(type);
     }
+
+    public Optional<Type> memberType(RecordType type, String memberName) {
+        var fields = typeToFields.get(type);
+        if (fields == null) {
+            return Optional.empty();
+        }
+
+        return fields.stream()
+            .filter(field -> field.name().equals(memberName))
+            .map(field -> (Type) field.type().value())
+            .findFirst();
+    }
 }

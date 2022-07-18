@@ -390,24 +390,16 @@ public class TypeChecker {
         var typedReceiverNode = typeCheckExpression(node.receiver(), context);
         // TODO: handle not a record
         var recordType = (RecordType) typedReceiverNode.type();
-        var member = context.fieldsOf(recordType)
-            .stream()
-            .filter(f -> f.name().equals(node.memberName()))
-            .findFirst();
+        var memberType = context.memberType(recordType, node.memberName());
 
-        if (member.isEmpty()) {
+        if (memberType.isEmpty()) {
             throw new UnknownMemberError(recordType, node.memberName(), node.source());
         }
-
-        var memberType = (Type) member
-            .get()
-            .type()
-            .value();
 
         return new TypedMemberAccessNode(
             typedReceiverNode,
             node.memberName(),
-            memberType,
+            memberType.get(),
             node.source()
         );
     }

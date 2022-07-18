@@ -307,6 +307,10 @@ public class JavaCodeGenerator {
                 return new JavaTypeVariableReferenceNode(interfaceType.name());
             })
             .toList();
+        
+        var body = node.body().stream()
+            .map(declaration -> compileRecordBodyDeclaration(declaration, context))
+            .toList();
 
         return new JavaOrdinaryCompilationUnitNode(
             namespaceToPackage(node.type().namespaceName(), context),
@@ -315,8 +319,25 @@ public class JavaCodeGenerator {
                 node.name(),
                 components,
                 implements_,
-                List.of()
+                body
             )
+        );
+    }
+
+    private static JavaClassBodyDeclarationNode compileRecordBodyDeclaration(
+        TypedRecordBodyDeclarationNode node,
+        JavaCodeGeneratorContext context
+    ) {
+        var propertyNode = (TypedPropertyNode) node;
+        return new JavaMethodDeclarationNode(
+            List.of(),
+            false,
+            compileTypeLevelExpression(propertyNode.type(), context),
+            propertyNode.name(),
+            List.of(),
+            propertyNode.body().stream()
+                .map(statement -> compileFunctionStatement(statement, context))
+                .toList()
         );
     }
 

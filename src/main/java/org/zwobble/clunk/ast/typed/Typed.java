@@ -65,6 +65,14 @@ public class Typed {
         return new TypedParamNode(name, type, NullSource.INSTANCE);
     }
 
+    public static TypedPropertyNode property(
+        String name,
+        TypedTypeLevelExpressionNode type,
+        List<TypedFunctionStatementNode> body
+    ) {
+        return new TypedPropertyNode(name, type, body, NullSource.INSTANCE);
+    }
+
     public static TypedRecordFieldNode recordField(String name, TypedTypeLevelExpressionNode type) {
         return new TypedRecordFieldNode(name, type, NullSource.INSTANCE);
     }

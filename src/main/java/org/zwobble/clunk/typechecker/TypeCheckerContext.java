@@ -18,10 +18,12 @@ public record TypeCheckerContext(
     PStack<StackFrame> stack,
     PMap<NamespaceName, NamespaceType> namespaceTypes,
     PMap<RecordType, List<TypedRecordFieldNode>> typeToFields,
+    PMap<RecordType, Map<String, Type>> memberTypes,
     PVector<SubtypeRelation> subtypeRelations
 ) {
     public static final TypeCheckerContext EMPTY = new TypeCheckerContext(
         P.stack(),
+        P.map(),
         P.map(),
         P.map(),
         P.vector()
@@ -30,6 +32,7 @@ public record TypeCheckerContext(
     public static TypeCheckerContext stub() {
         return new TypeCheckerContext(
             P.stack(StackFrame.namespace(NamespaceName.fromParts(), Builtins.ENVIRONMENT)),
+            P.map(),
             P.map(),
             P.map(),
             P.vector()
@@ -53,6 +56,7 @@ public record TypeCheckerContext(
             stack.plus(stackFrame),
             namespaceTypes,
             typeToFields,
+            memberTypes,
             subtypeRelations
         );
     }
@@ -62,6 +66,7 @@ public record TypeCheckerContext(
             stack.minus(0),
             namespaceTypes,
             typeToFields,
+            memberTypes,
             subtypeRelations
         );
     }
@@ -76,7 +81,7 @@ public record TypeCheckerContext(
 
     public TypeCheckerContext updateNamespaceType(NamespaceType namespaceType) {
         var namespaceTypes = this.namespaceTypes.plus(namespaceType.name(), namespaceType);
-        return new TypeCheckerContext(stack, namespaceTypes, typeToFields, subtypeRelations);
+        return new TypeCheckerContext(stack, namespaceTypes, typeToFields, memberTypes, subtypeRelations);
     }
 
     public Optional<NamespaceType> typeOfNamespace(NamespaceName name) {
@@ -92,6 +97,7 @@ public record TypeCheckerContext(
             P.stackUpdateTop(stack, frame -> frame.updateType(name, type, source)),
             namespaceTypes,
             typeToFields,
+            memberTypes,
             subtypeRelations
         );
     }
@@ -108,12 +114,22 @@ public record TypeCheckerContext(
 
     public TypeCheckerContext addFields(RecordType type, List<TypedRecordFieldNode> fields) {
         var typeToFields = this.typeToFields.plus(type, fields);
-        return new TypeCheckerContext(stack, namespaceTypes, typeToFields, subtypeRelations);
+        return new TypeCheckerContext(stack, namespaceTypes, typeToFields, memberTypes, subtypeRelations);
+    }
+
+    public TypeCheckerContext addMemberTypes(RecordType type, Map<String, Type> memberTypes) {
+        return new TypeCheckerContext(
+            stack,
+            namespaceTypes,
+            typeToFields,
+            this.memberTypes.plus(type, memberTypes),
+            subtypeRelations
+        );
     }
 
     public TypeCheckerContext addSubtypeRelation(RecordType subtype, InterfaceType superType) {
         var subtypeRelations = this.subtypeRelations.plus(new SubtypeRelation(subtype, superType));
-        return new TypeCheckerContext(stack, namespaceTypes, typeToFields, subtypeRelations);
+        return new TypeCheckerContext(stack, namespaceTypes, typeToFields, memberTypes, subtypeRelations);
     }
 
     public List<TypedRecordFieldNode> fieldsOf(RecordType type) {
@@ -121,14 +137,11 @@ public record TypeCheckerContext(
     }
 
     public Optional<Type> memberType(RecordType type, String memberName) {
-        var fields = typeToFields.get(type);
-        if (fields == null) {
+        var typeMembers = memberTypes.get(type);
+        if (typeMembers == null) {
             return Optional.empty();
         }
 
-        return fields.stream()
-            .filter(field -> field.name().equals(memberName))
-            .map(field -> (Type) field.type().value())
-            .findFirst();
+        return Optional.ofNullable(typeMembers.get(memberName));
     }
 }

@@ -7,6 +7,7 @@ import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.types.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -483,6 +484,21 @@ public class TypeChecker {
         });
     }
 
+    private static TypedPropertyNode typeCheckProperty(UntypedPropertyNode node, TypeCheckerContext context) {
+        var typedTypeNode = typeCheckTypeLevelExpressionNode(node.type(), context);
+        var typeCheckBodyResult = typeCheckFunctionStatements(
+            node.body(),
+            context.enterFunction((Type) typedTypeNode.value())
+        );
+        // TODO: check return
+        return new TypedPropertyNode(
+            node.name(),
+            typedTypeNode,
+            typeCheckBodyResult.value(),
+            node.source()
+        );
+    }
+
     private static TypeCheckNamespaceStatementResult typeCheckRecord(
         UntypedRecordNode node
     ) {
@@ -527,7 +543,21 @@ public class TypeChecker {
                             .toList();
                         typedSupertypeNodesBox.set(typedSupertypeNodes);
 
+                        var body = node.body().stream()
+                            .map(declaration -> typeCheckProperty((UntypedPropertyNode) declaration, context))
+                            .toList();
+
+                        var memberTypes = new HashMap<String, Type>();
+                        // TODO: check for duplicates
+                        for (var typedFieldNode : typedRecordFieldNodes) {
+                            memberTypes.put(typedFieldNode.name(), (Type) typedFieldNode.type().value());
+                        }
+                        for (var typedPropertyNode : body) {
+                            memberTypes.put(typedPropertyNode.name(), (Type) typedPropertyNode.type().value());
+                        }
+
                         var newContext = context.addFields(recordType, typedRecordFieldNodes);
+                        newContext = newContext.addMemberTypes(recordType, memberTypes);
                         for (var typedSupertypeNode : typedSupertypeNodes) {
                             // TODO: handle type-level values that aren't types
                             newContext = newContext.addSubtypeRelation(recordType, (InterfaceType) typedSupertypeNode.value());

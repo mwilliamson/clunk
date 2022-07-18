@@ -9,6 +9,7 @@ import org.zwobble.clunk.types.RecordType;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -23,7 +24,7 @@ public class TypeCheckMemberAccessTests {
         var recordType = new RecordType(NamespaceName.fromParts("example"), "Id");
         var context = TypeCheckerContext.stub()
             .updateType("id", recordType, NullSource.INSTANCE)
-            .addFields(recordType, List.of(Typed.recordField("value", Typed.typeLevelInt())));
+            .addMemberTypes(recordType, Map.ofEntries(Map.entry("value", Types.INT)));
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 

@@ -1,6 +1,7 @@
 package org.zwobble.clunk.ast.untyped;
 
 import org.pcollections.PVector;
+import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.util.P;

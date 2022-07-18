@@ -75,6 +75,14 @@ public class Untyped {
         return new UntypedParamNode(name, type, NullSource.INSTANCE);
     }
 
+    public static UntypedPropertyNode property(
+        String name,
+        UntypedTypeLevelExpressionNode type,
+        List<UntypedFunctionStatementNode> body
+    ) {
+        return new UntypedPropertyNode(name, type, body, NullSource.INSTANCE);
+    }
+
     public static UntypedRecordFieldNode recordField(String name, UntypedTypeLevelExpressionNode type) {
         return new UntypedRecordFieldNode(name, type, NullSource.INSTANCE);
     }

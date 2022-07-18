@@ -8,6 +8,9 @@ import org.zwobble.clunk.ast.untyped.UntypedRecordNode;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.*;
 
+import java.util.List;
+import java.util.Optional;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -69,6 +72,36 @@ public class TypeCheckRecordTests {
                 has("type", isTypedTypeLevelExpressionNode(StringType.INSTANCE))
             )
         ));
+    }
+
+    @Test
+    public void fieldsAreAddedToMemberTypes() {
+        var untypedNode = UntypedRecordNode.builder("Example")
+            .addField(Untyped.recordField("x", Untyped.typeLevelReference("String")))
+            .build();
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
+
+        var typedNode = (TypedRecordNode) result.typedNode();
+        assertThat(result.context().memberType(typedNode.type(), "x"), equalTo(Optional.of(Types.STRING)));
+    }
+
+    @Test
+    public void propertiesAreAddedToMemberTypes() {
+        var untypedNode = UntypedRecordNode.builder("Example")
+            .addBodyDeclaration(Untyped.property(
+                "x",
+                Untyped.typeLevelReference("String"),
+                List.of(Untyped.returnStatement(Untyped.string()))
+            ))
+            .build();
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
+
+        var typedNode = (TypedRecordNode) result.typedNode();
+        assertThat(result.context().memberType(typedNode.type(), "x"), equalTo(Optional.of(Types.STRING)));
     }
 
     @Test

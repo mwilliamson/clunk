@@ -57,6 +57,13 @@ public class PythonCodeGenerator {
         }
     }
 
+    private PythonExpressionNode compileAdd(TypedIntAddNode node, PythonCodeGeneratorContext context) {
+        return new PythonAddNode(
+            compileExpression(node.left(), context),
+            compileExpression(node.right(), context)
+        );
+    }
+
     private PythonStatementNode compileBlankLine(TypedBlankLineNode node, PythonCodeGeneratorContext context) {
         return new PythonBlankLineNode();
     }
@@ -130,7 +137,7 @@ public class PythonCodeGenerator {
 
             @Override
             public PythonExpressionNode visit(TypedIntAddNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileAdd(node, context);
             }
 
             @Override

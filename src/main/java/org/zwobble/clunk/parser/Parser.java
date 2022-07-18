@@ -53,6 +53,7 @@ public class Parser {
     public UntypedExpressionNode parseExpression(TokenIterator<TokenType> tokens) {
         var expression = parsePrimaryExpression(tokens);
 
+        // TODO: handle precedence properly
         while (true) {
             if (tokens.trySkip(TokenType.SYMBOL_DOT)) {
                 var fieldName = tokens.nextValue(TokenType.IDENTIFIER);
@@ -65,6 +66,9 @@ public class Parser {
                 );
                 tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
                 expression = new UntypedCallNode(expression, positionalArgs, expression.source());
+            } else if (tokens.trySkip(TokenType.SYMBOL_PLUS)) {
+                var right = parsePrimaryExpression(tokens);
+                expression = new UntypedAddNode(expression, right, expression.source());
             } else {
                 return expression;
             }

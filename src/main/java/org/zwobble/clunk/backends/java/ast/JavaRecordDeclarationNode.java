@@ -1,6 +1,8 @@
 package org.zwobble.clunk.backends.java.ast;
 
-import java.util.ArrayList;
+import org.pcollections.PVector;
+import org.zwobble.clunk.util.P;
+
 import java.util.List;
 
 public record JavaRecordDeclarationNode(
@@ -14,28 +16,24 @@ public record JavaRecordDeclarationNode(
     }
 
     public static Builder builder(String name) {
-        return new Builder(name, List.of(), List.of());
+        return new Builder(name, P.vector(), P.vector());
     }
 
     public static record Builder(
         String name,
-        List<JavaRecordComponentNode> components,
-        List<JavaTypeExpressionNode> implements_
+        PVector<JavaRecordComponentNode> components,
+        PVector<JavaTypeExpressionNode> implements_
     ) {
         public JavaRecordDeclarationNode build() {
             return new JavaRecordDeclarationNode(name, components, implements_);
         }
 
         public Builder addComponent(JavaRecordComponentNode component) {
-            var components = new ArrayList<>(this.components);
-            components.add(component);
-            return new Builder(name, components, implements_);
+            return new Builder(name, components.plus(component), implements_);
         }
 
         public Builder addImplements(JavaTypeExpressionNode implementsType) {
-            var implements_ = new ArrayList<>(this.implements_);
-            implements_.add(implementsType);
-            return new Builder(name, components, implements_);
+            return new Builder(name, components, implements_.plus(implementsType));
         }
     }
 }

@@ -1,6 +1,7 @@
 package org.zwobble.clunk.backends.typescript.ast;
 
 import java.util.List;
+import java.util.Optional;
 
 public class TypeScript {
     private TypeScript() {
@@ -22,8 +23,12 @@ public class TypeScript {
         return new TypeScriptCallNode(receiver, args);
     }
 
-    public static TypeScriptClassFieldNode classField(String name, TypeScriptReferenceNode type) {
-        return new TypeScriptClassFieldNode(name, type);
+    public static TypeScriptClassFieldNode classField(String name, TypeScriptExpressionNode type) {
+        return new TypeScriptClassFieldNode(name, type, Optional.empty());
+    }
+
+    public static TypeScriptClassFieldNode classField(String name, TypeScriptExpressionNode type, TypeScriptExpressionNode value) {
+        return new TypeScriptClassFieldNode(name, type, Optional.of(value));
     }
 
     public static TypeScriptConditionalBranchNode conditionalBranch(

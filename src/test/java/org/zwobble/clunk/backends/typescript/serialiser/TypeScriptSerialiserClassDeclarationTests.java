@@ -67,4 +67,44 @@ public class TypeScriptSerialiserClassDeclarationTests {
             """
         ));
     }
+
+    @Test
+    public void constantFieldsAreInitialisedInline() {
+        var node = TypeScriptClassDeclarationNode.builder("Example")
+            .addField(TypeScript.classField("type", TypeScript.string("active"), TypeScript.string("active")))
+            .build();
+
+        var result = serialiseToString(node, TypeScriptSerialiser::serialiseStatement);
+
+        assertThat(result, equalTo(
+            """
+            class Example {
+                readonly type: "active" = "active";
+            }
+            """
+        ));
+    }
+
+    @Test
+    public void constantFieldsAreNotIncludedInConstructor() {
+        var node = TypeScriptClassDeclarationNode.builder("Example")
+            .addField(TypeScript.classField("type", TypeScript.string("active"), TypeScript.string("active")))
+            .addField(TypeScript.classField("first", TypeScript.reference("string")))
+            .build();
+
+        var result = serialiseToString(node, TypeScriptSerialiser::serialiseStatement);
+
+        assertThat(result, equalTo(
+            """
+            class Example {
+                readonly type: "active" = "active";
+                readonly first: string;
+                
+                constructor(first: string) {
+                    this.first = first;
+                }
+            }
+            """
+        ));
+    }
 }

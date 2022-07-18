@@ -53,15 +53,23 @@ public class TypeScriptSerialiser {
             builder.append(field.name());
             builder.append(": ");
             serialiseExpression(field.type(), builder);
+            if (field.constantValue().isPresent()) {
+                builder.append(" = ");
+                serialiseExpression(field.constantValue().get(), builder);
+            }
             builder.append(";");
             builder.newLine();
         }
 
-        if (!node.fields().isEmpty()) {
+        var variableFields = node.fields().stream()
+            .filter(field -> field.constantValue().isEmpty())
+            .toList();
+
+        if (!variableFields.isEmpty()) {
             builder.newLine();
             builder.append("constructor(");
             forEachInterspersed(
-                node.fields(),
+                variableFields,
                 field -> {
                     builder.append(field.name());
                     builder.append(": ");
@@ -72,7 +80,7 @@ public class TypeScriptSerialiser {
             builder.append(") {");
             builder.newLine();
             builder.indent();
-            for (var field : node.fields()) {
+            for (var field : variableFields) {
                 builder.append("this.");
                 builder.append(field.name());
                 builder.append(" = ");

@@ -315,6 +315,20 @@ public class PythonCodeGenerator {
         return camelCaseToSnakeCase(node.name());
     }
 
+    private PythonStatementNode compileProperty(
+        TypedPropertyNode node,
+        PythonCodeGeneratorContext context
+    ) {
+        return new PythonFunctionNode(
+            node.name(),
+            List.of(Python.reference("property")),
+            List.of("self"),
+            node.body().stream()
+                .map(statement -> compileFunctionStatement(statement, context))
+                .toList()
+        );
+    }
+
     public PythonClassDeclarationNode compileRecord(
         TypedRecordNode node,
         PythonCodeGeneratorContext context
@@ -345,16 +359,12 @@ public class PythonCodeGenerator {
         TypedRecordBodyDeclarationNode node,
         PythonCodeGeneratorContext context
     ) {
-        var property = (TypedPropertyNode) node;
-
-        return new PythonFunctionNode(
-            property.name(),
-            List.of(Python.reference("property")),
-            List.of("self"),
-            property.body().stream()
-                .map(statement -> compileFunctionStatement(statement, context))
-                .toList()
-        );
+        return node.accept(new TypedRecordBodyDeclarationNode.Visitor<PythonStatementNode>() {
+            @Override
+            public PythonStatementNode visit(TypedPropertyNode node) {
+                return compileProperty(node, context);
+            }
+        });
     }
 
     private PythonExpressionNode compileReference(TypedReferenceNode node) {

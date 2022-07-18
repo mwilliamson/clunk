@@ -295,7 +295,7 @@ public class TypeScriptCodeGenerator {
             ));
         }
 
-        context.fieldsOf(node.type()).stream()
+        node.fields().stream()
             .map(field -> new TypeScriptClassFieldNode(field.name(), compileTypeLevelExpression(field.type()), Optional.empty()))
             .collect(Collectors.toCollection(() -> fields));
 

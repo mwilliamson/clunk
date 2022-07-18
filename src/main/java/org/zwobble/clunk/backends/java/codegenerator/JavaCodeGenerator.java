@@ -299,7 +299,7 @@ public class JavaCodeGenerator {
         TypedRecordNode node,
         JavaCodeGeneratorContext context
     ) {
-        var components = context.fieldsOf(node.type()).stream()
+        var components = node.fields().stream()
             .map(field -> new JavaRecordComponentNode(compileTypeLevelExpression(field.type(), context), field.name()))
             .collect(Collectors.toList());
 

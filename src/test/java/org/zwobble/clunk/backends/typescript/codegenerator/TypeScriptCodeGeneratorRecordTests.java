@@ -11,7 +11,6 @@ import org.zwobble.clunk.types.InterfaceType;
 import org.zwobble.clunk.types.NamespaceName;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -20,13 +19,11 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class TypeScriptCodeGeneratorRecordTests {
     @Test
     public void recordIsCompiledToTypeScriptClass() {
-        var node = TypedRecordNode.builder("Example").build();
-        var context = TypeScriptCodeGeneratorContext.stub(new FieldsLookup(Map.ofEntries(
-            Map.entry(node.type(), List.of(
-                Typed.recordField("first", Typed.typeLevelString()),
-                Typed.recordField("second", Typed.typeLevelInt())
-            ))
-        )));
+        var node = TypedRecordNode.builder("Example")
+            .addField(Typed.recordField("first", Typed.typeLevelString()))
+            .addField(Typed.recordField("second", Typed.typeLevelInt()))
+            .build();
+        var context = TypeScriptCodeGeneratorContext.stub();
 
         var result = TypeScriptCodeGenerator.compileNamespaceStatement(node, context);
 
@@ -48,17 +45,14 @@ public class TypeScriptCodeGeneratorRecordTests {
 
     @Test
     public void whenRecordIsSubtypeOfSealedInterfaceThenTypePropertyIsDiscriminator() {
-        var node = TypedRecordNode.builder("Example").build();
-        var fieldsLookup = new FieldsLookup(Map.ofEntries(
-            Map.entry(node.type(), List.of(
-                Typed.recordField("first", Typed.typeLevelString()),
-                Typed.recordField("second", Typed.typeLevelInt())
-            ))
-        ));
+        var node = TypedRecordNode.builder("Example")
+            .addField(Typed.recordField("first", Typed.typeLevelString()))
+            .addField(Typed.recordField("second", Typed.typeLevelInt()))
+            .build();
         var subtypeLookup = SubtypeLookup.fromSubtypeRelations(List.of(
             new SubtypeRelation(node.type(), new InterfaceType(NamespaceName.fromParts(), "Supertype"))
         ));
-        var context = new TypeScriptCodeGeneratorContext(fieldsLookup, subtypeLookup);
+        var context = new TypeScriptCodeGeneratorContext(FieldsLookup.EMPTY, subtypeLookup);
 
         var result = TypeScriptCodeGenerator.compileNamespaceStatement(node, context);
 

@@ -327,7 +327,7 @@ public class PythonCodeGenerator {
             )
         );
 
-        var statements = context.fieldsOf(node.type()).stream()
+        var statements = node.fields().stream()
             .map(field -> Python.variableType(field.name(), compileTypeLevelExpression(field.type(), context)))
             .toList();
 

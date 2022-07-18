@@ -1,15 +1,18 @@
 package org.zwobble.clunk.ast.typed;
 
+import org.pcollections.PVector;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.RecordType;
+import org.zwobble.clunk.util.P;
 
 import java.util.List;
 
 public record TypedRecordNode(
     String name,
     RecordType type,
+    List<TypedRecordFieldNode> fields,
     Source source
 ) implements TypedNamespaceStatementNode {
     @Override
@@ -22,12 +25,21 @@ public record TypedRecordNode(
     }
 
     public static Builder builder(NamespaceName namespaceName, String name) {
-        return new Builder(name, List.of(), new RecordType(namespaceName, name), NullSource.INSTANCE);
+        return new Builder(name, new RecordType(namespaceName, name), P.vector(), NullSource.INSTANCE);
     }
 
-    public static record Builder(String name, List<TypedRecordFieldNode> fields, RecordType type, Source source) {
+    public static record Builder(
+        String name,
+        RecordType type,
+        PVector<TypedRecordFieldNode> fields,
+        Source source
+    ) {
         public TypedRecordNode build() {
-            return new TypedRecordNode(name, type, source);
+            return new TypedRecordNode(name, type, fields, source);
+        }
+
+        public Builder addField(TypedRecordFieldNode field) {
+            return new Builder(name, type, fields.plus(field), source);
         }
     }
 }

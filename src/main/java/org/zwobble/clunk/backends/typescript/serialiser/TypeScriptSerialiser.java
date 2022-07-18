@@ -64,16 +64,7 @@ public class TypeScriptSerialiser {
         builder.newLine();
 
         for (var field : node.fields()) {
-            builder.append("readonly ");
-            builder.append(field.name());
-            builder.append(": ");
-            serialiseExpression(field.type(), builder);
-            if (field.constantValue().isPresent()) {
-                builder.append(" = ");
-                serialiseExpression(field.constantValue().get(), builder);
-            }
-            builder.append(";");
-            builder.newLine();
+            serialiseClassField(field, builder);
         }
 
         var variableFields = node.fields().stream()
@@ -81,33 +72,54 @@ public class TypeScriptSerialiser {
             .toList();
 
         if (!variableFields.isEmpty()) {
-            builder.newLine();
-            builder.append("constructor(");
-            forEachInterspersed(
-                variableFields,
-                field -> {
-                    builder.append(field.name());
-                    builder.append(": ");
-                    serialiseExpression(field.type(), builder);
-                },
-                () -> builder.append(", ")
-            );
-            builder.append(") {");
-            builder.newLine();
-            builder.indent();
-            for (var field : variableFields) {
-                builder.append("this.");
-                builder.append(field.name());
-                builder.append(" = ");
-                builder.append(field.name());
-                builder.append(";");
-                builder.newLine();
-            }
-            builder.dedent();
-            builder.append("}");
-            builder.newLine();
+            serialiseConstructor(variableFields, builder);
+        }
+        
+        for (var method : node.body()) {
+            serialiseMethod(method, builder);
         }
 
+        builder.dedent();
+        builder.append("}");
+        builder.newLine();
+    }
+
+    private static void serialiseClassField(TypeScriptClassFieldNode field, CodeBuilder builder) {
+        builder.append("readonly ");
+        builder.append(field.name());
+        builder.append(": ");
+        serialiseExpression(field.type(), builder);
+        if (field.constantValue().isPresent()) {
+            builder.append(" = ");
+            serialiseExpression(field.constantValue().get(), builder);
+        }
+        builder.append(";");
+        builder.newLine();
+    }
+
+    private static void serialiseConstructor(List<TypeScriptClassFieldNode> variableFields, CodeBuilder builder) {
+        builder.newLine();
+        builder.append("constructor(");
+        forEachInterspersed(
+            variableFields,
+            field -> {
+                builder.append(field.name());
+                builder.append(": ");
+                serialiseExpression(field.type(), builder);
+            },
+            () -> builder.append(", ")
+        );
+        builder.append(") {");
+        builder.newLine();
+        builder.indent();
+        for (var field : variableFields) {
+            builder.append("this.");
+            builder.append(field.name());
+            builder.append(" = ");
+            builder.append(field.name());
+            builder.append(";");
+            builder.newLine();
+        }
         builder.dedent();
         builder.append("}");
         builder.newLine();
@@ -220,11 +232,7 @@ public class TypeScriptSerialiser {
         builder.append("function ");
         builder.append(node.name());
         builder.append("(");
-        forEachInterspersed(
-            node.params(),
-            param -> serialiseParam(param, builder),
-            () -> builder.append(", ")
-        );
+        serialiseParams(node.params(), builder);
         builder.append("): ");
         serialiseExpression(node.returnType(), builder);
         serialiseBlock(node.body(), builder);
@@ -233,19 +241,20 @@ public class TypeScriptSerialiser {
     private static void serialiseFunctionExpression(TypeScriptFunctionExpressionNode node, CodeBuilder builder) {
         builder.append("function ");
         builder.append("(");
-        forEachInterspersed(
-            node.params(),
-            param -> serialiseParam(param, builder),
-            () -> builder.append(", ")
-        );
-        builder.append(") {");
+        serialiseParams(node.params(), builder);
+        builder.append(")");
+        serialiseBlock(node.body(), builder);
+    }
+
+    private static void serialiseMethod(TypeScriptFunctionDeclarationNode node, CodeBuilder builder) {
+        builder.append(node.name());
+        builder.append("");
+        builder.append("(");
+        serialiseParams(node.params(), builder);
+        builder.append("): ");
+        serialiseExpression(node.returnType(), builder);
+        serialiseBlock(node.body(), builder);
         builder.newLine();
-        builder.indent();
-        for (var statement : node.body()) {
-            serialiseStatement(statement, builder);
-        }
-        builder.dedent();
-        builder.append("}");
     }
 
     private static void serialiseNumberLiteral(TypeScriptNumberLiteralNode node, CodeBuilder builder) {
@@ -254,6 +263,14 @@ public class TypeScriptSerialiser {
         } else {
             builder.append(Double.toString(node.value()));
         }
+    }
+
+    private static void serialiseParams(List<TypeScriptParamNode> params, CodeBuilder builder) {
+        forEachInterspersed(
+            params,
+            param -> serialiseParam(param, builder),
+            () -> builder.append(", ")
+        );
     }
 
     private static void serialiseParam(TypeScriptParamNode node, CodeBuilder builder) {

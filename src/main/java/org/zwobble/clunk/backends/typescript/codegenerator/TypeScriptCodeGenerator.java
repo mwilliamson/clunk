@@ -298,7 +298,7 @@ public class TypeScriptCodeGenerator {
             .map(field -> new TypeScriptClassFieldNode(field.name(), compileTypeLevelExpression(field.type()), Optional.empty()))
             .collect(Collectors.toCollection(() -> fields));
 
-        return new TypeScriptClassDeclarationNode(node.name(), fields);
+        return new TypeScriptClassDeclarationNode(node.name(), fields, List.of());
     }
 
     private static TypeScriptExpressionNode compileReference(TypedReferenceNode node) {

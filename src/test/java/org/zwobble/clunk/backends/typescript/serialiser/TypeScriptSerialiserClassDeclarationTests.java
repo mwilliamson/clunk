@@ -3,6 +3,7 @@ package org.zwobble.clunk.backends.typescript.serialiser;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.backends.typescript.ast.TypeScript;
 import org.zwobble.clunk.backends.typescript.ast.TypeScriptClassDeclarationNode;
+import org.zwobble.clunk.backends.typescript.ast.TypeScriptFunctionDeclarationNode;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -102,6 +103,32 @@ public class TypeScriptSerialiserClassDeclarationTests {
                 
                 constructor(first: string) {
                     this.first = first;
+                }
+            }
+            """
+        ));
+    }
+
+    @Test
+    public void classWithMethod() {
+        var node = TypeScriptClassDeclarationNode.builder("Example")
+            .addMethod(
+                TypeScriptFunctionDeclarationNode.builder()
+                    .name("f")
+                    .addParam(TypeScript.param("x", TypeScript.reference("number")))
+                    .returnType(TypeScript.reference("string"))
+                    .addBodyStatement(TypeScript.returnStatement(TypeScript.string("hello")))
+                    .build()
+            )
+            .build();
+
+        var result = serialiseToString(node, TypeScriptSerialiser::serialiseStatement);
+
+        assertThat(result, equalTo(
+            """
+            class Example {
+                f(x: number): string {
+                    return "hello";
                 }
             }
             """

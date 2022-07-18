@@ -8,6 +8,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
+import static org.zwobble.clunk.typechecker.TypeCheckNamespaceStatementTesting.typeCheckNamespaceStatementAllPhases;
 
 public class TypeCheckTestTests {
     @Test
@@ -16,7 +17,7 @@ public class TypeCheckTestTests {
             .addBodyStatement(Untyped.var("x", Untyped.boolFalse()))
             .build();
 
-        var result = TypeChecker.typeCheckNamespaceStatement(
+        var result = typeCheckNamespaceStatementAllPhases(
             untypedNode,
             TypeCheckerContext.stub()
         );
@@ -32,7 +33,7 @@ public class TypeCheckTestTests {
             .addBodyStatement(Untyped.var("x", Untyped.boolFalse()))
             .build();
 
-        var result = TypeChecker.typeCheckNamespaceStatement(
+        var result = typeCheckNamespaceStatementAllPhases(
             untypedNode,
             TypeCheckerContext.stub()
         );

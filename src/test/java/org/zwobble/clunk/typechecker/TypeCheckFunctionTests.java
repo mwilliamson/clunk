@@ -13,6 +13,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
+import static org.zwobble.clunk.typechecker.TypeCheckNamespaceStatementTesting.typeCheckNamespaceStatementAllPhases;
 
 public class TypeCheckFunctionTests {
     @Test
@@ -21,10 +22,7 @@ public class TypeCheckFunctionTests {
             .name("f")
             .build();
 
-        var result = TypeChecker.typeCheckNamespaceStatement(
-            untypedNode,
-            TypeChecker.defineVariablesForNamespaceStatement(untypedNode, TypeCheckerContext.stub())
-        );
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, TypeCheckerContext.stub());
 
         assertThat(result.typedNode(), isTypedFunctionNode().withName("f"));
     }
@@ -36,10 +34,7 @@ public class TypeCheckFunctionTests {
             .addParam(Untyped.param("y", Untyped.typeLevelReference("String")))
             .build();
 
-        var result = TypeChecker.typeCheckNamespaceStatement(
-            untypedNode,
-            TypeChecker.defineVariablesForNamespaceStatement(untypedNode, TypeCheckerContext.stub())
-        );
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, TypeCheckerContext.stub());
 
         assertThat(result.typedNode(), isTypedFunctionNode().withParams(contains(
             isTypedParamNode().withName("x").withType(IntType.INSTANCE),
@@ -54,10 +49,7 @@ public class TypeCheckFunctionTests {
             .addBodyStatement(Untyped.returnStatement(Untyped.intLiteral()))
             .build();
 
-        var result = TypeChecker.typeCheckNamespaceStatement(
-            untypedNode,
-            TypeChecker.defineVariablesForNamespaceStatement(untypedNode, TypeCheckerContext.stub())
-        );
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, TypeCheckerContext.stub());
 
         assertThat(result.typedNode(), isTypedFunctionNode().withReturnType(IntType.INSTANCE));
     }
@@ -69,10 +61,7 @@ public class TypeCheckFunctionTests {
             .addBodyStatement(Untyped.returnStatement(Untyped.boolFalse()))
             .build();
 
-        var result = TypeChecker.typeCheckNamespaceStatement(
-            untypedNode,
-            TypeChecker.defineVariablesForNamespaceStatement(untypedNode, TypeCheckerContext.stub())
-        );
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, TypeCheckerContext.stub());
 
         assertThat(result.typedNode(), isTypedFunctionNode().withBody(contains(
             isTypedReturnNode().withExpression(isTypedBoolLiteralNode(false))
@@ -85,10 +74,7 @@ public class TypeCheckFunctionTests {
             .returnType(Untyped.typeLevelReference("Unit"))
             .build();
 
-        var result = TypeChecker.typeCheckNamespaceStatement(
-            untypedNode,
-            TypeChecker.defineVariablesForNamespaceStatement(untypedNode, TypeCheckerContext.stub())
-        );
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, TypeCheckerContext.stub());
 
         var typedNode = (TypedFunctionNode) result.typedNode();
         assertThat(typedNode.body(), empty());
@@ -100,10 +86,7 @@ public class TypeCheckFunctionTests {
             .returnType(Untyped.typeLevelReference("Bool"))
             .build();
 
-        assertThrows(MissingReturnError.class, () -> TypeChecker.typeCheckNamespaceStatement(
-            untypedNode,
-            TypeChecker.defineVariablesForNamespaceStatement(untypedNode, TypeCheckerContext.stub())
-        ));
+        assertThrows(MissingReturnError.class, () -> typeCheckNamespaceStatementAllPhases(untypedNode, TypeCheckerContext.stub()));
     }
 
     @Test
@@ -112,17 +95,15 @@ public class TypeCheckFunctionTests {
             .name("f")
             .addParam(Untyped.param("x", Untyped.typeLevelReference("Int")))
             .returnType(Untyped.typeLevelReference("String"))
+            .addBodyStatement(Untyped.returnStatement(Untyped.string()))
             .build();
         var context = TypeCheckerContext.stub()
             .enterNamespace(NamespaceName.fromParts("a", "b"));
 
-        var result = TypeChecker.defineVariablesForNamespaceStatement(
-            untypedNode,
-            context
-        );
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
         assertThat(
-            result.typeOf("f", NullSource.INSTANCE),
+            result.context().typeOf("f", NullSource.INSTANCE),
             equalTo(new StaticFunctionType(
                 NamespaceName.fromParts("a", "b"),
                 "f",
@@ -138,10 +119,7 @@ public class TypeCheckFunctionTests {
             .addBodyStatement(Untyped.var("x", Untyped.boolFalse()))
             .build();
 
-        var result = TypeChecker.typeCheckNamespaceStatement(
-            untypedNode,
-            TypeChecker.defineVariablesForNamespaceStatement(untypedNode, TypeCheckerContext.stub())
-        );
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, TypeCheckerContext.stub());
 
         assertThat(result.context().currentFrame().environment().containsKey("x"), equalTo(false));
     }

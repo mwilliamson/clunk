@@ -1,7 +1,6 @@
 package org.zwobble.clunk.backends.typescript.codegenerator;
 
 import org.zwobble.clunk.ast.typed.*;
-import org.zwobble.clunk.backends.java.ast.JavaCallNewNode;
 import org.zwobble.clunk.backends.typescript.ast.*;
 import org.zwobble.clunk.typechecker.FieldsLookup;
 import org.zwobble.clunk.typechecker.SubtypeLookup;

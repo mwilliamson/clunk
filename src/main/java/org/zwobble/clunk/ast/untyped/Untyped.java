@@ -95,6 +95,10 @@ public class Untyped {
         return new UntypedTypeLevelReferenceNode(value, NullSource.INSTANCE);
     }
 
+    public static UntypedStringLiteralNode string() {
+        return string("");
+    }
+
     public static UntypedStringLiteralNode string(String value) {
         return new UntypedStringLiteralNode(value, NullSource.INSTANCE);
     }

@@ -14,6 +14,7 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.matchers.CastMatcher.cast;
 import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
+import static org.zwobble.clunk.typechecker.TypeCheckNamespaceStatementTesting.typeCheckNamespaceStatementAllPhases;
 
 public class TypeCheckEnumTests {
     @Test
@@ -21,10 +22,7 @@ public class TypeCheckEnumTests {
         var untypedNode = Untyped.enum_("NoteType");
         var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
 
-        var result = TypeChecker.typeCheckNamespaceStatement(
-            untypedNode,
-            TypeChecker.defineVariablesForNamespaceStatement(untypedNode, context)
-        );
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
         assertThat(
             result.context().typeOf("NoteType", NullSource.INSTANCE),
@@ -40,10 +38,7 @@ public class TypeCheckEnumTests {
         var untypedNode = Untyped.enum_("NoteType");
         var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
 
-        var result = TypeChecker.typeCheckNamespaceStatement(
-            untypedNode,
-            TypeChecker.defineVariablesForNamespaceStatement(untypedNode, context)
-        );
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
         var typedNode = (TypedEnumNode) result.typedNode();
         assertThat(typedNode, allOf(

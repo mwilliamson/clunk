@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedTypeLevelExpressionNode;
 import static org.zwobble.clunk.matchers.CastMatcher.cast;
 import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
+import static org.zwobble.clunk.typechecker.TypeCheckNamespaceStatementTesting.typeCheckNamespaceStatementAllPhases;
 
 public class TypeCheckRecordTests {
     @Test
@@ -21,10 +22,7 @@ public class TypeCheckRecordTests {
         var untypedNode = UntypedRecordNode.builder("Example").build();
         var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
 
-        var result = TypeChecker.typeCheckNamespaceStatement(
-            untypedNode,
-            TypeChecker.defineVariablesForNamespaceStatement(untypedNode, context)
-        );
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
         assertThat(
             result.context().typeOf("Example", NullSource.INSTANCE),
@@ -46,10 +44,7 @@ public class TypeCheckRecordTests {
             .build();
         var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
 
-        var result = TypeChecker.typeCheckNamespaceStatement(
-            untypedNode,
-            TypeChecker.defineVariablesForNamespaceStatement(untypedNode, context)
-        );
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
         var typedNode = (TypedRecordNode) result.typedNode();
         assertThat(typedNode, allOf(
@@ -73,10 +68,7 @@ public class TypeCheckRecordTests {
             .enterNamespace(NamespaceName.fromParts("a", "b"))
             .updateType("Person", Types.metaType(Types.interfaceType(NamespaceName.fromParts("a", "b"), "Person")), NullSource.INSTANCE);
 
-        var result = TypeChecker.typeCheckNamespaceStatement(
-            untypedNode,
-            TypeChecker.defineVariablesForNamespaceStatement(untypedNode, context)
-        );
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
         assertThat(result.context().subtypeRelations(), containsInAnyOrder(
             allOf(
@@ -97,10 +89,7 @@ public class TypeCheckRecordTests {
 
         assertThrows(
             CannotExtendFinalTypeError.class,
-            () -> TypeChecker.typeCheckNamespaceStatement(
-                untypedNode,
-                TypeChecker.defineVariablesForNamespaceStatement(untypedNode, context)
-            )
+            () -> typeCheckNamespaceStatementAllPhases(untypedNode, context)
         );
     }
 
@@ -115,10 +104,7 @@ public class TypeCheckRecordTests {
 
         assertThrows(
             CannotExtendSealedInterfaceFromDifferentNamespaceError.class,
-            () -> TypeChecker.typeCheckNamespaceStatement(
-                untypedNode,
-                TypeChecker.defineVariablesForNamespaceStatement(untypedNode, context)
-            )
+            () -> typeCheckNamespaceStatementAllPhases(untypedNode, context)
         );
     }
 

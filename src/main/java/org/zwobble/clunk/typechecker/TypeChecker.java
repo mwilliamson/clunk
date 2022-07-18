@@ -25,10 +25,6 @@ public class TypeChecker {
         );
     }
 
-    private static TypeCheckerContext defineVariablesForBlankLine(UntypedBlankLineNode node, TypeCheckerContext context) {
-        return context;
-    }
-
     private static TypeCheckFunctionStatementResult<TypedFunctionStatementNode> typeCheckBlankLineInFunction(
         UntypedBlankLineNode node,
         TypeCheckerContext context
@@ -36,11 +32,13 @@ public class TypeChecker {
         return new TypeCheckFunctionStatementResult<>(new TypedBlankLineNode(node.source()), false, context);
     }
 
-    private static TypeCheckResult<TypedNamespaceStatementNode> typeCheckBlankLineInNamespace(
-        UntypedBlankLineNode node,
-        TypeCheckerContext context
+    private static TypeCheckNamespaceStatementResult typeCheckBlankLineInNamespace(
+        UntypedBlankLineNode node
     ) {
-        return new TypeCheckResult<>(new TypedBlankLineNode(node.source()), context);
+        return new TypeCheckNamespaceStatementResult(
+            List.of(),
+            context -> new TypedBlankLineNode(node.source())
+        );
     }
 
     private static TypedExpressionNode typeCheckBoolLiteral(UntypedBoolLiteralNode node) {
@@ -134,21 +132,24 @@ public class TypeChecker {
         );
     }
 
-    private static TypeCheckerContext defineVariablesForEnum(
-        UntypedEnumNode node,
-        TypeCheckerContext context
+    private static TypeCheckNamespaceStatementResult typeCheckEnum(
+        UntypedEnumNode node
     ) {
-        var type = new EnumType(context.currentFrame().namespaceName().get(), node.name(), node.members());
-        return context.updateType(node.name(), Types.metaType(type), node.source());
-    }
+        var typeBox = new Box<EnumType>();
 
-    private static TypeCheckResult<TypedNamespaceStatementNode> typeCheckEnum(
-        UntypedEnumNode node,
-        TypeCheckerContext context
-    ) {
-        var type = (EnumType) resolveTypeLevelValue(node.name(), node.source(), context);
-        var typedNode = new TypedEnumNode(type, node.source());
-        return new TypeCheckResult<>(typedNode, context);
+        return new TypeCheckNamespaceStatementResult(
+            List.of(
+                new PendingTypeCheck(
+                    TypeCheckerPhase.DEFINE_TYPES,
+                    context -> {
+                        var type = new EnumType(context.currentFrame().namespaceName().get(), node.name(), node.members());
+                        typeBox.set(type);
+                        return context.updateType(node.name(), Types.metaType(type), node.source());
+                    }
+                )
+            ),
+            context -> new TypedEnumNode(typeBox.get(), node.source())
+        );
     }
 
     public static TypedExpressionNode typeCheckExpression(
@@ -223,52 +224,61 @@ public class TypeChecker {
         );
     }
 
-    private static TypeCheckerContext defineVariablesForFunction(
-        UntypedFunctionNode node,
-        TypeCheckerContext context
+    private static TypeCheckNamespaceStatementResult typeCheckFunction(
+        UntypedFunctionNode node
     ) {
-        // TODO: handle not a type
-        var params = node.params().stream().map(param -> (Type) typeCheckParam(param, context).type().value()).toList();
-        var typedReturnTypeNode = typeCheckTypeLevelExpressionNode(node.returnType(), context);
-        // TODO: handle not a type
-        var returnType = (Type) typedReturnTypeNode.value();
+        var functionTypeBox = new Box<StaticFunctionType>();
+        var typedParamNodesBox = new Box<List<TypedParamNode>>();
+        var typedReturnTypeNodeBox = new Box<TypedTypeLevelExpressionNode>();
 
-        var type = new StaticFunctionType(
-            context.currentFrame().namespaceName().get(),
-            node.name(),
-            params,
-            returnType
+        return new TypeCheckNamespaceStatementResult(
+            List.of(
+                new PendingTypeCheck(
+                    TypeCheckerPhase.DEFINE_FUNCTIONS,
+                    context -> {
+                        var typedParamNodes = node.params().stream().map(param -> typeCheckParam(param, context)).toList();
+                        typedParamNodesBox.set(typedParamNodes);
+                        // TODO: handle not a type
+                        var paramTypes = typedParamNodes.stream().map(param -> (Type) param.type().value()).toList();
+                        var typedReturnTypeNode = typeCheckTypeLevelExpressionNode(node.returnType(), context);
+                        typedReturnTypeNodeBox.set(typedReturnTypeNode);
+                        // TODO: handle not a type
+                        var returnType = (Type) typedReturnTypeNode.value();
+
+                        var type = new StaticFunctionType(
+                            context.currentFrame().namespaceName().get(),
+                            node.name(),
+                            paramTypes,
+                            returnType
+                        );
+                        functionTypeBox.set(type);
+                        return context.updateType(node.name(), type, node.source());
+                    }
+                )
+            ),
+            context -> {
+                var functionType = functionTypeBox.get();
+                var typedParamNodes = typedParamNodesBox.get();
+                var typedReturnTypeNode = typedReturnTypeNodeBox.get();
+
+                var typeCheckStatementsResult = typeCheckFunctionStatements(
+                    node.body(),
+                    context.enterFunction(functionType.returnType())
+                );
+
+                if (!typeCheckStatementsResult.returns() && !functionType.returnType().equals(Types.UNIT)) {
+                    throw new MissingReturnError(node.source());
+                }
+
+                return new TypedFunctionNode(
+                    node.name(),
+                    typedParamNodes,
+                    typedReturnTypeNode,
+                    typeCheckStatementsResult.value(),
+                    node.source()
+                );
+            }
         );
-        return context.updateType(node.name(), type, node.source());
-    }
-
-    private static TypeCheckResult<TypedNamespaceStatementNode> typeCheckFunction(
-        UntypedFunctionNode node,
-        TypeCheckerContext context
-    ) {
-        var functionType = (StaticFunctionType) context.typeOf(node.name(), node.source());
-
-        var typedParamNodes = node.params().stream().map(param -> typeCheckParam(param, context)).toList();
-        var typedReturnTypeNode = typeCheckTypeLevelExpressionNode(node.returnType(), context);
-
-        var typeCheckStatementsResult = typeCheckFunctionStatements(
-            node.body(),
-            context.enterFunction(functionType.returnType())
-        );
-
-        if (!typeCheckStatementsResult.returns() && !functionType.returnType().equals(Types.UNIT)) {
-            throw new MissingReturnError(node.source());
-        }
-
-        var typedNode = new TypedFunctionNode(
-            node.name(),
-            typedParamNodes,
-            typedReturnTypeNode,
-            typeCheckStatementsResult.value(),
-            node.source()
-        );
-
-        return new TypeCheckResult<>(typedNode, context);
     }
 
     public static TypeCheckFunctionStatementResult<TypedFunctionStatementNode> typeCheckFunctionStatement(
@@ -379,16 +389,23 @@ public class TypeChecker {
         }
     }
 
-    private static TypeCheckerContext defineVariablesForInterface(UntypedInterfaceNode node, TypeCheckerContext context) {
-        // TODO: handle missing namespace name
-        var interfaceType = new InterfaceType(context.currentFrame().namespaceName().get(), node.name());
-        return context.updateType(node.name(), metaType(interfaceType), node.source());
-    }
+    private static TypeCheckNamespaceStatementResult typeCheckInterface(UntypedInterfaceNode node) {
+        var interfaceTypeBox = new Box<InterfaceType>();
 
-    private static TypeCheckResult<TypedNamespaceStatementNode> typeCheckInterface(UntypedInterfaceNode node, TypeCheckerContext context) {
-        var interfaceType = (InterfaceType) resolveTypeLevelValue(node.name(), node.source(), context);
-        var typedNode = new TypedInterfaceNode(node.name(), interfaceType, node.source());
-        return new TypeCheckResult<>(typedNode, context);
+        return new TypeCheckNamespaceStatementResult(
+            List.of(
+                new PendingTypeCheck(
+                    TypeCheckerPhase.DEFINE_TYPES,
+                    context -> {
+                        // TODO: handle missing namespace name
+                        var interfaceType = new InterfaceType(context.currentFrame().namespaceName().get(), node.name());
+                        interfaceTypeBox.set(interfaceType);
+                        return context.updateType(node.name(), metaType(interfaceType), node.source());
+                    }
+                )
+            ),
+            context ->  new TypedInterfaceNode(node.name(), interfaceTypeBox.get(), node.source())
+        );
     }
 
     private static TypedExpressionNode typeCheckIntLiteral(UntypedIntLiteralNode node) {
@@ -408,23 +425,25 @@ public class TypeChecker {
             typedImports.add(typeCheckImportResult.node);
         }
 
+        var typeCheckResults = new ArrayList<TypeCheckNamespaceStatementResult>();
         for (var statement : node.statements()) {
-            if (statement.isTypeDefinition()) {
-                context = defineVariablesForNamespaceStatement(statement, context);
-            }
+            var result = typeCheckNamespaceStatement(statement);
+            typeCheckResults.add(result);
         }
 
-        for (var statement : node.statements()) {
-            if (!statement.isTypeDefinition()) {
-                context = defineVariablesForNamespaceStatement(statement, context);
+        for (var phase : TypeCheckerPhase.values()) {
+            for (var typeCheckResult : typeCheckResults) {
+                for (var pendingTypeCheck : typeCheckResult.pendingTypeChecks()) {
+                    if (pendingTypeCheck.phase().equals(phase)) {
+                        context = pendingTypeCheck.typeCheck(context);
+                    }
+                }
             }
         }
 
         var typedBody = new ArrayList<TypedNamespaceStatementNode>();
-        for (var statement : node.statements()) {
-            var result = typeCheckNamespaceStatement(statement, context);
-            context = result.context();
-            typedBody.add(result.typedNode());
+        for (var result : typeCheckResults) {
+            typedBody.add(result.value(context));
         }
 
         var typedNode = new TypedNamespaceNode(
@@ -436,126 +455,97 @@ public class TypeChecker {
         return new TypeCheckResult<>(typedNode, context.leave());
     }
 
-    public static TypeCheckerContext defineVariablesForNamespaceStatement(
-        UntypedNamespaceStatementNode node,
-        TypeCheckerContext context
+    public static TypeCheckNamespaceStatementResult typeCheckNamespaceStatement(
+        UntypedNamespaceStatementNode node
     ) {
-        return node.accept(new UntypedNamespaceStatementNode.Visitor<TypeCheckerContext>() {
+        return node.accept(new UntypedNamespaceStatementNode.Visitor<TypeCheckNamespaceStatementResult>() {
             @Override
-            public TypeCheckerContext visit(UntypedBlankLineNode node) {
-                return defineVariablesForBlankLine(node, context);
+            public TypeCheckNamespaceStatementResult visit(UntypedBlankLineNode node) {
+                return typeCheckBlankLineInNamespace(node);
             }
 
             @Override
-            public TypeCheckerContext visit(UntypedEnumNode node) {
-                return defineVariablesForEnum(node, context);
+            public TypeCheckNamespaceStatementResult visit(UntypedEnumNode node) {
+                return typeCheckEnum(node);
             }
 
             @Override
-            public TypeCheckerContext visit(UntypedFunctionNode node) {
-                return defineVariablesForFunction(node, context);
+            public TypeCheckNamespaceStatementResult visit(UntypedFunctionNode node) {
+                return typeCheckFunction(node);
             }
 
             @Override
-            public TypeCheckerContext visit(UntypedInterfaceNode node) {
-                return defineVariablesForInterface(node, context);
+            public TypeCheckNamespaceStatementResult visit(UntypedInterfaceNode node) {
+                return typeCheckInterface(node);
             }
 
             @Override
-            public TypeCheckerContext visit(UntypedRecordNode node) {
-                return defineVariablesForRecord(node, context);
+            public TypeCheckNamespaceStatementResult visit(UntypedRecordNode node) {
+                return typeCheckRecord(node);
             }
 
             @Override
-            public TypeCheckerContext visit(UntypedTestNode node) {
-                return defineVariablesForTest(node, context);
+            public TypeCheckNamespaceStatementResult visit(UntypedTestNode node) {
+                return typeCheckTest(node);
             }
         });
     }
 
-    public static TypeCheckResult<TypedNamespaceStatementNode> typeCheckNamespaceStatement(
-        UntypedNamespaceStatementNode node,
-        TypeCheckerContext context
+    private static TypeCheckNamespaceStatementResult typeCheckRecord(
+        UntypedRecordNode node
     ) {
-        return node.accept(new UntypedNamespaceStatementNode.Visitor<TypeCheckResult<TypedNamespaceStatementNode>>() {
-            @Override
-            public TypeCheckResult<TypedNamespaceStatementNode> visit(UntypedBlankLineNode node) {
-                return typeCheckBlankLineInNamespace(node, context);
-            }
+        var recordTypeBox = new Box<RecordType>();
 
-            @Override
-            public TypeCheckResult<TypedNamespaceStatementNode> visit(UntypedEnumNode node) {
-                return typeCheckEnum(node, context);
-            }
-
-            @Override
-            public TypeCheckResult<TypedNamespaceStatementNode> visit(UntypedFunctionNode node) {
-                return typeCheckFunction(node, context);
-            }
-
-            @Override
-            public TypeCheckResult<TypedNamespaceStatementNode> visit(UntypedInterfaceNode node) {
-                return typeCheckInterface(node, context);
-            }
-
-            @Override
-            public TypeCheckResult<TypedNamespaceStatementNode> visit(UntypedRecordNode node) {
-                return typeCheckRecord(node, context);
-            }
-
-            @Override
-            public TypeCheckResult<TypedNamespaceStatementNode> visit(UntypedTestNode node) {
-                return typeCheckTest(node, context);
-            }
-        });
-    }
-
-    private static TypeCheckerContext defineVariablesForRecord(
-        UntypedRecordNode node,
-        TypeCheckerContext context
-    ) {
-        // TODO: handle missing namespace name
-        var recordType = new RecordType(context.currentFrame().namespaceName().get(), node.name());
-        return context.updateType(node.name(), metaType(recordType), node.source());
-    }
-
-    private static TypeCheckResult<TypedNamespaceStatementNode> typeCheckRecord(
-        UntypedRecordNode node,
-        TypeCheckerContext context
-    ) {
-        var recordType = (RecordType) resolveTypeLevelValue(node.name(), node.source(), context);
-
-        var typedNode = new TypedRecordNode(
-            node.name(),
-            recordType,
-            node.source()
-        );
-
-        var newContext = context.addFields(recordType, node.fields().stream()
-            .map(field -> typeCheckRecordField(field, context))
-            .collect(Collectors.toList()));
-
-        var typedSupertypeNodes = node.supertypes().stream()
-            .map(untypedSupertypeNode -> {
-                var typedSupertypeNode = typeCheckTypeLevelExpressionNode(untypedSupertypeNode, context);
-                // TODO: handle non-type type-level values
-                if (typedSupertypeNode.value() instanceof InterfaceType supertype) {
-                    if (!supertype.namespaceName().equals(recordType.namespaceName())) {
-                        throw new CannotExtendSealedInterfaceFromDifferentNamespaceError(untypedSupertypeNode.source());
+        return new TypeCheckNamespaceStatementResult(
+            List.of(
+                new PendingTypeCheck(
+                    TypeCheckerPhase.DEFINE_TYPES,
+                    context -> {
+                        // TODO: handle missing namespace name
+                        var recordType = new RecordType(context.currentFrame().namespaceName().get(), node.name());
+                        recordTypeBox.set(recordType);
+                        return context.updateType(node.name(), metaType(recordType), node.source());
                     }
-                } else {
-                    throw new CannotExtendFinalTypeError(untypedSupertypeNode.source());
-                }
-                return typedSupertypeNode;
-            })
-            .toList();
+                ),
+                new PendingTypeCheck(
+                    TypeCheckerPhase.GENERATE_TYPE_INFO,
+                    context -> {
+                        var recordType = recordTypeBox.get();
 
-        for (var typedSupertypeNode : typedSupertypeNodes) {
-            // TODO: handle type-level values that aren't types
-            newContext = newContext.addSubtypeRelation(recordType, (InterfaceType) typedSupertypeNode.value());
-        }
+                        var typedRecordFieldNodes = node.fields().stream()
+                            .map(field -> typeCheckRecordField(field, context))
+                            .collect(Collectors.toList());
 
-        return new TypeCheckResult<>(typedNode, newContext);
+                        var typedSupertypeNodes = node.supertypes().stream()
+                            .map(untypedSupertypeNode -> {
+                                var typedSupertypeNode = typeCheckTypeLevelExpressionNode(untypedSupertypeNode, context);
+                                // TODO: handle non-type type-level values
+                                if (typedSupertypeNode.value() instanceof InterfaceType supertype) {
+                                    if (!supertype.namespaceName().equals(recordType.namespaceName())) {
+                                        throw new CannotExtendSealedInterfaceFromDifferentNamespaceError(untypedSupertypeNode.source());
+                                    }
+                                } else {
+                                    throw new CannotExtendFinalTypeError(untypedSupertypeNode.source());
+                                }
+                                return typedSupertypeNode;
+                            })
+                            .toList();
+
+                        var newContext = context.addFields(recordType, typedRecordFieldNodes);
+                        for (var typedSupertypeNode : typedSupertypeNodes) {
+                            // TODO: handle type-level values that aren't types
+                            newContext = newContext.addSubtypeRelation(recordType, (InterfaceType) typedSupertypeNode.value());
+                        }
+                        return newContext;
+                    }
+                )
+            ),
+            context -> new TypedRecordNode(
+                node.name(),
+                recordTypeBox.get(),
+                node.source()
+            )
+        );
     }
 
     private static TypedRecordFieldNode typeCheckRecordField(
@@ -595,29 +585,25 @@ public class TypeChecker {
         return new TypedStringLiteralNode(node.value(), node.source());
     }
 
-    private static TypeCheckerContext defineVariablesForTest(
-        UntypedTestNode node,
-        TypeCheckerContext context
+    private static TypeCheckNamespaceStatementResult typeCheckTest(
+        UntypedTestNode node
     ) {
-        return context;
-    }
 
-    private static TypeCheckResult<TypedNamespaceStatementNode> typeCheckTest(
-        UntypedTestNode node,
-        TypeCheckerContext context
-    ) {
-        var typedStatements = typeCheckFunctionStatements(
-            node.body(),
-            context.enterTest()
-        ).value();
+        return new TypeCheckNamespaceStatementResult(
+            List.of(),
+            context -> {
+                var typedStatements = typeCheckFunctionStatements(
+                    node.body(),
+                    context.enterTest()
+                ).value();
 
-        var typedNode = new TypedTestNode(
-            node.name(),
-            typedStatements,
-            node.source()
+                return new TypedTestNode(
+                    node.name(),
+                    typedStatements,
+                    node.source()
+                );
+            }
         );
-
-        return new TypeCheckResult<>(typedNode, context);
     }
 
     public static TypedTypeLevelExpressionNode typeCheckTypeLevelExpressionNode(

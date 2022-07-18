@@ -1,6 +1,8 @@
 package org.zwobble.clunk.backends.python.ast;
 
-import java.util.ArrayList;
+import org.pcollections.PVector;
+import org.zwobble.clunk.util.P;
+
 import java.util.List;
 
 public record PythonFunctionNode(
@@ -14,22 +16,20 @@ public record PythonFunctionNode(
     }
 
     public static Builder builder() {
-        return new Builder("f", List.of(), List.of());
+        return new Builder("f", P.vector(), P.vector());
     }
 
     public static record Builder(
         String name,
-        List<String> params,
-        List<PythonStatementNode> body
+        PVector<String> params,
+        PVector<PythonStatementNode> body
     ) {
         public PythonFunctionNode build() {
             return new PythonFunctionNode(name, params, body);
         }
 
         public Builder addParam(String param) {
-            var params = new ArrayList<>(this.params);
-            params.add(param);
-            return new Builder(name, params, body);
+            return new Builder(name, params.plus(param), body);
         }
 
         public Builder name(String name) {
@@ -37,9 +37,7 @@ public record PythonFunctionNode(
         }
 
         public Builder addBodyStatement(PythonStatementNode statement) {
-            var body = new ArrayList<>(this.body);
-            body.add(statement);
-            return new Builder(name, params, body);
+            return new Builder(name, params, body.plus(statement));
         }
     }
 }

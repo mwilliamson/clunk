@@ -13,7 +13,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedTypeLevelExpressionNode;
 import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
+import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 import static org.zwobble.clunk.typechecker.TypeCheckNamespaceStatementTesting.typeCheckNamespaceStatementAllPhases;
 
 public class TypeCheckRecordTests {

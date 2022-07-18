@@ -7,7 +7,7 @@ import org.zwobble.clunk.types.Type;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
-import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
+import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 
 public class TypedFieldAccessNodeMatcher extends CastMatcher<Object, TypedFieldAccessNode> {
     private final PVector<Matcher<? super TypedFieldAccessNode>> matchers;

@@ -7,7 +7,7 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.isUntypedStringLiteralNode;
-import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
+import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 import static org.zwobble.clunk.parser.Parsing.parseString;
 import static org.zwobble.clunk.sources.SourceMatchers.isFileFragmentSource;
 

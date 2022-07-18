@@ -7,7 +7,7 @@ import org.zwobble.clunk.util.Lists;
 import java.util.List;
 
 import static org.hamcrest.Matchers.allOf;
-import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
+import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 
 public class TypedReturnNodeMatcher extends CastMatcher<Object, TypedReturnNode> {
     private final List<Matcher<? super TypedReturnNode>> matchers;

@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
-import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
+import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 
 public class TypedCallNodeMatcher extends CastMatcher<Object, TypedCallNode> {
     private final List<Matcher<? super TypedCallNode>> matchers;

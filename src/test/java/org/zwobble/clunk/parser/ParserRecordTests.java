@@ -7,7 +7,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.*;
 import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
+import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 import static org.zwobble.clunk.parser.Parsing.parseString;
 
 public class ParserRecordTests {

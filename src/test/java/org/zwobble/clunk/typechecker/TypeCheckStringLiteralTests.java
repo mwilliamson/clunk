@@ -6,7 +6,7 @@ import org.zwobble.clunk.ast.untyped.Untyped;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
+import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 
 public class TypeCheckStringLiteralTests {
     @Test

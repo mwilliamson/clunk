@@ -9,7 +9,7 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
+import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 
 public class UntypedNodeMatchers {
     public static Matcher<UntypedNode> isUntypedBlankLineNode() {

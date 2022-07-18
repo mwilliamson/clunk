@@ -10,7 +10,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
+import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 
 public class TypedNodeMatchers {
     public static Matcher<TypedExpressionNode> isTypedBoolLiteralNode(boolean value) {

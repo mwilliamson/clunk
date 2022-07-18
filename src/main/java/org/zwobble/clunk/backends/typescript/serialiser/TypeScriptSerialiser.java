@@ -8,6 +8,12 @@ import java.util.List;
 import static org.zwobble.clunk.util.Iterables.forEachInterspersed;
 
 public class TypeScriptSerialiser {
+    private static void serialiseAdd(TypeScriptAddNode node, CodeBuilder builder) {
+        serialiseExpression(node.left(), builder);
+        builder.append(" + ");
+        serialiseExpression(node.right(), builder);
+    }
+
     private static void serialiseBlankLine(TypeScriptBlankLineNode node, CodeBuilder builder) {
         builder.newLine();
     }
@@ -176,6 +182,12 @@ public class TypeScriptSerialiser {
 
     public static void serialiseExpression(TypeScriptExpressionNode node, CodeBuilder builder) {
         node.accept(new TypeScriptExpressionNode.Visitor<Void>() {
+            @Override
+            public Void visit(TypeScriptAddNode node) {
+                serialiseAdd(node, builder);
+                return null;
+            }
+
             @Override
             public Void visit(TypeScriptBoolLiteralNode node) {
                 serialiseBoolLiteral(node, builder);

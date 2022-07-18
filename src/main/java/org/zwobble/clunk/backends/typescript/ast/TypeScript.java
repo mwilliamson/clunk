@@ -8,6 +8,10 @@ public class TypeScript {
 
     }
 
+    public static TypeScriptAddNode add(TypeScriptExpressionNode left, TypeScriptExpressionNode right) {
+        return new TypeScriptAddNode(left, right);
+    }
+
     public static TypeScriptBoolLiteralNode boolFalse() {
         return new TypeScriptBoolLiteralNode(false);
     }

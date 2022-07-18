@@ -349,8 +349,16 @@ public class JavaSerialiser {
             );
             builder.append(" ");
         }
+        builder.append("{");
+        builder.newLine();
+        builder.indent();
 
-        builder.append("{\n}");
+        for (var bodyDeclaration : node.body()) {
+            serialiseClassBodyDeclaration(bodyDeclaration, builder);
+        }
+
+        builder.dedent();
+        builder.append("}");
     }
 
     private static void serialiseReference(JavaReferenceNode node, CodeBuilder builder) {

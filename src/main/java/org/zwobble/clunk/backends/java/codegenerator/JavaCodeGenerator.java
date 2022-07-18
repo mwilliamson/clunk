@@ -314,7 +314,8 @@ public class JavaCodeGenerator {
             new JavaRecordDeclarationNode(
                 node.name(),
                 components,
-                implements_
+                implements_,
+                List.of()
             )
         );
     }

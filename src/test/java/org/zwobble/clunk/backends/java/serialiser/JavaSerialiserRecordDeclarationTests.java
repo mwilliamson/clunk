@@ -1,9 +1,7 @@
 package org.zwobble.clunk.backends.java.serialiser;
 
 import org.junit.jupiter.api.Test;
-import org.zwobble.clunk.backends.java.ast.Java;
-import org.zwobble.clunk.backends.java.ast.JavaRecordComponentNode;
-import org.zwobble.clunk.backends.java.ast.JavaRecordDeclarationNode;
+import org.zwobble.clunk.backends.java.ast.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -66,6 +64,27 @@ public class JavaSerialiserRecordDeclarationTests {
         assertThat(result, equalTo(
             """
             public record Example() implements A, B {
+            }"""
+        ));
+    }
+
+    @Test
+    public void canSerialiseRecordWithMethods() {
+        var node = JavaRecordDeclarationNode.builder("Example")
+            .addBodyDeclaration(
+                JavaMethodDeclarationNode.builder()
+                    .name("f")
+                    .returnType(Java.typeVariableReference("void"))
+                    .build()
+            )
+            .build();
+
+        var result = serialiseToString(node, JavaSerialiser::serialiseTypeDeclaration);
+
+        assertThat(result, equalTo("""
+            public record Example() {
+                public void f() {
+                }
             }"""
         ));
     }

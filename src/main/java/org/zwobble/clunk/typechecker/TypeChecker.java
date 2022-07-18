@@ -26,6 +26,15 @@ public class TypeChecker {
         );
     }
 
+    private static TypedExpressionNode typeCheckAdd(UntypedAddNode node, TypeCheckerContext context) {
+        // TODO: check left and right are ints
+        return new TypedIntAddNode(
+            typeCheckExpression(node.left(), context),
+            typeCheckExpression(node.right(), context),
+            node.source()
+        );
+    }
+
     private static TypeCheckFunctionStatementResult<TypedFunctionStatementNode> typeCheckBlankLineInFunction(
         UntypedBlankLineNode node,
         TypeCheckerContext context
@@ -160,7 +169,7 @@ public class TypeChecker {
         return node.accept(new UntypedExpressionNode.Visitor<TypedExpressionNode>() {
             @Override
             public TypedExpressionNode visit(UntypedAddNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return typeCheckAdd(node, context);
             }
 
             @Override

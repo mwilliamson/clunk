@@ -86,11 +86,7 @@ public class PythonSerialiser {
     }
 
     private static void serialiseClassDeclaration(PythonClassDeclarationNode node, CodeBuilder builder) {
-        for (var decorator : node.decorators()) {
-            builder.append("@");
-            serialiseExpression(decorator, builder);
-            builder.newLine();
-        }
+        serialiseDecorators(node.decorators(), builder);
         builder.append("class ");
         builder.append(node.name());
         if (!node.baseClasses().isEmpty()) {
@@ -105,6 +101,14 @@ public class PythonSerialiser {
         builder.append(":");
         builder.newLine();
         serialiseBlock(node.statements(), builder);
+    }
+
+    private static void serialiseDecorators(List<? extends PythonExpressionNode> decorators, CodeBuilder builder) {
+        for (var decorator : decorators) {
+            builder.append("@");
+            serialiseExpression(decorator, builder);
+            builder.newLine();
+        }
     }
 
     public static void serialiseExpression(PythonExpressionNode node, CodeBuilder builder) {
@@ -162,6 +166,7 @@ public class PythonSerialiser {
     }
 
     private static void serialiseFunction(PythonFunctionNode node, CodeBuilder builder) {
+        serialiseDecorators(node.decorators(), builder);
         builder.append("def ");
         builder.append(node.name());
         builder.append("(");

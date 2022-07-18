@@ -22,6 +22,24 @@ public class PythonSerialiserFunctionTests {
     }
 
     @Test
+    public void functionWithDecorators() {
+        var node = PythonFunctionNode.builder()
+            .name("make_it_so")
+            .addDecorator(Python.reference("x"))
+            .addDecorator(Python.reference("y"))
+            .build();
+
+        var result = serialiseToString(node, PythonSerialiser::serialiseStatement);
+
+        assertThat(result, equalTo("""
+            @x
+            @y
+            def make_it_so():
+                pass
+            """));
+    }
+
+    @Test
     public void functionWithParams() {
         var node = PythonFunctionNode.builder()
             .name("make_it_so")

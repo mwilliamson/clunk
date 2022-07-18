@@ -159,6 +159,7 @@ public class PythonCodeGenerator {
     private PythonStatementNode compileFunction(TypedFunctionNode node, PythonCodeGeneratorContext context) {
         return new PythonFunctionNode(
             camelCaseToSnakeCase(node.name()),
+            List.of(),
             node.params().stream().map(param -> compileParam(param)).toList(),
             node.body().stream().map(statement -> compileFunctionStatement(statement, context)).toList()
         );
@@ -348,6 +349,7 @@ public class PythonCodeGenerator {
     private PythonStatementNode compileTest(TypedTestNode node, PythonCodeGeneratorContext context) {
         return new PythonFunctionNode(
             PythonTestNames.generateName(node.name()),
+            List.of(),
             List.of(),
             node.body().stream().map(statement -> compileFunctionStatement(statement, context)).toList()
         );

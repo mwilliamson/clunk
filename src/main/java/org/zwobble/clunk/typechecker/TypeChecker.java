@@ -495,6 +495,7 @@ public class TypeChecker {
         UntypedRecordNode node
     ) {
         var recordTypeBox = new Box<RecordType>();
+        var typedSupertypeNodesBox = new Box<List<TypedTypeLevelExpressionNode>>();
         var typedRecordFieldNodesBox = new Box<List<TypedRecordFieldNode>>();
 
         return new TypeCheckNamespaceStatementResult(
@@ -532,6 +533,7 @@ public class TypeChecker {
                                 return typedSupertypeNode;
                             })
                             .toList();
+                        typedSupertypeNodesBox.set(typedSupertypeNodes);
 
                         var newContext = context.addFields(recordType, typedRecordFieldNodes);
                         for (var typedSupertypeNode : typedSupertypeNodes) {
@@ -546,6 +548,7 @@ public class TypeChecker {
                 node.name(),
                 recordTypeBox.get(),
                 typedRecordFieldNodesBox.get(),
+                typedSupertypeNodesBox.get(),
                 node.source()
             )
         );

@@ -13,6 +13,7 @@ public record TypedRecordNode(
     String name,
     RecordType type,
     List<TypedRecordFieldNode> fields,
+    List<TypedTypeLevelExpressionNode> supertypes,
     Source source
 ) implements TypedNamespaceStatementNode {
     @Override
@@ -25,21 +26,26 @@ public record TypedRecordNode(
     }
 
     public static Builder builder(NamespaceName namespaceName, String name) {
-        return new Builder(name, new RecordType(namespaceName, name), P.vector(), NullSource.INSTANCE);
+        return new Builder(name, new RecordType(namespaceName, name), P.vector(), P.vector(), NullSource.INSTANCE);
     }
 
     public static record Builder(
         String name,
         RecordType type,
         PVector<TypedRecordFieldNode> fields,
+        PVector<TypedTypeLevelExpressionNode> supertypes,
         Source source
     ) {
         public TypedRecordNode build() {
-            return new TypedRecordNode(name, type, fields, source);
+            return new TypedRecordNode(name, type, fields, supertypes, source);
         }
 
         public Builder addField(TypedRecordFieldNode field) {
-            return new Builder(name, type, fields.plus(field), source);
+            return new Builder(name, type, fields.plus(field), supertypes, source);
+        }
+
+        public Builder addSupertype(TypedTypeLevelExpressionNode supertype) {
+            return new Builder(name, type, fields, supertypes.plus(supertype), source);
         }
     }
 }

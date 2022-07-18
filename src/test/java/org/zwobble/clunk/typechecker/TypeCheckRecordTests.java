@@ -82,6 +82,9 @@ public class TypeCheckRecordTests {
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
+        assertThat(result.typedNode(), has("supertypes", contains(
+            has("value", isInterfaceType(NamespaceName.fromParts("a", "b"), "Person"))
+        )));
         assertThat(result.context().subtypeRelations(), containsInAnyOrder(
             allOf(
                 has("subtype", isRecordType(NamespaceName.fromParts("a", "b"), "User")),

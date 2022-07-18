@@ -14,7 +14,7 @@ public class TypeScriptSerialiserConstructedTypeTests {
     public void canSerialiseWithOneArgument() {
         var node = TypeScript.constructedType(TypeScript.reference("A"), List.of(TypeScript.reference("B")));
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseExpression);
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("(A)<B>"));
     }
@@ -23,7 +23,7 @@ public class TypeScriptSerialiserConstructedTypeTests {
     public void canSerialiseWithMultipleArguments() {
         var node = TypeScript.constructedType(TypeScript.reference("A"), List.of(TypeScript.reference("B"), TypeScript.reference("C")));
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseExpression);
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("(A)<B, C>"));
     }

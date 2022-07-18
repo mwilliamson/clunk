@@ -13,7 +13,7 @@ public class TypeScriptSerialiserBoolLiteralTests {
     public void falseIsSerialisedToFalseKeyword() {
         var node = TypeScript.boolFalse();
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseExpression);
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("false"));
     }
@@ -22,7 +22,7 @@ public class TypeScriptSerialiserBoolLiteralTests {
     public void trueIsSerialisedToTrueKeyword() {
         var node = TypeScript.boolTrue();
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseExpression);
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("true"));
     }

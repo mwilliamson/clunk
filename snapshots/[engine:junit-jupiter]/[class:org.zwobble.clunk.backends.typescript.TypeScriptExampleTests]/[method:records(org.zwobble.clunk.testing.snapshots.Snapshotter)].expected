@@ -44,19 +44,19 @@ class Add {
     }
 }
 
-(test)("assert field", function () {
-    let add = new (Add)(2, 3);
+test("assert field", function () {
+    let add = new Add(2, 3);
 
-    (assertThat)((add).left, (equalTo)(2));
-    (assertThat)((add).right, (equalTo)(3));
+    assertThat(add.left, equalTo(2));
+    assertThat(add.right, equalTo(3));
 });
 
-(test)("assert sum", function () {
-    let add = new (Add)(2, 3);
+test("assert sum", function () {
+    let add = new Add(2, 3);
 
-    let result = (add).sum;
+    let result = add.sum;
 
-    (assertThat)(result, (equalTo)(5));
+    assertThat(result, equalTo(5));
 });
 
 

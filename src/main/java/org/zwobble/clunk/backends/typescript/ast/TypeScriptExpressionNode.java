@@ -1,6 +1,8 @@
 package org.zwobble.clunk.backends.typescript.ast;
 
 public interface TypeScriptExpressionNode extends TypeScriptNode {
+    TypeScriptPrecedence precedence();
+
     <T> T accept(Visitor<T> visitor);
 
     interface Visitor<T> {

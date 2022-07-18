@@ -4,14 +4,15 @@ import org.zwobble.clunk.backends.CodeBuilder;
 import org.zwobble.clunk.backends.typescript.ast.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.zwobble.clunk.util.Iterables.forEachInterspersed;
 
 public class TypeScriptSerialiser {
     private static void serialiseAdd(TypeScriptAddNode node, CodeBuilder builder) {
-        serialiseExpression(node.left(), builder);
+        serialiseExpression(node.left(), builder, Optional.of(node));
         builder.append(" + ");
-        serialiseExpression(node.right(), builder);
+        serialiseExpression(node.right(), builder, Optional.of(node));
     }
 
     private static void serialiseBlankLine(TypeScriptBlankLineNode node, CodeBuilder builder) {
@@ -34,14 +35,12 @@ public class TypeScriptSerialiser {
     }
 
     private static void serialiseCall(TypeScriptCallNode node, CodeBuilder builder) {
-        builder.append("(");
-        serialiseExpression(node.receiver(), builder);
-        builder.append(")");
+        serialiseExpression(node.receiver(), builder, Optional.of(node));
 
         builder.append("(");
         forEachInterspersed(
             node.args(),
-            arg -> serialiseExpression(arg, builder),
+            arg -> serialiseExpression(arg, builder, Optional.empty()),
             () -> builder.append(", ")
         );
         builder.append(")");
@@ -49,14 +48,11 @@ public class TypeScriptSerialiser {
 
     private static void serialiseCallNew(TypeScriptCallNewNode node, CodeBuilder builder) {
         builder.append("new ");
-        builder.append("(");
-        serialiseExpression(node.receiver(), builder);
-        builder.append(")");
-
+        serialiseExpression(node.receiver(), builder, Optional.of(node));
         builder.append("(");
         forEachInterspersed(
             node.args(),
-            arg -> serialiseExpression(arg, builder),
+            arg -> serialiseExpression(arg, builder, Optional.empty()),
             () -> builder.append(", ")
         );
         builder.append(")");
@@ -110,10 +106,10 @@ public class TypeScriptSerialiser {
         builder.append("readonly ");
         builder.append(field.name());
         builder.append(": ");
-        serialiseExpression(field.type(), builder);
+        serialiseExpression(field.type(), builder, Optional.empty());
         if (field.constantValue().isPresent()) {
             builder.append(" = ");
-            serialiseExpression(field.constantValue().get(), builder);
+            serialiseExpression(field.constantValue().get(), builder, Optional.empty());
         }
         builder.append(";");
         builder.newLine();
@@ -127,7 +123,7 @@ public class TypeScriptSerialiser {
             field -> {
                 builder.append(field.name());
                 builder.append(": ");
-                serialiseExpression(field.type(), builder);
+                serialiseExpression(field.type(), builder, Optional.empty());
             },
             () -> builder.append(", ")
         );
@@ -149,13 +145,13 @@ public class TypeScriptSerialiser {
 
     private static void serialiseConstructedType(TypeScriptConstructedTypeNode node, CodeBuilder builder) {
         builder.append("(");
-        serialiseExpression(node.receiver(), builder);
+        serialiseExpression(node.receiver(), builder, Optional.of(node));
         builder.append(")");
 
         builder.append("<");
         forEachInterspersed(
             node.args(),
-            arg -> serialiseExpression(arg, builder),
+            arg -> serialiseExpression(arg, builder, Optional.empty()),
             () -> builder.append(", ")
         );
         builder.append(">");
@@ -180,7 +176,12 @@ public class TypeScriptSerialiser {
         builder.newLine();
     }
 
-    public static void serialiseExpression(TypeScriptExpressionNode node, CodeBuilder builder) {
+    public static void serialiseExpression(TypeScriptExpressionNode node, CodeBuilder builder, Optional<TypeScriptExpressionNode> parent) {
+        var parenthesize = parent.isPresent() && node.precedence().ordinal() < parent.get().precedence().ordinal();
+        if (parenthesize) {
+            builder.append("(");
+        }
+
         node.accept(new TypeScriptExpressionNode.Visitor<Void>() {
             @Override
             public Void visit(TypeScriptAddNode node) {
@@ -248,10 +249,14 @@ public class TypeScriptSerialiser {
                 return null;
             }
         });
+
+        if (parenthesize) {
+            builder.append(")");
+        }
     }
 
     private static void serialiseExpressionStatement(TypeScriptExpressionStatementNode node, CodeBuilder builder) {
-        serialiseExpression(node.expression(), builder);
+        serialiseExpression(node.expression(), builder, Optional.empty());
         builder.append(";");
         builder.newLine();
     }
@@ -262,7 +267,7 @@ public class TypeScriptSerialiser {
         builder.append("(");
         serialiseParams(node.params(), builder);
         builder.append("): ");
-        serialiseExpression(node.returnType(), builder);
+        serialiseExpression(node.returnType(), builder, Optional.empty());
         serialiseBlock(node.body(), builder);
         builder.newLine();
     }
@@ -279,7 +284,7 @@ public class TypeScriptSerialiser {
         builder.append("get ");
         builder.append(node.name());
         builder.append("(): ");
-        serialiseExpression(node.type(), builder);
+        serialiseExpression(node.type(), builder, Optional.empty());
         serialiseBlock(node.body(), builder);
         builder.newLine();
     }
@@ -290,7 +295,7 @@ public class TypeScriptSerialiser {
         builder.append("(");
         serialiseParams(node.params(), builder);
         builder.append("): ");
-        serialiseExpression(node.returnType(), builder);
+        serialiseExpression(node.returnType(), builder, Optional.empty());
         serialiseBlock(node.body(), builder);
         builder.newLine();
     }
@@ -314,19 +319,19 @@ public class TypeScriptSerialiser {
     private static void serialiseParam(TypeScriptParamNode node, CodeBuilder builder) {
         builder.append(node.name());
         builder.append(": ");
-        serialiseExpression(node.type(), builder);
+        serialiseExpression(node.type(), builder, Optional.empty());
     }
 
     private static void serialiseIfStatement(TypeScriptIfStatementNode node, CodeBuilder builder) {
         builder.append("if (");
         var firstConditionalBranch = node.conditionalBranches().get(0);
-        serialiseExpression(firstConditionalBranch.condition(), builder);
+        serialiseExpression(firstConditionalBranch.condition(), builder, Optional.empty());
         builder.append(")");
         serialiseBlock(firstConditionalBranch.body(), builder);
 
         node.conditionalBranches().stream().skip(1).forEachOrdered(conditionalBranch -> {
             builder.append(" else if (");
-            serialiseExpression(conditionalBranch.condition(), builder);
+            serialiseExpression(conditionalBranch.condition(), builder, Optional.empty());
             builder.append(")");
             serialiseBlock(conditionalBranch.body(), builder);
         });
@@ -364,7 +369,7 @@ public class TypeScriptSerialiser {
             builder.append("readonly ");
             builder.append(field.name());
             builder.append(": ");
-            serialiseExpression(field.type(), builder);
+            serialiseExpression(field.type(), builder, Optional.empty());
             builder.append(";");
             builder.newLine();
         }
@@ -377,7 +382,7 @@ public class TypeScriptSerialiser {
         builder.append("let ");
         builder.append(node.name());
         builder.append(" = ");
-        serialiseExpression(node.expression(), builder);
+        serialiseExpression(node.expression(), builder, Optional.empty());
         builder.append(";");
         builder.newLine();
     }
@@ -389,9 +394,7 @@ public class TypeScriptSerialiser {
     }
 
     private static void serialisePropertyAccess(TypeScriptPropertyAccessNode node, CodeBuilder builder) {
-        builder.append("(");
-        serialiseExpression(node.receiver(), builder);
-        builder.append(")");
+        serialiseExpression(node.receiver(), builder, Optional.of(node));
         builder.append(".");
         builder.append(node.propertyName());
     }
@@ -402,7 +405,7 @@ public class TypeScriptSerialiser {
 
     private static void serialiseReturn(TypeScriptReturnNode node, CodeBuilder builder) {
         builder.append("return ");
-        serialiseExpression(node.expression(), builder);
+        serialiseExpression(node.expression(), builder, Optional.empty());
         builder.append(";");
         builder.newLine();
     }
@@ -500,7 +503,7 @@ public class TypeScriptSerialiser {
         builder.append("type ");
         builder.append(node.name());
         builder.append(" = ");
-        serialiseExpression(node.value(), builder);
+        serialiseExpression(node.value(), builder, Optional.empty());
         builder.append(";");
         builder.newLine();
     }
@@ -508,7 +511,7 @@ public class TypeScriptSerialiser {
     private static void serialiseUnion(TypeScriptUnionNode node, CodeBuilder builder) {
         forEachInterspersed(
             node.members(),
-            member -> serialiseExpression(member, builder),
+            member -> serialiseExpression(member, builder, Optional.of(node)),
             () -> builder.append(" | ")
         );
     }

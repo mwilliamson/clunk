@@ -12,7 +12,7 @@ public class TypeScriptSerialiserStringLiteralTests {
     public void emptyString() {
         var node = TypeScript.string("");
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseExpression);
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("\"\""));
     }
@@ -21,7 +21,7 @@ public class TypeScriptSerialiserStringLiteralTests {
     public void stringOfAsciiCharacters() {
         var node = TypeScript.string("abcXYZ123");
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseExpression);
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("\"abcXYZ123\""));
     }
@@ -30,7 +30,7 @@ public class TypeScriptSerialiserStringLiteralTests {
     public void specialCharactersAreEscaped() {
         var node = TypeScript.string("\b\t\n\013\f\r\"\\");
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseExpression);
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("\"\\b\\t\\n\\v\\f\\r\\\"\\\\\""));
     }

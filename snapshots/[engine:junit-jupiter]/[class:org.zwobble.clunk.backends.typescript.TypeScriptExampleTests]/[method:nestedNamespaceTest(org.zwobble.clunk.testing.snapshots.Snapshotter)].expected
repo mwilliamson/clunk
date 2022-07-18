@@ -13,8 +13,8 @@ Output path: one/two/SimpleTest.ts
 import {assertThat} from "@mwilliamson/precisely";
 import {equalTo} from "@mwilliamson/precisely";
 
-(test)("assert False", function () {
-    (assertThat)(false, (equalTo)(true));
+test("assert False", function () {
+    assertThat(false, equalTo(true));
 });
 
 
@@ -33,8 +33,8 @@ Expected:
   true
 but:
   was false
-      at Object.assertThat (node_modules/@mwilliamson/precisely/lib/assertThat.js:14:15)
-      at Context.<anonymous> (src/one/two/SimpleTest.ts:5:17)
+      at assertThat (node_modules/@mwilliamson/precisely/lib/assertThat.js:14:15)
+      at Context.<anonymous> (src/one/two/SimpleTest.ts:5:15)
       at processImmediate (node:internal/timers:466:21)
 
 

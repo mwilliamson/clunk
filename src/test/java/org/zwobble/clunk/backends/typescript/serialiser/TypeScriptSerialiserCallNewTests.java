@@ -14,26 +14,26 @@ public class TypeScriptSerialiserCallNewTests {
     public void canSerialiseCallWithNoArguments() {
         var node = TypeScript.callNew(TypeScript.reference("X"), List.of());
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseExpression);
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
 
-        assertThat(result, equalTo("new (X)()"));
+        assertThat(result, equalTo("new X()"));
     }
 
     @Test
     public void canSerialiseCallWithOneArgument() {
         var node = TypeScript.callNew(TypeScript.reference("X"), List.of(TypeScript.boolFalse()));
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseExpression);
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
 
-        assertThat(result, equalTo("new (X)(false)"));
+        assertThat(result, equalTo("new X(false)"));
     }
 
     @Test
     public void canSerialiseCallWithMultipleArguments() {
         var node = TypeScript.callNew(TypeScript.reference("X"), List.of(TypeScript.boolFalse(), TypeScript.boolTrue()));
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseExpression);
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
 
-        assertThat(result, equalTo("new (X)(false, true)"));
+        assertThat(result, equalTo("new X(false, true)"));
     }
 }

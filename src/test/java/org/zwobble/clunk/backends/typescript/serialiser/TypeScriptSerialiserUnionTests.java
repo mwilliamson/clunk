@@ -18,7 +18,7 @@ public class TypeScriptSerialiserUnionTests {
             TypeScript.reference("C")
         ));
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseExpression);
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("A | B | C"));
     }

@@ -114,8 +114,8 @@ public class TypeScriptCodeGeneratorNamespaceTests {
         assertThat(string, equalTo("""
             import {assertThat} from "@mwilliamson/precisely";
             import {equalTo} from "@mwilliamson/precisely";
-            (test)("x", function () {
-                (assertThat)(1, (equalTo)(2));
+            test("x", function () {
+                assertThat(1, equalTo(2));
             });
             """));
     }

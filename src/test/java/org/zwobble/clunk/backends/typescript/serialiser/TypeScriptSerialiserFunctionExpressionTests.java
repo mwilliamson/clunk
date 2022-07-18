@@ -14,7 +14,7 @@ public class TypeScriptSerialiserFunctionExpressionTests {
         var node = TypeScriptFunctionExpressionNode.builder()
             .build();
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseExpression);
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("""
             function () {
@@ -28,7 +28,7 @@ public class TypeScriptSerialiserFunctionExpressionTests {
             .addParam(TypeScript.param("x", TypeScript.reference("number")))
             .build();
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseExpression);
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("""
             function (x: number) {
@@ -43,7 +43,7 @@ public class TypeScriptSerialiserFunctionExpressionTests {
             .addParam(TypeScript.param("y", TypeScript.reference("string")))
             .build();
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseExpression);
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("""
             function (x: number, y: string) {
@@ -57,7 +57,7 @@ public class TypeScriptSerialiserFunctionExpressionTests {
             .addBodyStatement(TypeScript.returnStatement(TypeScript.boolFalse()))
             .build();
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseExpression);
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("""
             function () {

@@ -15,7 +15,7 @@ public class TypeScriptSerialiserAddTests {
             TypeScript.reference("b")
         );
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseExpression);
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("a + b"));
     }

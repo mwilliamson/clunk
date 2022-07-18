@@ -7,6 +7,11 @@ public record TypeScriptCallNode(
     List<TypeScriptExpressionNode> args
 ) implements TypeScriptExpressionNode {
     @Override
+    public TypeScriptPrecedence precedence() {
+        return TypeScriptPrecedence.CALL;
+    }
+
+    @Override
     public <T> T accept(Visitor<T> visitor) {
         return visitor.visit(this);
     }

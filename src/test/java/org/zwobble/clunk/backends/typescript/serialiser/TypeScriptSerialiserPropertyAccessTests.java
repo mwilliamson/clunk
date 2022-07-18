@@ -12,8 +12,8 @@ public class TypeScriptSerialiserPropertyAccessTests {
     public void canSerialisePropertyAccess() {
         var node = TypeScript.propertyAccess(TypeScript.reference("x"), "y");
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseExpression);
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
 
-        assertThat(result, equalTo("(x).y"));
+        assertThat(result, equalTo("x.y"));
     }
 }

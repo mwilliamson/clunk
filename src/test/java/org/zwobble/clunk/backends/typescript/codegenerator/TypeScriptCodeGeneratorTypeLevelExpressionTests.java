@@ -2,7 +2,7 @@ package org.zwobble.clunk.backends.typescript.codegenerator;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
-import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser;
+import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiserTesting;
 import org.zwobble.clunk.types.*;
 
 import java.util.List;
@@ -18,7 +18,7 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
 
         var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
 
-        var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
+        var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("boolean"));
     }
 
@@ -28,7 +28,7 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
 
         var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
 
-        var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
+        var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("C"));
     }
 
@@ -38,7 +38,7 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
 
         var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
 
-        var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
+        var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("number"));
     }
 
@@ -48,7 +48,7 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
 
         var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
 
-        var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
+        var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("C"));
     }
 
@@ -62,7 +62,7 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
 
         var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
 
-        var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
+        var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("(Array)<number>"));
     }
 
@@ -76,7 +76,7 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
 
         var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
 
-        var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
+        var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("number | null"));
     }
 
@@ -86,7 +86,7 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
 
         var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
 
-        var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
+        var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("C"));
     }
 
@@ -96,7 +96,7 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
 
         var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
 
-        var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
+        var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("string"));
     }
 }

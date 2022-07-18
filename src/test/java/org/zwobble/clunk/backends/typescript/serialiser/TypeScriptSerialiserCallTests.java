@@ -14,26 +14,26 @@ public class TypeScriptSerialiserCallTests {
     public void canSerialiseCallWithNoArguments() {
         var node = TypeScript.call(TypeScript.reference("f"), List.of());
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseExpression);
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
 
-        assertThat(result, equalTo("(f)()"));
+        assertThat(result, equalTo("f()"));
     }
 
     @Test
     public void canSerialiseCallWithOneArgument() {
         var node = TypeScript.call(TypeScript.reference("f"), List.of(TypeScript.boolFalse()));
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseExpression);
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
 
-        assertThat(result, equalTo("(f)(false)"));
+        assertThat(result, equalTo("f(false)"));
     }
 
     @Test
     public void canSerialiseCallWithMultipleArguments() {
         var node = TypeScript.call(TypeScript.reference("f"), List.of(TypeScript.boolFalse(), TypeScript.boolTrue()));
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseExpression);
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
 
-        assertThat(result, equalTo("(f)(false, true)"));
+        assertThat(result, equalTo("f(false, true)"));
     }
 }

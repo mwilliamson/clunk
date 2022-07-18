@@ -12,7 +12,7 @@ public class TypeScriptSerialiserIntLiteralTests {
     public void canSerialiseZero() {
         var node = TypeScript.numberLiteral(0);
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseExpression);
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("0"));
     }
@@ -21,7 +21,7 @@ public class TypeScriptSerialiserIntLiteralTests {
     public void canSerialisePositiveIntegers() {
         var node = TypeScript.numberLiteral(123);
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseExpression);
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("123"));
     }
@@ -30,7 +30,7 @@ public class TypeScriptSerialiserIntLiteralTests {
     public void canSerialiseNegativeIntegers() {
         var node = TypeScript.numberLiteral(-123);
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseExpression);
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("-123"));
     }
@@ -39,7 +39,7 @@ public class TypeScriptSerialiserIntLiteralTests {
     public void canSerialiseFractionalNumbers() {
         var node = TypeScript.numberLiteral(0.5);
 
-        var result = serialiseToString(node, TypeScriptSerialiser::serialiseExpression);
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("0.5"));
     }

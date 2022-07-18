@@ -22,7 +22,7 @@ public class TypeScriptCodeGeneratorTestTests {
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseStatement);
         assertThat(string, equalTo(
             """
-            (test)("can assign bool", function () {
+            test("can assign bool", function () {
                 let x = false;
             });
             """

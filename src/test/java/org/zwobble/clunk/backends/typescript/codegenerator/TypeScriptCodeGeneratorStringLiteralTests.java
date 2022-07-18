@@ -2,9 +2,7 @@ package org.zwobble.clunk.backends.typescript.codegenerator;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
-import org.zwobble.clunk.backends.python.codegenerator.PythonCodeGenerator;
-import org.zwobble.clunk.backends.python.serialiser.PythonSerialiser;
-import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser;
+import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiserTesting;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -17,7 +15,7 @@ public class TypeScriptCodeGeneratorStringLiteralTests {
 
         var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
 
-        var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
+        var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("\"hello\""));
     }
 }

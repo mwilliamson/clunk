@@ -3,7 +3,7 @@ package org.zwobble.clunk.backends.typescript.codegenerator;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedMemberAccessNode;
-import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser;
+import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiserTesting;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.RecordType;
@@ -26,7 +26,7 @@ public class TypeScriptCodeGeneratorMemberAccessTests {
 
         var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
 
-        var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
-        assertThat(string, equalTo("(id).value"));
+        var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("id.value"));
     }
 }

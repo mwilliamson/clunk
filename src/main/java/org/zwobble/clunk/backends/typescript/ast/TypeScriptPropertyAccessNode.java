@@ -5,6 +5,11 @@ public record TypeScriptPropertyAccessNode(
     String propertyName
 ) implements TypeScriptExpressionNode {
     @Override
+    public TypeScriptPrecedence precedence() {
+        return TypeScriptPrecedence.CALL;
+    }
+
+    @Override
     public <T> T accept(Visitor<T> visitor) {
         return visitor.visit(this);
     }

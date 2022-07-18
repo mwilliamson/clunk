@@ -293,6 +293,22 @@ public class JavaCodeGenerator {
         return new JavaParamNode(compileTypeLevelExpression(node.type(), context), node.name());
     }
 
+    private static JavaClassBodyDeclarationNode compileProperty(
+        TypedPropertyNode node,
+        JavaCodeGeneratorContext context
+    ) {
+        return new JavaMethodDeclarationNode(
+            List.of(),
+            false,
+            compileTypeLevelExpression(node.type(), context),
+            node.name(),
+            List.of(),
+            node.body().stream()
+                .map(statement -> compileFunctionStatement(statement, context))
+                .toList()
+        );
+    }
+
     public static JavaOrdinaryCompilationUnitNode compileRecord(
         TypedRecordNode node,
         JavaCodeGeneratorContext context
@@ -328,17 +344,12 @@ public class JavaCodeGenerator {
         TypedRecordBodyDeclarationNode node,
         JavaCodeGeneratorContext context
     ) {
-        var propertyNode = (TypedPropertyNode) node;
-        return new JavaMethodDeclarationNode(
-            List.of(),
-            false,
-            compileTypeLevelExpression(propertyNode.type(), context),
-            propertyNode.name(),
-            List.of(),
-            propertyNode.body().stream()
-                .map(statement -> compileFunctionStatement(statement, context))
-                .toList()
-        );
+        return node.accept(new TypedRecordBodyDeclarationNode.Visitor<JavaClassBodyDeclarationNode>() {
+            @Override
+            public JavaClassBodyDeclarationNode visit(TypedPropertyNode node) {
+                return compileProperty(node, context);
+            }
+        });
     }
 
     private static JavaExpressionNode compileReference(TypedReferenceNode node) {

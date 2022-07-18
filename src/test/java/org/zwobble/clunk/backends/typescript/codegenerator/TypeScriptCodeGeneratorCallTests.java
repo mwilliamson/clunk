@@ -3,12 +3,10 @@ package org.zwobble.clunk.backends.typescript.codegenerator;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedCallNode;
-import org.zwobble.clunk.backends.python.codegenerator.PythonCodeGenerator;
-import org.zwobble.clunk.backends.python.codegenerator.PythonCodeGeneratorContext;
-import org.zwobble.clunk.backends.python.serialiser.PythonSerialiser;
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.RecordType;
 import org.zwobble.clunk.types.StaticFunctionType;
 import org.zwobble.clunk.types.Types;
 
@@ -40,5 +38,21 @@ public class TypeScriptCodeGeneratorCallTests {
 
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
         assertThat(string, equalTo("(abs)(123)"));
+    }
+
+    @Test
+    public void callToRecordConstructorsAreCompiledToConstructorCalls() {
+        var recordType = new RecordType(NamespaceName.fromParts("example"), "Id");
+        var node = new TypedCallNode(
+            Typed.reference("Id", Types.metaType(recordType)),
+            List.of(Typed.intLiteral(123)),
+            Types.INT,
+            NullSource.INSTANCE
+        );
+
+        var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, TypeScriptSerialiser::serialiseExpression);
+        assertThat(string, equalTo("new (Id)(123)"));
     }
 }

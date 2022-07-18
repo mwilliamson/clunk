@@ -1,6 +1,7 @@
 package org.zwobble.clunk.backends.typescript.codegenerator;
 
 import org.zwobble.clunk.ast.typed.*;
+import org.zwobble.clunk.backends.java.ast.JavaCallNewNode;
 import org.zwobble.clunk.backends.typescript.ast.*;
 import org.zwobble.clunk.typechecker.FieldsLookup;
 import org.zwobble.clunk.typechecker.SubtypeLookup;
@@ -63,10 +64,19 @@ public class TypeScriptCodeGenerator {
     }
 
     private static TypeScriptExpressionNode compileCall(TypedCallNode node, TypeScriptCodeGeneratorContext context) {
-        return new TypeScriptCallNode(
-            compileCallReceiver(node.receiver(), context),
-            node.positionalArgs().stream().map(arg -> compileExpression(arg, context)).toList()
-        );
+        var typeScriptReceiver = compileCallReceiver(node.receiver(), context);
+        var typeScriptArgs = node.positionalArgs().stream()
+            .map(arg -> compileExpression(arg, context))
+            .toList();
+
+        if (node.receiver().type() instanceof TypeLevelValueType typeLevelValueType) {
+            return new TypeScriptCallNewNode(typeScriptReceiver, typeScriptArgs);
+        } else {
+            return new TypeScriptCallNode(
+                typeScriptReceiver,
+                typeScriptArgs
+            );
+        }
     }
 
     private static TypeScriptExpressionNode compileCallReceiver(TypedExpressionNode receiver, TypeScriptCodeGeneratorContext context) {

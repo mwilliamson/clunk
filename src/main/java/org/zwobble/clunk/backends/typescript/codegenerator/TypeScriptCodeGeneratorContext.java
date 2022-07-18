@@ -4,6 +4,7 @@ import org.zwobble.clunk.ast.typed.TypedRecordFieldNode;
 import org.zwobble.clunk.backends.typescript.ast.TypeScriptImportNode;
 import org.zwobble.clunk.typechecker.FieldsLookup;
 import org.zwobble.clunk.typechecker.SubtypeLookup;
+import org.zwobble.clunk.types.InterfaceType;
 import org.zwobble.clunk.types.RecordType;
 import org.zwobble.clunk.types.Type;
 
@@ -51,7 +52,7 @@ public class TypeScriptCodeGeneratorContext {
         return subtypeLookup.subtypesOf(supertype);
     }
 
-    public List<Type> supertypesOf(Type subtype) {
+    public List<InterfaceType> supertypesOf(Type subtype) {
         return subtypeLookup.supertypesOf(subtype);
     }
 }

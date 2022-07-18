@@ -63,7 +63,7 @@ public class JavaCodeGeneratorRecordTests {
             """
                 package example.project;
                 
-                public record Example() implements a.b.X, a.b.Y {
+                public record Example() implements X, Y {
                 }"""
         ));
     }

@@ -24,14 +24,14 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
     }
 
     @Test
-    public void enumTypeIsCompiledToFullyQualifiedReference() {
+    public void enumTypeIsCompiledToReference() {
         var node = Typed.typeLevelReference("C", Types.enumType(NamespaceName.fromParts("a", "b"), "C", List.of()));
         var context = JavaCodeGeneratorContext.stub();
 
         var result = JavaCodeGenerator.compileTypeLevelExpression(node, context);
 
         var string = serialiseToString(result, JavaSerialiser::serialiseTypeExpression);
-        assertThat(string, equalTo("a.b.C"));
+        assertThat(string, equalTo("C"));
     }
 
     @Test
@@ -46,14 +46,14 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
     }
 
     @Test
-    public void interfaceTypeIsCompiledToFullyQualifiedReference() {
+    public void interfaceTypeIsCompiledToReference() {
         var node = Typed.typeLevelReference("C", Types.interfaceType(NamespaceName.fromParts("a", "b"), "C"));
         var context = JavaCodeGeneratorContext.stub();
 
         var result = JavaCodeGenerator.compileTypeLevelExpression(node, context);
 
         var string = serialiseToString(result, JavaSerialiser::serialiseTypeExpression);
-        assertThat(string, equalTo("a.b.C"));
+        assertThat(string, equalTo("C"));
     }
 
     @Test
@@ -87,14 +87,14 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
     }
 
     @Test
-    public void recordTypeIsCompiledToFullyQualifiedReference() {
+    public void recordTypeIsCompiledToReference() {
         var node = Typed.typeLevelReference("C", Types.recordType(NamespaceName.fromParts("a", "b"), "C"));
         var context = JavaCodeGeneratorContext.stub();
 
         var result = JavaCodeGenerator.compileTypeLevelExpression(node, context);
 
         var string = serialiseToString(result, JavaSerialiser::serialiseTypeExpression);
-        assertThat(string, equalTo("a.b.C"));
+        assertThat(string, equalTo("C"));
     }
 
     @Test

@@ -1,7 +1,7 @@
 package org.zwobble.clunk.typechecker;
 
+import org.zwobble.clunk.types.InterfaceType;
 import org.zwobble.clunk.types.RecordType;
-import org.zwobble.clunk.types.Type;
 
-public record SubtypeRelation(RecordType subtype, Type supertype) {
+public record SubtypeRelation(RecordType subtype, InterfaceType supertype) {
 }

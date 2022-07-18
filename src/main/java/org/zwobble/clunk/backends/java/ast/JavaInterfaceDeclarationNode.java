@@ -5,7 +5,7 @@ import java.util.Optional;
 
 public record JavaInterfaceDeclarationNode(
     String name,
-    Optional<List<JavaTypeExpressionNode>> permits
+    Optional<List<? extends JavaTypeExpressionNode>> permits
 ) implements JavaTypeDeclarationNode {
     @Override
     public <T> T accept(Visitor<T> visitor) {
@@ -18,7 +18,7 @@ public record JavaInterfaceDeclarationNode(
 
     public static record Builder(
         String name,
-        Optional<List<JavaTypeExpressionNode>> permits
+        Optional<List<? extends JavaTypeExpressionNode>> permits
     ) {
         public JavaInterfaceDeclarationNode build() {
             return new JavaInterfaceDeclarationNode(name, permits);

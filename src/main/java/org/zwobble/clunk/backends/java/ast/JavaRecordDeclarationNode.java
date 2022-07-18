@@ -6,7 +6,7 @@ import java.util.List;
 public record JavaRecordDeclarationNode(
     String name,
     List<JavaRecordComponentNode> components,
-    List<JavaTypeExpressionNode> implements_
+    List<? extends JavaTypeExpressionNode> implements_
 ) implements JavaTypeDeclarationNode {
     @Override
     public <T> T accept(Visitor<T> visitor) {

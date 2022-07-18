@@ -7,6 +7,7 @@ import org.zwobble.clunk.backends.java.ast.JavaImportTypeNode;
 import org.zwobble.clunk.backends.java.config.JavaTargetConfig;
 import org.zwobble.clunk.typechecker.FieldsLookup;
 import org.zwobble.clunk.typechecker.SubtypeLookup;
+import org.zwobble.clunk.types.InterfaceType;
 import org.zwobble.clunk.types.RecordType;
 import org.zwobble.clunk.types.Type;
 
@@ -59,7 +60,7 @@ public class JavaCodeGeneratorContext {
         return subtypeLookup.subtypesOf(supertype);
     }
 
-    public List<Type> supertypesOf(Type subtype) {
+    public List<InterfaceType> supertypesOf(Type subtype) {
         return subtypeLookup.supertypesOf(subtype);
     }
 }

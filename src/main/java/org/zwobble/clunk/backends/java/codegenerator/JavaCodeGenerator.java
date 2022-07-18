@@ -213,7 +213,7 @@ public class JavaCodeGenerator {
         JavaCodeGeneratorContext context
     ) {
         var permits = context.subtypesOf(node.type()).stream()
-            .map(subtype -> compileTypeLevelValue(subtype, context))
+            .map(subtype -> new JavaTypeVariableReferenceNode(subtype.name()))
             .toList();
 
         return new JavaOrdinaryCompilationUnitNode(
@@ -304,7 +304,7 @@ public class JavaCodeGenerator {
             .collect(Collectors.toList());
 
         var implements_ = context.supertypesOf(node.type()).stream()
-            .map(implementsType -> compileTypeLevelValue(implementsType, context))
+            .map(implementsType -> new JavaTypeVariableReferenceNode(implementsType.name()))
             .toList();
 
         return new JavaOrdinaryCompilationUnitNode(
@@ -351,40 +351,37 @@ public class JavaCodeGenerator {
         TypedTypeLevelExpressionNode node,
         JavaCodeGeneratorContext context
     ) {
-        return compileTypeLevelValue(node.value(), context);
-    }
+        return node.accept(new TypedTypeLevelExpressionNode.Visitor<JavaTypeExpressionNode>() {
+            @Override
+            public JavaTypeExpressionNode visit(TypedConstructedTypeNode node) {
+                // TODO: handle boxing
+                return new JavaParameterizedType(
+                    compileTypeLevelExpression(node.receiver(), context),
+                    node.args().stream()
+                        .map(arg -> compileTypeLevelExpression(arg, context))
+                        .toList()
+                );
+            }
 
-    private static JavaTypeExpressionNode compileTypeLevelValue(TypeLevelValue value, JavaCodeGeneratorContext context) {
-        if (value == BoolType.INSTANCE) {
-            return new JavaTypeVariableReferenceNode("boolean");
-        } else if (value == IntType.INSTANCE) {
-            return new JavaTypeVariableReferenceNode("int");
-        } else if (value == StringType.INSTANCE) {
-            return new JavaTypeVariableReferenceNode("String");
-        } else if (value instanceof EnumType enumType) {
-            var packageName = namespaceToPackage(enumType.namespaceName(), context);
-            return new JavaFullyQualifiedTypeReferenceNode(packageName, enumType.name());
-        } else if (value instanceof InterfaceType interfaceType) {
-            var packageName = namespaceToPackage(interfaceType.namespaceName(), context);
-            return new JavaFullyQualifiedTypeReferenceNode(packageName, interfaceType.name());
-        } else if (value instanceof ListType listType) {
-            // TODO: handle boxing
-            return new JavaParameterizedType(
-                new JavaFullyQualifiedTypeReferenceNode("java.util", "List"),
-                List.of(compileTypeLevelValue(listType.elementType(), context))
-            );
-        } else if (value instanceof OptionType optionType) {
-            // TODO: handle boxing
-            return new JavaParameterizedType(
-                new JavaFullyQualifiedTypeReferenceNode("java.util", "Optional"),
-                List.of(compileTypeLevelValue(optionType.elementType(), context))
-            );
-        } else if (value instanceof RecordType recordType) {
-            var packageName = namespaceToPackage(recordType.namespaceName(), context);
-            return new JavaFullyQualifiedTypeReferenceNode(packageName, recordType.name());
-        } else {
-            throw new RuntimeException("TODO");
-        }
+            @Override
+            public JavaTypeExpressionNode visit(TypedTypeLevelReferenceNode node) {
+                var value = node.value();
+
+                if (value == BoolType.INSTANCE) {
+                    return new JavaTypeVariableReferenceNode("boolean");
+                } else if (value == IntType.INSTANCE) {
+                    return new JavaTypeVariableReferenceNode("int");
+                } else if (value == StringType.INSTANCE) {
+                    return new JavaTypeVariableReferenceNode("String");
+                } else if (value == ListTypeConstructor.INSTANCE) {
+                    return new JavaFullyQualifiedTypeReferenceNode("java.util", "List");
+                } else if (value == OptionTypeConstructor.INSTANCE) {
+                    return new JavaFullyQualifiedTypeReferenceNode("java.util", "Optional");
+                } else {
+                    return new JavaTypeVariableReferenceNode(node.name());
+                }
+            }
+        });
     }
 
     private static JavaStatementNode compileVar(TypedVarNode node, JavaCodeGeneratorContext context) {

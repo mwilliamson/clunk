@@ -554,7 +554,7 @@ public class TypeChecker {
 
         for (var typedSupertypeNode : typedSupertypeNodes) {
             // TODO: handle type-level values that aren't types
-            newContext = newContext.addSubtypeRelation(recordType, (Type) typedSupertypeNode.value());
+            newContext = newContext.addSubtypeRelation(recordType, (InterfaceType) typedSupertypeNode.value());
         }
 
         return new TypeCheckResult<>(typedNode, newContext);

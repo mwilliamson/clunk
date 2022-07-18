@@ -7,10 +7,7 @@ import org.zwobble.clunk.ast.typed.TypedRecordFieldNode;
 import org.zwobble.clunk.builtins.Builtins;
 import org.zwobble.clunk.errors.SourceError;
 import org.zwobble.clunk.sources.Source;
-import org.zwobble.clunk.types.NamespaceName;
-import org.zwobble.clunk.types.NamespaceType;
-import org.zwobble.clunk.types.RecordType;
-import org.zwobble.clunk.types.Type;
+import org.zwobble.clunk.types.*;
 import org.zwobble.clunk.util.P;
 
 import java.util.List;
@@ -114,7 +111,7 @@ public record TypeCheckerContext(
         return new TypeCheckerContext(stack, namespaceTypes, typeToFields, subtypeRelations);
     }
 
-    public TypeCheckerContext addSubtypeRelation(RecordType subtype, Type superType) {
+    public TypeCheckerContext addSubtypeRelation(RecordType subtype, InterfaceType superType) {
         var subtypeRelations = this.subtypeRelations.plus(new SubtypeRelation(subtype, superType));
         return new TypeCheckerContext(stack, namespaceTypes, typeToFields, subtypeRelations);
     }

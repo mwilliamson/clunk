@@ -38,7 +38,7 @@ public class JavaCodeGeneratorInterfaceTests {
             """
                 package one.two;
                 
-                public sealed interface X permits one.two.A, one.two.B {
+                public sealed interface X permits A, B {
                 }
                 """
         ));

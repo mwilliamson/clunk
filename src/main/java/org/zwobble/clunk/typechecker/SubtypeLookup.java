@@ -1,5 +1,6 @@
 package org.zwobble.clunk.typechecker;
 
+import org.zwobble.clunk.types.InterfaceType;
 import org.zwobble.clunk.types.RecordType;
 import org.zwobble.clunk.types.Type;
 
@@ -13,7 +14,7 @@ public class SubtypeLookup {
 
     public static SubtypeLookup fromSubtypeRelations(List<SubtypeRelation> subtypeRelations) {
         var supertypeToSubtypes = new HashMap<Type, List<RecordType>>();
-        var subtypesToSupertypes = new HashMap<Type, List<Type>>();
+        var subtypesToSupertypes = new HashMap<Type, List<InterfaceType>>();
 
         for (var relation : subtypeRelations) {
             if (!supertypeToSubtypes.containsKey(relation.supertype())) {
@@ -31,11 +32,11 @@ public class SubtypeLookup {
     }
 
     private final Map<Type, List<RecordType>> supertypeToSubtypes;
-    private final Map<Type, List<Type>> subtypesToSupertypes;
+    private final Map<Type, List<InterfaceType>> subtypesToSupertypes;
 
     private SubtypeLookup(
         Map<Type, List<RecordType>> supertypeToSubtypes,
-        Map<Type, List<Type>> subtypesToSupertypes
+        Map<Type, List<InterfaceType>> subtypesToSupertypes
     ) {
         this.supertypeToSubtypes = supertypeToSubtypes;
         this.subtypesToSupertypes = subtypesToSupertypes;
@@ -45,7 +46,7 @@ public class SubtypeLookup {
         return supertypeToSubtypes.getOrDefault(supertype, List.of());
     }
 
-    public List<Type> supertypesOf(Type subtype) {
+    public List<InterfaceType> supertypesOf(Type subtype) {
         return subtypesToSupertypes.getOrDefault(subtype, List.of());
     }
 }

@@ -54,7 +54,11 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void listTypeIsCompiledToArrayType() {
-        var node = Typed.typeLevelReference("Int", Types.list(Types.INT));
+        var node = Typed.constructedType(
+            Typed.typeLevelReference("List", ListTypeConstructor.INSTANCE),
+            List.of(Typed.typeLevelReference("Int", Types.INT)),
+            Types.list(Types.INT)
+        );
 
         var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
 
@@ -64,7 +68,11 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void optionTypeIsCompiledToUnionWithNull() {
-        var node = Typed.typeLevelReference("Int", Types.option(Types.INT));
+        var node = Typed.constructedType(
+            Typed.typeLevelReference("Option", OptionTypeConstructor.INSTANCE),
+            List.of(Typed.typeLevelReference("Int", Types.INT)),
+            Types.option(Types.INT)
+        );
 
         var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
 

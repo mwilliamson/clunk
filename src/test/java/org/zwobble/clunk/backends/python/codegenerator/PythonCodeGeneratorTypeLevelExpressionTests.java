@@ -76,7 +76,7 @@ public class PythonCodeGeneratorTypeLevelExpressionTests {
         var node = Typed.constructedType(
             Typed.typeLevelReference("Option", OptionTypeConstructor.INSTANCE),
             List.of(Typed.typeLevelReference("Int", Types.INT)),
-            Types.list(Types.INT)
+            Types.option(Types.INT)
         );
         var context = PythonCodeGeneratorContext.stub();
 

@@ -58,7 +58,11 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void listTypeIsCompiledToListType() {
-        var node = Typed.typeLevelReference("String", Types.list(Types.STRING));
+        var node = Typed.constructedType(
+            Typed.typeLevelReference("List", ListTypeConstructor.INSTANCE),
+            List.of(Typed.typeLevelReference("String", Types.STRING)),
+            Types.list(Types.STRING)
+        );
         var context = JavaCodeGeneratorContext.stub();
 
         var result = JavaCodeGenerator.compileTypeLevelExpression(node, context);
@@ -69,7 +73,11 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void optionTypeIsCompiledToOptionalType() {
-        var node = Typed.typeLevelReference("String", Types.option(Types.STRING));
+        var node = Typed.constructedType(
+            Typed.typeLevelReference("Option", OptionTypeConstructor.INSTANCE),
+            List.of(Typed.typeLevelReference("STRING", Types.STRING)),
+            Types.option(Types.STRING)
+        );
         var context = JavaCodeGeneratorContext.stub();
 
         var result = JavaCodeGenerator.compileTypeLevelExpression(node, context);

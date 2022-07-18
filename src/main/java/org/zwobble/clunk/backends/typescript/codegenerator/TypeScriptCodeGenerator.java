@@ -314,35 +314,40 @@ public class TypeScriptCodeGenerator {
     }
 
     public static TypeScriptExpressionNode compileTypeLevelExpression(TypedTypeLevelExpressionNode node) {
-        return compileTypeLevelValue(node.value());
-    }
+        return node.accept(new TypedTypeLevelExpressionNode.Visitor<TypeScriptExpressionNode>() {
+            @Override
+            public TypeScriptExpressionNode visit(TypedConstructedTypeNode node) {
+                if (node.receiver().value() == OptionTypeConstructor.INSTANCE) {
+                    return new TypeScriptUnionNode(List.of(
+                        compileTypeLevelExpression(node.args().get(0)),
+                        new TypeScriptReferenceNode("null")
+                    ));
+                } else {
+                    return new TypeScriptConstructedTypeNode(
+                        compileTypeLevelExpression(node.receiver()),
+                        node.args().stream()
+                            .map(arg -> compileTypeLevelExpression(arg))
+                            .toList()
+                    );
+                }
+            }
 
-    private static TypeScriptExpressionNode compileTypeLevelValue(TypeLevelValue type) {
-        if (type == BoolType.INSTANCE) {
-            return new TypeScriptReferenceNode("boolean");
-        } else if (type instanceof EnumType enumType) {
-            return new TypeScriptReferenceNode(enumType.name());
-        } else if (type == IntType.INSTANCE) {
-            return new TypeScriptReferenceNode("number");
-        } else if (type instanceof InterfaceType interfaceType) {
-            return new TypeScriptReferenceNode(interfaceType.name());
-        } else if (type instanceof ListType listType) {
-            return new TypeScriptConstructedTypeNode(
-                new TypeScriptReferenceNode("Array"),
-                List.of(compileTypeLevelValue(listType.elementType()))
-            );
-        } else if (type instanceof OptionType optionType) {
-            return new TypeScriptUnionNode(List.of(
-                compileTypeLevelValue(optionType.elementType()),
-                new TypeScriptReferenceNode("null")
-            ));
-        } else if (type instanceof RecordType recordType) {
-            return new TypeScriptReferenceNode(recordType.name());
-        } else if (type == StringType.INSTANCE) {
-            return new TypeScriptReferenceNode("string");
-        } else {
-            throw new RuntimeException("TODO");
-        }
+            @Override
+            public TypeScriptExpressionNode visit(TypedTypeLevelReferenceNode node) {
+                var value = node.value();
+                if (value == BoolType.INSTANCE) {
+                    return new TypeScriptReferenceNode("boolean");
+                } else if (value == IntType.INSTANCE) {
+                    return new TypeScriptReferenceNode("number");
+                } else if (value == ListTypeConstructor.INSTANCE) {
+                    return new TypeScriptReferenceNode("Array");
+                } else if (value == StringType.INSTANCE) {
+                    return new TypeScriptReferenceNode("string");
+                } else {
+                    return new TypeScriptReferenceNode(node.name());
+                }
+            }
+        });
     }
 
     private static TypeScriptStatementNode compileVar(TypedVarNode node, TypeScriptCodeGeneratorContext context) {

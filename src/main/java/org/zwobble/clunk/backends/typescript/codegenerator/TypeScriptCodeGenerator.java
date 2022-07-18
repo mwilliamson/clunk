@@ -53,6 +53,13 @@ public class TypeScriptCodeGenerator {
         }
     }
 
+    private static TypeScriptExpressionNode compileAdd(TypedIntAddNode node, TypeScriptCodeGeneratorContext context) {
+        return new TypeScriptAddNode(
+            compileExpression(node.left(), context),
+            compileExpression(node.right(), context)
+        );
+    }
+
     private static TypeScriptStatementNode compileBlankLine(TypedBlankLineNode node, TypeScriptCodeGeneratorContext context) {
         return new TypeScriptBlankLineNode();
     }
@@ -108,7 +115,7 @@ public class TypeScriptCodeGenerator {
 
             @Override
             public TypeScriptExpressionNode visit(TypedIntAddNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileAdd(node, context);
             }
 
             @Override

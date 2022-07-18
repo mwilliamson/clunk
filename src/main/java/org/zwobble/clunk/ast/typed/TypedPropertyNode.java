@@ -10,4 +10,8 @@ public record TypedPropertyNode(
     List<TypedFunctionStatementNode> body,
     Source source
 ) implements TypedRecordBodyDeclarationNode {
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+        return visitor.visit(this);
+    }
 }

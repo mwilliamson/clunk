@@ -1,7 +1,14 @@
 package org.zwobble.clunk.ast.typed;
 
-import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.types.TypeLevelValue;
 
-public record TypedTypeLevelExpressionNode(TypeLevelValue value, Source source) implements TypedNode {
+public interface TypedTypeLevelExpressionNode extends TypedNode {
+    TypeLevelValue value();
+
+    interface Visitor<T> {
+        T visit(TypedConstructedTypeNode node);
+        T visit(TypedTypeLevelReferenceNode node);
+    }
+
+    <T> T accept(Visitor<T> visitor);
 }

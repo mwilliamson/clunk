@@ -121,7 +121,7 @@ public class TypeChecker {
             var args = node.args().stream().map(arg -> (Type)typeCheckTypeLevelExpressionNode(arg, context).value()).toList();
             var constructedType = typeConstructor.call(args);
 
-            return new TypedTypeLevelExpressionNode(constructedType, node.source());
+            return new TypedConstructedTypeNode(constructedType, node.source());
         }
 
         throw new UnexpectedTypeError(
@@ -642,7 +642,7 @@ public class TypeChecker {
         TypeCheckerContext context
     ) {
         var type = resolveTypeLevelValue(node.value(), node.source(), context);
-        return new TypedTypeLevelExpressionNode(type, node.source());
+        return new TypedTypeLevelReferenceNode(type, node.source());
     }
 
     private static TypeCheckStatementResult<TypedFunctionStatementNode> typeCheckVar(

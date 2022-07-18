@@ -56,11 +56,11 @@ public class Typed {
     }
 
     public static TypedParamNode param(String name, Type type) {
-        return new TypedParamNode(name, typeLevelExpression(type), NullSource.INSTANCE);
+        return new TypedParamNode(name, typeLevelReference(type), NullSource.INSTANCE);
     }
 
     public static TypedRecordFieldNode recordField(String name, Type type) {
-        return new TypedRecordFieldNode(name, typeLevelExpression(type), NullSource.INSTANCE);
+        return new TypedRecordFieldNode(name, typeLevelReference(type), NullSource.INSTANCE);
     }
 
     public static TypedReferenceNode reference(String name, Type type) {
@@ -75,8 +75,8 @@ public class Typed {
         return new TypedStringLiteralNode(value, NullSource.INSTANCE);
     }
 
-    public static TypedTypeLevelExpressionNode typeLevelExpression(Type type) {
-        return new TypedTypeLevelExpressionNode(type, NullSource.INSTANCE);
+    public static TypedTypeLevelExpressionNode typeLevelReference(Type type) {
+        return new TypedTypeLevelReferenceNode(type, NullSource.INSTANCE);
     }
 
     public static TypedVarNode var(String name, TypedExpressionNode expression) {

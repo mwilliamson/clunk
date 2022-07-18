@@ -22,7 +22,7 @@ public record TypedFunctionNode(
 
 
     public static Builder builder() {
-        return new Builder("f", List.of(), Typed.typeLevelExpression(IntType.INSTANCE), List.of());
+        return new Builder("f", List.of(), Typed.typeLevelReference(IntType.INSTANCE), List.of());
     }
 
     public static record Builder(
@@ -46,7 +46,7 @@ public record TypedFunctionNode(
         }
 
         public Builder returnType(Type returnType) {
-            return new Builder(name, params, Typed.typeLevelExpression(returnType), body);
+            return new Builder(name, params, Typed.typeLevelReference(returnType), body);
         }
 
         public Builder addBodyStatement(TypedFunctionStatementNode statement) {

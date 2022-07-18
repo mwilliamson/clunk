@@ -16,13 +16,13 @@ test "assert field" {
     assertThat(add.right, equalTo(3));
 }
 
-//test "assert sum" {
-//    var add = Add(2, 3);
+test "assert sum" {
+    var add = Add(2, 3);
 
-//    var result = add.sum;
+    var result = add.sum;
 
-//    assertThat(result, equalTo(5));
-//}
+    assertThat(result, equalTo(5));
+}
 
 
 ==============
@@ -46,16 +46,20 @@ def test_assert_field():
     (assert_that)((add).left, (equal_to)(2))
     (assert_that)((add).right, (equal_to)(3))
 
+def test_assert_sum():
+    add = (Add)(2, 3)
 
+    result = (add).sum
 
+    (assert_that)(result, (equal_to)(5))
 
 
 ==============
 
 ============================= test session starts ==============================
 rootdir: ROOTDIR, configfile: tox.ini
-collected 1 item
+collected 2 items
 
-recordsTest.py .                                                         [100%]
+recordsTest.py ..                                                        [100%]
 
-============================== 1 passed in TIME ===============================
+============================== 2 passed in TIME ===============================

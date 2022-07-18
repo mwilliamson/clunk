@@ -15,10 +15,10 @@ test "assert field" {
     assertThat(add.right, equalTo(3));
 }
 
-//test "assert sum" {
-//    var add = Add(2, 3);
+test "assert sum" {
+    var add = Add(2, 3);
 
-//    var result = add.sum;
+    var result = add.sum;
 
-//    assertThat(result, equalTo(5));
-//}
+    assertThat(result, equalTo(5));
+}

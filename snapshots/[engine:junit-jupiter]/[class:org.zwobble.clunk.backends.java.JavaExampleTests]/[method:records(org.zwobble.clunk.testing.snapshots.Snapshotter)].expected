@@ -16,13 +16,13 @@ test "assert field" {
     assertThat(add.right, equalTo(3));
 }
 
-//test "assert sum" {
-//    var add = Add(2, 3);
+test "assert sum" {
+    var add = Add(2, 3);
 
-//    var result = add.sum;
+    var result = add.sum;
 
-//    assertThat(result, equalTo(5));
-//}
+    assertThat(result, equalTo(5));
+}
 
 
 ==============
@@ -54,6 +54,15 @@ public class RecordsTest {
         assertThat((add).left(), equalTo(2));
         assertThat((add).right(), equalTo(3));
     }
+    @org.junit.jupiter.api.Test
+    @org.junit.jupiter.api.DisplayName("assert sum")
+    public void assertSum() {
+        var add = new Add(2, 3);
+
+        var result = (add).sum();
+
+        assertThat(result, equalTo(5));
+    }
 }
 
 ==============
@@ -61,7 +70,8 @@ public class RecordsTest {
 ╷
 ├─ JUnit Jupiter ✔
 │  └─ RecordsTest ✔
-│     └─ assert field ✔
+│     ├─ assert field ✔
+│     └─ assert sum ✔
 └─ JUnit Vintage ✔
 
 Test run finished after TIME ms
@@ -71,9 +81,9 @@ Test run finished after TIME ms
 [         0 containers aborted    ]
 [         3 containers successful ]
 [         0 containers failed     ]
-[         1 tests found           ]
+[         2 tests found           ]
 [         0 tests skipped         ]
-[         1 tests started         ]
+[         2 tests started         ]
 [         0 tests aborted         ]
-[         1 tests successful      ]
+[         2 tests successful      ]
 [         0 tests failed          ]

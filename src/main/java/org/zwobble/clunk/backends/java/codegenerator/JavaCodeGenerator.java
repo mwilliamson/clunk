@@ -113,6 +113,11 @@ public class JavaCodeGenerator {
             }
 
             @Override
+            public JavaExpressionNode visit(TypedIntAddNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public JavaExpressionNode visit(TypedIntLiteralNode node) {
                 return compileIntLiteral(node);
             }

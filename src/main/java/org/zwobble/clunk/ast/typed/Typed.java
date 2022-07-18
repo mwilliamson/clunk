@@ -57,6 +57,10 @@ public class Typed {
         return new TypedInterfaceNode(name, type, NullSource.INSTANCE);
     }
 
+    public static TypedIntAddNode intAdd(TypedExpressionNode left, TypedExpressionNode right) {
+        return new TypedIntAddNode(left, right, NullSource.INSTANCE);
+    }
+
     public static TypedExpressionNode intLiteral(int value) {
         return new TypedIntLiteralNode(value, NullSource.INSTANCE);
     }

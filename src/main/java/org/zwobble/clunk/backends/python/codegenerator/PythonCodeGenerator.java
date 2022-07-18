@@ -129,6 +129,11 @@ public class PythonCodeGenerator {
             }
 
             @Override
+            public PythonExpressionNode visit(TypedIntAddNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public PythonExpressionNode visit(TypedIntLiteralNode node) {
                 return compileIntLiteral(node);
             }

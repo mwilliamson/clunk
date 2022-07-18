@@ -45,7 +45,7 @@ public class TypeCheckNamespaceTests {
             .addImport(Untyped.import_(NamespaceName.fromParts("x", "y"), "IntAlias"))
             .addStatement(
                 UntypedRecordNode.builder("X")
-                    .addField(Untyped.recordField("f", Untyped.staticReference("IntAlias"))).build()
+                    .addField(Untyped.recordField("f", Untyped.typeLevelReference("IntAlias"))).build()
             )
             .build();
         var namespaceType = new NamespaceType(
@@ -90,7 +90,7 @@ public class TypeCheckNamespaceTests {
     public void whenVariableShadowsBuiltinThenEarlierReferencesUsesVariable() {
         var untypedNode = UntypedNamespaceNode
             .builder(NamespaceName.fromParts("example", "project"))
-            .addStatement(UntypedFunctionNode.builder().addParam(Untyped.param("x", Untyped.staticReference("X"))).build())
+            .addStatement(UntypedFunctionNode.builder().addParam(Untyped.param("x", Untyped.typeLevelReference("X"))).build())
             .addStatement(UntypedRecordNode.builder("X").build())
             .build();
         var context = TypeCheckerContext.stub()

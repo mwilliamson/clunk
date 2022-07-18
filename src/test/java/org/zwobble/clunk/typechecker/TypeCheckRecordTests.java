@@ -42,7 +42,7 @@ public class TypeCheckRecordTests {
     @Test
     public void recordIsTypeChecked() {
         var untypedNode = UntypedRecordNode.builder("Example")
-            .addField(Untyped.recordField("x", Untyped.staticReference("String")))
+            .addField(Untyped.recordField("x", Untyped.typeLevelReference("String")))
             .build();
         var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
 
@@ -67,7 +67,7 @@ public class TypeCheckRecordTests {
     @Test
     public void subtypeRelationsAreUpdated() {
         var untypedNode = UntypedRecordNode.builder("User")
-            .addSupertype(Untyped.staticReference("Person"))
+            .addSupertype(Untyped.typeLevelReference("Person"))
             .build();
         var context = TypeCheckerContext.stub()
             .enterNamespace(NamespaceName.fromParts("a", "b"))
@@ -89,7 +89,7 @@ public class TypeCheckRecordTests {
     @Test
     public void whenSupertypeIsNotInterfaceThenErrorIsThrown() {
         var untypedNode = UntypedRecordNode.builder("User")
-            .addSupertype(Untyped.staticReference("Bool"))
+            .addSupertype(Untyped.typeLevelReference("Bool"))
             .build();
         var context = TypeCheckerContext.stub()
             .enterNamespace(NamespaceName.fromParts("a", "b"))
@@ -107,7 +107,7 @@ public class TypeCheckRecordTests {
     @Test
     public void whenSupertypeIsSealedInterfaceFromDifferentNamespaceThenErrorIsThrown() {
         var untypedNode = UntypedRecordNode.builder("User")
-            .addSupertype(Untyped.staticReference("Person"))
+            .addSupertype(Untyped.typeLevelReference("Person"))
             .build();
         var context = TypeCheckerContext.stub()
             .enterNamespace(NamespaceName.fromParts("a", "b"))

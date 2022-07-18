@@ -32,8 +32,8 @@ public class TypeCheckFunctionTests {
     @Test
     public void paramsAreTyped() {
         var untypedNode = UntypedFunctionNode.builder()
-            .addParam(Untyped.param("x", Untyped.staticReference("Int")))
-            .addParam(Untyped.param("y", Untyped.staticReference("String")))
+            .addParam(Untyped.param("x", Untyped.typeLevelReference("Int")))
+            .addParam(Untyped.param("y", Untyped.typeLevelReference("String")))
             .build();
 
         var result = TypeChecker.typeCheckNamespaceStatement(
@@ -50,7 +50,7 @@ public class TypeCheckFunctionTests {
     @Test
     public void returnTypeIsTyped() {
         var untypedNode = UntypedFunctionNode.builder()
-            .returnType(Untyped.staticReference("Int"))
+            .returnType(Untyped.typeLevelReference("Int"))
             .addBodyStatement(Untyped.returnStatement(Untyped.intLiteral()))
             .build();
 
@@ -65,7 +65,7 @@ public class TypeCheckFunctionTests {
     @Test
     public void bodyIsTypeChecked() {
         var untypedNode = UntypedFunctionNode.builder()
-            .returnType(Untyped.staticReference("Bool"))
+            .returnType(Untyped.typeLevelReference("Bool"))
             .addBodyStatement(Untyped.returnStatement(Untyped.boolFalse()))
             .build();
 
@@ -82,7 +82,7 @@ public class TypeCheckFunctionTests {
     @Test
     public void givenFunctionHasUnitReturnTypeWhenBodyDoesNotReturnThenFunctionTypeChecks() {
         var untypedNode = UntypedFunctionNode.builder()
-            .returnType(Untyped.staticReference("Unit"))
+            .returnType(Untyped.typeLevelReference("Unit"))
             .build();
 
         var result = TypeChecker.typeCheckNamespaceStatement(
@@ -97,7 +97,7 @@ public class TypeCheckFunctionTests {
     @Test
     public void givenFunctionHasNonUnitReturnTypeWhenBodyDoesNotReturnThenErrorIsThrown() {
         var untypedNode = UntypedFunctionNode.builder()
-            .returnType(Untyped.staticReference("Bool"))
+            .returnType(Untyped.typeLevelReference("Bool"))
             .build();
 
         assertThrows(MissingReturnError.class, () -> TypeChecker.typeCheckNamespaceStatement(
@@ -110,8 +110,8 @@ public class TypeCheckFunctionTests {
     public void functionTypeIsAddedToEnvironment() {
         var untypedNode = UntypedFunctionNode.builder()
             .name("f")
-            .addParam(Untyped.param("x", Untyped.staticReference("Int")))
-            .returnType(Untyped.staticReference("String"))
+            .addParam(Untyped.param("x", Untyped.typeLevelReference("Int")))
+            .returnType(Untyped.typeLevelReference("String"))
             .build();
         var context = TypeCheckerContext.stub()
             .enterNamespace(NamespaceName.fromParts("a", "b"));

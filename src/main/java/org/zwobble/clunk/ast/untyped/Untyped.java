@@ -91,7 +91,7 @@ public class Untyped {
         return new UntypedReturnNode(expression, NullSource.INSTANCE);
     }
 
-    public static UntypedTypeLevelReferenceNode staticReference(String value) {
+    public static UntypedTypeLevelReferenceNode typeLevelReference(String value) {
         return new UntypedTypeLevelReferenceNode(value, NullSource.INSTANCE);
     }
 

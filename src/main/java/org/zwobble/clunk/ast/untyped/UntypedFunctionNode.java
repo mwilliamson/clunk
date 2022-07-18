@@ -27,7 +27,7 @@ public record UntypedFunctionNode(
         return new UntypedFunctionNode.Builder(
             "f",
             List.of(),
-            Untyped.staticReference("Unit"),
+            Untyped.typeLevelReference("Unit"),
             List.of(),
             NullSource.INSTANCE
         );

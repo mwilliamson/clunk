@@ -15,8 +15,8 @@ public class TypeCheckConstructedTypeTests {
     @Test
     public void whenReceiverIsNotTypeConstructorThenErrorIsThrown() {
         var untypedNode = Untyped.constructedType(
-            Untyped.staticReference("Bool"),
-            List.of(Untyped.staticReference("Int"))
+            Untyped.typeLevelReference("Bool"),
+            List.of(Untyped.typeLevelReference("Int"))
         );
 
         var result = assertThrows(UnexpectedTypeError.class, () -> TypeChecker.typeCheckTypeLevelExpressionNode(
@@ -31,8 +31,8 @@ public class TypeCheckConstructedTypeTests {
     @Test
     public void canConstructTypeWithOneArgument() {
         var untypedNode = Untyped.constructedType(
-            Untyped.staticReference("List"),
-            List.of(Untyped.staticReference("Int"))
+            Untyped.typeLevelReference("List"),
+            List.of(Untyped.typeLevelReference("Int"))
         );
         var context = TypeCheckerContext.stub();
 

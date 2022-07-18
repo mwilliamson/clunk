@@ -9,10 +9,10 @@ import org.zwobble.clunk.types.StringType;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedTypeLevelExpressionNode;
 
-public class TypeCheckStaticReferenceTests {
+public class TypeCheckTypeLevelReferenceTests {
     @Test
     public void staticReferenceToBoolHasBoolType() {
-        var untypedNode = Untyped.staticReference("Bool");
+        var untypedNode = Untyped.typeLevelReference("Bool");
 
         var typedNode = TypeChecker.typeCheckTypeLevelReferenceNode(
             untypedNode,
@@ -24,7 +24,7 @@ public class TypeCheckStaticReferenceTests {
 
     @Test
     public void staticReferenceToIntHasIntType() {
-        var untypedNode = Untyped.staticReference("Int");
+        var untypedNode = Untyped.typeLevelReference("Int");
 
         var typedNode = TypeChecker.typeCheckTypeLevelReferenceNode(
             untypedNode,
@@ -36,7 +36,7 @@ public class TypeCheckStaticReferenceTests {
 
     @Test
     public void staticReferenceToStringHasStringType() {
-        var untypedNode = Untyped.staticReference("String");
+        var untypedNode = Untyped.typeLevelReference("String");
 
         var typedNode = TypeChecker.typeCheckTypeLevelReferenceNode(
             untypedNode,

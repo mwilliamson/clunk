@@ -5,7 +5,6 @@ import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.backends.java.config.JavaTargetConfig;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
-import org.zwobble.clunk.typechecker.FieldsLookup;
 import org.zwobble.clunk.typechecker.SubtypeLookup;
 import org.zwobble.clunk.typechecker.SubtypeRelation;
 import org.zwobble.clunk.types.InterfaceType;
@@ -45,7 +44,7 @@ public class JavaCodeGeneratorRecordTests {
             new SubtypeRelation(node.type(), new InterfaceType(NamespaceName.fromParts("a", "b"), "X")),
             new SubtypeRelation(node.type(), new InterfaceType(NamespaceName.fromParts("a", "b"), "Y"))
         ));
-        var context = new JavaCodeGeneratorContext(JavaTargetConfig.stub(), FieldsLookup.EMPTY, subtypeLookup);
+        var context = new JavaCodeGeneratorContext(JavaTargetConfig.stub(), subtypeLookup);
 
         var result = JavaCodeGenerator.compileRecord(node, context);
 

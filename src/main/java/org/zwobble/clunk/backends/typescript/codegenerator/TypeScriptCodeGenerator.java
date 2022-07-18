@@ -2,7 +2,6 @@ package org.zwobble.clunk.backends.typescript.codegenerator;
 
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.typescript.ast.*;
-import org.zwobble.clunk.typechecker.FieldsLookup;
 import org.zwobble.clunk.typechecker.SubtypeLookup;
 import org.zwobble.clunk.types.*;
 
@@ -224,9 +223,9 @@ public class TypeScriptCodeGenerator {
         return new TypeScriptNumberLiteralNode(node.value());
     }
 
-    public static TypeScriptModuleNode compileNamespace(TypedNamespaceNode node, FieldsLookup fieldsLookup, SubtypeLookup subtypeLookup) {
+    public static TypeScriptModuleNode compileNamespace(TypedNamespaceNode node, SubtypeLookup subtypeLookup) {
         var name = String.join("/", node.name().parts());
-        var context = new TypeScriptCodeGeneratorContext(fieldsLookup, subtypeLookup);
+        var context = new TypeScriptCodeGeneratorContext(subtypeLookup);
 
         var statements = new ArrayList<TypeScriptStatementNode>();
 

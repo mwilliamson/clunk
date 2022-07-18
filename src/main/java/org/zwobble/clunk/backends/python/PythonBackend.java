@@ -7,7 +7,6 @@ import org.zwobble.clunk.backends.python.codegenerator.PythonCodeGenerator;
 import org.zwobble.clunk.backends.python.serialiser.PythonSerialiser;
 import org.zwobble.clunk.config.ProjectConfig;
 import org.zwobble.clunk.logging.Logger;
-import org.zwobble.clunk.typechecker.FieldsLookup;
 import org.zwobble.clunk.typechecker.TypeCheckResult;
 import org.zwobble.clunk.types.NamespaceName;
 
@@ -30,16 +29,14 @@ public class PythonBackend implements Backend {
         Path outputRoot,
         ProjectConfig projectConfig
     ) throws IOException {
-        var fieldsLookup = typeCheckResult.context().fieldsLookup();
-
         for (var typedNamespaceNode : typeCheckResult.typedNode()) {
-            compileNamespace(typedNamespaceNode, outputRoot, fieldsLookup);
+            compileNamespace(typedNamespaceNode, outputRoot);
         }
         Files.writeString(outputRoot.resolve("tox.ini"), "[pytest]\npython_files = *Test.py\n");
     }
 
-    private void compileNamespace(TypedNamespaceNode typedNamespaceNode, Path outputRoot, FieldsLookup fieldsLookup) throws IOException {
-        var pythonModule = PythonCodeGenerator.DEFAULT.compileNamespace(typedNamespaceNode, fieldsLookup);
+    private void compileNamespace(TypedNamespaceNode typedNamespaceNode, Path outputRoot) throws IOException {
+        var pythonModule = PythonCodeGenerator.DEFAULT.compileNamespace(typedNamespaceNode);
         var codeBuilder = new CodeBuilder();
         PythonSerialiser.serialiseModule(pythonModule, codeBuilder);
 

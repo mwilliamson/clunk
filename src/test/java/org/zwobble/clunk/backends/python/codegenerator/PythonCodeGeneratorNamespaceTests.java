@@ -1,15 +1,16 @@
 package org.zwobble.clunk.backends.python.codegenerator;
 
 import org.junit.jupiter.api.Test;
-import org.zwobble.clunk.ast.typed.*;
+import org.zwobble.clunk.ast.typed.Typed;
+import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
+import org.zwobble.clunk.ast.typed.TypedRecordNode;
+import org.zwobble.clunk.ast.typed.TypedTestNode;
 import org.zwobble.clunk.backends.python.serialiser.PythonSerialiser;
-import org.zwobble.clunk.typechecker.FieldsLookup;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.StaticFunctionType;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -25,12 +26,8 @@ public class PythonCodeGeneratorNamespaceTests {
             .addStatement(record1)
             .addStatement(record2)
             .build();
-        var fieldsLookup = new FieldsLookup(Map.ofEntries(
-            Map.entry(record1.type(), List.of()),
-            Map.entry(record2.type(), List.of())
-        ));
 
-        var result = PythonCodeGenerator.DEFAULT.compileNamespace(node, fieldsLookup);
+        var result = PythonCodeGenerator.DEFAULT.compileNamespace(node);
 
         assertThat(result.name(), equalTo("example.project"));
         var string = serialiseToString(result, PythonSerialiser::serialiseModule);
@@ -53,7 +50,7 @@ public class PythonCodeGeneratorNamespaceTests {
             .addImport(Typed.import_(NamespaceName.fromParts("a", "b"), "C", Types.INT))
             .build();
 
-        var result = PythonCodeGenerator.DEFAULT.compileNamespace(node, FieldsLookup.EMPTY);
+        var result = PythonCodeGenerator.DEFAULT.compileNamespace(node);
 
         assertThat(result.name(), equalTo("example.project"));
         var string = serialiseToString(result, PythonSerialiser::serialiseModule);
@@ -72,7 +69,7 @@ public class PythonCodeGeneratorNamespaceTests {
             .addImport(Typed.import_(NamespaceName.fromParts("d", "e", "f"), Types.INT))
             .build();
 
-        var result = PythonCodeGenerator.DEFAULT.compileNamespace(node, FieldsLookup.EMPTY);
+        var result = PythonCodeGenerator.DEFAULT.compileNamespace(node);
 
         assertThat(result.name(), equalTo("example.project"));
         var string = serialiseToString(result, PythonSerialiser::serialiseModule);
@@ -99,7 +96,7 @@ public class PythonCodeGeneratorNamespaceTests {
             ))
             .build();
 
-        var result = PythonCodeGenerator.DEFAULT.compileNamespace(node, FieldsLookup.EMPTY);
+        var result = PythonCodeGenerator.DEFAULT.compileNamespace(node);
 
         assertThat(result.name(), equalTo("example.project"));
         var string = serialiseToString(result, PythonSerialiser::serialiseModule);
@@ -151,7 +148,7 @@ public class PythonCodeGeneratorNamespaceTests {
             )
             .build();
 
-        var result = PythonCodeGenerator.DEFAULT.compileNamespace(node, FieldsLookup.EMPTY);
+        var result = PythonCodeGenerator.DEFAULT.compileNamespace(node);
 
         assertThat(result.name(), equalTo("example.project"));
         var string = serialiseToString(result, PythonSerialiser::serialiseModule);

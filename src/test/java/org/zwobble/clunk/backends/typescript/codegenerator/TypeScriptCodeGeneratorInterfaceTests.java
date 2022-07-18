@@ -3,7 +3,6 @@ package org.zwobble.clunk.backends.typescript.codegenerator;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser;
-import org.zwobble.clunk.typechecker.FieldsLookup;
 import org.zwobble.clunk.typechecker.SubtypeLookup;
 import org.zwobble.clunk.typechecker.SubtypeRelation;
 import org.zwobble.clunk.types.NamespaceName;
@@ -25,7 +24,7 @@ public class TypeScriptCodeGeneratorInterfaceTests {
             new SubtypeRelation(new RecordType(NamespaceName.fromParts("one", "two"), "A"), interfaceType),
             new SubtypeRelation(new RecordType(NamespaceName.fromParts("one", "two"), "B"), interfaceType)
         ));
-        var context = new TypeScriptCodeGeneratorContext(FieldsLookup.EMPTY, subtypeLookup);
+        var context = new TypeScriptCodeGeneratorContext(subtypeLookup);
 
         var result = TypeScriptCodeGenerator.compileNamespaceStatement(
             node,

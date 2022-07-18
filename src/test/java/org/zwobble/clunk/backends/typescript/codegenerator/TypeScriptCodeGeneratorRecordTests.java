@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser;
-import org.zwobble.clunk.typechecker.FieldsLookup;
 import org.zwobble.clunk.typechecker.SubtypeLookup;
 import org.zwobble.clunk.typechecker.SubtypeRelation;
 import org.zwobble.clunk.types.InterfaceType;
@@ -52,7 +51,7 @@ public class TypeScriptCodeGeneratorRecordTests {
         var subtypeLookup = SubtypeLookup.fromSubtypeRelations(List.of(
             new SubtypeRelation(node.type(), new InterfaceType(NamespaceName.fromParts(), "Supertype"))
         ));
-        var context = new TypeScriptCodeGeneratorContext(FieldsLookup.EMPTY, subtypeLookup);
+        var context = new TypeScriptCodeGeneratorContext(subtypeLookup);
 
         var result = TypeScriptCodeGenerator.compileNamespaceStatement(node, context);
 

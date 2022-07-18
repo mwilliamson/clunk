@@ -63,7 +63,7 @@ public class TypeCheckRecordTests {
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
         var typedNode = (TypedRecordNode) result.typedNode();
-        assertThat(result.context().fieldsLookup().fieldsOf(typedNode.type()), contains(
+        assertThat(result.context().fieldsOf(typedNode.type()), contains(
             allOf(
                 has("name", equalTo("x")),
                 has("type", isTypedTypeLevelExpressionNode(StringType.INSTANCE))

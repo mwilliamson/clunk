@@ -119,8 +119,4 @@ public record TypeCheckerContext(
     public List<TypedRecordFieldNode> fieldsOf(RecordType type) {
         return typeToFields.get(type);
     }
-
-    public FieldsLookup fieldsLookup() {
-        return new FieldsLookup(typeToFields);
-    }
 }

@@ -114,14 +114,16 @@ public class TypeChecker {
         UntypedConstructedTypeNode node,
         TypeCheckerContext context
     ) {
-        var receiverType = typeCheckTypeLevelExpressionNode(node.receiver(), context).value();
+        var typedReceiverNode = typeCheckTypeLevelExpressionNode(node.receiver(), context);
+        var receiverType = typedReceiverNode.value();
 
         if (receiverType instanceof TypeConstructor typeConstructor) {
+            var typedArgNodes = node.args().stream().map(arg -> typeCheckTypeLevelExpressionNode(arg, context)).toList();
             // TODO: handle non-type args
-            var args = node.args().stream().map(arg -> (Type)typeCheckTypeLevelExpressionNode(arg, context).value()).toList();
+            var args = typedArgNodes.stream().map(arg -> (Type) arg.value()).toList();
             var constructedType = typeConstructor.call(args);
 
-            return new TypedConstructedTypeNode(constructedType, node.source());
+            return new TypedConstructedTypeNode(typedReceiverNode, typedArgNodes, constructedType, node.source());
         }
 
         throw new UnexpectedTypeError(

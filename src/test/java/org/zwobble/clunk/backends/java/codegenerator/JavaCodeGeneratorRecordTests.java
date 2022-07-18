@@ -3,14 +3,9 @@ package org.zwobble.clunk.backends.java.codegenerator;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
-import org.zwobble.clunk.backends.java.config.JavaTargetConfig;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
-import org.zwobble.clunk.typechecker.SubtypeLookup;
-import org.zwobble.clunk.typechecker.SubtypeRelation;
 import org.zwobble.clunk.types.InterfaceType;
 import org.zwobble.clunk.types.NamespaceName;
-
-import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -39,12 +34,11 @@ public class JavaCodeGeneratorRecordTests {
 
     @Test
     public void whenRecordHasInterfaceAsSupertypeThenJavaRecordImplementsInterface() {
-        var node = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "Example").build();
-        var subtypeLookup = SubtypeLookup.fromSubtypeRelations(List.of(
-            new SubtypeRelation(node.type(), new InterfaceType(NamespaceName.fromParts("a", "b"), "X")),
-            new SubtypeRelation(node.type(), new InterfaceType(NamespaceName.fromParts("a", "b"), "Y"))
-        ));
-        var context = new JavaCodeGeneratorContext(JavaTargetConfig.stub(), subtypeLookup);
+        var node = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "Example")
+            .addSupertype(Typed.typeLevelReference("X", new InterfaceType(NamespaceName.fromParts("a", "b"), "X")))
+            .addSupertype(Typed.typeLevelReference("Y", new InterfaceType(NamespaceName.fromParts("a", "b"), "Y")))
+            .build();
+        var context = JavaCodeGeneratorContext.stub();
 
         var result = JavaCodeGenerator.compileRecord(node, context);
 

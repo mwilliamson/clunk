@@ -301,8 +301,11 @@ public class JavaCodeGenerator {
             .map(field -> new JavaRecordComponentNode(compileTypeLevelExpression(field.type(), context), field.name()))
             .collect(Collectors.toList());
 
-        var implements_ = context.supertypesOf(node.type()).stream()
-            .map(implementsType -> new JavaTypeVariableReferenceNode(implementsType.name()))
+        var implements_ = node.supertypes().stream()
+            .map(implementsType -> {
+                var interfaceType = (InterfaceType) implementsType.value();
+                return new JavaTypeVariableReferenceNode(interfaceType.name());
+            })
             .toList();
 
         return new JavaOrdinaryCompilationUnitNode(

@@ -514,6 +514,7 @@ public class TypeChecker {
         UntypedRecordNode node,
         TypeCheckerContext context
     ) {
+        // TODO: handle missing namespace name
         var recordType = new RecordType(context.currentFrame().namespaceName().get(), node.name());
         return context.updateType(node.name(), metaType(recordType), node.source());
     }
@@ -548,9 +549,6 @@ public class TypeChecker {
                 return typedSupertypeNode;
             })
             .toList();
-
-        // TODO: handle missing namespace name
-
 
         for (var typedSupertypeNode : typedSupertypeNodes) {
             // TODO: handle type-level values that aren't types

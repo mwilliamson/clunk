@@ -8,6 +8,12 @@ import java.util.List;
 import static org.zwobble.clunk.util.Iterables.forEachInterspersed;
 
 public class PythonSerialiser {
+    private static void serialiseAdd(PythonAddNode node, CodeBuilder builder) {
+        serialiseExpression(node.left(), builder);
+        builder.append(" + ");
+        serialiseExpression(node.right(), builder);
+    }
+
     private static void serialiseAssert(PythonAssertNode node, CodeBuilder builder) {
         builder.append("assert ");
         serialiseExpression(node.expression(), builder);
@@ -113,6 +119,12 @@ public class PythonSerialiser {
 
     public static void serialiseExpression(PythonExpressionNode node, CodeBuilder builder) {
         node.accept(new PythonExpressionNode.Visitor<Void>() {
+            @Override
+            public Void visit(PythonAddNode node) {
+                serialiseAdd(node, builder);
+                return null;
+            }
+
             @Override
             public Void visit(PythonAttrAccessNode node) {
                 serialiseAttrAccess(node, builder);

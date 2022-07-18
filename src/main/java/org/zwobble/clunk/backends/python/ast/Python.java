@@ -12,6 +12,10 @@ public class Python {
 
     }
 
+    public static PythonAddNode add(PythonExpressionNode left, PythonExpressionNode right) {
+        return new PythonAddNode(left, right);
+    }
+
     public static PythonAssertNode assert_(PythonExpressionNode expression) {
         return new PythonAssertNode(expression);
     }

@@ -12,7 +12,7 @@ public class JavaSerialiserBoolLiteralTests {
     public void falseIsSerialisedToFalseKeyword() {
         var node = Java.boolFalse();
 
-        var result = serialiseToString(node, JavaSerialiser::serialiseExpression);
+        var result = serialiseToString(node, JavaSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("false"));
     }
@@ -21,7 +21,7 @@ public class JavaSerialiserBoolLiteralTests {
     public void trueIsSerialisedToTrueKeyword() {
         var node = Java.boolTrue();
 
-        var result = serialiseToString(node, JavaSerialiser::serialiseExpression);
+        var result = serialiseToString(node, JavaSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("true"));
     }

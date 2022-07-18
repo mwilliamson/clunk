@@ -12,7 +12,7 @@ public class JavaSerialiserMemberAccessTests {
     public void canSerialiseMemberAccess() {
         var node = Java.memberAccess(Java.reference("x"), "y");
 
-        var result = serialiseToString(node, JavaSerialiser::serialiseExpression);
+        var result = serialiseToString(node, JavaSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("(x).y"));
     }

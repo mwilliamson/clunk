@@ -4,14 +4,15 @@ import org.zwobble.clunk.backends.CodeBuilder;
 import org.zwobble.clunk.backends.java.ast.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.zwobble.clunk.util.Iterables.forEachInterspersed;
 
 public class JavaSerialiser {
     private static void serialiseAdd(JavaAddNode node, CodeBuilder builder) {
-        serialiseExpression(node.left(), builder);
+        serialiseExpression(node.left(), builder, Optional.of(node));
         builder.append(" + ");
-        serialiseExpression(node.right(), builder);
+        serialiseExpression(node.right(), builder, Optional.of(node));
     }
 
     public static void serialiseAnnotation(JavaAnnotationNode node, CodeBuilder builder) {
@@ -28,7 +29,7 @@ public class JavaSerialiser {
                 builder.append("@");
                 serialiseTypeExpression(node.type(), builder);
                 builder.append("(");
-                serialiseExpression(node.value(), builder);
+                serialiseExpression(node.value(), builder, Optional.empty());
                 builder.append(")");
                 return null;
             }
@@ -55,11 +56,11 @@ public class JavaSerialiser {
     }
 
     private static void serialiseCall(JavaCallNode node, CodeBuilder builder) {
-        serialiseExpression(node.receiver(), builder);
+        serialiseExpression(node.receiver(), builder, Optional.of(node));
         builder.append("(");
         forEachInterspersed(
             node.args(),
-            arg -> serialiseExpression(arg, builder),
+            arg -> serialiseExpression(arg, builder, Optional.empty()),
             () -> builder.append(", ")
         );
         builder.append(")");
@@ -67,11 +68,11 @@ public class JavaSerialiser {
 
     private static void serialiseCallNew(JavaCallNewNode node, CodeBuilder builder) {
         builder.append("new ");
-        serialiseExpression(node.receiver(), builder);
+        serialiseExpression(node.receiver(), builder, Optional.of(node));
         builder.append("(");
         forEachInterspersed(
             node.args(),
-            arg -> serialiseExpression(arg, builder),
+            arg -> serialiseExpression(arg, builder, Optional.empty()),
             () -> builder.append(", ")
         );
         builder.append(")");
@@ -118,7 +119,12 @@ public class JavaSerialiser {
         builder.append("}");
     }
 
-    public static void serialiseExpression(JavaExpressionNode node, CodeBuilder builder) {
+    public static void serialiseExpression(JavaExpressionNode node, CodeBuilder builder, Optional<JavaExpressionNode> parent) {
+        var parenthesize = parent.isPresent() && node.precedence().ordinal() < parent.get().precedence().ordinal();
+        if (parenthesize) {
+            builder.append("(");
+        }
+
         node.accept(new JavaExpressionNode.Visitor<Void>() {
             @Override
             public Void visit(JavaAddNode node) {
@@ -168,13 +174,17 @@ public class JavaSerialiser {
                 return null;
             }
         });
+
+        if (parenthesize) {
+            builder.append(")");
+        }
     }
 
     private static void serialiseExpressionStatement(
         JavaExpressionStatementNode node,
         CodeBuilder builder
     ) {
-        serialiseExpression(node.expression(), builder);
+        serialiseExpression(node.expression(), builder, Optional.empty());
         builder.append(";");
         builder.newLine();
     }
@@ -191,13 +201,13 @@ public class JavaSerialiser {
     private static void serialiseIfStatement(JavaIfStatementNode node, CodeBuilder builder) {
         builder.append("if (");
         var firstConditionalBranch = node.conditionalBranches().get(0);
-        serialiseExpression(firstConditionalBranch.condition(), builder);
+        serialiseExpression(firstConditionalBranch.condition(), builder, Optional.empty());
         builder.append(")");
         serialiseBlock(firstConditionalBranch.body(), builder);
 
         node.conditionalBranches().stream().skip(1).forEachOrdered(conditionalBranch -> {
             builder.append(" else if (");
-            serialiseExpression(conditionalBranch.condition(), builder);
+            serialiseExpression(conditionalBranch.condition(), builder, Optional.empty());
             builder.append(")");
             serialiseBlock(conditionalBranch.body(), builder);
         });
@@ -269,7 +279,7 @@ public class JavaSerialiser {
 
     private static void serialiseMemberAccess(JavaMemberAccessNode node, CodeBuilder builder) {
         builder.append("(");
-        serialiseExpression(node.receiver(), builder);
+        serialiseExpression(node.receiver(), builder, Optional.of(node));
         builder.append(")");
         builder.append(".");
         builder.append(node.memberName());
@@ -379,7 +389,7 @@ public class JavaSerialiser {
 
     private static void serialiseReturn(JavaReturnNode node, CodeBuilder builder) {
         builder.append("return ");
-        serialiseExpression(node.expression(), builder);
+        serialiseExpression(node.expression(), builder, Optional.empty());
         builder.append(";");
         builder.newLine();
     }
@@ -490,7 +500,7 @@ public class JavaSerialiser {
         builder.append("var ");
         builder.append(node.name());
         builder.append(" = ");
-        serialiseExpression(node.expression(), builder);
+        serialiseExpression(node.expression(), builder, Optional.empty());
         builder.append(";");
         builder.newLine();
     }

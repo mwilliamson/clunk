@@ -15,7 +15,7 @@ public class JavaSerialiserAddTests {
             Java.reference("b")
         );
 
-        var result = serialiseToString(node, JavaSerialiser::serialiseExpression);
+        var result = serialiseToString(node, JavaSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("a + b"));
     }

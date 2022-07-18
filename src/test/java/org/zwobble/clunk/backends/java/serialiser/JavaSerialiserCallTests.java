@@ -14,7 +14,7 @@ public class JavaSerialiserCallTests {
     public void canSerialiseCallWithNoArguments() {
         var node = Java.call(Java.reference("f"), List.of());
 
-        var result = serialiseToString(node, JavaSerialiser::serialiseExpression);
+        var result = serialiseToString(node, JavaSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("f()"));
     }
@@ -23,7 +23,7 @@ public class JavaSerialiserCallTests {
     public void canSerialiseCallWithOneArgument() {
         var node = Java.call(Java.reference("f"), List.of(Java.boolFalse()));
 
-        var result = serialiseToString(node, JavaSerialiser::serialiseExpression);
+        var result = serialiseToString(node, JavaSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("f(false)"));
     }
@@ -32,7 +32,7 @@ public class JavaSerialiserCallTests {
     public void canSerialiseCallWithMultipleArguments() {
         var node = Java.call(Java.reference("f"), List.of(Java.boolFalse(), Java.boolTrue()));
 
-        var result = serialiseToString(node, JavaSerialiser::serialiseExpression);
+        var result = serialiseToString(node, JavaSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("f(false, true)"));
     }

@@ -12,7 +12,7 @@ public class JavaSerialiserIntLiteralTests {
     public void canSerialiseZero() {
         var node = Java.intLiteral(0);
 
-        var result = serialiseToString(node, JavaSerialiser::serialiseExpression);
+        var result = serialiseToString(node, JavaSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("0"));
     }
@@ -21,7 +21,7 @@ public class JavaSerialiserIntLiteralTests {
     public void canSerialisePositiveIntegers() {
         var node = Java.intLiteral(123);
 
-        var result = serialiseToString(node, JavaSerialiser::serialiseExpression);
+        var result = serialiseToString(node, JavaSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("123"));
     }
@@ -30,7 +30,7 @@ public class JavaSerialiserIntLiteralTests {
     public void canSerialiseNegativeIntegers() {
         var node = Java.intLiteral(-123);
 
-        var result = serialiseToString(node, JavaSerialiser::serialiseExpression);
+        var result = serialiseToString(node, JavaSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("-123"));
     }

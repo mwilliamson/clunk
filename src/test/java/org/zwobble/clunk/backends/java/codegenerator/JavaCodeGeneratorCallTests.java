@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedCallNode;
 import org.zwobble.clunk.backends.java.ast.Java;
-import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
+import org.zwobble.clunk.backends.java.serialiser.JavaSerialiserTesting;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.RecordType;
@@ -38,7 +38,7 @@ public class JavaCodeGeneratorCallTests {
 
         var result = JavaCodeGenerator.compileExpression(node, JavaCodeGeneratorContext.stub());
 
-        var string = serialiseToString(result, JavaSerialiser::serialiseExpression);
+        var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("abs(123)"));
     }
 
@@ -55,7 +55,7 @@ public class JavaCodeGeneratorCallTests {
 
         var result = JavaCodeGenerator.compileExpression(node, context);
 
-        var string = serialiseToString(result, JavaSerialiser::serialiseExpression);
+        var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("new Id(123)"));
         assertThat(context.imports(), contains(equalTo(Java.importType("example.Id"))));
     }

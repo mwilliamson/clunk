@@ -14,7 +14,7 @@ public class JavaSerialiserCallNewTests {
     public void canSerialiseCallWithNoArguments() {
         var node = Java.callNew(Java.reference("X"), List.of());
 
-        var result = serialiseToString(node, JavaSerialiser::serialiseExpression);
+        var result = serialiseToString(node, JavaSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("new X()"));
     }
@@ -23,7 +23,7 @@ public class JavaSerialiserCallNewTests {
     public void canSerialiseCallWithOneArgument() {
         var node = Java.callNew(Java.reference("X"), List.of(Java.boolFalse()));
 
-        var result = serialiseToString(node, JavaSerialiser::serialiseExpression);
+        var result = serialiseToString(node, JavaSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("new X(false)"));
     }
@@ -32,7 +32,7 @@ public class JavaSerialiserCallNewTests {
     public void canSerialiseCallWithMultipleArguments() {
         var node = Java.callNew(Java.reference("X"), List.of(Java.boolFalse(), Java.boolTrue()));
 
-        var result = serialiseToString(node, JavaSerialiser::serialiseExpression);
+        var result = serialiseToString(node, JavaSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("new X(false, true)"));
     }

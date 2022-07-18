@@ -3,7 +3,7 @@ package org.zwobble.clunk.backends.java.codegenerator;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedMemberAccessNode;
-import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
+import org.zwobble.clunk.backends.java.serialiser.JavaSerialiserTesting;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.RecordType;
@@ -26,7 +26,7 @@ public class JavaCodeGeneratorMemberAccessTests {
 
         var result = JavaCodeGenerator.compileExpression(node, JavaCodeGeneratorContext.stub());
 
-        var string = serialiseToString(result, JavaSerialiser::serialiseExpression);
+        var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("(id).value()"));
     }
 }

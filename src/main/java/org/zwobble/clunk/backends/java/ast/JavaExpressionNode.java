@@ -1,6 +1,8 @@
 package org.zwobble.clunk.backends.java.ast;
 
 public interface JavaExpressionNode extends JavaNode {
+    JavaPrecedence precedence();
+
     <T> T accept(Visitor<T> visitor);
 
     interface Visitor<T> {

@@ -14,7 +14,7 @@ public record TypedRecordNode(
     RecordType type,
     List<TypedRecordFieldNode> fields,
     List<TypedTypeLevelExpressionNode> supertypes,
-    List<TypedRecordBodyDeclarationNode> body,
+    List<? extends TypedRecordBodyDeclarationNode> body,
     Source source
 ) implements TypedNamespaceStatementNode {
     @Override

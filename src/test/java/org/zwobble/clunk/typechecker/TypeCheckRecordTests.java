@@ -14,7 +14,7 @@ import java.util.Optional;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedTypeLevelExpressionNode;
+import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
 import static org.zwobble.clunk.matchers.CastMatcher.cast;
 import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 import static org.zwobble.clunk.typechecker.TypeCheckNamespaceStatementTesting.typeCheckNamespaceStatementAllPhases;
@@ -43,7 +43,6 @@ public class TypeCheckRecordTests {
     @Test
     public void recordIsTypeChecked() {
         var untypedNode = UntypedRecordNode.builder("Example")
-            .addField(Untyped.recordField("x", Untyped.typeLevelReference("String")))
             .build();
         var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
 
@@ -53,6 +52,24 @@ public class TypeCheckRecordTests {
         assertThat(typedNode, allOf(
             has("name", equalTo("Example")),
             has("type", isRecordType(NamespaceName.fromParts("a", "b"), "Example"))
+        ));
+    }
+
+    @Test
+    public void fieldsAreIncludedInTypedNode() {
+        var untypedNode = UntypedRecordNode.builder("Example")
+            .addField(Untyped.recordField("x", Untyped.typeLevelReference("String")))
+            .build();
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
+
+        var typedNode = (TypedRecordNode) result.typedNode();
+        assertThat(typedNode.fields(), contains(
+            allOf(
+                has("name", equalTo("x")),
+                has("type", has("value", equalTo(Types.STRING)))
+            )
         ));
     }
 
@@ -85,6 +102,31 @@ public class TypeCheckRecordTests {
 
         var typedNode = (TypedRecordNode) result.typedNode();
         assertThat(result.context().memberType(typedNode.type(), "x"), equalTo(Optional.of(Types.STRING)));
+    }
+
+    @Test
+    public void propertiesAreIncludedInTypedNode() {
+        var untypedNode = UntypedRecordNode.builder("Example")
+            .addBodyDeclaration(Untyped.property(
+                "x",
+                Untyped.typeLevelReference("String"),
+                List.of(Untyped.returnStatement(Untyped.string("hello")))
+            ))
+            .build();
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
+
+        var typedNode = (TypedRecordNode) result.typedNode();
+        assertThat(typedNode.body(), contains(
+            allOf(
+                has("name", equalTo("x")),
+                has("type", has("value", equalTo(Types.STRING))),
+                has("body", contains(
+                    isTypedReturnNode().withExpression(isTypedStringLiteralNode("hello"))
+                ))
+            )
+        ));
     }
 
     @Test

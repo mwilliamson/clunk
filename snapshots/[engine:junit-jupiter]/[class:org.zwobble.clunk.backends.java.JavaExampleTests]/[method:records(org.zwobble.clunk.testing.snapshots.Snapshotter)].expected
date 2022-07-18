@@ -31,6 +31,9 @@ Output path: recordsTest/Add.java
 package recordsTest;
 
 public record Add(int left, int right) {
+    public int sum() {
+        return 5;
+    }
 }
 
 ==============

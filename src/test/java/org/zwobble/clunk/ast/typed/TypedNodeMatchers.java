@@ -67,6 +67,10 @@ public class TypedNodeMatchers {
         return new TypedReturnNodeMatcher(List.of());
     }
 
+    public static Matcher<TypedExpressionNode> isTypedStringLiteralNode(String value) {
+        return cast(TypedStringLiteralNode.class, has("value", equalTo(value)));
+    }
+
     public static TypedTestNodeMatcher isTypedTestNode() {
         return new TypedTestNodeMatcher(List.of());
     }

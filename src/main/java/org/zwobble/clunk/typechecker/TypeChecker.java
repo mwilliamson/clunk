@@ -505,6 +505,7 @@ public class TypeChecker {
         var recordTypeBox = new Box<RecordType>();
         var typedSupertypeNodesBox = new Box<List<TypedTypeLevelExpressionNode>>();
         var typedRecordFieldNodesBox = new Box<List<TypedRecordFieldNode>>();
+        var typedBodyBox = new Box<List<? extends TypedRecordBodyDeclarationNode>>();
 
         return new TypeCheckNamespaceStatementResult(
             List.of(
@@ -543,16 +544,17 @@ public class TypeChecker {
                             .toList();
                         typedSupertypeNodesBox.set(typedSupertypeNodes);
 
-                        var body = node.body().stream()
+                        var typedBody = node.body().stream()
                             .map(declaration -> typeCheckProperty((UntypedPropertyNode) declaration, context))
                             .toList();
+                        typedBodyBox.set(typedBody);
 
                         var memberTypes = new HashMap<String, Type>();
                         // TODO: check for duplicates
                         for (var typedFieldNode : typedRecordFieldNodes) {
                             memberTypes.put(typedFieldNode.name(), (Type) typedFieldNode.type().value());
                         }
-                        for (var typedPropertyNode : body) {
+                        for (var typedPropertyNode : typedBody) {
                             memberTypes.put(typedPropertyNode.name(), (Type) typedPropertyNode.type().value());
                         }
 
@@ -571,7 +573,7 @@ public class TypeChecker {
                 recordTypeBox.get(),
                 typedRecordFieldNodesBox.get(),
                 typedSupertypeNodesBox.get(),
-                List.of(),
+                typedBodyBox.get(),
                 node.source()
             )
         );

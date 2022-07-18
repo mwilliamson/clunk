@@ -27,8 +27,8 @@ public class PythonCodeGeneratorEnumTests {
         var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
         assertThat(string, equalTo(
             """
-                class NoteType((enum).Enum):
-                    FOOTNOTE = ((enum).auto)()
+                class NoteType(enum.Enum):
+                    FOOTNOTE = enum.auto()
                 """
         ));
         assertThat(context.imports(), contains(new PythonImportNode("enum")));

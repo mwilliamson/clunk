@@ -5,6 +5,11 @@ public record PythonAddNode(
     PythonExpressionNode right
 ) implements PythonExpressionNode {
     @Override
+    public PythonPrecedence precedence() {
+        return PythonPrecedence.ADDITION;
+    }
+
+    @Override
     public <T> T accept(Visitor<T> visitor) {
         return visitor.visit(this);
     }

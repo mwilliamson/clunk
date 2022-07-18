@@ -32,7 +32,7 @@ import dataclasses
 from precisely import assert_that
 from precisely import equal_to
 
-@((dataclasses).dataclass)(frozen=True)
+@dataclasses.dataclass(frozen=True)
 class Add:
     left: int
     right: int
@@ -41,17 +41,17 @@ class Add:
         return 5
 
 def test_assert_field():
-    add = (Add)(2, 3)
+    add = Add(2, 3)
 
-    (assert_that)((add).left, (equal_to)(2))
-    (assert_that)((add).right, (equal_to)(3))
+    assert_that(add.left, equal_to(2))
+    assert_that(add.right, equal_to(3))
 
 def test_assert_sum():
-    add = (Add)(2, 3)
+    add = Add(2, 3)
 
-    result = (add).sum
+    result = add.sum
 
-    (assert_that)(result, (equal_to)(5))
+    assert_that(result, equal_to(5))
 
 
 ==============

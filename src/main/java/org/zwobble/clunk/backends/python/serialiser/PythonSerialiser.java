@@ -4,19 +4,20 @@ import org.zwobble.clunk.backends.CodeBuilder;
 import org.zwobble.clunk.backends.python.ast.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.zwobble.clunk.util.Iterables.forEachInterspersed;
 
 public class PythonSerialiser {
     private static void serialiseAdd(PythonAddNode node, CodeBuilder builder) {
-        serialiseExpression(node.left(), builder);
+        serialiseExpression(node.left(), builder, Optional.of(node));
         builder.append(" + ");
-        serialiseExpression(node.right(), builder);
+        serialiseExpression(node.right(), builder, Optional.of(node));
     }
 
     private static void serialiseAssert(PythonAssertNode node, CodeBuilder builder) {
         builder.append("assert ");
-        serialiseExpression(node.expression(), builder);
+        serialiseExpression(node.expression(), builder, Optional.empty());
         builder.newLine();
     }
 
@@ -25,21 +26,20 @@ public class PythonSerialiser {
 
         if (node.type().isPresent()) {
             builder.append(": ");
-            serialiseExpression(node.type().get(), builder);
+            serialiseExpression(node.type().get(), builder, Optional.empty());
         }
 
         if (node.expression().isPresent()) {
             builder.append(" = ");
-            serialiseExpression(node.expression().get(), builder);
+            serialiseExpression(node.expression().get(), builder, Optional.empty());
         }
 
         builder.newLine();
     }
 
     private static void serialiseAttrAccess(PythonAttrAccessNode node, CodeBuilder builder) {
-        builder.append("(");
-        serialiseExpression(node.receiver(), builder);
-        builder.append(").");
+        serialiseExpression(node.receiver(), builder, Optional.of(node));
+        builder.append(".");
         builder.append(node.attrName());
     }
 
@@ -65,13 +65,12 @@ public class PythonSerialiser {
     }
 
     private static void serialiseCall(PythonCallNode node, CodeBuilder builder) {
+        serialiseExpression(node.receiver(), builder, Optional.of(node));
         builder.append("(");
-        serialiseExpression(node.receiver(), builder);
-        builder.append(")(");
 
         forEachInterspersed(
             node.args(),
-            arg -> serialiseExpression(arg, builder),
+            arg -> serialiseExpression(arg, builder, Optional.empty()),
             () -> builder.append(", ")
         );
 
@@ -84,7 +83,7 @@ public class PythonSerialiser {
             kwarg -> {
                 builder.append(kwarg.name());
                 builder.append("=");
-                serialiseExpression(kwarg.expression(), builder);
+                serialiseExpression(kwarg.expression(), builder, Optional.empty());
             },
             () -> builder.append(", ")
         );
@@ -99,7 +98,7 @@ public class PythonSerialiser {
             builder.append("(");
             forEachInterspersed(
                 node.baseClasses(),
-                baseClass -> serialiseExpression(baseClass, builder),
+                baseClass -> serialiseExpression(baseClass, builder, Optional.empty()),
                 () -> builder.append(", ")
             );
             builder.append(")");
@@ -112,12 +111,17 @@ public class PythonSerialiser {
     private static void serialiseDecorators(List<? extends PythonExpressionNode> decorators, CodeBuilder builder) {
         for (var decorator : decorators) {
             builder.append("@");
-            serialiseExpression(decorator, builder);
+            serialiseExpression(decorator, builder, Optional.empty());
             builder.newLine();
         }
     }
 
-    public static void serialiseExpression(PythonExpressionNode node, CodeBuilder builder) {
+    public static void serialiseExpression(PythonExpressionNode node, CodeBuilder builder, Optional<PythonExpressionNode> parent) {
+        var parenthesize = parent.isPresent() && node.precedence().ordinal() < parent.get().precedence().ordinal();
+        if (parenthesize) {
+            builder.append("(");
+        }
+
         node.accept(new PythonExpressionNode.Visitor<Void>() {
             @Override
             public Void visit(PythonAddNode node) {
@@ -167,13 +171,17 @@ public class PythonSerialiser {
                 return null;
             }
         });
+
+        if (parenthesize) {
+            builder.append(")");
+        }
     }
 
     private static void serialiseExpressionStatement(
         PythonExpressionStatementNode node,
         CodeBuilder builder
     ) {
-        serialiseExpression(node.expression(), builder);
+        serialiseExpression(node.expression(), builder, Optional.empty());
         builder.newLine();
     }
 
@@ -196,14 +204,14 @@ public class PythonSerialiser {
         var firstConditionalBranch = node.conditionalBranches().get(0);
 
         builder.append("if ");
-        serialiseExpression(firstConditionalBranch.condition(), builder);
+        serialiseExpression(firstConditionalBranch.condition(), builder, Optional.empty());
         builder.append(":");
         builder.newLine();
         serialiseBlock(firstConditionalBranch.body(), builder);
 
         node.conditionalBranches().stream().skip(1).forEachOrdered(conditionalBranch -> {
             builder.append("elif ");
-            serialiseExpression(conditionalBranch.condition(), builder);
+            serialiseExpression(conditionalBranch.condition(), builder, Optional.empty());
             builder.append(":");
             builder.newLine();
             serialiseBlock(conditionalBranch.body(), builder);
@@ -250,7 +258,7 @@ public class PythonSerialiser {
 
     private static void serialiseReturn(PythonReturnNode node, CodeBuilder builder) {
         builder.append("return ");
-        serialiseExpression(node.expression(), builder);
+        serialiseExpression(node.expression(), builder, Optional.empty());
         builder.newLine();
     }
 
@@ -334,11 +342,11 @@ public class PythonSerialiser {
     }
 
     private static void serialiseSubscription(PythonSubscriptionNode node, CodeBuilder builder) {
-        serialiseExpression(node.receiver(), builder);
+        serialiseExpression(node.receiver(), builder, Optional.of(node));
         builder.append("[");
         forEachInterspersed(
             node.args(),
-            arg -> serialiseExpression(arg, builder),
+            arg -> serialiseExpression(arg, builder, Optional.empty()),
             () -> builder.append(", ")
         );
         builder.append("]");

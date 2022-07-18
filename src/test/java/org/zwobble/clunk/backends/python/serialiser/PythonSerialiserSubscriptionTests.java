@@ -14,7 +14,7 @@ public class PythonSerialiserSubscriptionTests {
     public void canSerialiseSubscriptionWithOneArg() {
         var node = Python.subscription(Python.reference("x"), List.of(Python.reference("y")));
 
-        var result = serialiseToString(node, PythonSerialiser::serialiseExpression);
+        var result = serialiseToString(node, PythonSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("x[y]"));
     }
@@ -23,7 +23,7 @@ public class PythonSerialiserSubscriptionTests {
     public void canSerialiseSubscriptionWithMultipleArgs() {
         var node = Python.subscription(Python.reference("x"), List.of(Python.reference("y"), Python.reference("z")));
 
-        var result = serialiseToString(node, PythonSerialiser::serialiseExpression);
+        var result = serialiseToString(node, PythonSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("x[y, z]"));
     }

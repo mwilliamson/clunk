@@ -2,7 +2,7 @@ package org.zwobble.clunk.backends.python.codegenerator;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
-import org.zwobble.clunk.backends.python.serialiser.PythonSerialiser;
+import org.zwobble.clunk.backends.python.serialiser.PythonSerialiserTesting;
 import org.zwobble.clunk.types.*;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public class PythonCodeGeneratorTypeLevelExpressionTests {
 
         var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node, context);
 
-        var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
+        var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("bool"));
     }
 
@@ -30,7 +30,7 @@ public class PythonCodeGeneratorTypeLevelExpressionTests {
 
         var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node, context);
 
-        var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
+        var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("C"));
     }
 
@@ -41,7 +41,7 @@ public class PythonCodeGeneratorTypeLevelExpressionTests {
 
         var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node, context);
 
-        var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
+        var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("int"));
     }
 
@@ -52,7 +52,7 @@ public class PythonCodeGeneratorTypeLevelExpressionTests {
 
         var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node, context);
 
-        var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
+        var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("C"));
     }
 
@@ -67,8 +67,8 @@ public class PythonCodeGeneratorTypeLevelExpressionTests {
 
         var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node, context);
 
-        var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
-        assertThat(string, equalTo("(typing).List[int]"));
+        var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("typing.List[int]"));
     }
 
     @Test
@@ -82,8 +82,8 @@ public class PythonCodeGeneratorTypeLevelExpressionTests {
 
         var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node, context);
 
-        var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
-        assertThat(string, equalTo("(typing).Optional[int]"));
+        var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("typing.Optional[int]"));
     }
 
     @Test
@@ -93,7 +93,7 @@ public class PythonCodeGeneratorTypeLevelExpressionTests {
 
         var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node, context);
 
-        var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
+        var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("C"));
     }
 
@@ -104,7 +104,7 @@ public class PythonCodeGeneratorTypeLevelExpressionTests {
 
         var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node, context);
 
-        var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
+        var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("str"));
     }
 }

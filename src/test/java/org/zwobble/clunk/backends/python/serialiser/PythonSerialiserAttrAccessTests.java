@@ -12,8 +12,8 @@ public class PythonSerialiserAttrAccessTests {
     public void isSerialisedToName() {
         var node = Python.attr(Python.reference("Example"), "name");
 
-        var result = serialiseToString(node, PythonSerialiser::serialiseExpression);
+        var result = serialiseToString(node, PythonSerialiserTesting::serialiseExpression);
 
-        assertThat(result, equalTo("(Example).name"));
+        assertThat(result, equalTo("Example.name"));
     }
 }

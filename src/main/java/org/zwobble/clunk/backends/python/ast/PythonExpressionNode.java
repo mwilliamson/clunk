@@ -1,6 +1,8 @@
 package org.zwobble.clunk.backends.python.ast;
 
 public interface PythonExpressionNode extends PythonNode {
+    PythonPrecedence precedence();
+
     <T> T accept(Visitor<T> visitor);
 
     interface Visitor<T> {

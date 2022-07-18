@@ -12,7 +12,7 @@ public class PythonSerialiserReferenceTests {
     public void isSerialisedToName() {
         var node = Python.reference("Example");
 
-        var result = serialiseToString(node, PythonSerialiser::serialiseExpression);
+        var result = serialiseToString(node, PythonSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("Example"));
     }

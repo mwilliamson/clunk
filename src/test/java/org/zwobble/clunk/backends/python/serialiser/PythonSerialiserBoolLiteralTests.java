@@ -12,7 +12,7 @@ public class PythonSerialiserBoolLiteralTests {
     public void falseIsSerialised() {
         var node = Python.FALSE;
 
-        var result = serialiseToString(node, PythonSerialiser::serialiseExpression);
+        var result = serialiseToString(node, PythonSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("False"));
     }
@@ -21,7 +21,7 @@ public class PythonSerialiserBoolLiteralTests {
     public void trueIsSerialised() {
         var node = Python.TRUE;
 
-        var result = serialiseToString(node, PythonSerialiser::serialiseExpression);
+        var result = serialiseToString(node, PythonSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("True"));
     }

@@ -18,9 +18,9 @@ public class PythonSerialiserCallTests {
             List.of()
         );
 
-        var result = serialiseToString(node, PythonSerialiser::serialiseExpression);
+        var result = serialiseToString(node, PythonSerialiserTesting::serialiseExpression);
 
-        assertThat(result, equalTo("(f)()"));
+        assertThat(result, equalTo("f()"));
     }
 
     @Test
@@ -34,9 +34,9 @@ public class PythonSerialiserCallTests {
             List.of()
         );
 
-        var result = serialiseToString(node, PythonSerialiser::serialiseExpression);
+        var result = serialiseToString(node, PythonSerialiserTesting::serialiseExpression);
 
-        assertThat(result, equalTo("(f)(x1, y2)"));
+        assertThat(result, equalTo("f(x1, y2)"));
     }
 
     @Test
@@ -49,9 +49,9 @@ public class PythonSerialiserCallTests {
             )
         );
 
-        var result = serialiseToString(node, PythonSerialiser::serialiseExpression);
+        var result = serialiseToString(node, PythonSerialiserTesting::serialiseExpression);
 
-        assertThat(result, equalTo("(f)(x=x1, y=y2)"));
+        assertThat(result, equalTo("f(x=x1, y=y2)"));
     }
 
     @Test
@@ -68,8 +68,8 @@ public class PythonSerialiserCallTests {
             )
         );
 
-        var result = serialiseToString(node, PythonSerialiser::serialiseExpression);
+        var result = serialiseToString(node, PythonSerialiserTesting::serialiseExpression);
 
-        assertThat(result, equalTo("(f)(123, 456, x=x1, y=y2)"));
+        assertThat(result, equalTo("f(123, 456, x=x1, y=y2)"));
     }
 }

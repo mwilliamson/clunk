@@ -2,7 +2,7 @@ package org.zwobble.clunk.backends.python.codegenerator;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
-import org.zwobble.clunk.backends.python.serialiser.PythonSerialiser;
+import org.zwobble.clunk.backends.python.serialiser.PythonSerialiserTesting;
 import org.zwobble.clunk.types.BoolType;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -16,7 +16,7 @@ public class PythonCodeGeneratorReferenceTests {
 
         var result = PythonCodeGenerator.DEFAULT.compileExpression(node, PythonCodeGeneratorContext.stub());
 
-        var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
+        var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("value"));
     }
 }

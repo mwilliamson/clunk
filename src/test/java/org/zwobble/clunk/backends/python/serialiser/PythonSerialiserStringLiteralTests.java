@@ -12,7 +12,7 @@ public class PythonSerialiserStringLiteralTests {
     public void emptyString() {
         var node = Python.string("");
 
-        var result = serialiseToString(node, PythonSerialiser::serialiseExpression);
+        var result = serialiseToString(node, PythonSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("\"\""));
     }
@@ -21,7 +21,7 @@ public class PythonSerialiserStringLiteralTests {
     public void stringOfAsciiCharacters() {
         var node = Python.string("abcXYZ123");
 
-        var result = serialiseToString(node, PythonSerialiser::serialiseExpression);
+        var result = serialiseToString(node, PythonSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("\"abcXYZ123\""));
     }
@@ -30,7 +30,7 @@ public class PythonSerialiserStringLiteralTests {
     public void specialCharactersAreEscaped() {
         var node = Python.string("\b\t\n\013\f\r\"\\");
 
-        var result = serialiseToString(node, PythonSerialiser::serialiseExpression);
+        var result = serialiseToString(node, PythonSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("\"\\b\\t\\n\\v\\f\\r\\\"\\\\\""));
     }

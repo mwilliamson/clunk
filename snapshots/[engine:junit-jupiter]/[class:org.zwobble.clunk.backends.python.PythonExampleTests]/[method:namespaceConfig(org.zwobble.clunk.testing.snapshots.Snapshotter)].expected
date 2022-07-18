@@ -14,7 +14,7 @@ from precisely import assert_that
 from precisely import equal_to
 
 def test_assert_false():
-    (assert_that)(False, (equal_to)(True))
+    assert_that(False, equal_to(True))
 
 
 ==============
@@ -28,7 +28,7 @@ SimpleTest.py F                                                          [100%]
 =================================== FAILURES ===================================
 ______________________________ test_assert_false _______________________________
 SimpleTest.py:5: in test_assert_false
-    (assert_that)(False, (equal_to)(True))
+    assert_that(False, equal_to(True))
 SITE-PACKAGES/precisely/__init__.py:50: in assert_that
     raise AssertionError("\nExpected:{0}\nbut:{1}".format(
 E   AssertionError: 

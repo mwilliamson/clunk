@@ -3,7 +3,7 @@ package org.zwobble.clunk.backends.python.codegenerator;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedMemberAccessNode;
-import org.zwobble.clunk.backends.python.serialiser.PythonSerialiser;
+import org.zwobble.clunk.backends.python.serialiser.PythonSerialiserTesting;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.RecordType;
@@ -26,7 +26,7 @@ public class PythonCodeGeneratorMemberAccessTests {
 
         var result = PythonCodeGenerator.DEFAULT.compileExpression(node, PythonCodeGeneratorContext.stub());
 
-        var string = serialiseToString(result, PythonSerialiser::serialiseExpression);
-        assertThat(string, equalTo("(id).value"));
+        var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("id.value"));
     }
 }

@@ -26,7 +26,7 @@ public class PythonCodeGeneratorRecordTests {
         var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
         assertThat(string, equalTo(
             """
-                @((dataclasses).dataclass)(frozen=True)
+                @dataclasses.dataclass(frozen=True)
                 class Example:
                     first: str
                     second: int
@@ -50,7 +50,7 @@ public class PythonCodeGeneratorRecordTests {
         var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
         assertThat(string, equalTo(
             """
-                @((dataclasses).dataclass)(frozen=True)
+                @dataclasses.dataclass(frozen=True)
                 class Example:
                     @property
                     def value(self):

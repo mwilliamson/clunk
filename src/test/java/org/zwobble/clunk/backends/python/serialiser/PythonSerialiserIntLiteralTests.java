@@ -12,7 +12,7 @@ public class PythonSerialiserIntLiteralTests {
     public void canSerialiseZero() {
         var node = Python.intLiteral(0);
 
-        var result = serialiseToString(node, PythonSerialiser::serialiseExpression);
+        var result = serialiseToString(node, PythonSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("0"));
     }
@@ -21,7 +21,7 @@ public class PythonSerialiserIntLiteralTests {
     public void canSerialisePositiveIntegers() {
         var node = Python.intLiteral(123);
 
-        var result = serialiseToString(node, PythonSerialiser::serialiseExpression);
+        var result = serialiseToString(node, PythonSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("123"));
     }
@@ -30,7 +30,7 @@ public class PythonSerialiserIntLiteralTests {
     public void canSerialiseNegativeIntegers() {
         var node = Python.intLiteral(-123);
 
-        var result = serialiseToString(node, PythonSerialiser::serialiseExpression);
+        var result = serialiseToString(node, PythonSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("-123"));
     }

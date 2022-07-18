@@ -11,7 +11,7 @@ import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedTypeLevelExpr
 
 public class TypeCheckTypeLevelReferenceTests {
     @Test
-    public void staticReferenceToBoolHasBoolType() {
+    public void typeLevelReferenceToBoolHasBoolType() {
         var untypedNode = Untyped.typeLevelReference("Bool");
 
         var typedNode = TypeChecker.typeCheckTypeLevelReferenceNode(
@@ -23,7 +23,7 @@ public class TypeCheckTypeLevelReferenceTests {
     }
 
     @Test
-    public void staticReferenceToIntHasIntType() {
+    public void typeLevelReferenceToIntHasIntType() {
         var untypedNode = Untyped.typeLevelReference("Int");
 
         var typedNode = TypeChecker.typeCheckTypeLevelReferenceNode(
@@ -35,7 +35,7 @@ public class TypeCheckTypeLevelReferenceTests {
     }
 
     @Test
-    public void staticReferenceToStringHasStringType() {
+    public void typeLevelReferenceToStringHasStringType() {
         var untypedNode = Untyped.typeLevelReference("String");
 
         var typedNode = TypeChecker.typeCheckTypeLevelReferenceNode(

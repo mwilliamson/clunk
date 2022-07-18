@@ -271,22 +271,26 @@ public class TypeScriptCodeGenerator {
         return new TypeScriptParamNode(node.name(), compileTypeLevelExpression(node.type()));
     }
 
-    private static TypeScriptInterfaceDeclarationNode compileRecord(
+    private static TypeScriptStatementNode compileRecord(
         TypedRecordNode node,
         TypeScriptCodeGeneratorContext context
     ) {
-        var fields = new ArrayList<TypeScriptInterfaceFieldNode>();
+        var fields = new ArrayList<TypeScriptClassFieldNode>();
 
         var supertypes = context.supertypesOf(node.type());
         if (!supertypes.isEmpty()) {
-            fields.add(new TypeScriptInterfaceFieldNode("type", new TypeScriptStringLiteralNode(node.name())));
+            fields.add(new TypeScriptClassFieldNode(
+                "type",
+                new TypeScriptStringLiteralNode(node.name()),
+                Optional.of(new TypeScriptStringLiteralNode(node.name()))
+            ));
         }
 
         context.fieldsOf(node.type()).stream()
-            .map(field -> new TypeScriptInterfaceFieldNode(field.name(), compileTypeLevelExpression(field.type())))
+            .map(field -> new TypeScriptClassFieldNode(field.name(), compileTypeLevelExpression(field.type()), Optional.empty()))
             .collect(Collectors.toCollection(() -> fields));
 
-        return new TypeScriptInterfaceDeclarationNode(node.name(), fields);
+        return new TypeScriptClassDeclarationNode(node.name(), fields);
     }
 
     private static TypeScriptExpressionNode compileReference(TypedReferenceNode node) {

@@ -40,9 +40,9 @@ public class TypeScriptCodeGeneratorNamespaceTests {
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseModule);
         assertThat(string, equalTo(
             """
-                interface First {
+                class First {
                 }
-                interface Second {
+                class Second {
                 }
                 """
         ));

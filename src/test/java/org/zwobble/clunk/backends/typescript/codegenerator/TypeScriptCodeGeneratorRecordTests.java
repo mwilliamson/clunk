@@ -19,7 +19,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class TypeScriptCodeGeneratorRecordTests {
     @Test
-    public void recordIsCompiledToTypeScriptInterface() {
+    public void recordIsCompiledToTypeScriptClass() {
         var node = TypedRecordNode.builder("Example").build();
         var context = TypeScriptCodeGeneratorContext.stub(new FieldsLookup(Map.ofEntries(
             Map.entry(node.type(), List.of(
@@ -33,9 +33,14 @@ public class TypeScriptCodeGeneratorRecordTests {
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseStatement);
         assertThat(string, equalTo(
             """
-                interface Example {
+                class Example {
                     readonly first: string;
                     readonly second: number;
+                    
+                    constructor(first: string, second: number) {
+                        this.first = first;
+                        this.second = second;
+                    }
                 }
                 """
         ));
@@ -60,10 +65,15 @@ public class TypeScriptCodeGeneratorRecordTests {
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseStatement);
         assertThat(string, equalTo(
             """
-                interface Example {
-                    readonly type: "Example";
+                class Example {
+                    readonly type: "Example" = "Example";
                     readonly first: string;
                     readonly second: number;
+                    
+                    constructor(first: string, second: number) {
+                        this.first = first;
+                        this.second = second;
+                    }
                 }
                 """
         ));

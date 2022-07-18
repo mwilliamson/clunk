@@ -148,31 +148,52 @@ enum VerticalAlignment {
 Output path: html.ts
 type HtmlNode = HtmlElement | HtmlForceWrite | HtmlTag;
 
-interface HtmlAttribute {
+class HtmlAttribute {
     readonly name: string;
     readonly value: string;
+
+    constructor(name: string, value: string) {
+        this.name = name;
+        this.value = value;
+    }
 }
 
-interface HtmlElement {
-    readonly type: "HtmlElement";
+class HtmlElement {
+    readonly type: "HtmlElement" = "HtmlElement";
     readonly tag: HtmlTag;
     readonly children: (Array)<HtmlNode>;
+
+    constructor(tag: HtmlTag, children: (Array)<HtmlNode>) {
+        this.tag = tag;
+        this.children = children;
+    }
 }
 
-interface HtmlForceWrite {
-    readonly type: "HtmlForceWrite";
+class HtmlForceWrite {
+    readonly type: "HtmlForceWrite" = "HtmlForceWrite";
 }
 
-interface HtmlTag {
-    readonly type: "HtmlTag";
+class HtmlTag {
+    readonly type: "HtmlTag" = "HtmlTag";
     readonly tagNames: (Array)<string>;
     readonly attributes: (Array)<HtmlAttribute>;
     readonly isCollapsible: boolean;
     readonly separator: string;
+
+    constructor(tagNames: (Array)<string>, attributes: (Array)<HtmlAttribute>, isCollapsible: boolean, separator: string) {
+        this.tagNames = tagNames;
+        this.attributes = attributes;
+        this.isCollapsible = isCollapsible;
+        this.separator = separator;
+    }
 }
 
-interface HtmlText {
+class HtmlText {
     readonly value: string;
+
+    constructor(value: string) {
+        this.value = value;
+    }
 }
 
 
@@ -181,58 +202,96 @@ interface HtmlText {
 Output path: documents.ts
 type DocumentElement = Bookmark | BreakLine | BreakPage | BreakColumn | CommentReference | Hyperlink | Image | NoteReference | Paragraph | Run | Tab | Table | TableCell | TableRow | Text;
 
-interface Bookmark {
-    readonly type: "Bookmark";
+class Bookmark {
+    readonly type: "Bookmark" = "Bookmark";
     readonly name: string;
+
+    constructor(name: string) {
+        this.name = name;
+    }
 }
 
-interface BreakLine {
-    readonly type: "BreakLine";
+class BreakLine {
+    readonly type: "BreakLine" = "BreakLine";
 }
 
-interface BreakPage {
-    readonly type: "BreakPage";
+class BreakPage {
+    readonly type: "BreakPage" = "BreakPage";
 }
 
-interface BreakColumn {
-    readonly type: "BreakColumn";
+class BreakColumn {
+    readonly type: "BreakColumn" = "BreakColumn";
 }
 
-interface Comment {
+class Comment {
     readonly commentId: string;
     readonly body: (Array)<DocumentElement>;
     readonly authorName: string | null;
     readonly authorInitials: string | null;
+
+    constructor(commentId: string, body: (Array)<DocumentElement>, authorName: string | null, authorInitials: string | null) {
+        this.commentId = commentId;
+        this.body = body;
+        this.authorName = authorName;
+        this.authorInitials = authorInitials;
+    }
 }
 
-interface CommentReference {
-    readonly type: "CommentReference";
+class CommentReference {
+    readonly type: "CommentReference" = "CommentReference";
     readonly commentId: string;
+
+    constructor(commentId: string) {
+        this.commentId = commentId;
+    }
 }
 
-interface Document {
+class Document {
     readonly children: (Array)<DocumentElement>;
     readonly notes: (Array)<Note>;
     readonly comments: (Array)<Comment>;
+
+    constructor(children: (Array)<DocumentElement>, notes: (Array)<Note>, comments: (Array)<Comment>) {
+        this.children = children;
+        this.notes = notes;
+        this.comments = comments;
+    }
 }
 
-interface Hyperlink {
-    readonly type: "Hyperlink";
+class Hyperlink {
+    readonly type: "Hyperlink" = "Hyperlink";
     readonly href: string;
     readonly targetFrame: string | null;
     readonly children: (Array)<DocumentElement>;
+
+    constructor(href: string, targetFrame: string | null, children: (Array)<DocumentElement>) {
+        this.href = href;
+        this.targetFrame = targetFrame;
+        this.children = children;
+    }
 }
 
-interface Image {
-    readonly type: "Image";
+class Image {
+    readonly type: "Image" = "Image";
     readonly altText: string | null;
     readonly contentType: string | null;
+
+    constructor(altText: string | null, contentType: string | null) {
+        this.altText = altText;
+        this.contentType = contentType;
+    }
 }
 
-interface Note {
+class Note {
     readonly noteType: NoteType;
     readonly id: string;
     readonly body: (Array)<DocumentElement>;
+
+    constructor(noteType: NoteType, id: string, body: (Array)<DocumentElement>) {
+        this.noteType = noteType;
+        this.id = id;
+        this.body = body;
+    }
 }
 
 enum NoteType {
@@ -240,38 +299,66 @@ enum NoteType {
     ENDNOTE,
 }
 
-interface NoteReference {
-    readonly type: "NoteReference";
+class NoteReference {
+    readonly type: "NoteReference" = "NoteReference";
     readonly noteType: NoteType;
     readonly noteId: string;
+
+    constructor(noteType: NoteType, noteId: string) {
+        this.noteType = noteType;
+        this.noteId = noteId;
+    }
 }
 
-interface NumberingLevel {
+class NumberingLevel {
     readonly levelIndex: string;
     readonly isOrdered: boolean;
+
+    constructor(levelIndex: string, isOrdered: boolean) {
+        this.levelIndex = levelIndex;
+        this.isOrdered = isOrdered;
+    }
 }
 
-interface NumberingStyle {
+class NumberingStyle {
     readonly numId: string;
+
+    constructor(numId: string) {
+        this.numId = numId;
+    }
 }
 
-interface Paragraph {
-    readonly type: "Paragraph";
+class Paragraph {
+    readonly type: "Paragraph" = "Paragraph";
     readonly style: string | null;
     readonly numbering: NumberingLevel | null;
     readonly indent: ParagraphIndent;
     readonly children: (Array)<DocumentElement>;
+
+    constructor(style: string | null, numbering: NumberingLevel | null, indent: ParagraphIndent, children: (Array)<DocumentElement>) {
+        this.style = style;
+        this.numbering = numbering;
+        this.indent = indent;
+        this.children = children;
+    }
 }
 
-interface ParagraphIndent {
+class ParagraphIndent {
     readonly start: string | null;
     readonly end: string | null;
     readonly firstLine: string | null;
     readonly hanging: string | null;
+
+    constructor(start: string | null, end: string | null, firstLine: string | null, hanging: string | null) {
+        this.start = start;
+        this.end = end;
+        this.firstLine = firstLine;
+        this.hanging = hanging;
+    }
 }
 
-interface Run {
-    readonly type: "Run";
+class Run {
+    readonly type: "Run" = "Run";
     readonly isBold: boolean;
     readonly isItalic: boolean;
     readonly isUnderline: boolean;
@@ -281,39 +368,76 @@ interface Run {
     readonly verticalAlignment: VerticalAlignment;
     readonly style: string | null;
     readonly children: (Array)<DocumentElement>;
+
+    constructor(isBold: boolean, isItalic: boolean, isUnderline: boolean, isStrikethrough: boolean, isAllCaps: boolean, isSmallCaps: boolean, verticalAlignment: VerticalAlignment, style: string | null, children: (Array)<DocumentElement>) {
+        this.isBold = isBold;
+        this.isItalic = isItalic;
+        this.isUnderline = isUnderline;
+        this.isStrikethrough = isStrikethrough;
+        this.isAllCaps = isAllCaps;
+        this.isSmallCaps = isSmallCaps;
+        this.verticalAlignment = verticalAlignment;
+        this.style = style;
+        this.children = children;
+    }
 }
 
-interface Style {
+class Style {
     readonly styleId: string;
     readonly name: string | null;
+
+    constructor(styleId: string, name: string | null) {
+        this.styleId = styleId;
+        this.name = name;
+    }
 }
 
-interface Tab {
-    readonly type: "Tab";
+class Tab {
+    readonly type: "Tab" = "Tab";
 }
 
-interface Table {
-    readonly type: "Table";
+class Table {
+    readonly type: "Table" = "Table";
     readonly style: Style | null;
     readonly children: (Array)<DocumentElement>;
+
+    constructor(style: Style | null, children: (Array)<DocumentElement>) {
+        this.style = style;
+        this.children = children;
+    }
 }
 
-interface TableCell {
-    readonly type: "TableCell";
+class TableCell {
+    readonly type: "TableCell" = "TableCell";
     readonly rowspan: number;
     readonly colspan: number;
     readonly children: (Array)<DocumentElement>;
+
+    constructor(rowspan: number, colspan: number, children: (Array)<DocumentElement>) {
+        this.rowspan = rowspan;
+        this.colspan = colspan;
+        this.children = children;
+    }
 }
 
-interface TableRow {
-    readonly type: "TableRow";
+class TableRow {
+    readonly type: "TableRow" = "TableRow";
     readonly children: (Array)<DocumentElement>;
     readonly isHeader: boolean;
+
+    constructor(children: (Array)<DocumentElement>, isHeader: boolean) {
+        this.children = children;
+        this.isHeader = isHeader;
+    }
 }
 
-interface Text {
-    readonly type: "Text";
+class Text {
+    readonly type: "Text" = "Text";
     readonly value: string;
+
+    constructor(value: string) {
+        this.value = value;
+    }
 }
 
 enum VerticalAlignment {

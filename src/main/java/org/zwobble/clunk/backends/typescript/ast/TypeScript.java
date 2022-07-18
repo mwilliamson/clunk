@@ -23,6 +23,13 @@ public class TypeScript {
         return new TypeScriptCallNode(receiver, args);
     }
 
+    public static TypeScriptCallNewNode callNew(
+        TypeScriptExpressionNode receiver,
+        List<TypeScriptExpressionNode> args
+    ) {
+        return new TypeScriptCallNewNode(receiver, args);
+    }
+
     public static TypeScriptClassFieldNode classField(String name, TypeScriptExpressionNode type) {
         return new TypeScriptClassFieldNode(name, type, Optional.empty());
     }

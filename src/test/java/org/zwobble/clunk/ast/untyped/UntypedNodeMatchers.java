@@ -114,7 +114,7 @@ public class UntypedNodeMatchers {
     }
 
     public static Matcher<UntypedTypeLevelExpressionNode> isUntypedTypeLevelReferenceNode(String value) {
-        return cast(UntypedTypeLevelExpressionNode.class, has("value", equalTo(value)));
+        return cast(UntypedTypeLevelExpressionNode.class, has("name", equalTo(value)));
     }
 
     public static Matcher<UntypedTypeLevelExpressionNode> isUntypedConstructedTypeNode(

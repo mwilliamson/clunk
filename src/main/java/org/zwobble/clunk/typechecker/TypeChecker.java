@@ -641,8 +641,8 @@ public class TypeChecker {
         UntypedTypeLevelReferenceNode node,
         TypeCheckerContext context
     ) {
-        var type = resolveTypeLevelValue(node.value(), node.source(), context);
-        return new TypedTypeLevelReferenceNode(node.value(), type, node.source());
+        var type = resolveTypeLevelValue(node.name(), node.source(), context);
+        return new TypedTypeLevelReferenceNode(node.name(), type, node.source());
     }
 
     private static TypeCheckStatementResult<TypedFunctionStatementNode> typeCheckVar(

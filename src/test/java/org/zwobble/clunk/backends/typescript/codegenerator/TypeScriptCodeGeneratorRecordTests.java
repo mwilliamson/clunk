@@ -4,12 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser;
-import org.zwobble.clunk.typechecker.SubtypeLookup;
-import org.zwobble.clunk.typechecker.SubtypeRelation;
 import org.zwobble.clunk.types.InterfaceType;
 import org.zwobble.clunk.types.NamespaceName;
-
-import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -47,11 +43,9 @@ public class TypeScriptCodeGeneratorRecordTests {
         var node = TypedRecordNode.builder("Example")
             .addField(Typed.recordField("first", Typed.typeLevelString()))
             .addField(Typed.recordField("second", Typed.typeLevelInt()))
+            .addSupertype(Typed.typeLevelReference("Supertype", new InterfaceType(NamespaceName.fromParts(), "Supertype")))
             .build();
-        var subtypeLookup = SubtypeLookup.fromSubtypeRelations(List.of(
-            new SubtypeRelation(node.type(), new InterfaceType(NamespaceName.fromParts(), "Supertype"))
-        ));
-        var context = new TypeScriptCodeGeneratorContext(subtypeLookup);
+        var context = TypeScriptCodeGeneratorContext.stub();
 
         var result = TypeScriptCodeGenerator.compileNamespaceStatement(node, context);
 

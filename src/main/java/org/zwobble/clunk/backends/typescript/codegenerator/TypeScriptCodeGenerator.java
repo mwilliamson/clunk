@@ -285,7 +285,7 @@ public class TypeScriptCodeGenerator {
     ) {
         var fields = new ArrayList<TypeScriptClassFieldNode>();
 
-        var supertypes = context.supertypesOf(node.type());
+        var supertypes = node.supertypes();
         if (!supertypes.isEmpty()) {
             fields.add(new TypeScriptClassFieldNode(
                 "type",

@@ -13,13 +13,13 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedFieldAccessNode;
+import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedMemberAccessNode;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedReferenceNode;
 
-public class TypeCheckFieldAccessTests {
+public class TypeCheckMemberAccessTests {
     @Test
-    public void canTypeCheckFieldAccess() {
-        var untypedNode = Untyped.fieldAccess(Untyped.reference("id"), "value");
+    public void canTypeCheckMemberAccess() {
+        var untypedNode = Untyped.memberAccess(Untyped.reference("id"), "value");
         var recordType = new RecordType(NamespaceName.fromParts("example"), "Id");
         var context = TypeCheckerContext.stub()
             .updateType("id", recordType, NullSource.INSTANCE)
@@ -27,24 +27,24 @@ public class TypeCheckFieldAccessTests {
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 
-        assertThat(result, isTypedFieldAccessNode()
+        assertThat(result, isTypedMemberAccessNode()
             .withReceiver(isTypedReferenceNode().withName("id").withType(recordType))
-            .withFieldName(equalTo("value"))
+            .withMemberName(equalTo("value"))
             .withType(Types.INT)
         );
     }
 
     @Test
-    public void whenFieldNameIsUnknownThenErrorIsThrown() {
-        var untypedNode = Untyped.fieldAccess(Untyped.reference("id"), "x");
+    public void whenMemberNameIsUnknownThenErrorIsThrown() {
+        var untypedNode = Untyped.memberAccess(Untyped.reference("id"), "x");
         var recordType = new RecordType(NamespaceName.fromParts("example"), "Id");
         var context = TypeCheckerContext.stub()
             .updateType("id", recordType, NullSource.INSTANCE)
             .addFields(recordType, List.of(Typed.recordField("value", Typed.typeLevelInt())));
 
-        var result = assertThrows(UnknownFieldError.class, () -> TypeChecker.typeCheckExpression(untypedNode, context));
+        var result = assertThrows(UnknownMemberError.class, () -> TypeChecker.typeCheckExpression(untypedNode, context));
 
         assertThat(result.getType(), equalTo(recordType));
-        assertThat(result.getFieldName(), equalTo("x"));
+        assertThat(result.getMemberName(), equalTo("x"));
     }
 }

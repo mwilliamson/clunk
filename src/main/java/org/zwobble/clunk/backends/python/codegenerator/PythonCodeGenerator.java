@@ -128,13 +128,13 @@ public class PythonCodeGenerator {
             }
 
             @Override
-            public PythonExpressionNode visit(TypedFieldAccessNode node) {
-                return compileFieldAccess(node, context);
+            public PythonExpressionNode visit(TypedIntLiteralNode node) {
+                return compileIntLiteral(node);
             }
 
             @Override
-            public PythonExpressionNode visit(TypedIntLiteralNode node) {
-                return compileIntLiteral(node);
+            public PythonExpressionNode visit(TypedMemberAccessNode node) {
+                return compileMemberAccess(node, context);
             }
 
             @Override
@@ -154,16 +154,6 @@ public class PythonCodeGenerator {
         PythonCodeGeneratorContext context
     ) {
         return new PythonExpressionStatementNode(compileExpression(node.expression(), context));
-    }
-
-    private PythonExpressionNode compileFieldAccess(
-        TypedFieldAccessNode node,
-        PythonCodeGeneratorContext context
-    ) {
-        return new PythonAttrAccessNode(
-            compileExpression(node.receiver(), context),
-            node.fieldName()
-        );
     }
 
     private PythonStatementNode compileFunction(TypedFunctionNode node, PythonCodeGeneratorContext context) {
@@ -251,6 +241,16 @@ public class PythonCodeGenerator {
 
     private PythonExpressionNode compileIntLiteral(TypedIntLiteralNode node) {
         return new PythonIntLiteralNode(BigInteger.valueOf(node.value()));
+    }
+
+    private PythonExpressionNode compileMemberAccess(
+        TypedMemberAccessNode node,
+        PythonCodeGeneratorContext context
+    ) {
+        return new PythonAttrAccessNode(
+            compileExpression(node.receiver(), context),
+            node.memberName()
+        );
     }
 
     public PythonModuleNode compileNamespace(TypedNamespaceNode node) {

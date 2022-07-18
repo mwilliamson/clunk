@@ -4,18 +4,18 @@ import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.isUntypedFieldAccessNode;
+import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.isUntypedMemberAccessNode;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.isUntypedReferenceNode;
 import static org.zwobble.clunk.parser.Parsing.parseString;
 
-public class ParserFieldAccessTests {
+public class ParserMemberAccessTests {
     @Test
-    public void canParseFieldAccess() {
+    public void canParseMemberAccess() {
         var source = "x.f";
 
         var node = parseString(source, Parser::parseExpression);
 
-        assertThat(node, isUntypedFieldAccessNode(
+        assertThat(node, isUntypedMemberAccessNode(
             isUntypedReferenceNode("x"),
             equalTo("f")
         ));

@@ -168,13 +168,13 @@ public class TypeChecker {
             }
 
             @Override
-            public TypedExpressionNode visit(UntypedFieldAccessNode node) {
-                return typeCheckFieldAccess(node, context);
+            public TypedExpressionNode visit(UntypedIntLiteralNode node) {
+                return typeCheckIntLiteral(node);
             }
 
             @Override
-            public TypedExpressionNode visit(UntypedIntLiteralNode node) {
-                return typeCheckIntLiteral(node);
+            public TypedExpressionNode visit(UntypedMemberAccessNode node) {
+                return typeCheckMemberAccess(node, context);
             }
 
             @Override
@@ -196,32 +196,6 @@ public class TypeChecker {
         var typedExpression = typeCheckExpression(node.expression(), context);
         var typedStatement = new TypedExpressionStatementNode(typedExpression, node.source());
         return new TypeCheckFunctionStatementResult<>(typedStatement, false, context);
-    }
-
-    private static TypedExpressionNode typeCheckFieldAccess(UntypedFieldAccessNode node, TypeCheckerContext context) {
-        var typedReceiverNode = typeCheckExpression(node.receiver(), context);
-        // TODO: handle not a record
-        var recordType = (RecordType) typedReceiverNode.type();
-        var field = context.fieldsOf(recordType)
-            .stream()
-            .filter(f -> f.name().equals(node.fieldName()))
-            .findFirst();
-
-        if (field.isEmpty()) {
-            throw new UnknownFieldError(recordType, node.fieldName(), node.source());
-        }
-
-        var fieldType = (Type) field
-            .get()
-            .type()
-            .value();
-
-        return new TypedFieldAccessNode(
-            typedReceiverNode,
-            node.fieldName(),
-            fieldType,
-            node.source()
-        );
     }
 
     private static TypeCheckNamespaceStatementResult typeCheckFunction(
@@ -410,6 +384,32 @@ public class TypeChecker {
 
     private static TypedExpressionNode typeCheckIntLiteral(UntypedIntLiteralNode node) {
         return new TypedIntLiteralNode(node.value(), node.source());
+    }
+
+    private static TypedExpressionNode typeCheckMemberAccess(UntypedMemberAccessNode node, TypeCheckerContext context) {
+        var typedReceiverNode = typeCheckExpression(node.receiver(), context);
+        // TODO: handle not a record
+        var recordType = (RecordType) typedReceiverNode.type();
+        var member = context.fieldsOf(recordType)
+            .stream()
+            .filter(f -> f.name().equals(node.memberName()))
+            .findFirst();
+
+        if (member.isEmpty()) {
+            throw new UnknownMemberError(recordType, node.memberName(), node.source());
+        }
+
+        var memberType = (Type) member
+            .get()
+            .type()
+            .value();
+
+        return new TypedMemberAccessNode(
+            typedReceiverNode,
+            node.memberName(),
+            memberType,
+            node.source()
+        );
     }
 
     public static TypeCheckResult<TypedNamespaceNode> typeCheckNamespace(

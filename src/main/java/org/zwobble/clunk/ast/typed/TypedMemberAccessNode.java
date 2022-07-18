@@ -3,9 +3,9 @@ package org.zwobble.clunk.ast.typed;
 import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.types.Type;
 
-public record TypedFieldAccessNode(
+public record TypedMemberAccessNode(
     TypedExpressionNode receiver,
-    String fieldName,
+    String memberName,
     Type type,
     Source source
 ) implements TypedExpressionNode {

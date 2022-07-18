@@ -107,13 +107,13 @@ public class TypeScriptCodeGenerator {
             }
 
             @Override
-            public TypeScriptExpressionNode visit(TypedFieldAccessNode node) {
-                return compileFieldAccess(node, context);
+            public TypeScriptExpressionNode visit(TypedIntLiteralNode node) {
+                return compileIntLiteral(node);
             }
 
             @Override
-            public TypeScriptExpressionNode visit(TypedIntLiteralNode node) {
-                return compileIntLiteral(node);
+            public TypeScriptExpressionNode visit(TypedMemberAccessNode node) {
+                return compileMemberAccess(node, context);
             }
 
             @Override
@@ -133,16 +133,6 @@ public class TypeScriptCodeGenerator {
         TypeScriptCodeGeneratorContext context
     ) {
         return new TypeScriptExpressionStatementNode(compileExpression(node.expression(), context));
-    }
-
-    private static TypeScriptExpressionNode compileFieldAccess(
-        TypedFieldAccessNode node,
-        TypeScriptCodeGeneratorContext context
-    ) {
-        return new TypeScriptPropertyAccessNode(
-            compileExpression(node.receiver(), context),
-            node.fieldName()
-        );
     }
 
     private static TypeScriptStatementNode compileFunction(TypedFunctionNode node, TypeScriptCodeGeneratorContext context) {
@@ -221,6 +211,16 @@ public class TypeScriptCodeGenerator {
 
     private static TypeScriptExpressionNode compileIntLiteral(TypedIntLiteralNode node) {
         return new TypeScriptNumberLiteralNode(node.value());
+    }
+
+    private static TypeScriptExpressionNode compileMemberAccess(
+        TypedMemberAccessNode node,
+        TypeScriptCodeGeneratorContext context
+    ) {
+        return new TypeScriptPropertyAccessNode(
+            compileExpression(node.receiver(), context),
+            node.memberName()
+        );
     }
 
     public static TypeScriptModuleNode compileNamespace(TypedNamespaceNode node, SubtypeLookup subtypeLookup) {

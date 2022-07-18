@@ -25,10 +25,6 @@ public class TypedNodeMatchers {
         return cast(TypedExpressionStatementNode.class, has("expression", expression));
     }
 
-    public static TypedFieldAccessNodeMatcher isTypedFieldAccessNode() {
-        return new TypedFieldAccessNodeMatcher(P.vector());
-    }
-
     public static TypedFunctionNodeMatcher isTypedFunctionNode() {
         return new TypedFunctionNodeMatcher(List.of());
     }
@@ -39,6 +35,10 @@ public class TypedNodeMatchers {
 
     public static Matcher<TypedExpressionNode> isTypedIntLiteralNode(int value) {
         return cast(TypedIntLiteralNode.class, has("value", equalTo(value)));
+    }
+
+    public static TypedMemberAccessNodeMatcher isTypedMemberAccessNode() {
+        return new TypedMemberAccessNodeMatcher(P.vector());
     }
 
     public static TypedParamNodeMatcher isTypedParamNode() {

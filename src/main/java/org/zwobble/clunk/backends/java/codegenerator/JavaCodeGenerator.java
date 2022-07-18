@@ -113,13 +113,13 @@ public class JavaCodeGenerator {
             }
 
             @Override
-            public JavaExpressionNode visit(TypedFieldAccessNode node) {
-                return compileFieldAccess(node, context);
+            public JavaExpressionNode visit(TypedIntLiteralNode node) {
+                return compileIntLiteral(node);
             }
 
             @Override
-            public JavaExpressionNode visit(TypedIntLiteralNode node) {
-                return compileIntLiteral(node);
+            public JavaExpressionNode visit(TypedMemberAccessNode node) {
+                return compileMemberAccess(node, context);
             }
 
             @Override
@@ -136,16 +136,6 @@ public class JavaCodeGenerator {
 
     private static JavaStatementNode compileExpressionStatement(TypedExpressionStatementNode node, JavaCodeGeneratorContext context) {
         return new JavaExpressionStatementNode(compileExpression(node.expression(), context));
-    }
-
-    private static JavaExpressionNode compileFieldAccess(TypedFieldAccessNode node, JavaCodeGeneratorContext context) {
-        return new JavaCallNode(
-            new JavaMemberAccessNode(
-                compileExpression(node.receiver(), context),
-                node.fieldName()
-            ),
-            List.of()
-        );
     }
 
     public static JavaClassBodyDeclarationNode compileFunction(TypedFunctionNode node, JavaCodeGeneratorContext context) {
@@ -228,6 +218,16 @@ public class JavaCodeGenerator {
 
     private static JavaExpressionNode compileIntLiteral(TypedIntLiteralNode node) {
         return new JavaIntLiteralNode(node.value());
+    }
+
+    private static JavaExpressionNode compileMemberAccess(TypedMemberAccessNode node, JavaCodeGeneratorContext context) {
+        return new JavaCallNode(
+            new JavaMemberAccessNode(
+                compileExpression(node.receiver(), context),
+                node.memberName()
+            ),
+            List.of()
+        );
     }
 
     public static List<JavaOrdinaryCompilationUnitNode> compileNamespace(

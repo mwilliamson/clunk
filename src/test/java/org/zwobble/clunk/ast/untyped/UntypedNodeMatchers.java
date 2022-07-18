@@ -49,16 +49,6 @@ public class UntypedNodeMatchers {
         return cast(UntypedExpressionStatementNode.class, has("expression", expression));
     }
 
-    public static Matcher<UntypedExpressionNode> isUntypedFieldAccessNode(
-        Matcher<UntypedExpressionNode> receiver,
-        Matcher<String> fieldName
-    ) {
-        return cast(UntypedFieldAccessNode.class, allOf(
-            has("receiver", receiver),
-            has("fieldName", fieldName)
-        ));
-    }
-
     public static UntypedFunctionNodeMatcher isUntypedFunctionNode() {
         return new UntypedFunctionNodeMatcher(List.of());
     }
@@ -79,6 +69,16 @@ public class UntypedNodeMatchers {
 
     public static Matcher<UntypedExpressionNode> isUntypedIntLiteralNode(int value) {
         return cast(UntypedIntLiteralNode.class, has("value", equalTo(value)));
+    }
+
+    public static Matcher<UntypedExpressionNode> isUntypedMemberAccessNode(
+        Matcher<UntypedExpressionNode> receiver,
+        Matcher<String> memberName
+    ) {
+        return cast(UntypedMemberAccessNode.class, allOf(
+            has("receiver", receiver),
+            has("memberName", memberName)
+        ));
     }
 
     public static UntypedNamespaceNodeMatcher isUntypedNamespaceNode() {

@@ -2,9 +2,9 @@ package org.zwobble.clunk.ast.untyped;
 
 import org.zwobble.clunk.sources.Source;
 
-public record UntypedFieldAccessNode(
+public record UntypedMemberAccessNode(
     UntypedExpressionNode receiver,
-    String fieldName,
+    String memberName,
     Source source
 ) implements UntypedExpressionNode {
     @Override

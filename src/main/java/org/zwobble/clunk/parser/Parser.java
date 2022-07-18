@@ -56,7 +56,7 @@ public class Parser {
         while (true) {
             if (tokens.trySkip(TokenType.SYMBOL_DOT)) {
                 var fieldName = tokens.nextValue(TokenType.IDENTIFIER);
-                expression = new UntypedFieldAccessNode(expression, fieldName, expression.source());
+                expression = new UntypedMemberAccessNode(expression, fieldName, expression.source());
             } else if (tokens.trySkip(TokenType.SYMBOL_PAREN_OPEN)) {
                 var positionalArgs = parseMany(
                     () -> tokens.isNext(TokenType.SYMBOL_PAREN_CLOSE),

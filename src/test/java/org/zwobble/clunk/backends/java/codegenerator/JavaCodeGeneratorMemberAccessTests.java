@@ -2,7 +2,7 @@ package org.zwobble.clunk.backends.java.codegenerator;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
-import org.zwobble.clunk.ast.typed.TypedFieldAccessNode;
+import org.zwobble.clunk.ast.typed.TypedMemberAccessNode;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.NamespaceName;
@@ -13,11 +13,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
-public class JavaCodeGeneratorFieldAccessTests {
+public class JavaCodeGeneratorMemberAccessTests {
     @Test
-    public void fieldAccessIsCompiledToMethodCall() {
+    public void memberAccessIsCompiledToMethodCall() {
         var recordType = new RecordType(NamespaceName.fromParts("example"), "Id");
-        var node = new TypedFieldAccessNode(
+        var node = new TypedMemberAccessNode(
             Typed.reference("id", recordType),
             "value",
             Types.INT,

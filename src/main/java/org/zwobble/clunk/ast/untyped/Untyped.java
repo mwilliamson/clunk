@@ -44,10 +44,6 @@ public class Untyped {
         return new UntypedExpressionStatementNode(expression, NullSource.INSTANCE);
     }
 
-    public static UntypedExpressionNode fieldAccess(UntypedExpressionNode receiver, String fieldName) {
-        return new UntypedFieldAccessNode(receiver, fieldName, NullSource.INSTANCE);
-    }
-
     public static UntypedIfStatementNode ifStatement(
         List<UntypedConditionalBranchNode> conditionalBranches,
         List<UntypedFunctionStatementNode> elseBody
@@ -69,6 +65,10 @@ public class Untyped {
 
     public static UntypedIntLiteralNode intLiteral(int value) {
         return new UntypedIntLiteralNode(value, NullSource.INSTANCE);
+    }
+
+    public static UntypedExpressionNode memberAccess(UntypedExpressionNode receiver, String memberAccess) {
+        return new UntypedMemberAccessNode(receiver, memberAccess, NullSource.INSTANCE);
     }
 
     public static UntypedParamNode param(String name, UntypedTypeLevelExpressionNode type) {

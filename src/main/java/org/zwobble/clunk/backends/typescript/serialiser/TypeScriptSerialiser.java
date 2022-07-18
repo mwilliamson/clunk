@@ -41,6 +41,55 @@ public class TypeScriptSerialiser {
         builder.append(")");
     }
 
+    private static void serialiseClassDeclaration(TypeScriptClassDeclarationNode node, CodeBuilder builder) {
+        builder.append("class ");
+        builder.append(node.name());
+        builder.append(" {");
+        builder.indent();
+        builder.newLine();
+
+        for (var field : node.fields()) {
+            builder.append("readonly ");
+            builder.append(field.name());
+            builder.append(": ");
+            serialiseExpression(field.type(), builder);
+            builder.append(";");
+            builder.newLine();
+        }
+
+        if (!node.fields().isEmpty()) {
+            builder.newLine();
+            builder.append("constructor(");
+            forEachInterspersed(
+                node.fields(),
+                field -> {
+                    builder.append(field.name());
+                    builder.append(": ");
+                    serialiseExpression(field.type(), builder);
+                },
+                () -> builder.append(", ")
+            );
+            builder.append(") {");
+            builder.newLine();
+            builder.indent();
+            for (var field : node.fields()) {
+                builder.append("this.");
+                builder.append(field.name());
+                builder.append(" = ");
+                builder.append(field.name());
+                builder.append(";");
+                builder.newLine();
+            }
+            builder.dedent();
+            builder.append("}");
+            builder.newLine();
+        }
+
+        builder.dedent();
+        builder.append("}");
+        builder.newLine();
+    }
+
     private static void serialiseConstructedType(TypeScriptConstructedTypeNode node, CodeBuilder builder) {
         builder.append("(");
         serialiseExpression(node.receiver(), builder);
@@ -279,6 +328,12 @@ public class TypeScriptSerialiser {
             @Override
             public Void visit(TypeScriptBlankLineNode node) {
                 serialiseBlankLine(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(TypeScriptClassDeclarationNode node) {
+                serialiseClassDeclaration(node, builder);
                 return null;
             }
 

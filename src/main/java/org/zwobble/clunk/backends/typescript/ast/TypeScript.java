@@ -22,6 +22,10 @@ public class TypeScript {
         return new TypeScriptCallNode(receiver, args);
     }
 
+    public static TypeScriptClassFieldNode classField(String name, TypeScriptReferenceNode type) {
+        return new TypeScriptClassFieldNode(name, type);
+    }
+
     public static TypeScriptConditionalBranchNode conditionalBranch(
         TypeScriptExpressionNode condition,
         List<TypeScriptStatementNode> body

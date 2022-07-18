@@ -1,10 +1,7 @@
 package org.zwobble.clunk.ast.typed;
 
 import org.zwobble.clunk.sources.NullSource;
-import org.zwobble.clunk.types.InterfaceType;
-import org.zwobble.clunk.types.NamespaceName;
-import org.zwobble.clunk.types.Type;
-import org.zwobble.clunk.types.Types;
+import org.zwobble.clunk.types.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +24,14 @@ public class Typed {
         List<TypedFunctionStatementNode> body
     ) {
         return new TypedConditionalBranchNode(condition, body, NullSource.INSTANCE);
+    }
+
+    public static TypedConstructedTypeNode constructedType(
+        TypedTypeLevelExpressionNode receiver,
+        List<TypedTypeLevelExpressionNode> args,
+        TypeLevelValue value
+    ) {
+        return new TypedConstructedTypeNode(receiver, args, value, NullSource.INSTANCE);
     }
 
     public static TypedExpressionStatementNode expressionStatement(TypedExpressionNode expression) {
@@ -76,8 +81,8 @@ public class Typed {
         return new TypedStringLiteralNode(value, NullSource.INSTANCE);
     }
 
-    public static TypedTypeLevelExpressionNode typeLevelReference(String name, Type type) {
-        return new TypedTypeLevelReferenceNode(name, type, NullSource.INSTANCE);
+    public static TypedTypeLevelExpressionNode typeLevelReference(String name, TypeLevelValue value) {
+        return new TypedTypeLevelReferenceNode(name, value, NullSource.INSTANCE);
     }
 
     public static TypedTypeLevelExpressionNode typeLevelBool() {

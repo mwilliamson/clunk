@@ -358,43 +358,44 @@ public class PythonCodeGenerator {
         TypedTypeLevelExpressionNode node,
         PythonCodeGeneratorContext context
     ) {
-        return compileTypeLevelValue(node.value(), context);
-    }
+        return node.accept(new TypedTypeLevelExpressionNode.Visitor<PythonExpressionNode>() {
+            @Override
+            public PythonExpressionNode visit(TypedConstructedTypeNode node) {
+                return new PythonSubscriptionNode(
+                    compileTypeLevelExpression(node.receiver(), context),
+                    node.args().stream()
+                        .map(arg -> compileTypeLevelExpression(arg, context))
+                        .toList()
+                );
+            }
 
-    private PythonExpressionNode compileTypeLevelValue(TypeLevelValue type, PythonCodeGeneratorContext context) {
-        if (type == BoolType.INSTANCE) {
-            return new PythonReferenceNode("bool");
-        } else if (type instanceof EnumType enumType) {
-            return new PythonReferenceNode(enumType.name());
-        } else if (type == IntType.INSTANCE) {
-            return new PythonReferenceNode("int");
-        } else if (type instanceof InterfaceType interfaceType) {
-            return new PythonReferenceNode(interfaceType.name());
-        } else if (type instanceof ListType listType) {
-            context.addImport(List.of("typing"));
-            return new PythonSubscriptionNode(
-                new PythonAttrAccessNode(
-                    new PythonReferenceNode("typing"),
-                    "List"
-                ),
-                compileTypeLevelValue(listType.elementType(), context)
-            );
-        } else if (type instanceof OptionType optionType) {
-            context.addImport(List.of("typing"));
-            return new PythonSubscriptionNode(
-                new PythonAttrAccessNode(
-                    new PythonReferenceNode("typing"),
-                    "Optional"
-                ),
-                compileTypeLevelValue(optionType.elementType(), context)
-            );
-        } else if (type instanceof RecordType recordType) {
-            return new PythonReferenceNode(recordType.name());
-        } else if (type == StringType.INSTANCE) {
-            return new PythonReferenceNode("str");
-        } else {
-            throw new RuntimeException("TODO");
-        }
+            @Override
+            public PythonExpressionNode visit(TypedTypeLevelReferenceNode node) {
+                var typeLevelValue = node.value();
+
+                if (typeLevelValue == BoolType.INSTANCE) {
+                    return new PythonReferenceNode("bool");
+                } else if (typeLevelValue == IntType.INSTANCE) {
+                    return new PythonReferenceNode("int");
+                } else if (typeLevelValue == ListTypeConstructor.INSTANCE) {
+                    context.addImport(List.of("typing"));
+                    return new PythonAttrAccessNode(
+                        new PythonReferenceNode("typing"),
+                        "List"
+                    );
+                } else if (typeLevelValue == OptionTypeConstructor.INSTANCE) {
+                    context.addImport(List.of("typing"));
+                    return new PythonAttrAccessNode(
+                        new PythonReferenceNode("typing"),
+                        "Optional"
+                    );
+                } else if (typeLevelValue == StringType.INSTANCE) {
+                    return new PythonReferenceNode("str");
+                } else {
+                    return new PythonReferenceNode(node.name());
+                }
+            }
+        });
     }
 
     private PythonStatementNode compileVar(TypedVarNode node, PythonCodeGeneratorContext context) {

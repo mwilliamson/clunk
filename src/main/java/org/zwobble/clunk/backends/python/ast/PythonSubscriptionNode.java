@@ -1,8 +1,10 @@
 package org.zwobble.clunk.backends.python.ast;
 
+import java.util.List;
+
 public record PythonSubscriptionNode(
     PythonExpressionNode receiver,
-    PythonExpressionNode arg
+    List<PythonExpressionNode> args
 ) implements PythonExpressionNode {
     @Override
     public <T> T accept(Visitor<T> visitor) {

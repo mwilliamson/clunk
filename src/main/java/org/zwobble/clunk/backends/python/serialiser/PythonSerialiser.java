@@ -319,7 +319,11 @@ public class PythonSerialiser {
     private static void serialiseSubscription(PythonSubscriptionNode node, CodeBuilder builder) {
         serialiseExpression(node.receiver(), builder);
         builder.append("[");
-        serialiseExpression(node.arg(), builder);
+        forEachInterspersed(
+            node.args(),
+            arg -> serialiseExpression(arg, builder),
+            () -> builder.append(", ")
+        );
         builder.append("]");
     }
 }

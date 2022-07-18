@@ -72,9 +72,9 @@ public class Python {
 
     public static PythonExpressionNode subscription(
         PythonExpressionNode receiver,
-        PythonExpressionNode arg
+        List<PythonExpressionNode> args
     ) {
-        return new PythonSubscriptionNode(receiver, arg);
+        return new PythonSubscriptionNode(receiver, args);
     }
 
     public static PythonAssignmentNode variableType(String name, PythonExpressionNode type) {

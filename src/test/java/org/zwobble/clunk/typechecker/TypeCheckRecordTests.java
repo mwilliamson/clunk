@@ -51,6 +51,18 @@ public class TypeCheckRecordTests {
             has("name", equalTo("Example")),
             has("type", isRecordType(NamespaceName.fromParts("a", "b"), "Example"))
         ));
+    }
+
+    @Test
+    public void fieldsForTypeAreUpdated() {
+        var untypedNode = UntypedRecordNode.builder("Example")
+            .addField(Untyped.recordField("x", Untyped.typeLevelReference("String")))
+            .build();
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
+
+        var typedNode = (TypedRecordNode) result.typedNode();
         assertThat(result.context().fieldsLookup().fieldsOf(typedNode.type()), contains(
             allOf(
                 has("name", equalTo("x")),

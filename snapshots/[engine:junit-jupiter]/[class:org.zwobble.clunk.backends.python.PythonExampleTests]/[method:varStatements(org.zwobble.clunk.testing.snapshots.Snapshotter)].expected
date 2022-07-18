@@ -14,8 +14,10 @@ test "var statement" {
 Output path: varStatementsTest.py
 from precisely import assert_that
 from precisely import equal_to
+
 def test_var_statement():
     result = 5
+
     (assert_that)(result, (equal_to)(5))
 
 

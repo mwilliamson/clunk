@@ -58,6 +58,10 @@ public class JavaCodeGenerator {
         }
     }
 
+    private static JavaStatementNode compileBlankLine(TypedBlankLineNode node, JavaCodeGeneratorContext context) {
+        return new JavaBlankLineNode();
+    }
+
     private static JavaExpressionNode compileBoolLiteral(TypedBoolLiteralNode node) {
         return new JavaBoolLiteralNode(node.value());
     }
@@ -159,6 +163,11 @@ public class JavaCodeGenerator {
     public static JavaStatementNode compileFunctionStatement(TypedFunctionStatementNode node, JavaCodeGeneratorContext context) {
         return node.accept(new TypedFunctionStatementNode.Visitor<JavaStatementNode>() {
             @Override
+            public JavaStatementNode visit(TypedBlankLineNode node) {
+                return compileBlankLine(node, context);
+            }
+
+            @Override
             public JavaStatementNode visit(TypedExpressionStatementNode node) {
                 return compileExpressionStatement(node, context);
             }
@@ -234,6 +243,11 @@ public class JavaCodeGenerator {
 
         for (var statement : node.statements()) {
             statement.accept(new TypedNamespaceStatementNode.Visitor<Void>() {
+                @Override
+                public Void visit(TypedBlankLineNode node) {
+                    return null;
+                }
+
                 @Override
                 public Void visit(TypedEnumNode node) {
                     compilationUnits.add(compileEnum(node, context));

@@ -22,6 +22,7 @@ public class VarStatementsTest {
     @org.junit.jupiter.api.DisplayName("var statement")
     public void varStatement() {
         var result = 5;
+
         assertThat(result, equalTo(5));
     }
 }

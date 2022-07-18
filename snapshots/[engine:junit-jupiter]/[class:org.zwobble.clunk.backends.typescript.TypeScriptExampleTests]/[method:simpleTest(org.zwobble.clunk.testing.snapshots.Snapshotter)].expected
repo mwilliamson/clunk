@@ -24,15 +24,19 @@ test "assert 42 == 42" {
 Output path: SimpleTest.ts
 import {assertThat} from "@mwilliamson/precisely";
 import {equalTo} from "@mwilliamson/precisely";
+
 (test)("assert False", function () {
     (assertThat)(false, (equalTo)(true));
 });
+
 (test)("assert True", function () {
     (assertThat)(true, (equalTo)(false));
 });
+
 (test)("assert 42 == 47", function () {
     (assertThat)(42, (equalTo)(47));
 });
+
 (test)("assert 42 == 42", function () {
     (assertThat)(42, (equalTo)(42));
 });
@@ -57,7 +61,7 @@ Expected:
 but:
   was false
       at Object.assertThat (node_modules/@mwilliamson/precisely/lib/assertThat.js:14:15)
-      at Context.<anonymous> (src/SimpleTest.ts:4:17)
+      at Context.<anonymous> (src/SimpleTest.ts:5:17)
       at processImmediate (node:internal/timers:466:21)
 
   2) assert True:
@@ -67,7 +71,7 @@ Expected:
 but:
   was true
       at Object.assertThat (node_modules/@mwilliamson/precisely/lib/assertThat.js:14:15)
-      at Context.<anonymous> (src/SimpleTest.ts:7:17)
+      at Context.<anonymous> (src/SimpleTest.ts:9:17)
       at processImmediate (node:internal/timers:466:21)
 
   3) assert 42 == 47:
@@ -77,7 +81,7 @@ Expected:
 but:
   was 42
       at Object.assertThat (node_modules/@mwilliamson/precisely/lib/assertThat.js:14:15)
-      at Context.<anonymous> (src/SimpleTest.ts:10:17)
+      at Context.<anonymous> (src/SimpleTest.ts:13:17)
       at processImmediate (node:internal/timers:466:21)
 
 

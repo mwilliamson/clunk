@@ -14,8 +14,10 @@ test "var statement" {
 Output path: varStatementsTest.ts
 import {assertThat} from "@mwilliamson/precisely";
 import {equalTo} from "@mwilliamson/precisely";
+
 (test)("var statement", function () {
     let result = 5;
+
     (assertThat)(result, (equalTo)(5));
 });
 

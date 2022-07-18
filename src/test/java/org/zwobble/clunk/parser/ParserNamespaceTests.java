@@ -66,4 +66,23 @@ public class ParserNamespaceTests {
             isUntypedRecordNode().withName("Second")
         )));
     }
+
+    @Test
+    public void canParseBlankLines() {
+        var source = "record First(name: String)\n\nrecord Second(name: String)";
+
+        var node = parseString(
+            source,
+            (parser, tokens) -> parser.parseNamespace(
+                tokens,
+                NamespaceName.fromParts("example", "project")
+            )
+        );
+
+        assertThat(node, isUntypedNamespaceNode().withStatements(contains(
+            isUntypedRecordNode().withName("First"),
+            isUntypedBlankLineNode(),
+            isUntypedRecordNode().withName("Second")
+        )));
+    }
 }

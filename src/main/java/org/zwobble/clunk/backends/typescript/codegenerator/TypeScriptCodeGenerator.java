@@ -54,6 +54,10 @@ public class TypeScriptCodeGenerator {
         }
     }
 
+    private static TypeScriptStatementNode compileBlankLine(TypedBlankLineNode node, TypeScriptCodeGeneratorContext context) {
+        return new TypeScriptBlankLineNode();
+    }
+
     private static TypeScriptExpressionNode compileBoolLiteral(TypedBoolLiteralNode node) {
         return new TypeScriptBoolLiteralNode(node.value());
     }
@@ -148,6 +152,11 @@ public class TypeScriptCodeGenerator {
     ) {
         return node.accept(new TypedFunctionStatementNode.Visitor<TypeScriptStatementNode>() {
             @Override
+            public TypeScriptStatementNode visit(TypedBlankLineNode node) {
+                return compileBlankLine(node, context);
+            }
+
+            @Override
             public TypeScriptStatementNode visit(TypedExpressionStatementNode node) {
                 return compileExpressionStatement(node, context);
             }
@@ -226,6 +235,11 @@ public class TypeScriptCodeGenerator {
         TypeScriptCodeGeneratorContext context
     ) {
         return node.accept(new TypedNamespaceStatementNode.Visitor<TypeScriptStatementNode>() {
+            @Override
+            public TypeScriptStatementNode visit(TypedBlankLineNode node) {
+                return compileBlankLine(node, context);
+            }
+
             @Override
             public TypeScriptStatementNode visit(TypedEnumNode node) {
                 return compileEnum(node, context);

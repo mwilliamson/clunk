@@ -30,22 +30,28 @@ test "assert field" {
 Output path: recordsTest.ts
 import {assertThat} from "@mwilliamson/precisely";
 import {equalTo} from "@mwilliamson/precisely";
+
 interface Add {
     readonly left: number;
     readonly right: number;
 }
+
 (test)("assert field", function () {
     let add = (Add)(2, 3);
+
     (assertThat)((add).left, (equalTo)(2));
     (assertThat)((add).right, (equalTo)(3));
 });
+
+
+
 
 
 ==============
 
 
 TSError: ⨯ Unable to compile TypeScript:
-src/recordsTest.ts(8,16): error TS2693: 'Add' only refers to a type, but is being used as a value here.
+src/recordsTest.ts(10,16): error TS2693: 'Add' only refers to a type, but is being used as a value here.
 
     at createTSError (/home/mick/Programming/current/clunk-lang/testing/typescript/node_modules/ts-node/src/index.ts:820:12)
     at reportTSError (/home/mick/Programming/current/clunk-lang/testing/typescript/node_modules/ts-node/src/index.ts:824:19)

@@ -57,6 +57,10 @@ public class PythonCodeGenerator {
         }
     }
 
+    private PythonStatementNode compileBlankLine(TypedBlankLineNode node, PythonCodeGeneratorContext context) {
+        return new PythonBlankLineNode();
+    }
+
     private PythonExpressionNode compileBoolLiteral(TypedBoolLiteralNode node) {
         return new PythonBoolLiteralNode(node.value());
     }
@@ -174,6 +178,11 @@ public class PythonCodeGenerator {
     public PythonStatementNode compileFunctionStatement(TypedFunctionStatementNode node, PythonCodeGeneratorContext context) {
         return node.accept(new TypedFunctionStatementNode.Visitor<PythonStatementNode>() {
             @Override
+            public PythonStatementNode visit(TypedBlankLineNode node) {
+                return compileBlankLine(node, context);
+            }
+
+            @Override
             public PythonStatementNode visit(TypedExpressionStatementNode node) {
                 return compileExpressionStatement(node, context);
             }
@@ -269,6 +278,11 @@ public class PythonCodeGenerator {
         PythonCodeGeneratorContext context
     ) {
         return node.accept(new TypedNamespaceStatementNode.Visitor<PythonStatementNode>() {
+            @Override
+            public PythonStatementNode visit(TypedBlankLineNode node) {
+                return compileBlankLine(node, context);
+            }
+
             @Override
             public PythonStatementNode visit(TypedEnumNode node) {
                 return compileEnum(node, context);

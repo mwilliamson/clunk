@@ -3,7 +3,6 @@ package org.zwobble.clunk.ast.untyped;
 import org.hamcrest.Matcher;
 import org.zwobble.clunk.types.NamespaceName;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +12,10 @@ import static org.zwobble.clunk.matchers.CastMatcher.cast;
 import static org.zwobble.clunk.matchers.HasRecordComponentWithValue.has;
 
 public class UntypedNodeMatchers {
+    public static Matcher<UntypedNode> isUntypedBlankLineNode() {
+        return cast(UntypedBlankLineNode.class);
+    }
+
     public static Matcher<UntypedExpressionNode> isUntypedBoolLiteralNode(boolean value) {
         return cast(UntypedBoolLiteralNode.class, has("value", equalTo(value)));
     }

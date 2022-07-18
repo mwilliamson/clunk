@@ -20,6 +20,12 @@ public class Parser {
         this.fullSource = fullSource;
     }
 
+    private UntypedBlankLineNode parseBlankLine(TokenIterator<TokenType> tokens) {
+        var source = source(tokens);
+        tokens.skip(TokenType.BLANK_LINE);
+        return new UntypedBlankLineNode(source);
+    }
+
     private List<UntypedFunctionStatementNode> parseBlock(TokenIterator<TokenType> tokens) {
         tokens.skip(TokenType.SYMBOL_BRACE_OPEN);
         var body = parseRepeated(
@@ -197,7 +203,9 @@ public class Parser {
     }
 
     public UntypedFunctionStatementNode parseFunctionStatement(TokenIterator<TokenType> tokens) {
-        if (tokens.isNext(TokenType.KEYWORD_IF)) {
+        if (tokens.isNext(TokenType.BLANK_LINE)) {
+            return parseBlankLine(tokens);
+        } else if (tokens.isNext(TokenType.KEYWORD_IF)) {
             return parseIfStatement(tokens);
         } else if (tokens.isNext(TokenType.KEYWORD_RETURN)) {
             return parseReturn(tokens);
@@ -269,7 +277,9 @@ public class Parser {
     }
 
     public UntypedNamespaceStatementNode parseNamespaceStatement(TokenIterator<TokenType> tokens) {
-        if (tokens.isNext(TokenType.KEYWORD_ENUM)) {
+        if (tokens.isNext(TokenType.BLANK_LINE)) {
+            return parseBlankLine(tokens);
+        } else if (tokens.isNext(TokenType.KEYWORD_ENUM)) {
             return parseEnum(tokens);
         } else if (tokens.isNext(TokenType.KEYWORD_FUN)) {
             return parseFunction(tokens);

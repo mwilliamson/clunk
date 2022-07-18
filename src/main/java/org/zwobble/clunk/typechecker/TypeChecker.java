@@ -25,6 +25,24 @@ public class TypeChecker {
         );
     }
 
+    private static TypeCheckerContext defineVariablesForBlankLine(UntypedBlankLineNode node, TypeCheckerContext context) {
+        return context;
+    }
+
+    private static TypeCheckStatementResult<TypedFunctionStatementNode> typeCheckBlankLineInFunction(
+        UntypedBlankLineNode node,
+        TypeCheckerContext context
+    ) {
+        return new TypeCheckStatementResult<>(new TypedBlankLineNode(node.source()), false, context);
+    }
+
+    private static TypeCheckResult<TypedNamespaceStatementNode> typeCheckBlankLineInNamespace(
+        UntypedBlankLineNode node,
+        TypeCheckerContext context
+    ) {
+        return new TypeCheckResult<>(new TypedBlankLineNode(node.source()), context);
+    }
+
     private static TypedExpressionNode typeCheckBoolLiteral(UntypedBoolLiteralNode node) {
         return new TypedBoolLiteralNode(node.value(), node.source());
     }
@@ -257,6 +275,11 @@ public class TypeChecker {
     ) {
         return node.accept(new UntypedFunctionStatementNode.Visitor<>() {
             @Override
+            public TypeCheckStatementResult<TypedFunctionStatementNode> visit(UntypedBlankLineNode node) {
+                return typeCheckBlankLineInFunction(node, context);
+            }
+
+            @Override
             public TypeCheckStatementResult<TypedFunctionStatementNode> visit(UntypedExpressionStatementNode node) {
                 return typeCheckExpressionStatement(node, context);
             }
@@ -417,6 +440,11 @@ public class TypeChecker {
     ) {
         return node.accept(new UntypedNamespaceStatementNode.Visitor<TypeCheckerContext>() {
             @Override
+            public TypeCheckerContext visit(UntypedBlankLineNode node) {
+                return defineVariablesForBlankLine(node, context);
+            }
+
+            @Override
             public TypeCheckerContext visit(UntypedEnumNode node) {
                 return defineVariablesForEnum(node, context);
             }
@@ -448,6 +476,11 @@ public class TypeChecker {
         TypeCheckerContext context
     ) {
         return node.accept(new UntypedNamespaceStatementNode.Visitor<TypeCheckResult<TypedNamespaceStatementNode>>() {
+            @Override
+            public TypeCheckResult<TypedNamespaceStatementNode> visit(UntypedBlankLineNode node) {
+                return typeCheckBlankLineInNamespace(node, context);
+            }
+
             @Override
             public TypeCheckResult<TypedNamespaceStatementNode> visit(UntypedEnumNode node) {
                 return typeCheckEnum(node, context);

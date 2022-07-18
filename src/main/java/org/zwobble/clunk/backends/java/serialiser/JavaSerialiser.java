@@ -29,6 +29,10 @@ public class JavaSerialiser {
         });
     }
 
+    private static void serialiseBlankLine(JavaBlankLineNode node, CodeBuilder builder) {
+        builder.newLine();
+    }
+
     private static void serialiseBlock(List<JavaStatementNode> statements, CodeBuilder builder) {
         builder.append(" {");
         builder.newLine();
@@ -362,6 +366,12 @@ public class JavaSerialiser {
 
     public static void serialiseStatement(JavaStatementNode node, CodeBuilder builder) {
         node.accept(new JavaStatementNode.Visitor<Void>() {
+            @Override
+            public Void visit(JavaBlankLineNode node) {
+                serialiseBlankLine(node, builder);
+                return null;
+            }
+
             @Override
             public Void visit(JavaExpressionStatementNode node) {
                 serialiseExpressionStatement(node, builder);

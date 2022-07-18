@@ -45,6 +45,7 @@ public class Tokeniser {
             RegexTokeniser.rule(TokenType.SYMBOL_SQUARE_CLOSE, "\\]"),
             RegexTokeniser.rule(TokenType.SYMBOL_SUBTYPE, "<:"),
 
+            RegexTokeniser.rule(TokenType.BLANK_LINE, "[\n][\r\t ]*(?=[\n])"),
             RegexTokeniser.rule(TokenType.IDENTIFIER, "[A-Za-z][A-Za-z0-9]*"),
             RegexTokeniser.rule(TokenType.INT, "0|-?[1-9][0-9]*"),
             RegexTokeniser.rule(TokenType.STRING, "\"(?:[^\\\\\"\n\r]|\\\\.)*\""),

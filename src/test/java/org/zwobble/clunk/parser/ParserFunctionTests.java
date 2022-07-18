@@ -64,4 +64,27 @@ public class ParserFunctionTests {
             isUntypedReturnNode().withExpression(isUntypedBoolLiteralNode(false))
         )));
     }
+
+    @Test
+    public void canParseBlankLinesInBody() {
+        var source = """
+            fun f() -> String {
+                
+                one;
+                
+                
+            }
+            """;
+
+        var node = parseString(source, Parser::parseNamespaceStatement);
+
+        assertThat(node, isUntypedFunctionNode()
+            .withBody(contains(
+                isUntypedBlankLineNode(),
+                isUntypedExpressionStatementNode(isUntypedReferenceNode("one")),
+                isUntypedBlankLineNode(),
+                isUntypedBlankLineNode()
+            ))
+        );
+    }
 }

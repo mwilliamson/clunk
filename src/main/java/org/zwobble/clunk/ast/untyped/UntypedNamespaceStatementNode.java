@@ -4,6 +4,7 @@ public interface UntypedNamespaceStatementNode extends UntypedNode {
     boolean isTypeDefinition();
 
     interface Visitor<T> {
+        T visit(UntypedBlankLineNode node);
         T visit(UntypedEnumNode node);
         T visit(UntypedFunctionNode node);
         T visit(UntypedInterfaceNode node);

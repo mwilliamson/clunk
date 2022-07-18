@@ -4,6 +4,7 @@ public interface TypeScriptStatementNode extends TypeScriptNode {
     <T> T accept(Visitor<T> visitor);
 
     interface Visitor<T> {
+        T visit(TypeScriptBlankLineNode node);
         T visit(TypeScriptEnumDeclarationNode node);
         T visit(TypeScriptExpressionStatementNode node);
         T visit(TypeScriptFunctionDeclarationNode node);

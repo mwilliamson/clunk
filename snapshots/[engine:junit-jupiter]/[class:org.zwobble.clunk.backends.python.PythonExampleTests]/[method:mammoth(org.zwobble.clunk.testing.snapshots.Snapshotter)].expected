@@ -150,23 +150,28 @@ import dataclasses
 import typing
 class HtmlNode:
     pass
+
 @((dataclasses).dataclass)(frozen=True)
 class HtmlAttribute:
     name: str
     value: str
+
 @((dataclasses).dataclass)(frozen=True)
 class HtmlElement:
     tag: HtmlTag
     children: (typing).List[HtmlNode]
+
 @((dataclasses).dataclass)(frozen=True)
 class HtmlForceWrite:
     pass
+
 @((dataclasses).dataclass)(frozen=True)
 class HtmlTag:
     tagNames: (typing).List[str]
     attributes: (typing).List[HtmlAttribute]
     isCollapsible: bool
     separator: str
+
 @((dataclasses).dataclass)(frozen=True)
 class HtmlText:
     value: str
@@ -180,72 +185,89 @@ import typing
 import enum
 class DocumentElement:
     pass
+
 @((dataclasses).dataclass)(frozen=True)
 class Bookmark:
     name: str
+
 @((dataclasses).dataclass)(frozen=True)
 class BreakLine:
     pass
+
 @((dataclasses).dataclass)(frozen=True)
 class BreakPage:
     pass
+
 @((dataclasses).dataclass)(frozen=True)
 class BreakColumn:
     pass
+
 @((dataclasses).dataclass)(frozen=True)
 class Comment:
     commentId: str
     body: (typing).List[DocumentElement]
     authorName: (typing).Optional[str]
     authorInitials: (typing).Optional[str]
+
 @((dataclasses).dataclass)(frozen=True)
 class CommentReference:
     commentId: str
+
 @((dataclasses).dataclass)(frozen=True)
 class Document:
     children: (typing).List[DocumentElement]
     notes: (typing).List[Note]
     comments: (typing).List[Comment]
+
 @((dataclasses).dataclass)(frozen=True)
 class Hyperlink:
     href: str
     targetFrame: (typing).Optional[str]
     children: (typing).List[DocumentElement]
+
 @((dataclasses).dataclass)(frozen=True)
 class Image:
     altText: (typing).Optional[str]
     contentType: (typing).Optional[str]
+
 @((dataclasses).dataclass)(frozen=True)
 class Note:
     noteType: NoteType
     id: str
     body: (typing).List[DocumentElement]
+
 class NoteType((enum).Enum):
     FOOTNOTE = ((enum).auto)()
     ENDNOTE = ((enum).auto)()
+
 @((dataclasses).dataclass)(frozen=True)
 class NoteReference:
     noteType: NoteType
     noteId: str
+
 @((dataclasses).dataclass)(frozen=True)
 class NumberingLevel:
     levelIndex: str
     isOrdered: bool
+
 @((dataclasses).dataclass)(frozen=True)
 class NumberingStyle:
     numId: str
+
 @((dataclasses).dataclass)(frozen=True)
 class Paragraph:
     style: (typing).Optional[str]
     numbering: (typing).Optional[NumberingLevel]
     indent: ParagraphIndent
     children: (typing).List[DocumentElement]
+
 @((dataclasses).dataclass)(frozen=True)
 class ParagraphIndent:
     start: (typing).Optional[str]
     end: (typing).Optional[str]
     firstLine: (typing).Optional[str]
     hanging: (typing).Optional[str]
+
 @((dataclasses).dataclass)(frozen=True)
 class Run:
     isBold: bool
@@ -257,29 +279,36 @@ class Run:
     verticalAlignment: VerticalAlignment
     style: (typing).Optional[str]
     children: (typing).List[DocumentElement]
+
 @((dataclasses).dataclass)(frozen=True)
 class Style:
     styleId: str
     name: (typing).Optional[str]
+
 @((dataclasses).dataclass)(frozen=True)
 class Tab:
     pass
+
 @((dataclasses).dataclass)(frozen=True)
 class Table:
     style: (typing).Optional[Style]
     children: (typing).List[DocumentElement]
+
 @((dataclasses).dataclass)(frozen=True)
 class TableCell:
     rowspan: int
     colspan: int
     children: (typing).List[DocumentElement]
+
 @((dataclasses).dataclass)(frozen=True)
 class TableRow:
     children: (typing).List[DocumentElement]
     isHeader: bool
+
 @((dataclasses).dataclass)(frozen=True)
 class Text:
     value: str
+
 class VerticalAlignment((enum).Enum):
     SUPERSCRIPT = ((enum).auto)()
     SUBSCRIPT = ((enum).auto)()

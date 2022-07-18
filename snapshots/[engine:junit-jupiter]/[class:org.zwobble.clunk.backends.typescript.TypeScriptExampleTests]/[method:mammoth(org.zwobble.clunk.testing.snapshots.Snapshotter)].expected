@@ -147,18 +147,22 @@ enum VerticalAlignment {
 
 Output path: html.ts
 type HtmlNode = HtmlElement | HtmlForceWrite | HtmlTag;
+
 interface HtmlAttribute {
     readonly name: string;
     readonly value: string;
 }
+
 interface HtmlElement {
     readonly type: "HtmlElement";
     readonly tag: HtmlTag;
     readonly children: (Array)<HtmlNode>;
 }
+
 interface HtmlForceWrite {
     readonly type: "HtmlForceWrite";
 }
+
 interface HtmlTag {
     readonly type: "HtmlTag";
     readonly tagNames: (Array)<string>;
@@ -166,6 +170,7 @@ interface HtmlTag {
     readonly isCollapsible: boolean;
     readonly separator: string;
 }
+
 interface HtmlText {
     readonly value: string;
 }
@@ -175,66 +180,81 @@ interface HtmlText {
 
 Output path: documents.ts
 type DocumentElement = Bookmark | BreakLine | BreakPage | BreakColumn | CommentReference | Hyperlink | Image | NoteReference | Paragraph | Run | Tab | Table | TableCell | TableRow | Text;
+
 interface Bookmark {
     readonly type: "Bookmark";
     readonly name: string;
 }
+
 interface BreakLine {
     readonly type: "BreakLine";
 }
+
 interface BreakPage {
     readonly type: "BreakPage";
 }
+
 interface BreakColumn {
     readonly type: "BreakColumn";
 }
+
 interface Comment {
     readonly commentId: string;
     readonly body: (Array)<DocumentElement>;
     readonly authorName: string | null;
     readonly authorInitials: string | null;
 }
+
 interface CommentReference {
     readonly type: "CommentReference";
     readonly commentId: string;
 }
+
 interface Document {
     readonly children: (Array)<DocumentElement>;
     readonly notes: (Array)<Note>;
     readonly comments: (Array)<Comment>;
 }
+
 interface Hyperlink {
     readonly type: "Hyperlink";
     readonly href: string;
     readonly targetFrame: string | null;
     readonly children: (Array)<DocumentElement>;
 }
+
 interface Image {
     readonly type: "Image";
     readonly altText: string | null;
     readonly contentType: string | null;
 }
+
 interface Note {
     readonly noteType: NoteType;
     readonly id: string;
     readonly body: (Array)<DocumentElement>;
 }
+
 enum NoteType {
     FOOTNOTE,
     ENDNOTE,
 }
+
 interface NoteReference {
     readonly type: "NoteReference";
     readonly noteType: NoteType;
     readonly noteId: string;
 }
+
 interface NumberingLevel {
     readonly levelIndex: string;
     readonly isOrdered: boolean;
 }
+
 interface NumberingStyle {
     readonly numId: string;
 }
+
 interface Paragraph {
     readonly type: "Paragraph";
     readonly style: string | null;
@@ -242,12 +262,14 @@ interface Paragraph {
     readonly indent: ParagraphIndent;
     readonly children: (Array)<DocumentElement>;
 }
+
 interface ParagraphIndent {
     readonly start: string | null;
     readonly end: string | null;
     readonly firstLine: string | null;
     readonly hanging: string | null;
 }
+
 interface Run {
     readonly type: "Run";
     readonly isBold: boolean;
@@ -260,33 +282,40 @@ interface Run {
     readonly style: string | null;
     readonly children: (Array)<DocumentElement>;
 }
+
 interface Style {
     readonly styleId: string;
     readonly name: string | null;
 }
+
 interface Tab {
     readonly type: "Tab";
 }
+
 interface Table {
     readonly type: "Table";
     readonly style: Style | null;
     readonly children: (Array)<DocumentElement>;
 }
+
 interface TableCell {
     readonly type: "TableCell";
     readonly rowspan: number;
     readonly colspan: number;
     readonly children: (Array)<DocumentElement>;
 }
+
 interface TableRow {
     readonly type: "TableRow";
     readonly children: (Array)<DocumentElement>;
     readonly isHeader: boolean;
 }
+
 interface Text {
     readonly type: "Text";
     readonly value: string;
 }
+
 enum VerticalAlignment {
     SUPERSCRIPT,
     SUBSCRIPT,

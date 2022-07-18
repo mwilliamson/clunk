@@ -37,6 +37,10 @@ public class PythonSerialiser {
         builder.append(node.attrName());
     }
 
+    private static void serialiseBlankLine(PythonBlankLineNode node, CodeBuilder builder) {
+        builder.newLine();
+    }
+
     private static void serialiseBlock(List<? extends PythonStatementNode> statements, CodeBuilder builder) {
         builder.indent();
         if (statements.isEmpty()) {
@@ -244,6 +248,12 @@ public class PythonSerialiser {
             @Override
             public Void visit(PythonAssignmentNode node) {
                 serialiseAssignment(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(PythonBlankLineNode node) {
+                serialiseBlankLine(node, builder);
                 return null;
             }
 

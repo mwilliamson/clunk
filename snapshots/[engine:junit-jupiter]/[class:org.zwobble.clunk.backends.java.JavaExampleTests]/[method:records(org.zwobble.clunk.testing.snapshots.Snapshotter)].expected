@@ -47,6 +47,7 @@ public class RecordsTest {
     @org.junit.jupiter.api.DisplayName("assert field")
     public void assertField() {
         var add = new Add(2, 3);
+
         assertThat((add).left(), equalTo(2));
         assertThat((add).right(), equalTo(3));
     }

@@ -35,6 +35,7 @@ public enum TokenType {
     INT,
     STRING,
 
+    BLANK_LINE,
     COMMENT_SINGLE_LINE,
     WHITESPACE,
     UNKNOWN,

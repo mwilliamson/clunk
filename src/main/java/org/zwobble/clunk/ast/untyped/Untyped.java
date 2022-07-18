@@ -7,6 +7,10 @@ import java.util.List;
 import java.util.Optional;
 
 public class Untyped {
+    public static UntypedAddNode add(UntypedExpressionNode left, UntypedExpressionNode right) {
+        return new UntypedAddNode(left, right, NullSource.INSTANCE);
+    }
+
     public static UntypedBoolLiteralNode boolFalse() {
         return new UntypedBoolLiteralNode(false, NullSource.INSTANCE);
     }

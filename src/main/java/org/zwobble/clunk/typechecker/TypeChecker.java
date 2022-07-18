@@ -159,6 +159,11 @@ public class TypeChecker {
     ) {
         return node.accept(new UntypedExpressionNode.Visitor<TypedExpressionNode>() {
             @Override
+            public TypedExpressionNode visit(UntypedAddNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public TypedExpressionNode visit(UntypedBoolLiteralNode node) {
                 return typeCheckBoolLiteral(node);
             }

@@ -545,7 +545,7 @@ public class TypeChecker {
                         typedSupertypeNodesBox.set(typedSupertypeNodes);
 
                         var typedBody = node.body().stream()
-                            .map(declaration -> typeCheckProperty((UntypedPropertyNode) declaration, context))
+                            .map(declaration -> typeCheckRecordBodyDeclaration(declaration, context))
                             .toList();
                         typedBodyBox.set(typedBody);
 
@@ -577,6 +577,15 @@ public class TypeChecker {
                 node.source()
             )
         );
+    }
+
+    private static TypedPropertyNode typeCheckRecordBodyDeclaration(UntypedRecordBodyDeclarationNode node, TypeCheckerContext context) {
+        return node.accept(new UntypedRecordBodyDeclarationNode.Visitor<TypedPropertyNode>() {
+            @Override
+            public TypedPropertyNode visit(UntypedPropertyNode node) {
+                return typeCheckProperty(node, context);
+            }
+        });
     }
 
     private static TypedRecordFieldNode typeCheckRecordField(

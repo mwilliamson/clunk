@@ -10,4 +10,8 @@ public record UntypedPropertyNode(
     List<UntypedFunctionStatementNode> body,
     Source source
 ) implements UntypedRecordBodyDeclarationNode {
+    @Override
+    public <T> T accept(Visitor<T> visitor) {
+        return visitor.visit(this);
+    }
 }

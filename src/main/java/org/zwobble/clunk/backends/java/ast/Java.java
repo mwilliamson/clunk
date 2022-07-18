@@ -3,6 +3,10 @@ package org.zwobble.clunk.backends.java.ast;
 import java.util.List;
 
 public class Java {
+    public static JavaAddNode add(JavaReferenceNode left, JavaReferenceNode right) {
+        return new JavaAddNode(left, right);
+    }
+
     public static JavaAnnotationNode annotation(JavaTypeExpressionNode type) {
         return new JavaMarkerAnnotationNode(type);
     }

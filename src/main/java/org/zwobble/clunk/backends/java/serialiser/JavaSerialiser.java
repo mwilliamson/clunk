@@ -8,6 +8,12 @@ import java.util.List;
 import static org.zwobble.clunk.util.Iterables.forEachInterspersed;
 
 public class JavaSerialiser {
+    private static void serialiseAdd(JavaAddNode node, CodeBuilder builder) {
+        serialiseExpression(node.left(), builder);
+        builder.append(" + ");
+        serialiseExpression(node.right(), builder);
+    }
+
     public static void serialiseAnnotation(JavaAnnotationNode node, CodeBuilder builder) {
         node.accept(new JavaAnnotationNode.Visitor<Void>() {
             @Override
@@ -114,6 +120,12 @@ public class JavaSerialiser {
 
     public static void serialiseExpression(JavaExpressionNode node, CodeBuilder builder) {
         node.accept(new JavaExpressionNode.Visitor<Void>() {
+            @Override
+            public Void visit(JavaAddNode node) {
+                serialiseAdd(node, builder);
+                return null;
+            }
+
             @Override
             public Void visit(JavaBoolLiteralNode node) {
                 serialiseBoolLiteral(node, builder);

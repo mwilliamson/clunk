@@ -4,6 +4,7 @@ public interface JavaExpressionNode extends JavaNode {
     <T> T accept(Visitor<T> visitor);
 
     interface Visitor<T> {
+        T visit(JavaAddNode node);
         T visit(JavaBoolLiteralNode node);
         T visit(JavaCallNode node);
         T visit(JavaCallNewNode node);

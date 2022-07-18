@@ -252,6 +252,7 @@ public class TypeScriptSerialiser {
         builder.append("): ");
         serialiseExpression(node.returnType(), builder);
         serialiseBlock(node.body(), builder);
+        builder.newLine();
     }
 
     private static void serialiseFunctionExpression(TypeScriptFunctionExpressionNode node, CodeBuilder builder) {
@@ -268,6 +269,7 @@ public class TypeScriptSerialiser {
         builder.append("(): ");
         serialiseExpression(node.type(), builder);
         serialiseBlock(node.body(), builder);
+        builder.newLine();
     }
 
     private static void serialiseMethod(TypeScriptFunctionDeclarationNode node, CodeBuilder builder) {

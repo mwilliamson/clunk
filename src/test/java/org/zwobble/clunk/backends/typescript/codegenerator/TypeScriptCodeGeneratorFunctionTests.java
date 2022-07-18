@@ -27,7 +27,8 @@ public class TypeScriptCodeGeneratorFunctionTests {
             """
                 function f(x: string, y: number): boolean {
                     return false;
-                }"""
+                }
+                """
         ));
     }
 }

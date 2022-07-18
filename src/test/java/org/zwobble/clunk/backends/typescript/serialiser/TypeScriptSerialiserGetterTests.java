@@ -22,7 +22,8 @@ public class TypeScriptSerialiserGetterTests {
         assertThat(result, equalTo("""
             get f(): string {
                 return "hello";
-            }"""
+            }
+            """
         ));
     }
 }

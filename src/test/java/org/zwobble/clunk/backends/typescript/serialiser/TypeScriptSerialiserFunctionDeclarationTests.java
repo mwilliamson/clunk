@@ -20,7 +20,8 @@ public class TypeScriptSerialiserFunctionDeclarationTests {
 
         assertThat(result, equalTo("""
             function f(): string {
-            }"""
+            }
+            """
         ));
     }
 
@@ -36,7 +37,8 @@ public class TypeScriptSerialiserFunctionDeclarationTests {
 
         assertThat(result, equalTo("""
             function f(x: number): string {
-            }"""
+            }
+            """
         ));
     }
 
@@ -53,7 +55,8 @@ public class TypeScriptSerialiserFunctionDeclarationTests {
 
         assertThat(result, equalTo("""
             function f(x: number, y: string): string {
-            }"""
+            }
+            """
         ));
     }
 
@@ -70,7 +73,8 @@ public class TypeScriptSerialiserFunctionDeclarationTests {
         assertThat(result, equalTo("""
             function f(): string {
                 return false;
-            }"""
+            }
+            """
         ));
     }
 }

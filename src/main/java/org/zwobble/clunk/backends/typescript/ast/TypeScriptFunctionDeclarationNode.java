@@ -8,9 +8,14 @@ public record TypeScriptFunctionDeclarationNode(
     List<TypeScriptParamNode> params,
     TypeScriptExpressionNode returnType,
     List<TypeScriptStatementNode> body
-) implements TypeScriptStatementNode {
+) implements TypeScriptClassBodyDeclarationNode, TypeScriptStatementNode {
     @Override
-    public <T> T accept(Visitor<T> visitor) {
+    public <T> T accept(TypeScriptClassBodyDeclarationNode.Visitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public <T> T accept(TypeScriptStatementNode.Visitor<T> visitor) {
         return visitor.visit(this);
     }
 

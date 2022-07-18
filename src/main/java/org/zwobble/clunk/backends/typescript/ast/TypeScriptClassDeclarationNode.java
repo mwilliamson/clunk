@@ -8,7 +8,7 @@ import java.util.List;
 public record TypeScriptClassDeclarationNode(
     String name,
     List<TypeScriptClassFieldNode> fields,
-    List<TypeScriptFunctionDeclarationNode> body
+    List<TypeScriptClassBodyDeclarationNode> body
 ) implements TypeScriptStatementNode {
     @Override
     public <T> T accept(Visitor<T> visitor) {
@@ -22,7 +22,7 @@ public record TypeScriptClassDeclarationNode(
     public static record Builder(
         String name,
         PVector<TypeScriptClassFieldNode> fields,
-        PVector<TypeScriptFunctionDeclarationNode> body
+        PVector<TypeScriptClassBodyDeclarationNode> body
     ) {
         public TypeScriptClassDeclarationNode build() {
             return new TypeScriptClassDeclarationNode(name, fields, body);

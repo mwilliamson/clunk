@@ -75,13 +75,23 @@ public class TypeScriptSerialiser {
             serialiseConstructor(variableFields, builder);
         }
         
-        for (var method : node.body()) {
-            serialiseMethod(method, builder);
+        for (var declaration : node.body()) {
+            serialiseClassBodyDeclaration(declaration, builder);
         }
 
         builder.dedent();
         builder.append("}");
         builder.newLine();
+    }
+
+    private static void serialiseClassBodyDeclaration(TypeScriptClassBodyDeclarationNode node, CodeBuilder builder) {
+        node.accept(new TypeScriptClassBodyDeclarationNode.Visitor<Void>() {
+            @Override
+            public Void visit(TypeScriptFunctionDeclarationNode node) {
+                serialiseMethod(node, builder);
+                return null;
+            }
+        });
     }
 
     private static void serialiseClassField(TypeScriptClassFieldNode field, CodeBuilder builder) {

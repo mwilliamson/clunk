@@ -14,7 +14,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class JavaCodeGeneratorTypeLevelExpressionTests {
     @Test
     public void boolTypeIsCompiledToJavaBooleanType() {
-        var node = Typed.typeLevelReference(BoolType.INSTANCE);
+        var node = Typed.typeLevelReference("Bool", BoolType.INSTANCE);
         var context = JavaCodeGeneratorContext.stub();
 
         var result = JavaCodeGenerator.compileTypeLevelExpression(node, context);
@@ -25,7 +25,7 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void enumTypeIsCompiledToFullyQualifiedReference() {
-        var node = Typed.typeLevelReference(Types.enumType(NamespaceName.fromParts("a", "b"), "C", List.of()));
+        var node = Typed.typeLevelReference("C", Types.enumType(NamespaceName.fromParts("a", "b"), "C", List.of()));
         var context = JavaCodeGeneratorContext.stub();
 
         var result = JavaCodeGenerator.compileTypeLevelExpression(node, context);
@@ -36,7 +36,7 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void intTypeIsCompiledToJavaIntType() {
-        var node = Typed.typeLevelReference(IntType.INSTANCE);
+        var node = Typed.typeLevelReference("Int", IntType.INSTANCE);
         var context = JavaCodeGeneratorContext.stub();
 
         var result = JavaCodeGenerator.compileTypeLevelExpression(node, context);
@@ -47,7 +47,7 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void interfaceTypeIsCompiledToFullyQualifiedReference() {
-        var node = Typed.typeLevelReference(Types.interfaceType(NamespaceName.fromParts("a", "b"), "C"));
+        var node = Typed.typeLevelReference("C", Types.interfaceType(NamespaceName.fromParts("a", "b"), "C"));
         var context = JavaCodeGeneratorContext.stub();
 
         var result = JavaCodeGenerator.compileTypeLevelExpression(node, context);
@@ -58,7 +58,7 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void listTypeIsCompiledToListType() {
-        var node = Typed.typeLevelReference(Types.list(Types.STRING));
+        var node = Typed.typeLevelReference("String", Types.list(Types.STRING));
         var context = JavaCodeGeneratorContext.stub();
 
         var result = JavaCodeGenerator.compileTypeLevelExpression(node, context);
@@ -69,7 +69,7 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void optionTypeIsCompiledToOptionalType() {
-        var node = Typed.typeLevelReference(Types.option(Types.STRING));
+        var node = Typed.typeLevelReference("String", Types.option(Types.STRING));
         var context = JavaCodeGeneratorContext.stub();
 
         var result = JavaCodeGenerator.compileTypeLevelExpression(node, context);
@@ -80,7 +80,7 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void recordTypeIsCompiledToFullyQualifiedReference() {
-        var node = Typed.typeLevelReference(Types.recordType(NamespaceName.fromParts("a", "b"), "C"));
+        var node = Typed.typeLevelReference("C", Types.recordType(NamespaceName.fromParts("a", "b"), "C"));
         var context = JavaCodeGeneratorContext.stub();
 
         var result = JavaCodeGenerator.compileTypeLevelExpression(node, context);
@@ -91,7 +91,7 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void stringTypeIsCompiledToJavaStringType() {
-        var node = Typed.typeLevelReference(StringType.INSTANCE);
+        var node = Typed.typeLevelReference("String", StringType.INSTANCE);
         var context = JavaCodeGeneratorContext.stub();
 
         var result = JavaCodeGenerator.compileTypeLevelExpression(node, context);

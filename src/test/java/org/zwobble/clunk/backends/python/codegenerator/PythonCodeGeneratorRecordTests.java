@@ -5,8 +5,6 @@ import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.backends.python.serialiser.PythonSerialiser;
 import org.zwobble.clunk.typechecker.FieldsLookup;
-import org.zwobble.clunk.types.IntType;
-import org.zwobble.clunk.types.StringType;
 
 import java.util.List;
 import java.util.Map;
@@ -21,8 +19,8 @@ public class PythonCodeGeneratorRecordTests {
         var node = TypedRecordNode.builder("Example").build();
         var fieldsLookup = new FieldsLookup(Map.ofEntries(
             Map.entry(node.type(), List.of(
-                Typed.recordField("first", StringType.INSTANCE),
-                Typed.recordField("second", IntType.INSTANCE)
+                Typed.recordField("first", Typed.typeLevelString()),
+                Typed.recordField("second", Typed.typeLevelInt())
             ))
         ));
         var context = PythonCodeGeneratorContext.stub(fieldsLookup);

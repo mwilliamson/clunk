@@ -19,7 +19,7 @@ public class TypeCheckTypeLevelReferenceTests {
             TypeCheckerContext.stub()
         );
 
-        assertThat(typedNode, isTypedTypeLevelReferenceNode(BoolType.INSTANCE));
+        assertThat(typedNode, isTypedTypeLevelReferenceNode("Bool", BoolType.INSTANCE));
     }
 
     @Test
@@ -31,7 +31,7 @@ public class TypeCheckTypeLevelReferenceTests {
             TypeCheckerContext.stub()
         );
 
-        assertThat(typedNode, isTypedTypeLevelReferenceNode(IntType.INSTANCE));
+        assertThat(typedNode, isTypedTypeLevelReferenceNode("Int", IntType.INSTANCE));
     }
 
     @Test
@@ -43,6 +43,6 @@ public class TypeCheckTypeLevelReferenceTests {
             TypeCheckerContext.stub()
         );
 
-        assertThat(typedNode, isTypedTypeLevelReferenceNode(StringType.INSTANCE));
+        assertThat(typedNode, isTypedTypeLevelReferenceNode("String", StringType.INSTANCE));
     }
 }

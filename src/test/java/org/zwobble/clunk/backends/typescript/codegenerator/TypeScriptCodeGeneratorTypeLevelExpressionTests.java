@@ -14,7 +14,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
     @Test
     public void boolTypeIsCompiledToBooleanType() {
-        var node = Typed.typeLevelReference(BoolType.INSTANCE);
+        var node = Typed.typeLevelReference("Bool", BoolType.INSTANCE);
 
         var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
 
@@ -24,7 +24,7 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void enumTypeIsCompiledToReference() {
-        var node = Typed.typeLevelReference(Types.enumType(NamespaceName.fromParts("a", "b"), "C", List.of()));
+        var node = Typed.typeLevelReference("C", Types.enumType(NamespaceName.fromParts("a", "b"), "C", List.of()));
 
         var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
 
@@ -34,7 +34,7 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void intTypeIsCompiledToNumberType() {
-        var node = Typed.typeLevelReference(IntType.INSTANCE);
+        var node = Typed.typeLevelReference("Int", IntType.INSTANCE);
 
         var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
 
@@ -44,7 +44,7 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void interfaceTypeIsCompiledToReference() {
-        var node = Typed.typeLevelReference(Types.interfaceType(NamespaceName.fromParts("a", "b"), "C"));
+        var node = Typed.typeLevelReference("C", Types.interfaceType(NamespaceName.fromParts("a", "b"), "C"));
 
         var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
 
@@ -54,7 +54,7 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void listTypeIsCompiledToArrayType() {
-        var node = Typed.typeLevelReference(Types.list(Types.INT));
+        var node = Typed.typeLevelReference("Int", Types.list(Types.INT));
 
         var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
 
@@ -64,7 +64,7 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void optionTypeIsCompiledToUnionWithNull() {
-        var node = Typed.typeLevelReference(Types.option(Types.INT));
+        var node = Typed.typeLevelReference("Int", Types.option(Types.INT));
 
         var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
 
@@ -74,7 +74,7 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void recordTypeIsCompiledToReference() {
-        var node = Typed.typeLevelReference(Types.recordType(NamespaceName.fromParts("a", "b"), "C"));
+        var node = Typed.typeLevelReference("C", Types.recordType(NamespaceName.fromParts("a", "b"), "C"));
 
         var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
 
@@ -84,7 +84,7 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void stringTypeIsCompiledToStringType() {
-        var node = Typed.typeLevelReference(StringType.INSTANCE);
+        var node = Typed.typeLevelReference("String", StringType.INSTANCE);
 
         var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
 

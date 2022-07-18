@@ -642,7 +642,7 @@ public class TypeChecker {
         TypeCheckerContext context
     ) {
         var type = resolveTypeLevelValue(node.value(), node.source(), context);
-        return new TypedTypeLevelReferenceNode(type, node.source());
+        return new TypedTypeLevelReferenceNode(node.value(), type, node.source());
     }
 
     private static TypeCheckStatementResult<TypedFunctionStatementNode> typeCheckVar(

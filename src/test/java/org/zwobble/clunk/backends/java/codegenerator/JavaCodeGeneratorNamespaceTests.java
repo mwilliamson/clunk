@@ -9,7 +9,6 @@ import org.zwobble.clunk.typechecker.FieldsLookup;
 import org.zwobble.clunk.typechecker.SubtypeLookup;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.StaticFunctionType;
-import org.zwobble.clunk.types.StringType;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
@@ -60,8 +59,8 @@ public class JavaCodeGeneratorNamespaceTests {
     public void functionsAreGroupedIntoSingleClassNamedAfterNamespace() {
         var node = TypedNamespaceNode
             .builder(NamespaceName.fromParts("example", "project"))
-            .addStatement(TypedFunctionNode.builder().name("f").returnType(StringType.INSTANCE).build())
-            .addStatement(TypedFunctionNode.builder().name("g").returnType(StringType.INSTANCE).build())
+            .addStatement(TypedFunctionNode.builder().name("f").returnType(Typed.typeLevelString()).build())
+            .addStatement(TypedFunctionNode.builder().name("g").returnType(Typed.typeLevelString()).build())
             .build();
 
         var result = JavaCodeGenerator.compileNamespace(node, JavaTargetConfig.stub(), FieldsLookup.EMPTY, SubtypeLookup.EMPTY);

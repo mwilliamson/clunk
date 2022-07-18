@@ -23,8 +23,8 @@ public class JavaCodeGeneratorRecordTests {
         var node = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "Example").build();
         var context = JavaCodeGeneratorContext.stub(new FieldsLookup(Map.ofEntries(
             Map.entry(node.type(), List.of(
-                Typed.recordField("first", StringType.INSTANCE),
-                Typed.recordField("second", IntType.INSTANCE)
+                Typed.recordField("first", Typed.typeLevelString()),
+                Typed.recordField("second", Typed.typeLevelInt())
             ))
         )));
 

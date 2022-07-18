@@ -3,7 +3,6 @@ package org.zwobble.clunk.ast.typed;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.types.IntType;
-import org.zwobble.clunk.types.Type;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +21,7 @@ public record TypedFunctionNode(
 
 
     public static Builder builder() {
-        return new Builder("f", List.of(), Typed.typeLevelReference(IntType.INSTANCE), List.of());
+        return new Builder("f", List.of(), Typed.typeLevelReference("Int", IntType.INSTANCE), List.of());
     }
 
     public static record Builder(
@@ -45,8 +44,8 @@ public record TypedFunctionNode(
             return new Builder(name, params, returnType, body);
         }
 
-        public Builder returnType(Type returnType) {
-            return new Builder(name, params, Typed.typeLevelReference(returnType), body);
+        public Builder returnType(TypedTypeLevelExpressionNode returnType) {
+            return new Builder(name, params, returnType, body);
         }
 
         public Builder addBodyStatement(TypedFunctionStatementNode statement) {

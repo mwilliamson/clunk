@@ -4,9 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedFunctionNode;
 import org.zwobble.clunk.backends.python.serialiser.PythonSerialiser;
-import org.zwobble.clunk.types.BoolType;
-import org.zwobble.clunk.types.IntType;
-import org.zwobble.clunk.types.StringType;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -17,9 +14,9 @@ public class PythonCodeGeneratorFunctionTests {
     public void functionIsCompiledToFunction() {
         var node = TypedFunctionNode.builder()
             .name("f")
-            .addParam(Typed.param("x", StringType.INSTANCE))
-            .addParam(Typed.param("y", IntType.INSTANCE))
-            .returnType(BoolType.INSTANCE)
+            .addParam(Typed.param("x", Typed.typeLevelString()))
+            .addParam(Typed.param("y", Typed.typeLevelInt()))
+            .returnType(Typed.typeLevelBool())
             .addBodyStatement(Typed.returnStatement(Typed.boolFalse()))
             .build();
 
@@ -55,8 +52,8 @@ public class PythonCodeGeneratorFunctionTests {
     public void paramNamesAreConvertedToSnakeCase() {
         var node = TypedFunctionNode.builder()
             .name("f")
-            .addParam(Typed.param("maxWidth", IntType.INSTANCE))
-            .addParam(Typed.param("maxHeight", IntType.INSTANCE))
+            .addParam(Typed.param("maxWidth", Typed.typeLevelInt()))
+            .addParam(Typed.param("maxHeight", Typed.typeLevelInt()))
             .build();
 
         var result = PythonCodeGenerator.DEFAULT.compileNamespaceStatement(node, PythonCodeGeneratorContext.stub());

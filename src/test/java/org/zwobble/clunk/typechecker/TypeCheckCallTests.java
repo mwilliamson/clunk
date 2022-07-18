@@ -48,7 +48,7 @@ public class TypeCheckCallTests {
         var recordType = Types.recordType(NamespaceName.fromParts("example"), "Id");
         var context = TypeCheckerContext.stub()
             .updateType("Id", Types.metaType(recordType), NullSource.INSTANCE)
-            .addFields(recordType, List.of(Typed.recordField("value", Types.INT)));
+            .addFields(recordType, List.of(Typed.recordField("value", Typed.typeLevelInt())));
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 

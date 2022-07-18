@@ -4,6 +4,7 @@ import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.InterfaceType;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.Type;
+import org.zwobble.clunk.types.Types;
 
 import java.util.List;
 import java.util.Optional;
@@ -55,12 +56,12 @@ public class Typed {
         return new TypedIntLiteralNode(value, NullSource.INSTANCE);
     }
 
-    public static TypedParamNode param(String name, Type type) {
-        return new TypedParamNode(name, typeLevelReference(type), NullSource.INSTANCE);
+    public static TypedParamNode param(String name, TypedTypeLevelExpressionNode type) {
+        return new TypedParamNode(name, type, NullSource.INSTANCE);
     }
 
-    public static TypedRecordFieldNode recordField(String name, Type type) {
-        return new TypedRecordFieldNode(name, typeLevelReference(type), NullSource.INSTANCE);
+    public static TypedRecordFieldNode recordField(String name, TypedTypeLevelExpressionNode type) {
+        return new TypedRecordFieldNode(name, type, NullSource.INSTANCE);
     }
 
     public static TypedReferenceNode reference(String name, Type type) {
@@ -75,8 +76,20 @@ public class Typed {
         return new TypedStringLiteralNode(value, NullSource.INSTANCE);
     }
 
-    public static TypedTypeLevelExpressionNode typeLevelReference(Type type) {
-        return new TypedTypeLevelReferenceNode(type, NullSource.INSTANCE);
+    public static TypedTypeLevelExpressionNode typeLevelReference(String name, Type type) {
+        return new TypedTypeLevelReferenceNode(name, type, NullSource.INSTANCE);
+    }
+
+    public static TypedTypeLevelExpressionNode typeLevelBool() {
+        return typeLevelReference("Bool", Types.BOOL);
+    }
+
+    public static TypedTypeLevelExpressionNode typeLevelInt() {
+        return typeLevelReference("Int", Types.INT);
+    }
+
+    public static TypedTypeLevelExpressionNode typeLevelString() {
+        return typeLevelReference("String", Types.STRING);
     }
 
     public static TypedVarNode var(String name, TypedExpressionNode expression) {

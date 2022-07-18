@@ -23,7 +23,7 @@ public class TypeCheckFieldAccessTests {
         var recordType = new RecordType(NamespaceName.fromParts("example"), "Id");
         var context = TypeCheckerContext.stub()
             .updateType("id", recordType, NullSource.INSTANCE)
-            .addFields(recordType, List.of(Typed.recordField("value", Types.INT)));
+            .addFields(recordType, List.of(Typed.recordField("value", Typed.typeLevelInt())));
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 
@@ -40,7 +40,7 @@ public class TypeCheckFieldAccessTests {
         var recordType = new RecordType(NamespaceName.fromParts("example"), "Id");
         var context = TypeCheckerContext.stub()
             .updateType("id", recordType, NullSource.INSTANCE)
-            .addFields(recordType, List.of(Typed.recordField("value", Types.INT)));
+            .addFields(recordType, List.of(Typed.recordField("value", Typed.typeLevelInt())));
 
         var result = assertThrows(UnknownFieldError.class, () -> TypeChecker.typeCheckExpression(untypedNode, context));
 

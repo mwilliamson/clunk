@@ -7,10 +7,8 @@ import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser;
 import org.zwobble.clunk.typechecker.FieldsLookup;
 import org.zwobble.clunk.typechecker.SubtypeLookup;
 import org.zwobble.clunk.typechecker.SubtypeRelation;
-import org.zwobble.clunk.types.IntType;
 import org.zwobble.clunk.types.InterfaceType;
 import org.zwobble.clunk.types.NamespaceName;
-import org.zwobble.clunk.types.StringType;
 
 import java.util.List;
 import java.util.Map;
@@ -25,8 +23,8 @@ public class TypeScriptCodeGeneratorRecordTests {
         var node = TypedRecordNode.builder("Example").build();
         var context = TypeScriptCodeGeneratorContext.stub(new FieldsLookup(Map.ofEntries(
             Map.entry(node.type(), List.of(
-                Typed.recordField("first", StringType.INSTANCE),
-                Typed.recordField("second", IntType.INSTANCE)
+                Typed.recordField("first", Typed.typeLevelString()),
+                Typed.recordField("second", Typed.typeLevelInt())
             ))
         )));
 
@@ -48,8 +46,8 @@ public class TypeScriptCodeGeneratorRecordTests {
         var node = TypedRecordNode.builder("Example").build();
         var fieldsLookup = new FieldsLookup(Map.ofEntries(
             Map.entry(node.type(), List.of(
-                Typed.recordField("first", StringType.INSTANCE),
-                Typed.recordField("second", IntType.INSTANCE)
+                Typed.recordField("first", Typed.typeLevelString()),
+                Typed.recordField("second", Typed.typeLevelInt())
             ))
         ));
         var subtypeLookup = SubtypeLookup.fromSubtypeRelations(List.of(

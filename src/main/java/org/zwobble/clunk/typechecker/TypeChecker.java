@@ -549,6 +549,7 @@ public class TypeChecker {
                 recordTypeBox.get(),
                 typedRecordFieldNodesBox.get(),
                 typedSupertypeNodesBox.get(),
+                List.of(),
                 node.source()
             )
         );

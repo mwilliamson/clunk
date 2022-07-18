@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.zwobble.clunk.backends.python.codegenerator.CaseConverter.camelCaseToSnakeCase;
 
@@ -327,11 +328,33 @@ public class PythonCodeGenerator {
             )
         );
 
-        var statements = node.fields().stream()
-            .map(field -> Python.variableType(field.name(), compileTypeLevelExpression(field.type(), context)))
-            .toList();
+        var body = new ArrayList<PythonStatementNode>();
 
-        return new PythonClassDeclarationNode(node.name(), decorators, List.of(), statements);
+        node.fields().stream()
+            .map(field -> Python.variableType(field.name(), compileTypeLevelExpression(field.type(), context)))
+            .collect(Collectors.toCollection(() -> body));
+        
+        for (var bodyDeclaration : node.body()) {
+            body.add(compileRecordBodyDeclaration(bodyDeclaration, context));
+        }
+
+        return new PythonClassDeclarationNode(node.name(), decorators, List.of(), body);
+    }
+
+    private PythonStatementNode compileRecordBodyDeclaration(
+        TypedRecordBodyDeclarationNode node,
+        PythonCodeGeneratorContext context
+    ) {
+        var property = (TypedPropertyNode) node;
+
+        return new PythonFunctionNode(
+            property.name(),
+            List.of(Python.reference("property")),
+            List.of("self"),
+            property.body().stream()
+                .map(statement -> compileFunctionStatement(statement, context))
+                .toList()
+        );
     }
 
     private PythonExpressionNode compileReference(TypedReferenceNode node) {

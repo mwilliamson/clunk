@@ -36,6 +36,9 @@ from precisely import equal_to
 class Add:
     left: int
     right: int
+    @property
+    def sum(self):
+        return 5
 
 def test_assert_field():
     add = (Add)(2, 3)

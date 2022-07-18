@@ -279,6 +279,19 @@ public class TypeScriptCodeGenerator {
         return new TypeScriptParamNode(node.name(), compileTypeLevelExpression(node.type()));
     }
 
+    private static TypeScriptClassBodyDeclarationNode compileProperty(
+        TypedPropertyNode node,
+        TypeScriptCodeGeneratorContext context
+    ) {
+        return new TypeScriptGetterNode(
+            node.name(),
+            compileTypeLevelExpression(node.type()),
+            node.body().stream()
+                .map(statement -> compileFunctionStatement(statement, context))
+                .toList()
+        );
+    }
+
     private static TypeScriptStatementNode compileRecord(
         TypedRecordNode node,
         TypeScriptCodeGeneratorContext context
@@ -297,8 +310,24 @@ public class TypeScriptCodeGenerator {
         node.fields().stream()
             .map(field -> new TypeScriptClassFieldNode(field.name(), compileTypeLevelExpression(field.type()), Optional.empty()))
             .collect(Collectors.toCollection(() -> fields));
+        
+        var body = node.body().stream()
+            .map(declaration -> compileRecordBodyDeclaration(declaration, context))
+            .toList();
 
-        return new TypeScriptClassDeclarationNode(node.name(), fields, List.of());
+        return new TypeScriptClassDeclarationNode(node.name(), fields, body);
+    }
+
+    private static TypeScriptClassBodyDeclarationNode compileRecordBodyDeclaration(
+        TypedRecordBodyDeclarationNode node,
+        TypeScriptCodeGeneratorContext context
+    ) {
+        return node.accept(new TypedRecordBodyDeclarationNode.Visitor<TypeScriptClassBodyDeclarationNode>() {
+            @Override
+            public TypeScriptClassBodyDeclarationNode visit(TypedPropertyNode node) {
+                return compileProperty(node, context);
+            }
+        });
     }
 
     private static TypeScriptExpressionNode compileReference(TypedReferenceNode node) {

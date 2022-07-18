@@ -39,6 +39,9 @@ class Add {
         this.left = left;
         this.right = right;
     }
+    get sum(): number {
+        return 5;
+    }
 }
 
 (test)("assert field", function () {

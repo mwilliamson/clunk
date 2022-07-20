@@ -152,7 +152,7 @@ public class PythonCodeGenerator {
 
             @Override
             public PythonExpressionNode visit(TypedMemberReferenceNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileMemberReference(node, context);
             }
 
             @Override
@@ -269,6 +269,16 @@ public class PythonCodeGenerator {
         return new PythonAttrAccessNode(
             compileExpression(node.receiver(), context),
             node.memberName()
+        );
+    }
+
+    private PythonExpressionNode compileMemberReference(
+        TypedMemberReferenceNode node,
+        PythonCodeGeneratorContext context
+    ) {
+        return new PythonAttrAccessNode(
+            new PythonReferenceNode("self"),
+            node.name()
         );
     }
 

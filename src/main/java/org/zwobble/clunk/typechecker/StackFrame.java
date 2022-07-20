@@ -13,6 +13,14 @@ public record StackFrame(
     Optional<Type> returnType,
     Map<String, Type> environment
 ) {
+    public static StackFrame body(Map<String, Type> environment) {
+        return new StackFrame(
+            Optional.empty(),
+            Optional.empty(),
+            environment
+        );
+    }
+
     public static StackFrame builtins(Map<String, Type> environment) {
         return new StackFrame(
             Optional.empty(),

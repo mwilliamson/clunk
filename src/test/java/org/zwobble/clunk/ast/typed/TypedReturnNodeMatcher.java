@@ -17,7 +17,7 @@ public class TypedReturnNodeMatcher extends CastMatcher<Object, TypedReturnNode>
         this.matchers = matchers;
     }
 
-    public TypedReturnNodeMatcher withExpression(Matcher<TypedExpressionNode> matcher) {
+    public TypedReturnNodeMatcher withExpression(Matcher<? super TypedExpressionNode> matcher) {
         return addMatcher(has("expression", matcher));
     }
 

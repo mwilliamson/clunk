@@ -47,6 +47,10 @@ public record TypeCheckerContext(
         return enter(StackFrame.function(returnType));
     }
 
+    public TypeCheckerContext enterRecordBody(Map<String, Type> fieldTypes) {
+        return enter(StackFrame.body(fieldTypes));
+    }
+
     public TypeCheckerContext enterTest() {
         return enter(StackFrame.test());
     }

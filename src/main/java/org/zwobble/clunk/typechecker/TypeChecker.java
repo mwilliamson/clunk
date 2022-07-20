@@ -558,8 +558,14 @@ public class TypeChecker {
                             .toList();
                         typedSupertypeNodesBox.set(typedSupertypeNodes);
 
+                        var fieldTypes = typedRecordFieldNodes.stream()
+                            .collect(Collectors.toMap(
+                                fieldNode -> fieldNode.name(),
+                                fieldNode -> (Type) fieldNode.type().value()
+                            ));
+                        var bodyContext = context.enterRecordBody(fieldTypes);
                         var typedBody = node.body().stream()
-                            .map(declaration -> typeCheckRecordBodyDeclaration(declaration, context))
+                            .map(declaration -> typeCheckRecordBodyDeclaration(declaration, bodyContext))
                             .toList();
                         typedBodyBox.set(typedBody);
 

@@ -147,6 +147,30 @@ public class TypeCheckRecordTests {
     }
 
     @Test
+    public void canAccessFieldsInsideProperties() {
+        var untypedNode = UntypedRecordNode.builder("Example")
+            .addField(Untyped.recordField("x", Untyped.typeLevelReference("String")))
+            .addBodyDeclaration(Untyped.property(
+                "y",
+                Untyped.typeLevelReference("String"),
+                List.of(Untyped.returnStatement(Untyped.reference("x")))
+            ))
+            .build();
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
+
+        var typedNode = (TypedRecordNode) result.typedNode();
+        assertThat(typedNode.body(), contains(
+            allOf(
+                has("body", contains(
+                    isTypedReturnNode().withExpression(isTypedReferenceNode().withName("x"))
+                ))
+            )
+        ));
+    }
+
+    @Test
     public void subtypeRelationsAreUpdated() {
         var untypedNode = UntypedRecordNode.builder("User")
             .addSupertype(Untyped.typeLevelReference("Person"))

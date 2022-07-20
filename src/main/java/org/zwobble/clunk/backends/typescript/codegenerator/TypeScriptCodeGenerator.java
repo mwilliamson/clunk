@@ -130,7 +130,7 @@ public class TypeScriptCodeGenerator {
 
             @Override
             public TypeScriptExpressionNode visit(TypedMemberReferenceNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileMemberReference(node, context);
             }
 
             @Override
@@ -237,6 +237,16 @@ public class TypeScriptCodeGenerator {
         return new TypeScriptPropertyAccessNode(
             compileExpression(node.receiver(), context),
             node.memberName()
+        );
+    }
+
+    private static TypeScriptExpressionNode compileMemberReference(
+        TypedMemberReferenceNode node,
+        TypeScriptCodeGeneratorContext context
+    ) {
+        return new TypeScriptPropertyAccessNode(
+            new TypeScriptReferenceNode("this"),
+            node.name()
         );
     }
 

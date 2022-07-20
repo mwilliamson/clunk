@@ -449,4 +449,4 @@ class HtmlText {
 
 ==============
 
-[31mError: No test files found: "/home/mick/Programming/current/clunk-lang/testing/typescript/src/**/*Test.ts"[39m
+[31mError: No test files found: "src/**/*Test.ts"[39m

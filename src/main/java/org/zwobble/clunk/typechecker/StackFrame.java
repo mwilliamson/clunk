@@ -11,9 +11,9 @@ import java.util.Optional;
 public record StackFrame(
     Optional<NamespaceName> namespaceName,
     Optional<Type> returnType,
-    Map<String, Type> environment
+    Map<String, Variable> environment
 ) {
-    public static StackFrame body(Map<String, Type> environment) {
+    public static StackFrame body(Map<String, Variable> environment) {
         return new StackFrame(
             Optional.empty(),
             Optional.empty(),
@@ -21,7 +21,7 @@ public record StackFrame(
         );
     }
 
-    public static StackFrame builtins(Map<String, Type> environment) {
+    public static StackFrame builtins(Map<String, Variable> environment) {
         return new StackFrame(
             Optional.empty(),
             Optional.empty(),
@@ -41,7 +41,7 @@ public record StackFrame(
         return namespace(namespaceName, Map.of());
     }
 
-    public static StackFrame namespace(NamespaceName namespaceName, Map<String, Type> environment) {
+    public static StackFrame namespace(NamespaceName namespaceName, Map<String, Variable> environment) {
         return new StackFrame(
             Optional.of(namespaceName),
             Optional.empty(),
@@ -57,13 +57,13 @@ public record StackFrame(
         );
     }
 
-    public StackFrame updateType(String name, Type type, Source source) {
+    public StackFrame addVariable(String name, Variable variable, Source source) {
         if (this.environment.containsKey(name)) {
             throw new VariableAlreadyDefinedError(name, source);
         }
 
         var environment = new HashMap<>(this.environment);
-        environment.put(name, type);
+        environment.put(name, variable);
         return new StackFrame(namespaceName, returnType, environment);
     }
 }

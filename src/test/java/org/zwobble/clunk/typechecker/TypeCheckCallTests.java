@@ -28,7 +28,7 @@ public class TypeCheckCallTests {
             Types.INT
         );
         var context = TypeCheckerContext.stub()
-            .updateType("abs", functionType, NullSource.INSTANCE);
+            .addLocal("abs", functionType, NullSource.INSTANCE);
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 
@@ -47,7 +47,7 @@ public class TypeCheckCallTests {
         );
         var recordType = Types.recordType(NamespaceName.fromParts("example"), "Id");
         var context = TypeCheckerContext.stub()
-            .updateType("Id", Types.metaType(recordType), NullSource.INSTANCE)
+            .addLocal("Id", Types.metaType(recordType), NullSource.INSTANCE)
             .addFields(recordType, List.of(Typed.recordField("value", Typed.typeLevelInt())));
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
@@ -72,7 +72,7 @@ public class TypeCheckCallTests {
             Types.INT
         );
         var context = TypeCheckerContext.stub()
-            .updateType("abs", functionType, NullSource.INSTANCE);
+            .addLocal("abs", functionType, NullSource.INSTANCE);
 
         var error = assertThrows(UnexpectedTypeError.class, () -> TypeChecker.typeCheckExpression(untypedNode, context));
 
@@ -93,7 +93,7 @@ public class TypeCheckCallTests {
             Types.INT
         );
         var context = TypeCheckerContext.stub()
-            .updateType("abs", functionType, NullSource.INSTANCE);
+            .addLocal("abs", functionType, NullSource.INSTANCE);
 
         var error = assertThrows(WrongNumberOfArgumentsError.class, () -> TypeChecker.typeCheckExpression(untypedNode, context));
 
@@ -114,7 +114,7 @@ public class TypeCheckCallTests {
             Types.INT
         );
         var context = TypeCheckerContext.stub()
-            .updateType("abs", functionType, NullSource.INSTANCE);
+            .addLocal("abs", functionType, NullSource.INSTANCE);
 
         var error = assertThrows(WrongNumberOfArgumentsError.class, () -> TypeChecker.typeCheckExpression(untypedNode, context));
 

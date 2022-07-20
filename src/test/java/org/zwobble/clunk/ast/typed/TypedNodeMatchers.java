@@ -41,6 +41,10 @@ public class TypedNodeMatchers {
         return new TypedMemberAccessNodeMatcher(P.vector());
     }
 
+    public static TypedMemberReferenceNodeMatcher isTypedMemberReferenceNode() {
+        return new TypedMemberReferenceNodeMatcher(List.of());
+    }
+
     public static TypedParamNodeMatcher isTypedParamNode() {
         return new TypedParamNodeMatcher(List.of());
     }

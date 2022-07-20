@@ -94,7 +94,7 @@ public class TypeCheckNamespaceTests {
             .addStatement(UntypedRecordNode.builder("X").build())
             .build();
         var context = TypeCheckerContext.stub()
-            .updateType("X", Types.metaType(Types.INT), NullSource.INSTANCE);
+            .addLocal("X", Types.metaType(Types.INT), NullSource.INSTANCE);
 
         var result = TypeChecker.typeCheckNamespace(untypedNode, context);
 

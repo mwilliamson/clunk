@@ -23,7 +23,7 @@ public class TypeCheckMemberAccessTests {
         var untypedNode = Untyped.memberAccess(Untyped.reference("id"), "value");
         var recordType = new RecordType(NamespaceName.fromParts("example"), "Id");
         var context = TypeCheckerContext.stub()
-            .updateType("id", recordType, NullSource.INSTANCE)
+            .addLocal("id", recordType, NullSource.INSTANCE)
             .addMemberTypes(recordType, Map.ofEntries(Map.entry("value", Types.INT)));
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
@@ -40,7 +40,7 @@ public class TypeCheckMemberAccessTests {
         var untypedNode = Untyped.memberAccess(Untyped.reference("id"), "x");
         var recordType = new RecordType(NamespaceName.fromParts("example"), "Id");
         var context = TypeCheckerContext.stub()
-            .updateType("id", recordType, NullSource.INSTANCE)
+            .addLocal("id", recordType, NullSource.INSTANCE)
             .addFields(recordType, List.of(Typed.recordField("value", Typed.typeLevelInt())));
 
         var result = assertThrows(UnknownMemberError.class, () -> TypeChecker.typeCheckExpression(untypedNode, context));

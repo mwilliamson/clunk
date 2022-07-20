@@ -154,7 +154,7 @@ public class TypeChecker {
                     context -> {
                         var type = new EnumType(context.currentFrame().namespaceName().get(), node.name(), node.members());
                         typeBox.set(type);
-                        return context.updateType(node.name(), Types.metaType(type), node.source());
+                        return context.addLocal(node.name(), Types.metaType(type), node.source());
                     }
                 )
             ),
@@ -241,7 +241,7 @@ public class TypeChecker {
                             returnType
                         );
                         functionTypeBox.set(type);
-                        return context.updateType(node.name(), type, node.source());
+                        return context.addLocal(node.name(), type, node.source());
                     }
                 )
             ),
@@ -368,7 +368,7 @@ public class TypeChecker {
                 );
             }
 
-            var newContext = context.updateType(fieldName, importType, import_.source());
+            var newContext = context.addLocal(fieldName, importType, import_.source());
 
             var typedNode = new TypedImportNode(import_.namespaceName(), import_.fieldName(), importType, import_.source());
 
@@ -389,7 +389,7 @@ public class TypeChecker {
                         // TODO: handle missing namespace name
                         var interfaceType = new InterfaceType(context.currentFrame().namespaceName().get(), node.name());
                         interfaceTypeBox.set(interfaceType);
-                        return context.updateType(node.name(), metaType(interfaceType), node.source());
+                        return context.addLocal(node.name(), metaType(interfaceType), node.source());
                     }
                 )
             ),
@@ -529,7 +529,7 @@ public class TypeChecker {
                         // TODO: handle missing namespace name
                         var recordType = new RecordType(context.currentFrame().namespaceName().get(), node.name());
                         recordTypeBox.set(recordType);
-                        return context.updateType(node.name(), metaType(recordType), node.source());
+                        return context.addLocal(node.name(), metaType(recordType), node.source());
                     }
                 ),
                 new PendingTypeCheck(
@@ -620,8 +620,12 @@ public class TypeChecker {
     }
 
     private static TypedExpressionNode typeCheckReference(UntypedReferenceNode node, TypeCheckerContext context) {
-        var type = context.typeOf(node.name(), node.source());
-        return new TypedReferenceNode(node.name(), type, node.source());
+        var variable = context.lookup(node.name(), node.source());
+        if (variable.isMember()) {
+            return new TypedMemberReferenceNode(node.name(), variable.type(), node.source());
+        } else {
+            return new TypedReferenceNode(node.name(), variable.type(), node.source());
+        }
     }
 
     private static TypeCheckFunctionStatementResult<TypedFunctionStatementNode> typeCheckReturn(UntypedReturnNode node, TypeCheckerContext context) {
@@ -701,7 +705,7 @@ public class TypeChecker {
             typedExpression,
             node.source()
         );
-        var updatedContext = context.updateType(node.name(), typedExpression.type(), node.source());
+        var updatedContext = context.addLocal(node.name(), typedExpression.type(), node.source());
         return new TypeCheckFunctionStatementResult<>(typedNode, false, updatedContext);
     }
 

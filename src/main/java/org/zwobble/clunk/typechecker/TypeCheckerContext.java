@@ -13,6 +13,7 @@ import org.zwobble.clunk.util.P;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public record TypeCheckerContext(
     PStack<StackFrame> stack,
@@ -48,7 +49,12 @@ public record TypeCheckerContext(
     }
 
     public TypeCheckerContext enterRecordBody(Map<String, Type> fieldTypes) {
-        return enter(StackFrame.body(fieldTypes));
+        var fieldVariables = fieldTypes.entrySet().stream()
+            .collect(Collectors.toMap(
+                entry -> entry.getKey(),
+                entry -> Variable.member(entry.getValue())
+            ));
+        return enter(StackFrame.body(fieldVariables));
     }
 
     public TypeCheckerContext enterTest() {
@@ -92,13 +98,17 @@ public record TypeCheckerContext(
         return Optional.ofNullable(namespaceTypes.get(name));
     }
 
-    public TypeCheckerContext withBuiltins(Map<String, Type> environment) {
+    public TypeCheckerContext withBuiltins(Map<String, Variable> environment) {
         return enter(StackFrame.builtins(environment));
     }
 
-    public TypeCheckerContext updateType(String name, Type type, Source source) {
+    public TypeCheckerContext addLocal(String name, Type type, Source source) {
+        return addVariable(name, Variable.local(type), source);
+    }
+
+    private TypeCheckerContext addVariable(String name, Variable variable, Source source) {
         return new TypeCheckerContext(
-            P.stackUpdateTop(stack, frame -> frame.updateType(name, type, source)),
+            P.stackUpdateTop(stack, frame -> frame.addVariable(name, variable, source)),
             namespaceTypes,
             typeToFields,
             memberTypes,
@@ -106,14 +116,18 @@ public record TypeCheckerContext(
         );
     }
 
-    public Type typeOf(String name, Source source) {
+    public Variable lookup(String name, Source source) {
         for (var callFrame : stack) {
-            var type = callFrame.environment().get(name);
-            if (type != null) {
-                return type;
+            var variable = callFrame.environment().get(name);
+            if (variable != null) {
+                return variable;
             }
         }
         throw new SourceError("unknown variable: " + name, source);
+    }
+
+    public Type typeOf(String name, Source source) {
+        return lookup(name, source).type();
     }
 
     public TypeCheckerContext addFields(RecordType type, List<TypedRecordFieldNode> fields) {

@@ -12,6 +12,7 @@ public interface TypedExpressionNode extends TypedNode {
         T visit(TypedIntAddNode node);
         T visit(TypedIntLiteralNode node);
         T visit(TypedMemberAccessNode node);
+        T visit(TypedMemberReferenceNode node);
         T visit(TypedReferenceNode node);
         T visit(TypedStringLiteralNode node);
     }

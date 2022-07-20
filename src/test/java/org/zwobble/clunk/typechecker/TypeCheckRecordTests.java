@@ -164,7 +164,7 @@ public class TypeCheckRecordTests {
         assertThat(typedNode.body(), contains(
             allOf(
                 has("body", contains(
-                    isTypedReturnNode().withExpression(isTypedReferenceNode().withName("x"))
+                    isTypedReturnNode().withExpression(isTypedMemberReferenceNode().withName("x").withType(Types.STRING))
                 ))
             )
         ));
@@ -177,7 +177,7 @@ public class TypeCheckRecordTests {
             .build();
         var context = TypeCheckerContext.stub()
             .enterNamespace(NamespaceName.fromParts("a", "b"))
-            .updateType("Person", Types.metaType(Types.interfaceType(NamespaceName.fromParts("a", "b"), "Person")), NullSource.INSTANCE);
+            .addLocal("Person", Types.metaType(Types.interfaceType(NamespaceName.fromParts("a", "b"), "Person")), NullSource.INSTANCE);
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
@@ -199,7 +199,7 @@ public class TypeCheckRecordTests {
             .build();
         var context = TypeCheckerContext.stub()
             .enterNamespace(NamespaceName.fromParts("a", "b"))
-            .updateType("Bool", Types.metaType(Types.BOOL), NullSource.INSTANCE);
+            .addLocal("Bool", Types.metaType(Types.BOOL), NullSource.INSTANCE);
 
         assertThrows(
             CannotExtendFinalTypeError.class,
@@ -214,7 +214,7 @@ public class TypeCheckRecordTests {
             .build();
         var context = TypeCheckerContext.stub()
             .enterNamespace(NamespaceName.fromParts("a", "b"))
-            .updateType("Person", Types.metaType(Types.interfaceType(NamespaceName.fromParts("d", "e"), "Person")), NullSource.INSTANCE);
+            .addLocal("Person", Types.metaType(Types.interfaceType(NamespaceName.fromParts("d", "e"), "Person")), NullSource.INSTANCE);
 
         assertThrows(
             CannotExtendSealedInterfaceFromDifferentNamespaceError.class,

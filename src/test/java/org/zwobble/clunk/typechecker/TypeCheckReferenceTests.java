@@ -13,7 +13,7 @@ public class TypeCheckReferenceTests {
     public void referenceHasTypeOfNameInEnvironment() {
         var untypedNode = Untyped.reference("x");
         var context = TypeCheckerContext.stub()
-            .updateType("x", IntType.INSTANCE, NullSource.INSTANCE);
+            .addLocal("x", IntType.INSTANCE, NullSource.INSTANCE);
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 

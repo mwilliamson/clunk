@@ -129,7 +129,7 @@ public class JavaCodeGenerator {
 
             @Override
             public JavaExpressionNode visit(TypedMemberReferenceNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileMemberReference(node);
             }
 
             @Override
@@ -244,6 +244,10 @@ public class JavaCodeGenerator {
             ),
             List.of()
         );
+    }
+
+    private static JavaExpressionNode compileMemberReference(TypedMemberReferenceNode node) {
+        return new JavaReferenceNode(node.name());
     }
 
     public static List<JavaOrdinaryCompilationUnitNode> compileNamespace(

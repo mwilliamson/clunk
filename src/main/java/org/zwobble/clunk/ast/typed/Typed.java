@@ -65,6 +65,10 @@ public class Typed {
         return new TypedIntLiteralNode(value, NullSource.INSTANCE);
     }
 
+    public static TypedMemberReferenceNode memberReference(String name, Type type) {
+        return new TypedMemberReferenceNode(name, type, NullSource.INSTANCE);
+    }
+
     public static TypedParamNode param(String name, TypedTypeLevelExpressionNode type) {
         return new TypedParamNode(name, type, NullSource.INSTANCE);
     }

@@ -21,5 +21,7 @@ testing/python/_virtualenv:
 	testing/python/_virtualenv/bin/pip install --upgrade wheel
 	testing/python/_virtualenv/bin/pip install precisely==0.1.9 pytest==7.1.2
 
-testing/typescript:
+.PHONY: testing/typescript
 
+testing/typescript:
+	cd testing/typescript && npm install

@@ -22,7 +22,7 @@ public class JavaCodeGeneratorCallTests {
     @Test
     public void callToStaticFunctionsAreCompiledToCalls() {
         var node = new TypedCallNode(
-            Typed.referenceVariable(
+            Typed.reference(
                 "abs",
                 new StaticFunctionType(
                     NamespaceName.fromParts("Math"),
@@ -46,7 +46,7 @@ public class JavaCodeGeneratorCallTests {
     public void callToRecordConstructorsAreCompiledToConstructorCalls() {
         var recordType = new RecordType(NamespaceName.fromParts("example"), "Id");
         var node = new TypedCallNode(
-            Typed.referenceVariable("Id", Types.metaType(recordType)),
+            Typed.reference("Id", Types.metaType(recordType)),
             List.of(Typed.intLiteral(123)),
             Types.INT,
             NullSource.INSTANCE

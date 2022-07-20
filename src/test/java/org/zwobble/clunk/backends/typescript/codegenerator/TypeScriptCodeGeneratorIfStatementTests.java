@@ -17,7 +17,7 @@ public class TypeScriptCodeGeneratorIfStatementTests {
         var node = Typed.ifStatement(
             List.of(
                 Typed.conditionalBranch(
-                    Typed.referenceVariable("x", Types.BOOL),
+                    Typed.reference("x", Types.BOOL),
                     List.of(Typed.returnStatement(Typed.intLiteral(42)))
                 )
             ),

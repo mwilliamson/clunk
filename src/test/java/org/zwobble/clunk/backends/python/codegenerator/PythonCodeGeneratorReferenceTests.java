@@ -12,7 +12,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class PythonCodeGeneratorReferenceTests {
     @Test
     public void referenceIsCompiledToReference() {
-        var node = Typed.referenceVariable("value", BoolType.INSTANCE);
+        var node = Typed.reference("value", BoolType.INSTANCE);
 
         var result = PythonCodeGenerator.DEFAULT.compileExpression(node, PythonCodeGeneratorContext.stub());
 

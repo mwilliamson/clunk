@@ -18,7 +18,7 @@ public class PythonCodeGeneratorMemberAccessTests {
     public void memberAccessIsCompiledToAttributeAccess() {
         var recordType = new RecordType(NamespaceName.fromParts("example"), "Id");
         var node = new TypedMemberAccessNode(
-            Typed.referenceVariable("id", recordType),
+            Typed.reference("id", recordType),
             "value",
             Types.INT,
             NullSource.INSTANCE

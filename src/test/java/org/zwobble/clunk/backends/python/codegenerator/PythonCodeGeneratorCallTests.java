@@ -19,7 +19,7 @@ public class PythonCodeGeneratorCallTests {
     @Test
     public void callToStaticFunctionsAreCompiledToCalls() {
         var node = new TypedCallNode(
-            Typed.referenceVariable(
+            Typed.reference(
                 "abs",
                 new StaticFunctionType(
                     NamespaceName.fromParts("Math"),

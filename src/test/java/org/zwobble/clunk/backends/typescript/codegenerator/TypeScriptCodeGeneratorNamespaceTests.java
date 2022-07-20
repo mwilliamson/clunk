@@ -92,11 +92,11 @@ public class TypeScriptCodeGeneratorNamespaceTests {
                     .name("x")
                     .addBodyStatement(Typed.expressionStatement(
                         Typed.call(
-                            Typed.reference("assertThat", assertThatType),
+                            Typed.referenceVariable("assertThat", assertThatType),
                             List.of(
                                 Typed.intLiteral(1),
                                 Typed.call(
-                                    Typed.reference("equalTo", equalToType),
+                                    Typed.referenceVariable("equalTo", equalToType),
                                     List.of(Typed.intLiteral(2)),
                                     Types.UNIT
                                 )

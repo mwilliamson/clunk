@@ -81,8 +81,8 @@ public class Typed {
         return new TypedRecordFieldNode(name, type, NullSource.INSTANCE);
     }
 
-    public static TypedReferenceNode reference(String name, Type type) {
-        return new TypedReferenceNode(name, type, NullSource.INSTANCE);
+    public static TypedReferenceNode referenceVariable(String name, Type type) {
+        return TypedReferenceNode.variable(name, type, NullSource.INSTANCE);
     }
 
     public static TypedReturnNode returnStatement(TypedExpressionNode expression) {

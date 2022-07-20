@@ -621,7 +621,7 @@ public class TypeChecker {
 
     private static TypedExpressionNode typeCheckReference(UntypedReferenceNode node, TypeCheckerContext context) {
         var type = context.typeOf(node.name(), node.source());
-        return new TypedReferenceNode(node.name(), type, node.source());
+        return TypedReferenceNode.variable(node.name(), type, node.source());
     }
 
     private static TypeCheckFunctionStatementResult<TypedFunctionStatementNode> typeCheckReturn(UntypedReturnNode node, TypeCheckerContext context) {

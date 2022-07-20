@@ -20,7 +20,7 @@ public class TypeScriptCodeGeneratorCallTests {
     @Test
     public void callToStaticFunctionsAreCompiledToCalls() {
         var node = new TypedCallNode(
-            Typed.reference(
+            Typed.referenceVariable(
                 "abs",
                 new StaticFunctionType(
                     NamespaceName.fromParts("Math"),
@@ -44,7 +44,7 @@ public class TypeScriptCodeGeneratorCallTests {
     public void callToRecordConstructorsAreCompiledToConstructorCalls() {
         var recordType = new RecordType(NamespaceName.fromParts("example"), "Id");
         var node = new TypedCallNode(
-            Typed.reference("Id", Types.metaType(recordType)),
+            Typed.referenceVariable("Id", Types.metaType(recordType)),
             List.of(Typed.intLiteral(123)),
             Types.INT,
             NullSource.INSTANCE

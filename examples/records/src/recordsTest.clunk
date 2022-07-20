@@ -3,8 +3,7 @@ import stdlib/matchers.equalTo;
 
 record Add(left: Int, right: Int) {
     property sum: Int {
-        //return left + right;
-        return 5;
+        return left + right;
     }
 }
 

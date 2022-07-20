@@ -4,8 +4,7 @@ import stdlib/matchers.equalTo;
 
 record Add(left: Int, right: Int) {
     property sum: Int {
-        //return left + right;
-        return 5;
+        return left + right;
     }
 }
 
@@ -38,7 +37,7 @@ class Add:
     right: int
     @property
     def sum(self):
-        return 5
+        return self.left + self.right
 
 def test_assert_field():
     add = Add(2, 3)

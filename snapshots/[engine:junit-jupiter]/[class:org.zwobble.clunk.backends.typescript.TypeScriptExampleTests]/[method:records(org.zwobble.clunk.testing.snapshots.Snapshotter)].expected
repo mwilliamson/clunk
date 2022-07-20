@@ -4,8 +4,7 @@ import stdlib/matchers.equalTo;
 
 record Add(left: Int, right: Int) {
     property sum: Int {
-        //return left + right;
-        return 5;
+        return left + right;
     }
 }
 
@@ -40,7 +39,7 @@ class Add {
         this.right = right;
     }
     get sum(): number {
-        return 5;
+        return this.left + this.right;
     }
 }
 

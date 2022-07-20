@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class Compiler {
@@ -80,6 +81,7 @@ public class Compiler {
                 return FileVisitResult.CONTINUE;
             }
         });
+        paths.sort(Comparator.naturalOrder());
         return paths;
     }
 

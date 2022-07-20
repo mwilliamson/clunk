@@ -1,25 +1,3 @@
-Source path: src/html.clunk
-sealed interface HtmlNode {
-}
-
-record HtmlAttribute(name: String, value: String)
-
-record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode
-
-record HtmlForceWrite() <: HtmlNode
-
-record HtmlTag(
-    tagNames: List[String],
-    attributes: List[HtmlAttribute],
-    isCollapsible: Bool,
-    separator: String,
-) <: HtmlNode
-
-record HtmlText(value: String)
-
-
-==============
-
 Source path: src/documents.clunk
 sealed interface DocumentElement {
 }
@@ -145,36 +123,24 @@ enum VerticalAlignment {
 
 ==============
 
-Output path: html.py
-import dataclasses
-import typing
-class HtmlNode:
-    pass
+Source path: src/html.clunk
+sealed interface HtmlNode {
+}
 
-@dataclasses.dataclass(frozen=True)
-class HtmlAttribute:
-    name: str
-    value: str
+record HtmlAttribute(name: String, value: String)
 
-@dataclasses.dataclass(frozen=True)
-class HtmlElement:
-    tag: HtmlTag
-    children: typing.List[HtmlNode]
+record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode
 
-@dataclasses.dataclass(frozen=True)
-class HtmlForceWrite:
-    pass
+record HtmlForceWrite() <: HtmlNode
 
-@dataclasses.dataclass(frozen=True)
-class HtmlTag:
-    tagNames: typing.List[str]
-    attributes: typing.List[HtmlAttribute]
-    isCollapsible: bool
-    separator: str
+record HtmlTag(
+    tagNames: List[String],
+    attributes: List[HtmlAttribute],
+    isCollapsible: Bool,
+    separator: String,
+) <: HtmlNode
 
-@dataclasses.dataclass(frozen=True)
-class HtmlText:
-    value: str
+record HtmlText(value: String)
 
 
 ==============
@@ -313,6 +279,40 @@ class VerticalAlignment(enum.Enum):
     SUPERSCRIPT = enum.auto()
     SUBSCRIPT = enum.auto()
     BASELINE = enum.auto()
+
+
+==============
+
+Output path: html.py
+import dataclasses
+import typing
+class HtmlNode:
+    pass
+
+@dataclasses.dataclass(frozen=True)
+class HtmlAttribute:
+    name: str
+    value: str
+
+@dataclasses.dataclass(frozen=True)
+class HtmlElement:
+    tag: HtmlTag
+    children: typing.List[HtmlNode]
+
+@dataclasses.dataclass(frozen=True)
+class HtmlForceWrite:
+    pass
+
+@dataclasses.dataclass(frozen=True)
+class HtmlTag:
+    tagNames: typing.List[str]
+    attributes: typing.List[HtmlAttribute]
+    isCollapsible: bool
+    separator: str
+
+@dataclasses.dataclass(frozen=True)
+class HtmlText:
+    value: str
 
 
 ==============

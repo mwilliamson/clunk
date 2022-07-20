@@ -1,25 +1,3 @@
-Source path: src/html.clunk
-sealed interface HtmlNode {
-}
-
-record HtmlAttribute(name: String, value: String)
-
-record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode
-
-record HtmlForceWrite() <: HtmlNode
-
-record HtmlTag(
-    tagNames: List[String],
-    attributes: List[HtmlAttribute],
-    isCollapsible: Bool,
-    separator: String,
-) <: HtmlNode
-
-record HtmlText(value: String)
-
-
-==============
-
 Source path: src/documents.clunk
 sealed interface DocumentElement {
 }
@@ -145,56 +123,24 @@ enum VerticalAlignment {
 
 ==============
 
-Output path: html.ts
-type HtmlNode = HtmlElement | HtmlForceWrite | HtmlTag;
-
-class HtmlAttribute {
-    readonly name: string;
-    readonly value: string;
-
-    constructor(name: string, value: string) {
-        this.name = name;
-        this.value = value;
-    }
+Source path: src/html.clunk
+sealed interface HtmlNode {
 }
 
-class HtmlElement {
-    readonly type: "HtmlElement" = "HtmlElement";
-    readonly tag: HtmlTag;
-    readonly children: (Array)<HtmlNode>;
+record HtmlAttribute(name: String, value: String)
 
-    constructor(tag: HtmlTag, children: (Array)<HtmlNode>) {
-        this.tag = tag;
-        this.children = children;
-    }
-}
+record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode
 
-class HtmlForceWrite {
-    readonly type: "HtmlForceWrite" = "HtmlForceWrite";
-}
+record HtmlForceWrite() <: HtmlNode
 
-class HtmlTag {
-    readonly type: "HtmlTag" = "HtmlTag";
-    readonly tagNames: (Array)<string>;
-    readonly attributes: (Array)<HtmlAttribute>;
-    readonly isCollapsible: boolean;
-    readonly separator: string;
+record HtmlTag(
+    tagNames: List[String],
+    attributes: List[HtmlAttribute],
+    isCollapsible: Bool,
+    separator: String,
+) <: HtmlNode
 
-    constructor(tagNames: (Array)<string>, attributes: (Array)<HtmlAttribute>, isCollapsible: boolean, separator: string) {
-        this.tagNames = tagNames;
-        this.attributes = attributes;
-        this.isCollapsible = isCollapsible;
-        this.separator = separator;
-    }
-}
-
-class HtmlText {
-    readonly value: string;
-
-    constructor(value: string) {
-        this.value = value;
-    }
-}
+record HtmlText(value: String)
 
 
 ==============
@@ -444,6 +390,60 @@ enum VerticalAlignment {
     SUPERSCRIPT,
     SUBSCRIPT,
     BASELINE,
+}
+
+
+==============
+
+Output path: html.ts
+type HtmlNode = HtmlElement | HtmlForceWrite | HtmlTag;
+
+class HtmlAttribute {
+    readonly name: string;
+    readonly value: string;
+
+    constructor(name: string, value: string) {
+        this.name = name;
+        this.value = value;
+    }
+}
+
+class HtmlElement {
+    readonly type: "HtmlElement" = "HtmlElement";
+    readonly tag: HtmlTag;
+    readonly children: (Array)<HtmlNode>;
+
+    constructor(tag: HtmlTag, children: (Array)<HtmlNode>) {
+        this.tag = tag;
+        this.children = children;
+    }
+}
+
+class HtmlForceWrite {
+    readonly type: "HtmlForceWrite" = "HtmlForceWrite";
+}
+
+class HtmlTag {
+    readonly type: "HtmlTag" = "HtmlTag";
+    readonly tagNames: (Array)<string>;
+    readonly attributes: (Array)<HtmlAttribute>;
+    readonly isCollapsible: boolean;
+    readonly separator: string;
+
+    constructor(tagNames: (Array)<string>, attributes: (Array)<HtmlAttribute>, isCollapsible: boolean, separator: string) {
+        this.tagNames = tagNames;
+        this.attributes = attributes;
+        this.isCollapsible = isCollapsible;
+        this.separator = separator;
+    }
+}
+
+class HtmlText {
+    readonly value: string;
+
+    constructor(value: string) {
+        this.value = value;
+    }
 }
 
 

@@ -1,25 +1,3 @@
-Source path: src/html.clunk
-sealed interface HtmlNode {
-}
-
-record HtmlAttribute(name: String, value: String)
-
-record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode
-
-record HtmlForceWrite() <: HtmlNode
-
-record HtmlTag(
-    tagNames: List[String],
-    attributes: List[HtmlAttribute],
-    isCollapsible: Bool,
-    separator: String,
-) <: HtmlNode
-
-record HtmlText(value: String)
-
-
-==============
-
 Source path: src/documents.clunk
 sealed interface DocumentElement {
 }
@@ -145,52 +123,25 @@ enum VerticalAlignment {
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/html/HtmlNode.java
-package org.zwobble.mammoth.internal.html;
-
-public sealed interface HtmlNode permits HtmlElement, HtmlForceWrite, HtmlTag {
+Source path: src/html.clunk
+sealed interface HtmlNode {
 }
 
+record HtmlAttribute(name: String, value: String)
 
-==============
+record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode
 
-Output path: org/zwobble/mammoth/internal/html/HtmlAttribute.java
-package org.zwobble.mammoth.internal.html;
+record HtmlForceWrite() <: HtmlNode
 
-public record HtmlAttribute(String name, String value) {
-}
+record HtmlTag(
+    tagNames: List[String],
+    attributes: List[HtmlAttribute],
+    isCollapsible: Bool,
+    separator: String,
+) <: HtmlNode
 
-==============
+record HtmlText(value: String)
 
-Output path: org/zwobble/mammoth/internal/html/HtmlElement.java
-package org.zwobble.mammoth.internal.html;
-
-public record HtmlElement(HtmlTag tag, java.util.List<HtmlNode> children) implements HtmlNode {
-}
-
-==============
-
-Output path: org/zwobble/mammoth/internal/html/HtmlForceWrite.java
-package org.zwobble.mammoth.internal.html;
-
-public record HtmlForceWrite() implements HtmlNode {
-}
-
-==============
-
-Output path: org/zwobble/mammoth/internal/html/HtmlTag.java
-package org.zwobble.mammoth.internal.html;
-
-public record HtmlTag(java.util.List<String> tagNames, java.util.List<HtmlAttribute> attributes, boolean isCollapsible, String separator) implements HtmlNode {
-}
-
-==============
-
-Output path: org/zwobble/mammoth/internal/html/HtmlText.java
-package org.zwobble.mammoth.internal.html;
-
-public record HtmlText(String value) {
-}
 
 ==============
 
@@ -396,6 +347,55 @@ public enum VerticalAlignment {
     SUPERSCRIPT,
     SUBSCRIPT,
     BASELINE
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/html/HtmlNode.java
+package org.zwobble.mammoth.internal.html;
+
+public sealed interface HtmlNode permits HtmlElement, HtmlForceWrite, HtmlTag {
+}
+
+
+==============
+
+Output path: org/zwobble/mammoth/internal/html/HtmlAttribute.java
+package org.zwobble.mammoth.internal.html;
+
+public record HtmlAttribute(String name, String value) {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/html/HtmlElement.java
+package org.zwobble.mammoth.internal.html;
+
+public record HtmlElement(HtmlTag tag, java.util.List<HtmlNode> children) implements HtmlNode {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/html/HtmlForceWrite.java
+package org.zwobble.mammoth.internal.html;
+
+public record HtmlForceWrite() implements HtmlNode {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/html/HtmlTag.java
+package org.zwobble.mammoth.internal.html;
+
+public record HtmlTag(java.util.List<String> tagNames, java.util.List<HtmlAttribute> attributes, boolean isCollapsible, String separator) implements HtmlNode {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/html/HtmlText.java
+package org.zwobble.mammoth.internal.html;
+
+public record HtmlText(String value) {
 }
 
 ==============

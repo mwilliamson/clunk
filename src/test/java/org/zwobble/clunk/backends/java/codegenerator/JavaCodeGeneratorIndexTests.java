@@ -32,6 +32,6 @@ public class JavaCodeGeneratorIndexTests {
         var result = JavaCodeGenerator.compileExpression(node, JavaCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
-        assertThat(string, equalTo("(values).get(123)"));
+        assertThat(string, equalTo("values.get(123)"));
     }
 }

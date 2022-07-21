@@ -278,9 +278,7 @@ public class JavaSerialiser {
     }
 
     private static void serialiseMemberAccess(JavaMemberAccessNode node, CodeBuilder builder) {
-        builder.append("(");
         serialiseExpression(node.receiver(), builder, Optional.of(node));
-        builder.append(")");
         builder.append(".");
         builder.append(node.memberName());
     }

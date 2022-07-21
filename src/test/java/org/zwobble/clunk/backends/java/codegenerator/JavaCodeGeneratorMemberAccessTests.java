@@ -27,6 +27,6 @@ public class JavaCodeGeneratorMemberAccessTests {
         var result = JavaCodeGenerator.compileExpression(node, JavaCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
-        assertThat(string, equalTo("(id).value()"));
+        assertThat(string, equalTo("id.value()"));
     }
 }

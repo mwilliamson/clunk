@@ -14,6 +14,6 @@ public class JavaSerialiserMemberAccessTests {
 
         var result = serialiseToString(node, JavaSerialiserTesting::serialiseExpression);
 
-        assertThat(result, equalTo("(x).y"));
+        assertThat(result, equalTo("x.y"));
     }
 }

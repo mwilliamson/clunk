@@ -50,15 +50,15 @@ public class RecordsTest {
     public void assertField() {
         var add = new Add(2, 3);
 
-        assertThat((add).left(), equalTo(2));
-        assertThat((add).right(), equalTo(3));
+        assertThat(add.left(), equalTo(2));
+        assertThat(add.right(), equalTo(3));
     }
     @org.junit.jupiter.api.Test
     @org.junit.jupiter.api.DisplayName("assert sum")
     public void assertSum() {
         var add = new Add(2, 3);
 
-        var result = (add).sum();
+        var result = add.sum();
 
         assertThat(result, equalTo(5));
     }

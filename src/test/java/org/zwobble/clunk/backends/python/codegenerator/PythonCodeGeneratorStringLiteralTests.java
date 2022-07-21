@@ -13,7 +13,7 @@ public class PythonCodeGeneratorStringLiteralTests {
     public void stringIsCompiledToString() {
         var node = Typed.string("hello");
 
-        var result = PythonCodeGenerator.DEFAULT.compileExpression(node, PythonCodeGeneratorContext.stub());
+        var result = PythonCodeGenerator.compileExpression(node, PythonCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("\"hello\""));

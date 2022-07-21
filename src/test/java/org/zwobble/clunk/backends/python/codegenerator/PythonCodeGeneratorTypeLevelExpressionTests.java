@@ -17,7 +17,7 @@ public class PythonCodeGeneratorTypeLevelExpressionTests {
         var node = Typed.typeLevelReference("Bool", BoolType.INSTANCE);
         var context = PythonCodeGeneratorContext.stub();
 
-        var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node, context);
+        var result = PythonCodeGenerator.compileTypeLevelExpression(node, context);
 
         var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("bool"));
@@ -28,7 +28,7 @@ public class PythonCodeGeneratorTypeLevelExpressionTests {
         var node = Typed.typeLevelReference("C", Types.enumType(NamespaceName.fromParts("a", "b"), "C", List.of()));
         var context = PythonCodeGeneratorContext.stub();
 
-        var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node, context);
+        var result = PythonCodeGenerator.compileTypeLevelExpression(node, context);
 
         var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("C"));
@@ -39,7 +39,7 @@ public class PythonCodeGeneratorTypeLevelExpressionTests {
         var node = Typed.typeLevelReference("Int", IntType.INSTANCE);
         var context = PythonCodeGeneratorContext.stub();
 
-        var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node, context);
+        var result = PythonCodeGenerator.compileTypeLevelExpression(node, context);
 
         var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("int"));
@@ -50,7 +50,7 @@ public class PythonCodeGeneratorTypeLevelExpressionTests {
         var node = Typed.typeLevelReference("C", Types.interfaceType(NamespaceName.fromParts("a", "b"), "C"));
         var context = PythonCodeGeneratorContext.stub();
 
-        var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node, context);
+        var result = PythonCodeGenerator.compileTypeLevelExpression(node, context);
 
         var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("C"));
@@ -65,7 +65,7 @@ public class PythonCodeGeneratorTypeLevelExpressionTests {
         );
         var context = PythonCodeGeneratorContext.stub();
 
-        var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node, context);
+        var result = PythonCodeGenerator.compileTypeLevelExpression(node, context);
 
         var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("typing.List[int]"));
@@ -80,7 +80,7 @@ public class PythonCodeGeneratorTypeLevelExpressionTests {
         );
         var context = PythonCodeGeneratorContext.stub();
 
-        var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node, context);
+        var result = PythonCodeGenerator.compileTypeLevelExpression(node, context);
 
         var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("typing.Optional[int]"));
@@ -91,7 +91,7 @@ public class PythonCodeGeneratorTypeLevelExpressionTests {
         var node = Typed.typeLevelReference("C", Types.recordType(NamespaceName.fromParts("a", "b"), "C"));
         var context = PythonCodeGeneratorContext.stub();
 
-        var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node, context);
+        var result = PythonCodeGenerator.compileTypeLevelExpression(node, context);
 
         var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("C"));
@@ -102,7 +102,7 @@ public class PythonCodeGeneratorTypeLevelExpressionTests {
         var node = Typed.typeLevelReference("String", StringType.INSTANCE);
         var context = PythonCodeGeneratorContext.stub();
 
-        var result = PythonCodeGenerator.DEFAULT.compileTypeLevelExpression(node, context);
+        var result = PythonCodeGenerator.compileTypeLevelExpression(node, context);
 
         var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("str"));

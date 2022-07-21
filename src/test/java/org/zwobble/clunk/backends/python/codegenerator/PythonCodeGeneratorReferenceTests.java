@@ -14,7 +14,7 @@ public class PythonCodeGeneratorReferenceTests {
     public void referenceIsCompiledToReference() {
         var node = Typed.reference("value", BoolType.INSTANCE);
 
-        var result = PythonCodeGenerator.DEFAULT.compileExpression(node, PythonCodeGeneratorContext.stub());
+        var result = PythonCodeGenerator.compileExpression(node, PythonCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("value"));

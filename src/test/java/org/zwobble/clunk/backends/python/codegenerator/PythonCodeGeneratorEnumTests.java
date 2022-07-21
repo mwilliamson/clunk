@@ -22,7 +22,7 @@ public class PythonCodeGeneratorEnumTests {
         var node = new TypedEnumNode(enumType, NullSource.INSTANCE);
         var context = PythonCodeGeneratorContext.stub();
 
-        var result = PythonCodeGenerator.DEFAULT.compileNamespaceStatement(node, context);
+        var result = PythonCodeGenerator.compileNamespaceStatement(node, context);
 
         var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
         assertThat(string, equalTo(

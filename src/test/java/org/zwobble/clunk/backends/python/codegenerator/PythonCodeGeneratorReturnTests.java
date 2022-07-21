@@ -22,6 +22,6 @@ public class PythonCodeGeneratorReturnTests {
     }
 
     private PythonStatementNode compileFunctionStatement(TypedReturnNode node) {
-        return PythonCodeGenerator.DEFAULT.compileFunctionStatement(node, PythonCodeGeneratorContext.stub());
+        return PythonCodeGenerator.compileFunctionStatement(node, PythonCodeGeneratorContext.stub());
     }
 }

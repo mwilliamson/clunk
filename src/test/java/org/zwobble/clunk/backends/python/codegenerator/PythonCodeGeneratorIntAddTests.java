@@ -14,7 +14,7 @@ public class PythonCodeGeneratorIntAddTests {
     public void intAddIsCompiledToAdd() {
         var node = Typed.intAdd(Typed.reference("a", Types.INT), Typed.reference("b", Types.INT));
 
-        var result = PythonCodeGenerator.DEFAULT.compileExpression(node, PythonCodeGeneratorContext.stub());
+        var result = PythonCodeGenerator.compileExpression(node, PythonCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("a + b"));

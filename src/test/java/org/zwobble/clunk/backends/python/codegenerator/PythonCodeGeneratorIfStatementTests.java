@@ -26,7 +26,7 @@ public class PythonCodeGeneratorIfStatementTests {
             )
         );
 
-        var result = PythonCodeGenerator.DEFAULT.compileFunctionStatement(node, PythonCodeGeneratorContext.stub());
+        var result = PythonCodeGenerator.compileFunctionStatement(node, PythonCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
         assertThat(string, equalTo(

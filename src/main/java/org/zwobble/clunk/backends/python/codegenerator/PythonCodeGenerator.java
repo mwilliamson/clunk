@@ -14,8 +14,6 @@ import java.util.stream.Collectors;
 import static org.zwobble.clunk.backends.python.codegenerator.CaseConverter.camelCaseToSnakeCase;
 
 public class PythonCodeGenerator {
-    public static final PythonCodeGenerator DEFAULT = new PythonCodeGenerator();
-
     private interface PythonMacro {
         PythonExpressionNode compileReceiver(PythonCodeGeneratorContext context);
     }
@@ -57,22 +55,22 @@ public class PythonCodeGenerator {
         }
     }
 
-    private PythonExpressionNode compileAdd(TypedIntAddNode node, PythonCodeGeneratorContext context) {
+    private static PythonExpressionNode compileAdd(TypedIntAddNode node, PythonCodeGeneratorContext context) {
         return new PythonAddNode(
             compileExpression(node.left(), context),
             compileExpression(node.right(), context)
         );
     }
 
-    private PythonStatementNode compileBlankLine(TypedBlankLineNode node, PythonCodeGeneratorContext context) {
+    private static PythonStatementNode compileBlankLine(TypedBlankLineNode node, PythonCodeGeneratorContext context) {
         return new PythonBlankLineNode();
     }
 
-    private PythonExpressionNode compileBoolLiteral(TypedBoolLiteralNode node) {
+    private static PythonExpressionNode compileBoolLiteral(TypedBoolLiteralNode node) {
         return new PythonBoolLiteralNode(node.value());
     }
 
-    private PythonExpressionNode compileCall(
+    private static PythonExpressionNode compileCall(
         TypedCallNode node,
         PythonCodeGeneratorContext context
     ) {
@@ -83,7 +81,7 @@ public class PythonCodeGenerator {
         );
     }
 
-    private PythonExpressionNode compileCallReceiver(
+    private static PythonExpressionNode compileCallReceiver(
         TypedExpressionNode receiver,
         PythonCodeGeneratorContext context
     ) {
@@ -96,7 +94,7 @@ public class PythonCodeGenerator {
         }
     }
 
-    private PythonStatementNode compileEnum(
+    private static PythonStatementNode compileEnum(
         TypedEnumNode node,
         PythonCodeGeneratorContext context
     ) {
@@ -120,7 +118,7 @@ public class PythonCodeGenerator {
         );
     }
 
-    public PythonExpressionNode compileExpression(
+    public static PythonExpressionNode compileExpression(
         TypedExpressionNode node,
         PythonCodeGeneratorContext context
     ) {
@@ -167,14 +165,14 @@ public class PythonCodeGenerator {
         });
     }
 
-    private PythonStatementNode compileExpressionStatement(
+    private static PythonStatementNode compileExpressionStatement(
         TypedExpressionStatementNode node,
         PythonCodeGeneratorContext context
     ) {
         return new PythonExpressionStatementNode(compileExpression(node.expression(), context));
     }
 
-    private PythonStatementNode compileFunction(TypedFunctionNode node, PythonCodeGeneratorContext context) {
+    private static PythonStatementNode compileFunction(TypedFunctionNode node, PythonCodeGeneratorContext context) {
         return new PythonFunctionNode(
             camelCaseToSnakeCase(node.name()),
             List.of(),
@@ -183,7 +181,7 @@ public class PythonCodeGenerator {
         );
     }
 
-    public PythonStatementNode compileFunctionStatement(TypedFunctionStatementNode node, PythonCodeGeneratorContext context) {
+    public static PythonStatementNode compileFunctionStatement(TypedFunctionStatementNode node, PythonCodeGeneratorContext context) {
         return node.accept(new TypedFunctionStatementNode.Visitor<PythonStatementNode>() {
             @Override
             public PythonStatementNode visit(TypedBlankLineNode node) {
@@ -212,7 +210,7 @@ public class PythonCodeGenerator {
         });
     }
 
-    private PythonStatementNode compileIfStatement(
+    private static PythonStatementNode compileIfStatement(
         TypedIfStatementNode node,
         PythonCodeGeneratorContext context
     ) {
@@ -231,7 +229,7 @@ public class PythonCodeGenerator {
         );
     }
 
-    private List<PythonStatementNode> compileImport(TypedImportNode import_) {
+    private static List<PythonStatementNode> compileImport(TypedImportNode import_) {
         var macro = lookupMacro(import_.type());
         if (macro.isPresent()) {
             return List.of();
@@ -254,15 +252,15 @@ public class PythonCodeGenerator {
         }
     }
 
-    private PythonStatementNode compileInterface(TypedInterfaceNode node, PythonCodeGeneratorContext context) {
+    private static PythonStatementNode compileInterface(TypedInterfaceNode node, PythonCodeGeneratorContext context) {
         return new PythonClassDeclarationNode(node.name(), List.of(), List.of(), List.of());
     }
 
-    private PythonExpressionNode compileIntLiteral(TypedIntLiteralNode node) {
+    private static PythonExpressionNode compileIntLiteral(TypedIntLiteralNode node) {
         return new PythonIntLiteralNode(BigInteger.valueOf(node.value()));
     }
 
-    private PythonExpressionNode compileMemberAccess(
+    private static PythonExpressionNode compileMemberAccess(
         TypedMemberAccessNode node,
         PythonCodeGeneratorContext context
     ) {
@@ -272,7 +270,7 @@ public class PythonCodeGenerator {
         );
     }
 
-    private PythonExpressionNode compileMemberReference(
+    private static PythonExpressionNode compileMemberReference(
         TypedMemberReferenceNode node,
         PythonCodeGeneratorContext context
     ) {
@@ -282,7 +280,7 @@ public class PythonCodeGenerator {
         );
     }
 
-    public PythonModuleNode compileNamespace(TypedNamespaceNode node) {
+    public static PythonModuleNode compileNamespace(TypedNamespaceNode node) {
         var context = new PythonCodeGeneratorContext();
         var moduleName = namespaceNameToModuleName(node.name());
 
@@ -301,7 +299,7 @@ public class PythonCodeGenerator {
         return new PythonModuleNode(moduleName, statements);
     }
 
-    public PythonStatementNode compileNamespaceStatement(
+    public static PythonStatementNode compileNamespaceStatement(
         TypedNamespaceStatementNode node,
         PythonCodeGeneratorContext context
     ) {
@@ -338,11 +336,11 @@ public class PythonCodeGenerator {
         });
     }
 
-    private String compileParam(TypedParamNode node) {
+    private static String compileParam(TypedParamNode node) {
         return camelCaseToSnakeCase(node.name());
     }
 
-    private PythonStatementNode compileProperty(
+    private static PythonStatementNode compileProperty(
         TypedPropertyNode node,
         PythonCodeGeneratorContext context
     ) {
@@ -356,7 +354,7 @@ public class PythonCodeGenerator {
         );
     }
 
-    public PythonClassDeclarationNode compileRecord(
+    public static PythonClassDeclarationNode compileRecord(
         TypedRecordNode node,
         PythonCodeGeneratorContext context
     ) {
@@ -382,7 +380,7 @@ public class PythonCodeGenerator {
         return new PythonClassDeclarationNode(node.name(), decorators, List.of(), body);
     }
 
-    private PythonStatementNode compileRecordBodyDeclaration(
+    private static PythonStatementNode compileRecordBodyDeclaration(
         TypedRecordBodyDeclarationNode node,
         PythonCodeGeneratorContext context
     ) {
@@ -394,19 +392,19 @@ public class PythonCodeGenerator {
         });
     }
 
-    private PythonExpressionNode compileReference(TypedReferenceNode node) {
+    private static PythonExpressionNode compileReference(TypedReferenceNode node) {
         return new PythonReferenceNode(node.name());
     }
 
-    private PythonStatementNode compileReturn(TypedReturnNode node, PythonCodeGeneratorContext context) {
+    private static PythonStatementNode compileReturn(TypedReturnNode node, PythonCodeGeneratorContext context) {
         return new PythonReturnNode(compileExpression(node.expression(), context));
     }
 
-    private PythonExpressionNode compileStringLiteral(TypedStringLiteralNode node) {
+    private static PythonExpressionNode compileStringLiteral(TypedStringLiteralNode node) {
         return new PythonStringLiteralNode(node.value());
     }
 
-    private PythonStatementNode compileTest(TypedTestNode node, PythonCodeGeneratorContext context) {
+    private static PythonStatementNode compileTest(TypedTestNode node, PythonCodeGeneratorContext context) {
         return new PythonFunctionNode(
             PythonTestNames.generateName(node.name()),
             List.of(),
@@ -415,7 +413,7 @@ public class PythonCodeGenerator {
         );
     }
 
-    public PythonExpressionNode compileTypeLevelExpression(
+    public static PythonExpressionNode compileTypeLevelExpression(
         TypedTypeLevelExpressionNode node,
         PythonCodeGeneratorContext context
     ) {
@@ -459,7 +457,7 @@ public class PythonCodeGenerator {
         });
     }
 
-    private PythonStatementNode compileVar(TypedVarNode node, PythonCodeGeneratorContext context) {
+    private static PythonStatementNode compileVar(TypedVarNode node, PythonCodeGeneratorContext context) {
         return new PythonAssignmentNode(
             node.name(),
             Optional.empty(),
@@ -467,11 +465,11 @@ public class PythonCodeGenerator {
         );
     }
 
-    private String namespaceNameToModuleName(NamespaceName name) {
+    private static String namespaceNameToModuleName(NamespaceName name) {
         return namespaceNameToModuleName(name.parts());
     }
 
-    private String namespaceNameToModuleName(List<String> parts) {
+    private static String namespaceNameToModuleName(List<String> parts) {
         return String.join(".", parts);
     }
 }

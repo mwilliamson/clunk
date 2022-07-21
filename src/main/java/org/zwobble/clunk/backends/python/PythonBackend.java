@@ -36,7 +36,7 @@ public class PythonBackend implements Backend {
     }
 
     private void compileNamespace(TypedNamespaceNode typedNamespaceNode, Path outputRoot) throws IOException {
-        var pythonModule = PythonCodeGenerator.DEFAULT.compileNamespace(typedNamespaceNode);
+        var pythonModule = PythonCodeGenerator.compileNamespace(typedNamespaceNode);
         var codeBuilder = new CodeBuilder();
         PythonSerialiser.serialiseModule(pythonModule, codeBuilder);
 

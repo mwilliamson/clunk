@@ -27,7 +27,7 @@ public class PythonCodeGeneratorNamespaceTests {
             .addStatement(record2)
             .build();
 
-        var result = PythonCodeGenerator.DEFAULT.compileNamespace(node);
+        var result = PythonCodeGenerator.compileNamespace(node);
 
         assertThat(result.name(), equalTo("example.project"));
         var string = serialiseToString(result, PythonSerialiser::serialiseModule);
@@ -50,7 +50,7 @@ public class PythonCodeGeneratorNamespaceTests {
             .addImport(Typed.import_(NamespaceName.fromParts("a", "b"), "C", Types.INT))
             .build();
 
-        var result = PythonCodeGenerator.DEFAULT.compileNamespace(node);
+        var result = PythonCodeGenerator.compileNamespace(node);
 
         assertThat(result.name(), equalTo("example.project"));
         var string = serialiseToString(result, PythonSerialiser::serialiseModule);
@@ -69,7 +69,7 @@ public class PythonCodeGeneratorNamespaceTests {
             .addImport(Typed.import_(NamespaceName.fromParts("d", "e", "f"), Types.INT))
             .build();
 
-        var result = PythonCodeGenerator.DEFAULT.compileNamespace(node);
+        var result = PythonCodeGenerator.compileNamespace(node);
 
         assertThat(result.name(), equalTo("example.project"));
         var string = serialiseToString(result, PythonSerialiser::serialiseModule);
@@ -96,7 +96,7 @@ public class PythonCodeGeneratorNamespaceTests {
             ))
             .build();
 
-        var result = PythonCodeGenerator.DEFAULT.compileNamespace(node);
+        var result = PythonCodeGenerator.compileNamespace(node);
 
         assertThat(result.name(), equalTo("example.project"));
         var string = serialiseToString(result, PythonSerialiser::serialiseModule);
@@ -148,7 +148,7 @@ public class PythonCodeGeneratorNamespaceTests {
             )
             .build();
 
-        var result = PythonCodeGenerator.DEFAULT.compileNamespace(node);
+        var result = PythonCodeGenerator.compileNamespace(node);
 
         assertThat(result.name(), equalTo("example.project"));
         var string = serialiseToString(result, PythonSerialiser::serialiseModule);

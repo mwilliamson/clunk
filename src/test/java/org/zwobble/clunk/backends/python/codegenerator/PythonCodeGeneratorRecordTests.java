@@ -21,7 +21,7 @@ public class PythonCodeGeneratorRecordTests {
             .build();
         var context = PythonCodeGeneratorContext.stub();
 
-        var result = PythonCodeGenerator.DEFAULT.compileRecord(node, context);
+        var result = PythonCodeGenerator.compileRecord(node, context);
 
         var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
         assertThat(string, equalTo(
@@ -45,7 +45,7 @@ public class PythonCodeGeneratorRecordTests {
             .build();
         var context = PythonCodeGeneratorContext.stub();
 
-        var result = PythonCodeGenerator.DEFAULT.compileRecord(node, context);
+        var result = PythonCodeGenerator.compileRecord(node, context);
 
         var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
         assertThat(string, equalTo(

@@ -114,7 +114,7 @@ public class JavaCodeGenerator {
 
             @Override
             public JavaExpressionNode visit(TypedIndexNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileIndex(node, context);
             }
 
             @Override
@@ -209,6 +209,19 @@ public class JavaCodeGenerator {
             node.elseBody().stream()
                 .map(statement -> compileFunctionStatement(statement, context))
                 .toList()
+        );
+    }
+
+    private static JavaExpressionNode compileIndex(
+        TypedIndexNode node,
+        JavaCodeGeneratorContext context
+    ) {
+        return new JavaCallNode(
+            new JavaMemberAccessNode(
+                compileExpression(node.receiver(), context),
+                "get"
+            ),
+            List.of(compileExpression(node.index(), context))
         );
     }
 

@@ -115,7 +115,7 @@ public class TypeScriptCodeGenerator {
 
             @Override
             public TypeScriptExpressionNode visit(TypedIndexNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileIndex(node, context);
             }
 
             @Override
@@ -214,6 +214,16 @@ public class TypeScriptCodeGenerator {
             node.elseBody().stream()
                 .map(statement -> compileFunctionStatement(statement, context))
                 .toList()
+        );
+    }
+
+    private static TypeScriptExpressionNode compileIndex(
+        TypedIndexNode node,
+        TypeScriptCodeGeneratorContext context
+    ) {
+        return new TypeScriptIndexNode(
+            compileExpression(node.receiver(), context),
+            compileExpression(node.index(), context)
         );
     }
 

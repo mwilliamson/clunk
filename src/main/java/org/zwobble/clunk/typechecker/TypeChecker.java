@@ -185,7 +185,7 @@ public class TypeChecker {
 
             @Override
             public TypedExpressionNode visit(UntypedIndexNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return typeCheckIndex(node, context);
             }
 
             @Override
@@ -381,6 +381,27 @@ public class TypeChecker {
             return new TypeCheckImportResult(typedNode, newContext);
         } else {
             throw new RuntimeException("TODO");
+        }
+    }
+
+    private static TypedExpressionNode typeCheckIndex(UntypedIndexNode node, TypeCheckerContext context) {
+        var typedReceiverNode = typeCheckExpression(node.receiver(), context);
+        var typedIndexNode = typeCheckExpression(node.index(), context);
+
+        var receiverType = typedReceiverNode.type();
+        if (receiverType instanceof ListType listType) {
+            if (typedIndexNode.type().equals(Types.INT)) {
+                return new TypedIndexNode(
+                    typedReceiverNode,
+                    typedIndexNode,
+                    listType.elementType(),
+                    node.source()
+                );
+            } else {
+                throw new UnexpectedTypeError(Types.INT, typedIndexNode.type(), typedIndexNode.source());
+            }
+        } else {
+            throw new UnexpectedTypeError(IndexableTypeSet.INSTANCE, typedReceiverNode.type(), node.source());
         }
     }
 

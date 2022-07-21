@@ -33,6 +33,10 @@ public class TypedNodeMatchers {
         return matcher;
     }
 
+    public static TypedIndexNodeMatcher isTypedIndexNode() {
+        return new TypedIndexNodeMatcher(P.vector());
+    }
+
     public static Matcher<TypedExpressionNode> isTypedIntLiteralNode(int value) {
         return cast(TypedIntLiteralNode.class, has("value", equalTo(value)));
     }

@@ -59,6 +59,13 @@ public class Untyped {
         return new UntypedImportNode(name, Optional.of(fieldName), NullSource.INSTANCE);
     }
 
+    public static UntypedIndexNode index(
+        UntypedExpressionNode receiver,
+        UntypedExpressionNode index
+    ) {
+        return new UntypedIndexNode(receiver, index, NullSource.INSTANCE);
+    }
+
     public static UntypedInterfaceNode interface_(String name) {
         return new UntypedInterfaceNode(name, NullSource.INSTANCE);
     }

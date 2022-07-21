@@ -256,14 +256,12 @@ public class TypeChecker {
                 var typedParamNodes = typedParamNodesBox.get();
                 var typedReturnTypeNode = typedReturnTypeNodeBox.get();
 
-                var typeCheckStatementsResult = typeCheckFunctionStatements(
+                var typeCheckStatementsResult = typeCheckFunctionBody(
                     node.body(),
-                    context.enterFunction(functionType.returnType())
+                    node.source(),
+                    functionType.returnType(),
+                    context
                 );
-
-                if (!typeCheckStatementsResult.returns() && !functionType.returnType().equals(Types.UNIT)) {
-                    throw new MissingReturnError(node.source());
-                }
 
                 return new TypedFunctionNode(
                     node.name(),
@@ -274,6 +272,23 @@ public class TypeChecker {
                 );
             }
         );
+    }
+
+    private static TypeCheckFunctionStatementResult<List<TypedFunctionStatementNode>> typeCheckFunctionBody(
+        List<UntypedFunctionStatementNode> body,
+        Source source,
+        Type returnType,
+        TypeCheckerContext context
+    ) {
+        var typeCheckStatementsResult = typeCheckFunctionStatements(
+            body,
+            context.enterFunction(returnType)
+        );
+
+        if (!typeCheckStatementsResult.returns() && !returnType.equals(Types.UNIT)) {
+            throw new MissingReturnError(source);
+        }
+        return typeCheckStatementsResult;
     }
 
     public static TypeCheckFunctionStatementResult<TypedFunctionStatementNode> typeCheckFunctionStatement(
@@ -534,12 +549,13 @@ public class TypeChecker {
         return new TypeCheckRecordBodyDeclarationResult(
             Map.of(node.name(), type),
             bodyContext -> {
-                var typeCheckBodyResult = typeCheckFunctionStatements(
+                var typeCheckBodyResult = typeCheckFunctionBody(
                     node.body(),
+                    node.source(),
+                    type,
                     bodyContext.enterFunction(type)
                 );
 
-                // TODO: check return
                 return new TypedPropertyNode(
                     node.name(),
                     typedTypeNode,
@@ -647,7 +663,7 @@ public class TypeChecker {
         );
     }
 
-    private static TypeCheckRecordBodyDeclarationResult typeCheckRecordBodyDeclaration(
+    public static TypeCheckRecordBodyDeclarationResult typeCheckRecordBodyDeclaration(
         UntypedRecordBodyDeclarationNode node,
         TypeCheckerContext context
     ) {

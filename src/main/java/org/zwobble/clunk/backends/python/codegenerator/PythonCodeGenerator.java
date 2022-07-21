@@ -135,7 +135,7 @@ public class PythonCodeGenerator {
 
             @Override
             public PythonExpressionNode visit(TypedIndexNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileIndex(node, context);
             }
 
             @Override
@@ -255,6 +255,16 @@ public class PythonCodeGenerator {
                 List.of(parts.get(parts.size() - 1))
             ));
         }
+    }
+
+    private static PythonExpressionNode compileIndex(
+        TypedIndexNode node,
+        PythonCodeGeneratorContext context
+    ) {
+        return new PythonSubscriptionNode(
+            compileExpression(node.receiver(), context),
+            List.of(compileExpression(node.index(), context))
+        );
     }
 
     private static PythonStatementNode compileInterface(TypedInterfaceNode node, PythonCodeGeneratorContext context) {

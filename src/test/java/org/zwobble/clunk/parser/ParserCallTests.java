@@ -15,7 +15,7 @@ public class ParserCallTests {
 
         var node = parseString(source, Parser::parseExpression);
 
-        assertThat(node, isUntypedCall()
+        assertThat(node, isUntypedCallNode()
             .withReceiver(isUntypedReferenceNode("f"))
             .withPositionalArgs(empty())
         );
@@ -27,7 +27,7 @@ public class ParserCallTests {
 
         var node = parseString(source, Parser::parseExpression);
 
-        assertThat(node, isUntypedCall()
+        assertThat(node, isUntypedCallNode()
             .withReceiver(isUntypedReferenceNode("f"))
             .withPositionalArgs(contains(isUntypedBoolLiteralNode(true)))
         );
@@ -39,7 +39,7 @@ public class ParserCallTests {
 
         var node = parseString(source, Parser::parseExpression);
 
-        assertThat(node, isUntypedCall()
+        assertThat(node, isUntypedCallNode()
             .withReceiver(isUntypedReferenceNode("f"))
             .withPositionalArgs(contains(isUntypedBoolLiteralNode(true), isUntypedBoolLiteralNode(false)))
         );
@@ -51,7 +51,7 @@ public class ParserCallTests {
 
         var node = parseString(source, Parser::parseExpression);
 
-        assertThat(node, isUntypedCall()
+        assertThat(node, isUntypedCallNode()
             .withReceiver(isUntypedReferenceNode("f"))
             .withPositionalArgs(contains(isUntypedBoolLiteralNode(true)))
         );
@@ -63,8 +63,8 @@ public class ParserCallTests {
 
         var node = parseString(source, Parser::parseExpression);
 
-        assertThat(node, isUntypedCall()
-            .withReceiver(isUntypedCall()
+        assertThat(node, isUntypedCallNode()
+            .withReceiver(isUntypedCallNode()
                 .withReceiver(isUntypedReferenceNode("f"))
                 .withPositionalArgs(empty()))
             .withPositionalArgs(empty())

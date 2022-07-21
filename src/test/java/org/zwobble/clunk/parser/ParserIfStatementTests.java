@@ -17,7 +17,7 @@ public class ParserIfStatementTests {
 
         assertThat(node, isUntypedIfStatementNode()
             .withConditionalBranches(contains(
-                isUntypedConditionalBranch(
+                isUntypedConditionalBranchNode(
                     isUntypedBoolLiteralNode(true),
                     contains(
                         isUntypedExpressionStatementNode(isUntypedIntLiteralNode(42)),
@@ -36,7 +36,7 @@ public class ParserIfStatementTests {
 
         assertThat(node, isUntypedIfStatementNode()
             .withConditionalBranches(contains(
-                isUntypedConditionalBranch(
+                isUntypedConditionalBranchNode(
                     isUntypedBoolLiteralNode(true),
                     contains(
                         isUntypedExpressionStatementNode(isUntypedIntLiteralNode(42))
@@ -56,13 +56,13 @@ public class ParserIfStatementTests {
 
         assertThat(node, isUntypedIfStatementNode()
             .withConditionalBranches(contains(
-                isUntypedConditionalBranch(
+                isUntypedConditionalBranchNode(
                     isUntypedBoolLiteralNode(true),
                     contains(
                         isUntypedExpressionStatementNode(isUntypedIntLiteralNode(42))
                     )
                 ),
-                isUntypedConditionalBranch(
+                isUntypedConditionalBranchNode(
                     isUntypedBoolLiteralNode(false),
                     contains(
                         isUntypedExpressionStatementNode(isUntypedIntLiteralNode(47))
@@ -80,13 +80,13 @@ public class ParserIfStatementTests {
 
         assertThat(node, isUntypedIfStatementNode()
             .withConditionalBranches(contains(
-                isUntypedConditionalBranch(
+                isUntypedConditionalBranchNode(
                     isUntypedBoolLiteralNode(true),
                     contains(
                         isUntypedExpressionStatementNode(isUntypedIntLiteralNode(42))
                     )
                 ),
-                isUntypedConditionalBranch(
+                isUntypedConditionalBranchNode(
                     isUntypedBoolLiteralNode(false),
                     contains(
                         isUntypedExpressionStatementNode(isUntypedIntLiteralNode(47))

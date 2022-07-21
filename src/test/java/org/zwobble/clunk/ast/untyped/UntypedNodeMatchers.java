@@ -21,11 +21,11 @@ public class UntypedNodeMatchers {
         return cast(UntypedBoolLiteralNode.class, has("value", equalTo(value)));
     }
 
-    public static UntypedCallNodeMatcher isUntypedCall() {
+    public static UntypedCallNodeMatcher isUntypedCallNode() {
         return new UntypedCallNodeMatcher(List.of());
     }
 
-    public static Matcher<UntypedConditionalBranchNode> isUntypedConditionalBranch(
+    public static Matcher<UntypedConditionalBranchNode> isUntypedConditionalBranchNode(
         Matcher<UntypedExpressionNode> condition,
         Matcher<? extends Iterable<? extends UntypedFunctionStatementNode>> body
     ) {

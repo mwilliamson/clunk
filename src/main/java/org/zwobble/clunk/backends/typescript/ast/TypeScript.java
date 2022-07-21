@@ -71,6 +71,13 @@ public class TypeScript {
         return new TypeScriptImportNode(module, exports);
     }
 
+    public static TypeScriptIndexNode index(
+        TypeScriptExpressionNode receiver,
+        TypeScriptExpressionNode index
+    ) {
+        return new TypeScriptIndexNode(receiver, index);
+    }
+
     public static TypeScriptInterfaceFieldNode interfaceField(String name, TypeScriptReferenceNode type) {
         return new TypeScriptInterfaceFieldNode(name, type);
     }

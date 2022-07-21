@@ -214,6 +214,12 @@ public class TypeScriptSerialiser {
             }
 
             @Override
+            public Void visit(TypeScriptIndexNode node) {
+                serialiseIndex(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(TypeScriptUnionNode node) {
                 serialiseUnion(node, builder);
                 return null;
@@ -287,6 +293,13 @@ public class TypeScriptSerialiser {
         serialiseExpression(node.type(), builder, Optional.empty());
         serialiseBlock(node.body(), builder);
         builder.newLine();
+    }
+
+    private static void serialiseIndex(TypeScriptIndexNode node, CodeBuilder builder) {
+        serialiseExpression(node.receiver(), builder, Optional.of(node));
+        builder.append("[");
+        serialiseExpression(node.index(), builder, Optional.empty());
+        builder.append("]");
     }
 
     private static void serialiseMethod(TypeScriptFunctionDeclarationNode node, CodeBuilder builder) {

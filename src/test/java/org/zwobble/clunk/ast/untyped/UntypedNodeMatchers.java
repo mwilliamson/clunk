@@ -2,6 +2,7 @@ package org.zwobble.clunk.ast.untyped;
 
 import org.hamcrest.Matcher;
 import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.util.P;
 
 import java.util.List;
 import java.util.Optional;
@@ -65,6 +66,10 @@ public class UntypedNodeMatchers {
             has("namespaceName", equalTo(namespaceName)),
             has("fieldName", equalTo(fieldName))
         ));
+    }
+
+    public static UntypedIndexNodeMatcher isUntypedIndexNode() {
+        return new UntypedIndexNodeMatcher(P.vector());
     }
 
     public static Matcher<UntypedExpressionNode> isUntypedIntLiteralNode(int value) {

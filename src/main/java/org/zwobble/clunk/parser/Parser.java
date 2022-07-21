@@ -69,6 +69,10 @@ public class Parser {
             } else if (tokens.trySkip(TokenType.SYMBOL_PLUS)) {
                 var right = parsePrimaryExpression(tokens);
                 expression = new UntypedAddNode(expression, right, expression.source());
+            } else if (tokens.trySkip(TokenType.SYMBOL_SQUARE_OPEN)) {
+                var index = parseExpression(tokens);
+                tokens.skip(TokenType.SYMBOL_SQUARE_CLOSE);
+                expression = new UntypedIndexNode(expression, index, expression.source());
             } else {
                 return expression;
             }

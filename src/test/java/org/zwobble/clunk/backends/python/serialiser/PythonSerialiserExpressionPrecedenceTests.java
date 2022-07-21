@@ -21,4 +21,28 @@ public class PythonSerialiserExpressionPrecedenceTests {
 
         assertThat(result, equalTo("(a + b)()"));
     }
+
+    @Test
+    public void subExpressionIsNotParenthesizedWhenOfSamePrecedence() {
+        var node = Python.add(
+            Python.add(Python.reference("a"), Python.reference("b")),
+            Python.reference("c")
+        );
+
+        var result = serialiseToString(node, PythonSerialiserTesting::serialiseExpression);
+
+        assertThat(result, equalTo("a + b + c"));
+    }
+
+    @Test
+    public void subExpressionIsNotParenthesizedWhenOfHigherPrecedence() {
+        var node = Python.add(
+            Python.call(Python.reference("a"), List.of()),
+            Python.reference("b")
+        );
+
+        var result = serialiseToString(node, PythonSerialiserTesting::serialiseExpression);
+
+        assertThat(result, equalTo("a() + b"));
+    }
 }

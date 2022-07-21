@@ -9,6 +9,7 @@ import org.zwobble.clunk.types.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.zwobble.clunk.types.Types.isSubType;
@@ -498,18 +499,28 @@ public class TypeChecker {
         });
     }
 
-    private static TypedPropertyNode typeCheckProperty(UntypedPropertyNode node, TypeCheckerContext context) {
-        var typedTypeNode = typeCheckTypeLevelExpressionNode(node.type(), context);
-        var typeCheckBodyResult = typeCheckFunctionStatements(
-            node.body(),
-            context.enterFunction((Type) typedTypeNode.value())
-        );
-        // TODO: check return
-        return new TypedPropertyNode(
-            node.name(),
-            typedTypeNode,
-            typeCheckBodyResult.value(),
-            node.source()
+    private static TypeCheckRecordBodyDeclarationResult typeCheckProperty(
+        UntypedPropertyNode node,
+        TypeCheckerContext initialContext
+    ) {
+        var typedTypeNode = typeCheckTypeLevelExpressionNode(node.type(), initialContext);
+        var type = (Type) typedTypeNode.value();
+        return new TypeCheckRecordBodyDeclarationResult(
+            Map.of(node.name(), type),
+            bodyContext -> {
+                var typeCheckBodyResult = typeCheckFunctionStatements(
+                    node.body(),
+                    bodyContext.enterFunction(type)
+                );
+
+                // TODO: check return
+                return new TypedPropertyNode(
+                    node.name(),
+                    typedTypeNode,
+                    typeCheckBodyResult.value(),
+                    node.source()
+                );
+            }
         );
     }
 
@@ -519,7 +530,8 @@ public class TypeChecker {
         var recordTypeBox = new Box<RecordType>();
         var typedSupertypeNodesBox = new Box<List<TypedTypeLevelExpressionNode>>();
         var typedRecordFieldNodesBox = new Box<List<TypedRecordFieldNode>>();
-        var typedBodyBox = new Box<List<? extends TypedRecordBodyDeclarationNode>>();
+        var typeCheckBodyDeclarationResultsBox = new Box<List<TypeCheckRecordBodyDeclarationResult>>();
+        var typedBodyDeclarationsBox = new Box<List<? extends TypedRecordBodyDeclarationNode>>();
 
         return new TypeCheckNamespaceStatementResult(
             List.of(
@@ -558,24 +570,18 @@ public class TypeChecker {
                             .toList();
                         typedSupertypeNodesBox.set(typedSupertypeNodes);
 
-                        var fieldTypes = typedRecordFieldNodes.stream()
-                            .collect(Collectors.toMap(
-                                fieldNode -> fieldNode.name(),
-                                fieldNode -> (Type) fieldNode.type().value()
-                            ));
-                        var bodyContext = context.enterRecordBody(fieldTypes);
-                        var typedBody = node.body().stream()
-                            .map(declaration -> typeCheckRecordBodyDeclaration(declaration, bodyContext))
+                        var typeCheckBodyDeclarationResults = node.body().stream()
+                            .map(declaration -> typeCheckRecordBodyDeclaration(declaration, context))
                             .toList();
-                        typedBodyBox.set(typedBody);
+                        typeCheckBodyDeclarationResultsBox.set(typeCheckBodyDeclarationResults);
 
                         var memberTypes = new HashMap<String, Type>();
                         // TODO: check for duplicates
                         for (var typedFieldNode : typedRecordFieldNodes) {
                             memberTypes.put(typedFieldNode.name(), (Type) typedFieldNode.type().value());
                         }
-                        for (var typedPropertyNode : typedBody) {
-                            memberTypes.put(typedPropertyNode.name(), (Type) typedPropertyNode.type().value());
+                        for (var typeCheckDeclarationResult : typeCheckBodyDeclarationResults) {
+                            memberTypes.putAll(typeCheckDeclarationResult.memberTypes());
                         }
 
                         var newContext = context.addFields(recordType, typedRecordFieldNodes);
@@ -586,6 +592,22 @@ public class TypeChecker {
                         }
                         return newContext;
                     }
+                ),
+                new PendingTypeCheck(
+                    TypeCheckerPhase.TYPE_CHECK_BODIES,
+                    context -> {
+                        var fieldTypes = typedRecordFieldNodesBox.get().stream()
+                            .collect(Collectors.toMap(
+                                fieldNode -> fieldNode.name(),
+                                fieldNode -> (Type) fieldNode.type().value()
+                            ));
+                        var bodyContext = context.enterRecordBody(fieldTypes);
+                        var typedBody = typeCheckBodyDeclarationResultsBox.get().stream()
+                            .map(result -> result.value(bodyContext))
+                            .toList();
+                        typedBodyDeclarationsBox.set(typedBody);
+                        return context;
+                    }
                 )
             ),
             context -> new TypedRecordNode(
@@ -593,16 +615,19 @@ public class TypeChecker {
                 recordTypeBox.get(),
                 typedRecordFieldNodesBox.get(),
                 typedSupertypeNodesBox.get(),
-                typedBodyBox.get(),
+                typedBodyDeclarationsBox.get(),
                 node.source()
             )
         );
     }
 
-    private static TypedPropertyNode typeCheckRecordBodyDeclaration(UntypedRecordBodyDeclarationNode node, TypeCheckerContext context) {
-        return node.accept(new UntypedRecordBodyDeclarationNode.Visitor<TypedPropertyNode>() {
+    private static TypeCheckRecordBodyDeclarationResult typeCheckRecordBodyDeclaration(
+        UntypedRecordBodyDeclarationNode node,
+        TypeCheckerContext context
+    ) {
+        return node.accept(new UntypedRecordBodyDeclarationNode.Visitor<TypeCheckRecordBodyDeclarationResult>() {
             @Override
-            public TypedPropertyNode visit(UntypedPropertyNode node) {
+            public TypeCheckRecordBodyDeclarationResult visit(UntypedPropertyNode node) {
                 return typeCheckProperty(node, context);
             }
         });

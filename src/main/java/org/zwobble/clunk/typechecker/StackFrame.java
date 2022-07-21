@@ -1,8 +1,10 @@
 package org.zwobble.clunk.typechecker;
 
+import org.pcollections.PMap;
 import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.Type;
+import org.zwobble.clunk.util.P;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,13 +13,13 @@ import java.util.Optional;
 public record StackFrame(
     Optional<NamespaceName> namespaceName,
     Optional<Type> returnType,
-    Map<String, Variable> environment
+    PMap<String, Variable> environment
 ) {
     public static StackFrame body(Map<String, Variable> environment) {
         return new StackFrame(
             Optional.empty(),
             Optional.empty(),
-            environment
+            P.copyOf(environment)
         );
     }
 
@@ -25,7 +27,7 @@ public record StackFrame(
         return new StackFrame(
             Optional.empty(),
             Optional.empty(),
-            environment
+            P.copyOf(environment)
         );
     }
 
@@ -33,7 +35,7 @@ public record StackFrame(
         return new StackFrame(
             Optional.empty(),
             Optional.of(returnType),
-            Map.of()
+            P.map()
         );
     }
 
@@ -45,7 +47,7 @@ public record StackFrame(
         return new StackFrame(
             Optional.of(namespaceName),
             Optional.empty(),
-            environment
+            P.copyOf(environment)
         );
     }
 
@@ -53,7 +55,7 @@ public record StackFrame(
         return new StackFrame(
             Optional.empty(),
             Optional.empty(),
-            Map.of()
+            P.copyOf(Map.of())
         );
     }
 
@@ -62,8 +64,6 @@ public record StackFrame(
             throw new VariableAlreadyDefinedError(name, source);
         }
 
-        var environment = new HashMap<>(this.environment);
-        environment.put(name, variable);
-        return new StackFrame(namespaceName, returnType, environment);
+        return new StackFrame(namespaceName, returnType, environment.plus(name, variable));
     }
 }

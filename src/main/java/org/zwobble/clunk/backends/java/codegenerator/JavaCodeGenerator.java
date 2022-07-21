@@ -20,7 +20,7 @@ public class JavaCodeGenerator {
         JavaExpressionNode compileReceiver(JavaCodeGeneratorContext context);
     }
 
-    private static final Map<NamespaceName, Map<String, JavaMacro>> MACROS = Map.ofEntries(
+    private static final Map<NamespaceName, Map<String, JavaMacro>> STATIC_FUNCTION_MACROS = Map.ofEntries(
         Map.entry(
             NamespaceName.fromParts("stdlib", "assertions"),
             Map.ofEntries(
@@ -49,7 +49,7 @@ public class JavaCodeGenerator {
 
     private static Optional<JavaMacro> lookupMacro(Type type) {
         if (type instanceof StaticFunctionType staticFunctionType) {
-            var macro = MACROS.getOrDefault(staticFunctionType.namespaceName(), Map.of())
+            var macro = STATIC_FUNCTION_MACROS.getOrDefault(staticFunctionType.namespaceName(), Map.of())
                 .get(staticFunctionType.functionName());
             return Optional.ofNullable(macro);
         } else {

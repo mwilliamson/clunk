@@ -16,7 +16,7 @@ public class TypeScriptCodeGenerator {
         TypeScriptExpressionNode compileReceiver(TypeScriptCodeGeneratorContext context);
     }
 
-    private static final Map<NamespaceName, Map<String, TypeScriptMacro>> MACROS = Map.ofEntries(
+    private static final Map<NamespaceName, Map<String, TypeScriptMacro>> STATIC_FUNCTION_MACROS = Map.ofEntries(
         Map.entry(
             NamespaceName.fromParts("stdlib", "assertions"),
             Map.ofEntries(
@@ -45,7 +45,7 @@ public class TypeScriptCodeGenerator {
 
     private static Optional<TypeScriptMacro> lookupMacro(Type type) {
         if (type instanceof StaticFunctionType staticFunctionType) {
-            var macro = MACROS.getOrDefault(staticFunctionType.namespaceName(), Map.of())
+            var macro = STATIC_FUNCTION_MACROS.getOrDefault(staticFunctionType.namespaceName(), Map.of())
                 .get(staticFunctionType.functionName());
             return Optional.ofNullable(macro);
         } else {

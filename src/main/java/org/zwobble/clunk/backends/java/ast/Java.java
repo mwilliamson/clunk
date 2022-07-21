@@ -3,7 +3,7 @@ package org.zwobble.clunk.backends.java.ast;
 import java.util.List;
 
 public class Java {
-    public static JavaAddNode add(JavaReferenceNode left, JavaReferenceNode right) {
+    public static JavaAddNode add(JavaExpressionNode left, JavaExpressionNode right) {
         return new JavaAddNode(left, right);
     }
 

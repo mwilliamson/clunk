@@ -21,4 +21,28 @@ public class JavaSerialiserExpressionPrecedenceTests {
 
         assertThat(result, equalTo("(a + b)()"));
     }
+
+    @Test
+    public void subExpressionIsNotParenthesizedWhenOfSamePrecedence() {
+        var node = Java.add(
+            Java.add(Java.reference("a"), Java.reference("b")),
+            Java.reference("c")
+        );
+
+        var result = serialiseToString(node, JavaSerialiserTesting::serialiseExpression);
+
+        assertThat(result, equalTo("a + b + c"));
+    }
+
+    @Test
+    public void subExpressionIsNotParenthesizedWhenOfHigherPrecedence() {
+        var node = Java.add(
+            Java.call(Java.reference("a"), List.of()),
+            Java.reference("b")
+        );
+
+        var result = serialiseToString(node, JavaSerialiserTesting::serialiseExpression);
+
+        assertThat(result, equalTo("a() + b"));
+    }
 }

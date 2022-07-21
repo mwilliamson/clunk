@@ -114,6 +114,11 @@ public class TypeScriptCodeGenerator {
             }
 
             @Override
+            public TypeScriptExpressionNode visit(TypedIndexNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public TypeScriptExpressionNode visit(TypedIntAddNode node) {
                 return compileAdd(node, context);
             }

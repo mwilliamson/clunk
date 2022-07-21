@@ -21,4 +21,28 @@ public class TypeScriptSerialiserExpressionPrecedenceTests {
 
         assertThat(result, equalTo("(a + b)()"));
     }
+
+    @Test
+    public void subExpressionIsNotParenthesizedWhenOfSamePrecedence() {
+        var node = TypeScript.add(
+            TypeScript.add(TypeScript.reference("a"), TypeScript.reference("b")),
+            TypeScript.reference("c")
+        );
+
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
+
+        assertThat(result, equalTo("a + b + c"));
+    }
+
+    @Test
+    public void subExpressionIsNotParenthesizedWhenOfHigherPrecedence() {
+        var node = TypeScript.add(
+            TypeScript.call(TypeScript.reference("a"), List.of()),
+            TypeScript.reference("b")
+        );
+
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
+
+        assertThat(result, equalTo("a() + b"));
+    }
 }

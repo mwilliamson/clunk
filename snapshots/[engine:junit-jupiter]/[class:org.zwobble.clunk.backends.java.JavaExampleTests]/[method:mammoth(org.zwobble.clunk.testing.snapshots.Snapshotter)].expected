@@ -129,7 +129,11 @@ sealed interface HtmlNode {
 
 record HtmlAttribute(name: String, value: String)
 
-record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode
+record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
+    property defaultTagName: String {
+        return tag.defaultTagName;
+    }
+}
 
 record HtmlForceWrite() <: HtmlNode
 
@@ -138,7 +142,11 @@ record HtmlTag(
     attributes: List[HtmlAttribute],
     isCollapsible: Bool,
     separator: String,
-) <: HtmlNode
+) <: HtmlNode {
+    property defaultTagName: String {
+        return tagNames[0];
+    }
+}
 
 record HtmlText(value: String)
 
@@ -372,6 +380,9 @@ Output path: org/zwobble/mammoth/internal/html/HtmlElement.java
 package org.zwobble.mammoth.internal.html;
 
 public record HtmlElement(HtmlTag tag, java.util.List<HtmlNode> children) implements HtmlNode {
+    public String defaultTagName() {
+        return tag.defaultTagName();
+    }
 }
 
 ==============
@@ -388,6 +399,9 @@ Output path: org/zwobble/mammoth/internal/html/HtmlTag.java
 package org.zwobble.mammoth.internal.html;
 
 public record HtmlTag(java.util.List<String> tagNames, java.util.List<HtmlAttribute> attributes, boolean isCollapsible, String separator) implements HtmlNode {
+    public String defaultTagName() {
+        return tagNames.get(0);
+    }
 }
 
 ==============

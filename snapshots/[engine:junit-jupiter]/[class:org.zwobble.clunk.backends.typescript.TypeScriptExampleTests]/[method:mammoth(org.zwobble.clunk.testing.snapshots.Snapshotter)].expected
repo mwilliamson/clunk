@@ -129,7 +129,11 @@ sealed interface HtmlNode {
 
 record HtmlAttribute(name: String, value: String)
 
-record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode
+record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
+    property defaultTagName: String {
+        return tag.defaultTagName;
+    }
+}
 
 record HtmlForceWrite() <: HtmlNode
 
@@ -138,7 +142,11 @@ record HtmlTag(
     attributes: List[HtmlAttribute],
     isCollapsible: Bool,
     separator: String,
-) <: HtmlNode
+) <: HtmlNode {
+    property defaultTagName: String {
+        return tagNames[0];
+    }
+}
 
 record HtmlText(value: String)
 
@@ -417,6 +425,9 @@ class HtmlElement {
         this.tag = tag;
         this.children = children;
     }
+    get defaultTagName(): string {
+        return this.tag.defaultTagName;
+    }
 }
 
 class HtmlForceWrite {
@@ -435,6 +446,9 @@ class HtmlTag {
         this.attributes = attributes;
         this.isCollapsible = isCollapsible;
         this.separator = separator;
+    }
+    get defaultTagName(): string {
+        return this.tagNames[0];
     }
 }
 

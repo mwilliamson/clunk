@@ -129,7 +129,11 @@ sealed interface HtmlNode {
 
 record HtmlAttribute(name: String, value: String)
 
-record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode
+record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
+    property defaultTagName: String {
+        return tag.defaultTagName;
+    }
+}
 
 record HtmlForceWrite() <: HtmlNode
 
@@ -138,7 +142,11 @@ record HtmlTag(
     attributes: List[HtmlAttribute],
     isCollapsible: Bool,
     separator: String,
-) <: HtmlNode
+) <: HtmlNode {
+    property defaultTagName: String {
+        return tagNames[0];
+    }
+}
 
 record HtmlText(value: String)
 
@@ -298,6 +306,9 @@ class HtmlAttribute:
 class HtmlElement:
     tag: HtmlTag
     children: typing.List[HtmlNode]
+    @property
+    def defaultTagName(self):
+        return self.tag.defaultTagName
 
 @dataclasses.dataclass(frozen=True)
 class HtmlForceWrite:
@@ -309,6 +320,9 @@ class HtmlTag:
     attributes: typing.List[HtmlAttribute]
     isCollapsible: bool
     separator: str
+    @property
+    def defaultTagName(self):
+        return self.tagNames[0]
 
 @dataclasses.dataclass(frozen=True)
 class HtmlText:

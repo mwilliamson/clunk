@@ -14,5 +14,6 @@ public interface PythonStatementNode extends PythonNode {
         T visit(PythonImportNode node);
         T visit(PythonImportFromNode node);
         T visit(PythonReturnNode node);
+        T visit(PythonSingleLineCommentNode node);
     }
 }

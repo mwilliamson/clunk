@@ -262,6 +262,12 @@ public class PythonSerialiser {
         builder.newLine();
     }
 
+    private static void serialiseSingleLineComment(PythonSingleLineCommentNode node, CodeBuilder builder) {
+        builder.append("#");
+        builder.append(node.value());
+        builder.newLine();
+    }
+
     public static void serialiseStatement(PythonStatementNode node, CodeBuilder builder) {
         node.accept(new PythonStatementNode.Visitor<Void>() {
             @Override
@@ -321,6 +327,12 @@ public class PythonSerialiser {
             @Override
             public Void visit(PythonReturnNode node) {
                 serialiseReturn(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(PythonSingleLineCommentNode node) {
+                serialiseSingleLineComment(node, builder);
                 return null;
             }
         });

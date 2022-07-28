@@ -74,6 +74,10 @@ public class Python {
         return new PythonReturnNode(expression);
     }
 
+    public static PythonSingleLineCommentNode singleLineComment(String value) {
+        return new PythonSingleLineCommentNode(value);
+    }
+
     public static PythonExpressionNode subscription(
         PythonExpressionNode receiver,
         List<PythonExpressionNode> args

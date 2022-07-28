@@ -187,6 +187,11 @@ public class JavaCodeGenerator {
             }
 
             @Override
+            public JavaStatementNode visit(TypedSingleLineCommentNode node) {
+                return compileSingleLineComment(node);
+            }
+
+            @Override
             public JavaStatementNode visit(TypedVarNode node) {
                 return compileVar(node, context);
             }
@@ -309,6 +314,12 @@ public class JavaCodeGenerator {
                 }
 
                 @Override
+                public Void visit(TypedSingleLineCommentNode node) {
+                    // TODO: handle this. Prefix to next compilation unit?
+                    return null;
+                }
+
+                @Override
                 public Void visit(TypedTestNode testNode) {
                     functions.add(compileTest(testNode, context));
                     return null;
@@ -396,6 +407,10 @@ public class JavaCodeGenerator {
 
     private static JavaStatementNode compileReturn(TypedReturnNode node, JavaCodeGeneratorContext context) {
         return new JavaReturnNode(compileExpression(node.expression(), context));
+    }
+
+    private static JavaStatementNode compileSingleLineComment(TypedSingleLineCommentNode node) {
+        return new JavaSingleLineCommentNode(node.value());
     }
 
     private static JavaStringLiteralNode compileStringLiteral(TypedStringLiteralNode node) {

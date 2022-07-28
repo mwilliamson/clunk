@@ -192,6 +192,11 @@ public class TypeScriptCodeGenerator {
             }
 
             @Override
+            public TypeScriptStatementNode visit(TypedSingleLineCommentNode node) {
+                return compileSingleLineComment(node);
+            }
+
+            @Override
             public TypeScriptStatementNode visit(TypedVarNode node) {
                 return compileVar(node, context);
             }
@@ -311,6 +316,11 @@ public class TypeScriptCodeGenerator {
             }
 
             @Override
+            public TypeScriptStatementNode visit(TypedSingleLineCommentNode node) {
+                return compileSingleLineComment(node);
+            }
+
+            @Override
             public TypeScriptStatementNode visit(TypedTestNode node) {
                 return compileTest(node, context);
             }
@@ -378,6 +388,10 @@ public class TypeScriptCodeGenerator {
 
     private static TypeScriptStatementNode compileReturn(TypedReturnNode node, TypeScriptCodeGeneratorContext context) {
         return new TypeScriptReturnNode(compileExpression(node.expression(), context));
+    }
+
+    private static TypeScriptStatementNode compileSingleLineComment(TypedSingleLineCommentNode node) {
+        return new TypeScriptSingleLineCommentNode(node.value());
     }
 
     private static TypeScriptExpressionNode compileStringLiteral(TypedStringLiteralNode node) {

@@ -7,6 +7,7 @@ public interface TypedNamespaceStatementNode extends TypedNode {
         T visit(TypedFunctionNode node);
         T visit(TypedInterfaceNode node);
         T visit(TypedRecordNode node);
+        T visit(TypedSingleLineCommentNode node);
         T visit(TypedTestNode node);
     }
 

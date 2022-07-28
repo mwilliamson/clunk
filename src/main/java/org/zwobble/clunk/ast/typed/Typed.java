@@ -93,6 +93,10 @@ public class Typed {
         return new TypedReturnNode(expression, NullSource.INSTANCE);
     }
 
+    public static TypedSingleLineCommentNode singleLineComment(String value) {
+        return new TypedSingleLineCommentNode(value, NullSource.INSTANCE);
+    }
+
     public static TypedStringLiteralNode string(String value) {
         return new TypedStringLiteralNode(value, NullSource.INSTANCE);
     }

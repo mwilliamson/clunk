@@ -209,6 +209,11 @@ public class PythonCodeGenerator {
             }
 
             @Override
+            public PythonStatementNode visit(TypedSingleLineCommentNode node) {
+                return compileSingleLineComment(node);
+            }
+
+            @Override
             public PythonStatementNode visit(TypedVarNode node) {
                 return compileVar(node, context);
             }
@@ -345,6 +350,11 @@ public class PythonCodeGenerator {
             }
 
             @Override
+            public PythonStatementNode visit(TypedSingleLineCommentNode node) {
+                return compileSingleLineComment(node);
+            }
+
+            @Override
             public PythonStatementNode visit(TypedTestNode node) {
                 return compileTest(node, context);
             }
@@ -413,6 +423,10 @@ public class PythonCodeGenerator {
 
     private static PythonStatementNode compileReturn(TypedReturnNode node, PythonCodeGeneratorContext context) {
         return new PythonReturnNode(compileExpression(node.expression(), context));
+    }
+
+    private static PythonStatementNode compileSingleLineComment(TypedSingleLineCommentNode node) {
+        return new PythonSingleLineCommentNode(node.value());
     }
 
     private static PythonExpressionNode compileStringLiteral(TypedStringLiteralNode node) {

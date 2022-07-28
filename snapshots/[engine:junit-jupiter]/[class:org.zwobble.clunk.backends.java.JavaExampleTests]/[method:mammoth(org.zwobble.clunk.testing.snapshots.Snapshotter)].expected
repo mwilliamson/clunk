@@ -142,13 +142,13 @@ record HtmlTag(
     attributes: List[HtmlAttribute],
     isCollapsible: Bool,
     separator: String,
-) <: HtmlNode {
+) {
     property defaultTagName: String {
         return tagNames[0];
     }
 }
 
-record HtmlText(value: String)
+record HtmlText(value: String) <: HtmlNode
 
 
 ==============
@@ -362,7 +362,7 @@ public enum VerticalAlignment {
 Output path: org/zwobble/mammoth/internal/html/HtmlNode.java
 package org.zwobble.mammoth.internal.html;
 
-public sealed interface HtmlNode permits HtmlElement, HtmlForceWrite, HtmlTag {
+public sealed interface HtmlNode permits HtmlElement, HtmlForceWrite, HtmlText {
 }
 
 
@@ -398,7 +398,7 @@ public record HtmlForceWrite() implements HtmlNode {
 Output path: org/zwobble/mammoth/internal/html/HtmlTag.java
 package org.zwobble.mammoth.internal.html;
 
-public record HtmlTag(java.util.List<String> tagNames, java.util.List<HtmlAttribute> attributes, boolean isCollapsible, String separator) implements HtmlNode {
+public record HtmlTag(java.util.List<String> tagNames, java.util.List<HtmlAttribute> attributes, boolean isCollapsible, String separator) {
     public String defaultTagName() {
         return tagNames.get(0);
     }
@@ -409,7 +409,7 @@ public record HtmlTag(java.util.List<String> tagNames, java.util.List<HtmlAttrib
 Output path: org/zwobble/mammoth/internal/html/HtmlText.java
 package org.zwobble.mammoth.internal.html;
 
-public record HtmlText(String value) {
+public record HtmlText(String value) implements HtmlNode {
 }
 
 ==============

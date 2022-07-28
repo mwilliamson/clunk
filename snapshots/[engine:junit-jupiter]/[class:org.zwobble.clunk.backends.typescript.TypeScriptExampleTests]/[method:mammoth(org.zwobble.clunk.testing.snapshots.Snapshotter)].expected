@@ -142,13 +142,13 @@ record HtmlTag(
     attributes: List[HtmlAttribute],
     isCollapsible: Bool,
     separator: String,
-) <: HtmlNode {
+) {
     property defaultTagName: String {
         return tagNames[0];
     }
 }
 
-record HtmlText(value: String)
+record HtmlText(value: String) <: HtmlNode
 
 
 ==============
@@ -404,7 +404,7 @@ enum VerticalAlignment {
 ==============
 
 Output path: html.ts
-type HtmlNode = HtmlElement | HtmlForceWrite | HtmlTag;
+type HtmlNode = HtmlElement | HtmlForceWrite | HtmlText;
 
 class HtmlAttribute {
     readonly name: string;
@@ -435,7 +435,6 @@ class HtmlForceWrite {
 }
 
 class HtmlTag {
-    readonly type: "HtmlTag" = "HtmlTag";
     readonly tagNames: (Array)<string>;
     readonly attributes: (Array)<HtmlAttribute>;
     readonly isCollapsible: boolean;
@@ -453,6 +452,7 @@ class HtmlTag {
 }
 
 class HtmlText {
+    readonly type: "HtmlText" = "HtmlText";
     readonly value: string;
 
     constructor(value: string) {

@@ -28,10 +28,20 @@ public class TypeChecker {
     }
 
     private static TypedExpressionNode typeCheckAdd(UntypedAddNode node, TypeCheckerContext context) {
-        // TODO: check left and right are ints
+        var left = typeCheckExpression(node.left(), context);
+        var right = typeCheckExpression(node.right(), context);
+
+        if (!left.type().equals(Types.INT)) {
+            throw new UnexpectedTypeError(Types.INT, left.type(), left.source());
+        }
+
+        if (!right.type().equals(Types.INT)) {
+            throw new UnexpectedTypeError(Types.INT, right.type(), right.source());
+        }
+
         return new TypedIntAddNode(
-            typeCheckExpression(node.left(), context),
-            typeCheckExpression(node.right(), context),
+            left,
+            right,
             node.source()
         );
     }

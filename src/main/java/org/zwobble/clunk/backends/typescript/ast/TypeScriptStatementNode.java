@@ -14,6 +14,7 @@ public interface TypeScriptStatementNode extends TypeScriptNode {
         T visit(TypeScriptInterfaceDeclarationNode node);
         T visit(TypeScriptLetNode node);
         T visit(TypeScriptReturnNode node);
+        T visit(TypeScriptSingleLineCommentNode node);
         T visit(TypeScriptTypeDeclarationNode node);
     }
 }

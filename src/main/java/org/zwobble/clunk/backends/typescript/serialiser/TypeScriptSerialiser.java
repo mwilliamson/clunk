@@ -423,6 +423,12 @@ public class TypeScriptSerialiser {
         builder.newLine();
     }
 
+    private static void serialiseSingleLineComment(TypeScriptSingleLineCommentNode node, CodeBuilder builder) {
+        builder.append("//");
+        builder.append(node.value());
+        builder.newLine();
+    }
+
     public static void serialiseStatement(TypeScriptStatementNode node, CodeBuilder builder) {
         node.accept(new TypeScriptStatementNode.Visitor<Void>() {
             @Override
@@ -482,6 +488,12 @@ public class TypeScriptSerialiser {
             @Override
             public Void visit(TypeScriptReturnNode node) {
                 serialiseReturn(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(TypeScriptSingleLineCommentNode node) {
+                serialiseSingleLineComment(node, builder);
                 return null;
             }
 

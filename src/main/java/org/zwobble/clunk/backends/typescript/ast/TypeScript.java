@@ -110,6 +110,10 @@ public class TypeScript {
         return new TypeScriptReturnNode(expression);
     }
 
+    public static TypeScriptSingleLineCommentNode singleLineComment(String value) {
+        return new TypeScriptSingleLineCommentNode(value);
+    }
+
     public static TypeScriptStringLiteralNode string(String value) {
         return new TypeScriptStringLiteralNode(value);
     }

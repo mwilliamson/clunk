@@ -392,6 +392,12 @@ public class JavaSerialiser {
         builder.newLine();
     }
 
+    private static void serialiseSingleLineComment(JavaSingleLineCommentNode node, CodeBuilder builder) {
+        builder.append("//");
+        builder.append(node.value());
+        builder.newLine();
+    }
+
     public static void serialiseStatement(JavaStatementNode node, CodeBuilder builder) {
         node.accept(new JavaStatementNode.Visitor<Void>() {
             @Override
@@ -415,6 +421,12 @@ public class JavaSerialiser {
             @Override
             public Void visit(JavaReturnNode node) {
                 serialiseReturn(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(JavaSingleLineCommentNode node) {
+                serialiseSingleLineComment(node, builder);
                 return null;
             }
 

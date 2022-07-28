@@ -96,6 +96,10 @@ public class Java {
         return new JavaReturnNode(expression);
     }
 
+    public static JavaSingleLineCommentNode singleLineComment(String value) {
+        return new JavaSingleLineCommentNode(value);
+    }
+
     public static JavaVariableDeclarationNode variableDeclaration(String name, JavaExpressionNode expression) {
         return new JavaVariableDeclarationNode(name, expression);
     }

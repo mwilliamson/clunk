@@ -2,11 +2,12 @@ package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.untyped.Untyped;
-import org.zwobble.clunk.types.BoolType;
-import org.zwobble.clunk.types.IntType;
-import org.zwobble.clunk.types.StringType;
+import org.zwobble.clunk.sources.NullSource;
+import org.zwobble.clunk.types.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedTypeLevelReferenceNode;
 
 public class TypeCheckTypeLevelReferenceTests {
@@ -44,5 +45,23 @@ public class TypeCheckTypeLevelReferenceTests {
         );
 
         assertThat(typedNode, isTypedTypeLevelReferenceNode("String", StringType.INSTANCE));
+    }
+
+    @Test
+    public void whenReferenceIsToNonTypeLevelValueThenErrorIsThrown() {
+        var untypedNode = Untyped.typeLevelReference("X");
+        var context = TypeCheckerContext.stub()
+            .addLocal("X", Types.INT, NullSource.INSTANCE);
+
+        var result = assertThrows(
+            UnexpectedTypeError.class,
+            () -> TypeChecker.typeCheckTypeLevelReferenceNode(
+                untypedNode,
+                context
+            )
+        );
+
+        assertThat(result.getExpected(), equalTo(TypeLevelValueTypeSet.INSTANCE));
+        assertThat(result.getActual(), equalTo(Types.INT));
     }
 }

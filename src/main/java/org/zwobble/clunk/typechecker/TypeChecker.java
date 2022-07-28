@@ -790,7 +790,7 @@ public class TypeChecker {
         if (type instanceof TypeLevelValueType) {
             return ((TypeLevelValueType) type).value();
         } else {
-            throw new RuntimeException("TODO");
+            throw new UnexpectedTypeError(TypeLevelValueTypeSet.INSTANCE, type, source);
         }
     }
 }

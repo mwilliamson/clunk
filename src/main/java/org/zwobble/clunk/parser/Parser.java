@@ -217,6 +217,8 @@ public class Parser {
             return parseIfStatement(tokens);
         } else if (tokens.isNext(TokenType.KEYWORD_RETURN)) {
             return parseReturn(tokens);
+        } else if (tokens.isNext(TokenType.COMMENT_SINGLE_LINE)) {
+            return parseSingleLineComment(tokens);
         } else if (tokens.isNext(TokenType.KEYWORD_VAR)) {
             return parseVar(tokens);
         } else {
@@ -295,6 +297,8 @@ public class Parser {
             return parseInterface(tokens);
         } else if (tokens.isNext(TokenType.KEYWORD_RECORD)) {
             return parseRecord(tokens);
+        } else if (tokens.isNext(TokenType.COMMENT_SINGLE_LINE)) {
+            return parseSingleLineComment(tokens);
         } else if (tokens.isNext(TokenType.KEYWORD_TEST)) {
             return parseTest(tokens);
         } else {
@@ -370,6 +374,15 @@ public class Parser {
         tokens.skip(TokenType.SYMBOL_SEMICOLON);
 
         return new UntypedReturnNode(expression, source);
+    }
+
+    private UntypedSingleLineCommentNode parseSingleLineComment(TokenIterator<TokenType> tokens) {
+        var source = source(tokens);
+
+        var line = tokens.nextValue(TokenType.COMMENT_SINGLE_LINE);
+        var value = line.substring(2);
+
+        return new UntypedSingleLineCommentNode(value, source);
     }
 
     private UntypedNamespaceStatementNode parseTest(TokenIterator<TokenType> tokens) {

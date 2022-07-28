@@ -56,7 +56,7 @@ public class Tokeniser {
 
     public static TokenIterator<TokenType> tokenise(FileFragmentSource source) {
         var tokens = tokeniser.tokenise(source).stream()
-            .filter(token -> token.tokenType() != TokenType.WHITESPACE && token.tokenType() != TokenType.COMMENT_SINGLE_LINE)
+            .filter(token -> token.tokenType() != TokenType.WHITESPACE)
             .collect(Collectors.toList());
 
         return new TokenIterator<>(tokens, token(source.end(), TokenType.END, ""));

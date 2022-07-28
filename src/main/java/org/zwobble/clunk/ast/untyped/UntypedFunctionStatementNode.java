@@ -8,6 +8,7 @@ public interface UntypedFunctionStatementNode extends UntypedNode {
         T visit(UntypedExpressionStatementNode node);
         T visit(UntypedIfStatementNode node);
         T visit(UntypedReturnNode node);
+        T visit(UntypedSingleLineCommentNode node);
         T visit(UntypedVarNode node);
     }
 }

@@ -326,6 +326,11 @@ public class TypeChecker {
             }
 
             @Override
+            public TypeCheckFunctionStatementResult<TypedFunctionStatementNode> visit(UntypedSingleLineCommentNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public TypeCheckFunctionStatementResult<TypedFunctionStatementNode> visit(UntypedVarNode node) {
                 return typeCheckVar(node, context);
             }
@@ -540,6 +545,11 @@ public class TypeChecker {
             @Override
             public TypeCheckNamespaceStatementResult visit(UntypedRecordNode node) {
                 return typeCheckRecord(node);
+            }
+
+            @Override
+            public TypeCheckNamespaceStatementResult visit(UntypedSingleLineCommentNode node) {
+                throw new UnsupportedOperationException("TODO");
             }
 
             @Override

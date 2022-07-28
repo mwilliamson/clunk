@@ -9,6 +9,7 @@ public interface UntypedNamespaceStatementNode extends UntypedNode {
         T visit(UntypedFunctionNode node);
         T visit(UntypedInterfaceNode node);
         T visit(UntypedRecordNode node);
+        T visit(UntypedSingleLineCommentNode node);
         T visit(UntypedTestNode node);
     }
 

@@ -147,8 +147,7 @@ public class TypeChecker {
 
         throw new UnexpectedTypeError(
             TypeConstructorTypeSet.INSTANCE,
-            // TODO: remove cast
-            (Type) receiverType,
+            Types.typeLevelValueType(receiverType),
             node.receiver().source()
         );
     }

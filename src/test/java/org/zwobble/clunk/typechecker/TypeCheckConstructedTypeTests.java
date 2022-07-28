@@ -29,7 +29,7 @@ public class TypeCheckConstructedTypeTests {
         ));
 
         assertThat(result.getExpected(), equalTo(TypeConstructorTypeSet.INSTANCE));
-        assertThat(result.getActual(), equalTo(Types.BOOL));
+        assertThat(result.getActual(), equalTo(Types.typeLevelValueType(Types.BOOL)));
     }
 
     @Test

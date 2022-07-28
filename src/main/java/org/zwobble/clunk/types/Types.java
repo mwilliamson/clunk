@@ -33,6 +33,10 @@ public class Types {
         return new TypeLevelValueType(type);
     }
 
+    public static TypeLevelValueType typeLevelValueType(TypeLevelValue value) {
+        return new TypeLevelValueType(value);
+    }
+
     public static TypeLevelValueType typeConstructorType(TypeConstructor typeConstructor) {
         return new TypeLevelValueType(typeConstructor);
     }

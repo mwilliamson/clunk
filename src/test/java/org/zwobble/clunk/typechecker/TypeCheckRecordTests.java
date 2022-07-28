@@ -171,6 +171,23 @@ public class TypeCheckRecordTests {
     }
 
     @Test
+    public void whenRecordHasTwoMembersWithTheSameNameThenAnErrorIsThrown() {
+        var untypedNode = UntypedRecordNode.builder("User")
+            .addField(Untyped.recordField("x", Untyped.typeLevelReference("Int")))
+            .addField(Untyped.recordField("x", Untyped.typeLevelReference("Int")))
+            .build();
+        var context = TypeCheckerContext.stub()
+            .enterNamespace(NamespaceName.fromParts("a", "b"));
+
+        var result = assertThrows(
+            FieldIsAlreadyDefinedError.class,
+            () -> typeCheckNamespaceStatementAllPhases(untypedNode, context)
+        );
+
+        assertThat(result.getFieldName(), equalTo("x"));
+    }
+
+    @Test
     public void subtypeRelationsAreUpdated() {
         var untypedNode = UntypedRecordNode.builder("User")
             .addSupertype(Untyped.typeLevelReference("Person"))

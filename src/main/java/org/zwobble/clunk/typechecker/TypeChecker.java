@@ -562,7 +562,8 @@ public class TypeChecker {
                     typeCheckBodyResult.value(),
                     node.source()
                 );
-            }
+            },
+            node.source()
         );
     }
 
@@ -617,17 +618,16 @@ public class TypeChecker {
                             .toList();
                         typeCheckBodyDeclarationResultsBox.set(typeCheckBodyDeclarationResults);
 
-                        var memberTypes = new HashMap<String, Type>();
-                        // TODO: check for duplicates
+                        var memberTypes = new MemberTypesBuilder();
                         for (var typedFieldNode : typedRecordFieldNodes) {
-                            memberTypes.put(typedFieldNode.name(), (Type) typedFieldNode.type().value());
+                            memberTypes.add(typedFieldNode.name(), (Type) typedFieldNode.type().value(), typedFieldNode.source());
                         }
                         for (var typeCheckDeclarationResult : typeCheckBodyDeclarationResults) {
-                            memberTypes.putAll(typeCheckDeclarationResult.memberTypes());
+                            memberTypes.addAll(typeCheckDeclarationResult.memberTypes(), typeCheckDeclarationResult.source());
                         }
 
                         var newContext = context.addFields(recordType, typedRecordFieldNodes);
-                        newContext = newContext.addMemberTypes(recordType, memberTypes);
+                        newContext = newContext.addMemberTypes(recordType, memberTypes.build());
                         for (var typedSupertypeNode : typedSupertypeNodes) {
                             // TODO: handle type-level values that aren't types
                             newContext = newContext.addSubtypeRelation(recordType, (InterfaceType) typedSupertypeNode.value());

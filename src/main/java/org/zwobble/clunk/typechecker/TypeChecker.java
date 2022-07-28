@@ -327,7 +327,7 @@ public class TypeChecker {
 
             @Override
             public TypeCheckFunctionStatementResult<TypedFunctionStatementNode> visit(UntypedSingleLineCommentNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return typeCheckSingleLineCommentInFunction(node, context);
             }
 
             @Override
@@ -549,7 +549,7 @@ public class TypeChecker {
 
             @Override
             public TypeCheckNamespaceStatementResult visit(UntypedSingleLineCommentNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return typeCheckSingleLineCommentInNamespace(node);
             }
 
             @Override
@@ -729,6 +729,26 @@ public class TypeChecker {
         var typedNode = new TypedReturnNode(expression, node.source());
 
         return new TypeCheckFunctionStatementResult<>(typedNode, true, context);
+    }
+
+    private static TypedSingleLineCommentNode typeCheckSingleLineComment(UntypedSingleLineCommentNode node) {
+        return new TypedSingleLineCommentNode(node.value(), node.source());
+    }
+
+    private static TypeCheckFunctionStatementResult<TypedFunctionStatementNode> typeCheckSingleLineCommentInFunction(
+        UntypedSingleLineCommentNode node,
+        TypeCheckerContext context
+    ) {
+        return new TypeCheckFunctionStatementResult<>(typeCheckSingleLineComment(node), false, context);
+    }
+
+    private static TypeCheckNamespaceStatementResult typeCheckSingleLineCommentInNamespace(
+        UntypedSingleLineCommentNode node
+    ) {
+        return new TypeCheckNamespaceStatementResult(
+            List.of(),
+            context -> typeCheckSingleLineComment(node)
+        );
     }
 
     private static TypedExpressionNode typeCheckStringLiteral(UntypedStringLiteralNode node) {

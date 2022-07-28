@@ -110,8 +110,8 @@ public class Untyped {
         return new UntypedReturnNode(expression, NullSource.INSTANCE);
     }
 
-    public static UntypedTypeLevelReferenceNode typeLevelReference(String value) {
-        return new UntypedTypeLevelReferenceNode(value, NullSource.INSTANCE);
+    public static UntypedSingleLineCommentNode singleLineComment(String value) {
+        return new UntypedSingleLineCommentNode(value, NullSource.INSTANCE);
     }
 
     public static UntypedStringLiteralNode string() {
@@ -120,6 +120,10 @@ public class Untyped {
 
     public static UntypedStringLiteralNode string(String value) {
         return new UntypedStringLiteralNode(value, NullSource.INSTANCE);
+    }
+
+    public static UntypedTypeLevelReferenceNode typeLevelReference(String value) {
+        return new UntypedTypeLevelReferenceNode(value, NullSource.INSTANCE);
     }
 
     public static UntypedVarNode var(String name, UntypedExpressionNode expression) {

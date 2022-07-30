@@ -9,6 +9,7 @@ public interface UntypedFunctionStatementNode extends UntypedNode {
         T visit(UntypedIfStatementNode node);
         T visit(UntypedReturnNode node);
         T visit(UntypedSingleLineCommentNode node);
+        T visit(UntypedSwitchNode node);
         T visit(UntypedVarNode node);
     }
 }

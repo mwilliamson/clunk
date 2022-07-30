@@ -219,6 +219,8 @@ public class Parser {
             return parseReturn(tokens);
         } else if (tokens.isNext(TokenType.COMMENT_SINGLE_LINE)) {
             return parseSingleLineComment(tokens);
+        } else if (tokens.isNext(TokenType.KEYWORD_SWITCH)) {
+            return parseSwitch(tokens);
         } else if (tokens.isNext(TokenType.KEYWORD_VAR)) {
             return parseVar(tokens);
         } else {
@@ -383,6 +385,35 @@ public class Parser {
         var value = line.substring(2);
 
         return new UntypedSingleLineCommentNode(value, source);
+    }
+
+    private UntypedFunctionStatementNode parseSwitch(TokenIterator<TokenType> tokens) {
+        var source = source(tokens);
+
+        tokens.skip(TokenType.KEYWORD_SWITCH);
+        tokens.skip(TokenType.SYMBOL_PAREN_OPEN);
+        var expression = parseExpression(tokens);
+        tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
+        tokens.skip(TokenType.SYMBOL_BRACE_OPEN);
+        var cases = parseMany(
+            () -> tokens.isNext(TokenType.SYMBOL_BRACE_CLOSE),
+            () -> parseSwitchCase(tokens),
+            () -> true
+        );
+        tokens.skip(TokenType.SYMBOL_BRACE_CLOSE);
+
+        return new UntypedSwitchNode(expression, cases, source);
+    }
+
+    private UntypedSwitchCaseNode parseSwitchCase(TokenIterator<TokenType> tokens) {
+        var source = source(tokens);
+
+        tokens.skip(TokenType.KEYWORD_CASE);
+        var type = parseTypeLevelExpression(tokens);
+        var variableName = tokens.nextValue(TokenType.IDENTIFIER);
+        var body = parseBlock(tokens);
+
+        return new UntypedSwitchCaseNode(type, variableName, body, source);
     }
 
     private UntypedNamespaceStatementNode parseTest(TokenIterator<TokenType> tokens) {

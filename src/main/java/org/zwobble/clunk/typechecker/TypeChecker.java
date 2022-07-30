@@ -7,7 +7,6 @@ import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.types.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -328,6 +327,11 @@ public class TypeChecker {
             @Override
             public TypeCheckFunctionStatementResult<TypedFunctionStatementNode> visit(UntypedSingleLineCommentNode node) {
                 return typeCheckSingleLineCommentInFunction(node, context);
+            }
+
+            @Override
+            public TypeCheckFunctionStatementResult<TypedFunctionStatementNode> visit(UntypedSwitchNode node) {
+                throw new UnsupportedOperationException("TODO");
             }
 
             @Override

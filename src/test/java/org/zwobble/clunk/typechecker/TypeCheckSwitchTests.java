@@ -64,4 +64,68 @@ public class TypeCheckSwitchTests {
             ))
         ));
     }
+
+    @Test
+    public void whenAtLeastOneCaseDoesNotReturnThenSwitchDoesNotReturn() {
+        var namespaceName = NamespaceName.fromParts("example");
+        var interfaceType = Types.interfaceType(namespaceName, "X");
+        var recordType1 = Types.recordType(namespaceName, "A");
+        var recordType2 = Types.recordType(namespaceName, "B");
+        var untypedNode = Untyped.switchStatement(
+            Untyped.reference("x"),
+            List.of(
+                Untyped.switchCase(
+                    Untyped.typeLevelReference("A"),
+                    "a",
+                    List.of()
+                ),
+                Untyped.switchCase(
+                    Untyped.typeLevelReference("B"),
+                    "b",
+                    List.of(Untyped.returnStatement(Untyped.boolTrue()))
+                )
+            )
+        );
+        var context = TypeCheckerContext.stub()
+            .addLocal("x", interfaceType, NullSource.INSTANCE)
+            .addLocal("A", Types.metaType(recordType1), NullSource.INSTANCE)
+            .addLocal("B", Types.metaType(recordType2), NullSource.INSTANCE)
+            .enterFunction(Types.BOOL);
+
+        var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
+
+        assertThat(result.returns(), equalTo(false));
+    }
+
+    @Test
+    public void whenAllCasesReturnThenSwitchReturns() {
+        var namespaceName = NamespaceName.fromParts("example");
+        var interfaceType = Types.interfaceType(namespaceName, "X");
+        var recordType1 = Types.recordType(namespaceName, "A");
+        var recordType2 = Types.recordType(namespaceName, "B");
+        var untypedNode = Untyped.switchStatement(
+            Untyped.reference("x"),
+            List.of(
+                Untyped.switchCase(
+                    Untyped.typeLevelReference("A"),
+                    "a",
+                    List.of(Untyped.returnStatement(Untyped.boolFalse()))
+                ),
+                Untyped.switchCase(
+                    Untyped.typeLevelReference("B"),
+                    "b",
+                    List.of(Untyped.returnStatement(Untyped.boolTrue()))
+                )
+            )
+        );
+        var context = TypeCheckerContext.stub()
+            .addLocal("x", interfaceType, NullSource.INSTANCE)
+            .addLocal("A", Types.metaType(recordType1), NullSource.INSTANCE)
+            .addLocal("B", Types.metaType(recordType2), NullSource.INSTANCE)
+            .enterFunction(Types.BOOL);
+
+        var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
+
+        assertThat(result.returns(), equalTo(true));
+    }
 }

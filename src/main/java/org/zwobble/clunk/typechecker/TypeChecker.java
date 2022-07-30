@@ -764,13 +764,17 @@ public class TypeChecker {
         TypeCheckerContext context
     ) {
         var typedExpressionNode = typeCheckExpression(node.expression(), context);
-        var typedCaseNodes = node.cases().stream()
-            .map(switchCase -> {
-                var typedType = typeCheckTypeLevelExpressionNode(switchCase.type(), context);
-                var typedBody = typeCheckFunctionStatements(switchCase.body(), context);
-                return new TypedSwitchCaseNode(typedType, switchCase.variableName(), typedBody.value(), node.source());
-            })
-            .toList();
+
+        var returns = true;
+        var typedCaseNodes = new ArrayList<TypedSwitchCaseNode>();
+        for (var switchCase : node.cases()) {
+            var typedType = typeCheckTypeLevelExpressionNode(switchCase.type(), context);
+            var typedBody = typeCheckFunctionStatements(switchCase.body(), context);
+            var typedCaseNode = new TypedSwitchCaseNode(typedType, switchCase.variableName(), typedBody.value(), node.source());
+            typedCaseNodes.add(typedCaseNode);
+            returns = returns && typedBody.returns();
+        }
+
         var typedNode = new TypedSwitchNode(
             typedExpressionNode,
             typedCaseNodes,
@@ -779,8 +783,7 @@ public class TypeChecker {
 
         return new TypeCheckFunctionStatementResult<>(
             typedNode,
-            // TODO: handle all cases returning
-            false,
+            returns,
             context
         );
     }

@@ -9,6 +9,7 @@ public interface TypedFunctionStatementNode extends TypedNode {
         T visit(TypedIfStatementNode node);
         T visit(TypedReturnNode node);
         T visit(TypedSingleLineCommentNode node);
+        T visit(TypedSwitchNode node);
         T visit(TypedVarNode node);
     }
 }

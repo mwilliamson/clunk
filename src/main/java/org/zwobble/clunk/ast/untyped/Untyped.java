@@ -122,6 +122,21 @@ public class Untyped {
         return new UntypedStringLiteralNode(value, NullSource.INSTANCE);
     }
 
+    public static UntypedSwitchCaseNode switchCase(
+        UntypedTypeLevelExpressionNode type,
+        String variableName,
+        List<UntypedFunctionStatementNode> body
+    ) {
+        return new UntypedSwitchCaseNode(type, variableName, body, NullSource.INSTANCE);
+    }
+
+    public static UntypedSwitchNode switchStatement(
+        UntypedExpressionNode expression,
+        List<UntypedSwitchCaseNode> cases
+    ) {
+        return new UntypedSwitchNode(expression, cases, NullSource.INSTANCE);
+    }
+
     public static UntypedTypeLevelReferenceNode typeLevelReference(String value) {
         return new UntypedTypeLevelReferenceNode(value, NullSource.INSTANCE);
     }

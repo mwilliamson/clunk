@@ -331,7 +331,7 @@ public class TypeChecker {
 
             @Override
             public TypeCheckFunctionStatementResult<TypedFunctionStatementNode> visit(UntypedSwitchNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return typeCheckSwitch(node, context);
             }
 
             @Override
@@ -757,6 +757,32 @@ public class TypeChecker {
 
     private static TypedExpressionNode typeCheckStringLiteral(UntypedStringLiteralNode node) {
         return new TypedStringLiteralNode(node.value(), node.source());
+    }
+
+    private static TypeCheckFunctionStatementResult<TypedFunctionStatementNode> typeCheckSwitch(
+        UntypedSwitchNode node,
+        TypeCheckerContext context
+    ) {
+        var typedExpressionNode = typeCheckExpression(node.expression(), context);
+        var typedCaseNodes = node.cases().stream()
+            .map(switchCase -> {
+                var typedType = typeCheckTypeLevelExpressionNode(switchCase.type(), context);
+                var typedBody = typeCheckFunctionStatements(switchCase.body(), context);
+                return new TypedSwitchCaseNode(typedType, switchCase.variableName(), typedBody.value(), node.source());
+            })
+            .toList();
+        var typedNode = new TypedSwitchNode(
+            typedExpressionNode,
+            typedCaseNodes,
+            node.source()
+        );
+
+        return new TypeCheckFunctionStatementResult<>(
+            typedNode,
+            // TODO: handle all cases returning
+            false,
+            context
+        );
     }
 
     private static TypeCheckNamespaceStatementResult typeCheckTest(

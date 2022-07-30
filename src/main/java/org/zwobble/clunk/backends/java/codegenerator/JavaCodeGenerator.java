@@ -192,6 +192,11 @@ public class JavaCodeGenerator {
             }
 
             @Override
+            public JavaStatementNode visit(TypedSwitchNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public JavaStatementNode visit(TypedVarNode node) {
                 return compileVar(node, context);
             }

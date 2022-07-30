@@ -197,6 +197,11 @@ public class TypeScriptCodeGenerator {
             }
 
             @Override
+            public TypeScriptStatementNode visit(TypedSwitchNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public TypeScriptStatementNode visit(TypedVarNode node) {
                 return compileVar(node, context);
             }

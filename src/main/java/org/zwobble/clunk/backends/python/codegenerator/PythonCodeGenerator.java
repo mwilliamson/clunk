@@ -214,6 +214,11 @@ public class PythonCodeGenerator {
             }
 
             @Override
+            public PythonStatementNode visit(TypedSwitchNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public PythonStatementNode visit(TypedVarNode node) {
                 return compileVar(node, context);
             }

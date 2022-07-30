@@ -1,6 +1,7 @@
 package org.zwobble.clunk.parser;
 
 public enum TokenType {
+    KEYWORD_CASE,
     KEYWORD_ELSE,
     KEYWORD_ENUM,
     KEYWORD_FALSE,
@@ -12,9 +13,11 @@ public enum TokenType {
     KEYWORD_RECORD,
     KEYWORD_RETURN,
     KEYWORD_SEALED,
+    KEYWORD_SWITCH,
     KEYWORD_TEST,
     KEYWORD_TRUE,
     KEYWORD_VAR,
+    KEYWORD_YIELD,
 
     SYMBOL_ARROW,
     SYMBOL_BRACE_OPEN,

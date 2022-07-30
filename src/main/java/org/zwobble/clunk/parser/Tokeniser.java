@@ -15,6 +15,7 @@ public class Tokeniser {
         List.of(
             RegexTokeniser.rule(TokenType.COMMENT_SINGLE_LINE, "//.*"),
 
+            RegexTokeniser.rule(TokenType.KEYWORD_CASE, "case"),
             RegexTokeniser.rule(TokenType.KEYWORD_ELSE, "else"),
             RegexTokeniser.rule(TokenType.KEYWORD_ENUM, "enum"),
             RegexTokeniser.rule(TokenType.KEYWORD_FALSE, "false"),
@@ -26,9 +27,11 @@ public class Tokeniser {
             RegexTokeniser.rule(TokenType.KEYWORD_RECORD, "record"),
             RegexTokeniser.rule(TokenType.KEYWORD_RETURN, "return"),
             RegexTokeniser.rule(TokenType.KEYWORD_SEALED, "sealed"),
+            RegexTokeniser.rule(TokenType.KEYWORD_SWITCH, "switch"),
             RegexTokeniser.rule(TokenType.KEYWORD_TEST, "test"),
             RegexTokeniser.rule(TokenType.KEYWORD_TRUE, "true"),
             RegexTokeniser.rule(TokenType.KEYWORD_VAR, "var"),
+            RegexTokeniser.rule(TokenType.KEYWORD_YIELD, "yield"),
 
             RegexTokeniser.rule(TokenType.SYMBOL_ARROW, "->"),
             RegexTokeniser.rule(TokenType.SYMBOL_BRACE_OPEN, "\\{"),

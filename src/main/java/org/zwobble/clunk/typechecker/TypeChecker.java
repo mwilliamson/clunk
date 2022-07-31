@@ -764,6 +764,13 @@ public class TypeChecker {
         TypeCheckerContext context
     ) {
         var typedExpressionNode = typeCheckExpression(node.expression(), context);
+        if (!(typedExpressionNode.type() instanceof InterfaceType)) {
+            throw new UnexpectedTypeError(
+                SealedInterfaceTypeSet.INSTANCE,
+                typedExpressionNode.type(),
+                typedExpressionNode.source()
+            );
+        }
 
         var returns = true;
         var typedCaseNodes = new ArrayList<TypedSwitchCaseNode>();

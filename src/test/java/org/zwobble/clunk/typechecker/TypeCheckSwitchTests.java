@@ -12,8 +12,7 @@ import org.zwobble.clunk.types.Types;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedReferenceNode;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedTypeLevelReferenceNode;
@@ -45,7 +44,9 @@ public class TypeCheckSwitchTests {
         var context = TypeCheckerContext.stub()
             .addLocal("x", interfaceType, NullSource.INSTANCE)
             .addLocal("A", Types.metaType(recordType1), NullSource.INSTANCE)
-            .addLocal("B", Types.metaType(recordType2), NullSource.INSTANCE);
+            .addLocal("B", Types.metaType(recordType2), NullSource.INSTANCE)
+            .addSubtypeRelation(recordType1, interfaceType)
+            .addSubtypeRelation(recordType2, interfaceType);
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
@@ -70,6 +71,7 @@ public class TypeCheckSwitchTests {
     @Test
     public void whenExpressionIsNotSealedInterfaceThenErrorIsThrown() {
         var namespaceName = NamespaceName.fromParts("example");
+        var interfaceType = Types.interfaceType(namespaceName, "X");
         var recordType1 = Types.recordType(namespaceName, "A");
         var untypedNode = Untyped.switchStatement(
             Untyped.reference("x"),
@@ -83,7 +85,8 @@ public class TypeCheckSwitchTests {
         );
         var context = TypeCheckerContext.stub()
             .addLocal("x", Types.INT, NullSource.INSTANCE)
-            .addLocal("A", Types.metaType(recordType1), NullSource.INSTANCE);
+            .addLocal("A", Types.metaType(recordType1), NullSource.INSTANCE)
+            .addSubtypeRelation(recordType1, interfaceType);
 
         var result = assertThrows(
             UnexpectedTypeError.class,
@@ -92,6 +95,36 @@ public class TypeCheckSwitchTests {
 
         assertThat(result.getExpected(), equalTo(SealedInterfaceTypeSet.INSTANCE));
         assertThat(result.getActual(), equalTo(Types.INT));
+    }
+
+    @Test
+    public void whenSwitchIsNotExhaustiveThenErrorIsThrown() {
+        var namespaceName = NamespaceName.fromParts("example");
+        var interfaceType = Types.interfaceType(namespaceName, "X");
+        var recordType1 = Types.recordType(namespaceName, "A");
+        var recordType2 = Types.recordType(namespaceName, "B");
+        var untypedNode = Untyped.switchStatement(
+            Untyped.reference("x"),
+            List.of(
+                Untyped.switchCase(
+                    Untyped.typeLevelReference("A"),
+                    "a",
+                    List.of()
+                )
+            )
+        );
+        var context = TypeCheckerContext.stub()
+            .addLocal("x", interfaceType, NullSource.INSTANCE)
+            .addLocal("A", Types.metaType(recordType1), NullSource.INSTANCE)
+            .addSubtypeRelation(recordType1, interfaceType)
+            .addSubtypeRelation(recordType2, interfaceType);
+
+        var result = assertThrows(
+            SwitchIsNotExhaustiveError.class,
+            () -> TypeChecker.typeCheckFunctionStatement(untypedNode, context)
+        );
+
+        assertThat(result.getUnhandledTypes(), contains(recordType2));
     }
 
     @Test
@@ -119,6 +152,8 @@ public class TypeCheckSwitchTests {
             .addLocal("x", interfaceType, NullSource.INSTANCE)
             .addLocal("A", Types.metaType(recordType1), NullSource.INSTANCE)
             .addLocal("B", Types.metaType(recordType2), NullSource.INSTANCE)
+            .addSubtypeRelation(recordType1, interfaceType)
+            .addSubtypeRelation(recordType2, interfaceType)
             .enterFunction(Types.BOOL);
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
@@ -151,6 +186,8 @@ public class TypeCheckSwitchTests {
             .addLocal("x", interfaceType, NullSource.INSTANCE)
             .addLocal("A", Types.metaType(recordType1), NullSource.INSTANCE)
             .addLocal("B", Types.metaType(recordType2), NullSource.INSTANCE)
+            .addSubtypeRelation(recordType1, interfaceType)
+            .addSubtypeRelation(recordType2, interfaceType)
             .enterFunction(Types.BOOL);
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);

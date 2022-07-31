@@ -773,6 +773,12 @@ public class TypeChecker {
         }
 
         var returns = true;
+        // TODO: push subtype lookup into context
+        var unhandledTypes = context.subtypeRelations().stream()
+            .filter(relation -> relation.supertype().equals(typedExpressionNode.type()))
+            .map(relation -> relation.subtype())
+            .collect(Collectors.toSet());
+
         var typedCaseNodes = new ArrayList<TypedSwitchCaseNode>();
         for (var switchCase : node.cases()) {
             var typedType = typeCheckTypeLevelExpressionNode(switchCase.type(), context);
@@ -780,6 +786,11 @@ public class TypeChecker {
             var typedCaseNode = new TypedSwitchCaseNode(typedType, switchCase.variableName(), typedBody.value(), node.source());
             typedCaseNodes.add(typedCaseNode);
             returns = returns && typedBody.returns();
+            unhandledTypes.remove(typedType.value());
+        }
+
+        if (!unhandledTypes.isEmpty()) {
+            throw new SwitchIsNotExhaustiveError(unhandledTypes.stream().toList(), node.source());
         }
 
         var typedNode = new TypedSwitchNode(

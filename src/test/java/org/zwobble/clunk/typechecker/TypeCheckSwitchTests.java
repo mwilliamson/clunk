@@ -128,6 +128,42 @@ public class TypeCheckSwitchTests {
     }
 
     @Test
+    public void whenSwitchHasImpossibleCaseThenErrorIsThrown() {
+        var namespaceName = NamespaceName.fromParts("example");
+        var interfaceType = Types.interfaceType(namespaceName, "X");
+        var recordType1 = Types.recordType(namespaceName, "A");
+        var recordType2 = Types.recordType(namespaceName, "B");
+        var untypedNode = Untyped.switchStatement(
+            Untyped.reference("x"),
+            List.of(
+                Untyped.switchCase(
+                    Untyped.typeLevelReference("A"),
+                    "a",
+                    List.of()
+                ),
+                Untyped.switchCase(
+                    Untyped.typeLevelReference("B"),
+                    "b",
+                    List.of()
+                )
+            )
+        );
+        var context = TypeCheckerContext.stub()
+            .addLocal("x", interfaceType, NullSource.INSTANCE)
+            .addLocal("A", Types.metaType(recordType1), NullSource.INSTANCE)
+            .addLocal("B", Types.metaType(recordType2), NullSource.INSTANCE)
+            .addSubtypeRelation(recordType1, interfaceType);
+
+        var result = assertThrows(
+            InvalidCaseTypeError.class,
+            () -> TypeChecker.typeCheckFunctionStatement(untypedNode, context)
+        );
+
+        assertThat(result.getExpressionType(), equalTo(interfaceType));
+        assertThat(result.getCaseType(), equalTo(recordType2));
+    }
+
+    @Test
     public void whenAtLeastOneCaseDoesNotReturnThenSwitchDoesNotReturn() {
         var namespaceName = NamespaceName.fromParts("example");
         var interfaceType = Types.interfaceType(namespaceName, "X");

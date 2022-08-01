@@ -783,7 +783,11 @@ public class TypeChecker {
             var typedCaseNode = new TypedSwitchCaseNode(typedType, switchCase.variableName(), typedBody.value(), node.source());
             typedCaseNodes.add(typedCaseNode);
             returns = returns && typedBody.returns();
-            unhandledTypes.remove(typedType.value());
+            // TODO: handle not a type
+            var caseType = (Type) typedType.value();
+            if (!unhandledTypes.remove(caseType)) {
+                throw new InvalidCaseTypeError(typedExpressionNode.type(), caseType, switchCase.source());
+            }
         }
 
         if (!unhandledTypes.isEmpty()) {

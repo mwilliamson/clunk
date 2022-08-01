@@ -192,20 +192,18 @@ public class TypeCheckRecordTests {
         var untypedNode = UntypedRecordNode.builder("User")
             .addSupertype(Untyped.typeLevelReference("Person"))
             .build();
+        var interfaceType = Types.interfaceType(NamespaceName.fromParts("a", "b"), "Person");
         var context = TypeCheckerContext.stub()
             .enterNamespace(NamespaceName.fromParts("a", "b"))
-            .addLocal("Person", Types.metaType(Types.interfaceType(NamespaceName.fromParts("a", "b"), "Person")), NullSource.INSTANCE);
+            .addLocal("Person", Types.metaType(interfaceType), NullSource.INSTANCE);
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
         assertThat(result.typedNode(), has("supertypes", contains(
             has("value", isInterfaceType(NamespaceName.fromParts("a", "b"), "Person"))
         )));
-        assertThat(result.context().subtypeRelations(), containsInAnyOrder(
-            allOf(
-                has("subtype", isRecordType(NamespaceName.fromParts("a", "b"), "User")),
-                has("supertype", isInterfaceType(NamespaceName.fromParts("a", "b"), "Person"))
-            )
+        assertThat(result.context().subtypesOf(interfaceType), containsInAnyOrder(
+            isRecordType(NamespaceName.fromParts("a", "b"), "User")
         ));
     }
 
@@ -243,7 +241,7 @@ public class TypeCheckRecordTests {
         return cast(InterfaceType.class, has("namespaceName", equalTo(namespaceName)), has("name", equalTo(name)));
     }
 
-    private Matcher<?> isRecordType(NamespaceName namespaceName, String name) {
+    private Matcher<Type> isRecordType(NamespaceName namespaceName, String name) {
         return cast(RecordType.class, has("namespaceName", equalTo(namespaceName)), has("name", equalTo(name)));
     }
 }

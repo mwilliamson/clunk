@@ -7,6 +7,7 @@ import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.types.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -773,11 +774,7 @@ public class TypeChecker {
         }
 
         var returns = true;
-        // TODO: push subtype lookup into context
-        var unhandledTypes = context.subtypeRelations().stream()
-            .filter(relation -> relation.supertype().equals(typedExpressionNode.type()))
-            .map(relation -> relation.subtype())
-            .collect(Collectors.toSet());
+        var unhandledTypes = new HashSet<>(context.subtypesOf(typedExpressionNode.type()));
 
         var typedCaseNodes = new ArrayList<TypedSwitchCaseNode>();
         for (var switchCase : node.cases()) {

@@ -2,7 +2,6 @@ package org.zwobble.clunk.typechecker;
 
 import org.pcollections.PMap;
 import org.pcollections.PStack;
-import org.pcollections.PVector;
 import org.zwobble.clunk.ast.typed.TypedRecordFieldNode;
 import org.zwobble.clunk.builtins.Builtins;
 import org.zwobble.clunk.errors.SourceError;
@@ -20,14 +19,14 @@ public record TypeCheckerContext(
     PMap<NamespaceName, NamespaceType> namespaceTypes,
     PMap<RecordType, List<TypedRecordFieldNode>> typeToFields,
     PMap<RecordType, Map<String, Type>> memberTypes,
-    PVector<SubtypeRelation> subtypeRelations
+    SubtypeRelations subtypeRelations
 ) {
     public static final TypeCheckerContext EMPTY = new TypeCheckerContext(
         P.stack(),
         P.map(),
         P.map(),
         P.map(),
-        P.vector()
+        SubtypeRelations.EMPTY
     );
 
     public static TypeCheckerContext stub() {
@@ -36,7 +35,7 @@ public record TypeCheckerContext(
             P.map(),
             P.map(),
             P.map(),
-            P.vector()
+            SubtypeRelations.EMPTY
         );
     }
 
@@ -146,7 +145,7 @@ public record TypeCheckerContext(
     }
 
     public TypeCheckerContext addSubtypeRelation(RecordType subtype, InterfaceType superType) {
-        var subtypeRelations = this.subtypeRelations.plus(new SubtypeRelation(subtype, superType));
+        var subtypeRelations = this.subtypeRelations.add(subtype, superType);
         return new TypeCheckerContext(stack, namespaceTypes, typeToFields, memberTypes, subtypeRelations);
     }
 
@@ -161,5 +160,9 @@ public record TypeCheckerContext(
         }
 
         return Optional.ofNullable(typeMembers.get(memberName));
+    }
+
+    public List<RecordType> subtypesOf(Type type) {
+        return subtypeRelations.subtypesOf(type);
     }
 }

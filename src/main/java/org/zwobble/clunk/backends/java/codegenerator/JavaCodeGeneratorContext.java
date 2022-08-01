@@ -4,8 +4,7 @@ import org.zwobble.clunk.backends.java.ast.JavaImportNode;
 import org.zwobble.clunk.backends.java.ast.JavaImportStaticNode;
 import org.zwobble.clunk.backends.java.ast.JavaImportTypeNode;
 import org.zwobble.clunk.backends.java.config.JavaTargetConfig;
-import org.zwobble.clunk.typechecker.SubtypeLookup;
-import org.zwobble.clunk.types.InterfaceType;
+import org.zwobble.clunk.typechecker.SubtypeRelations;
 import org.zwobble.clunk.types.RecordType;
 import org.zwobble.clunk.types.Type;
 
@@ -15,15 +14,15 @@ import java.util.Set;
 
 public class JavaCodeGeneratorContext {
     public static JavaCodeGeneratorContext stub() {
-        return new JavaCodeGeneratorContext(JavaTargetConfig.stub(), SubtypeLookup.EMPTY);
+        return new JavaCodeGeneratorContext(JavaTargetConfig.stub(), SubtypeRelations.EMPTY);
     }
 
     private final JavaTargetConfig config;
-    private final SubtypeLookup subtypeLookup;
+    private final SubtypeRelations subtypeRelations;
 
-    public JavaCodeGeneratorContext(JavaTargetConfig config, SubtypeLookup subtypeLookup) {
+    public JavaCodeGeneratorContext(JavaTargetConfig config, SubtypeRelations subtypeRelations) {
         this.config = config;
-        this.subtypeLookup = subtypeLookup;
+        this.subtypeRelations = subtypeRelations;
     }
 
     private final Set<JavaImportNode> imports = new LinkedHashSet<>();
@@ -45,10 +44,6 @@ public class JavaCodeGeneratorContext {
     }
 
     public List<RecordType> subtypesOf(Type supertype) {
-        return subtypeLookup.subtypesOf(supertype);
-    }
-
-    public List<InterfaceType> supertypesOf(Type subtype) {
-        return subtypeLookup.supertypesOf(subtype);
+        return subtypeRelations.subtypesOf(supertype);
     }
 }

@@ -1,8 +1,7 @@
 package org.zwobble.clunk.backends.typescript.codegenerator;
 
 import org.zwobble.clunk.backends.typescript.ast.TypeScriptImportNode;
-import org.zwobble.clunk.typechecker.SubtypeLookup;
-import org.zwobble.clunk.types.InterfaceType;
+import org.zwobble.clunk.typechecker.SubtypeRelations;
 import org.zwobble.clunk.types.RecordType;
 import org.zwobble.clunk.types.Type;
 
@@ -12,17 +11,17 @@ import java.util.Set;
 
 public class TypeScriptCodeGeneratorContext {
     public static TypeScriptCodeGeneratorContext stub() {
-        return new TypeScriptCodeGeneratorContext(SubtypeLookup.EMPTY);
+        return new TypeScriptCodeGeneratorContext(SubtypeRelations.EMPTY);
     }
 
     private record Import(String module, String export) {
     }
 
     private final Set<Import> imports;
-    private final SubtypeLookup subtypeLookup;
+    private final SubtypeRelations subtypeRelations;
 
-    public TypeScriptCodeGeneratorContext(SubtypeLookup subtypeLookup) {
-        this.subtypeLookup = subtypeLookup;
+    public TypeScriptCodeGeneratorContext(SubtypeRelations subtypeRelations) {
+        this.subtypeRelations = subtypeRelations;
         this.imports = new LinkedHashSet<>();
     }
 
@@ -37,10 +36,6 @@ public class TypeScriptCodeGeneratorContext {
     }
 
     public List<RecordType> subtypesOf(Type supertype) {
-        return subtypeLookup.subtypesOf(supertype);
-    }
-
-    public List<InterfaceType> supertypesOf(Type subtype) {
-        return subtypeLookup.supertypesOf(subtype);
+        return subtypeRelations.subtypesOf(supertype);
     }
 }

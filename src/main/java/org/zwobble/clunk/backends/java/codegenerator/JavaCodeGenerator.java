@@ -3,7 +3,7 @@ package org.zwobble.clunk.backends.java.codegenerator;
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.java.ast.*;
 import org.zwobble.clunk.backends.java.config.JavaTargetConfig;
-import org.zwobble.clunk.typechecker.SubtypeLookup;
+import org.zwobble.clunk.typechecker.SubtypeRelations;
 import org.zwobble.clunk.types.*;
 
 import java.util.ArrayList;
@@ -281,9 +281,9 @@ public class JavaCodeGenerator {
     public static List<JavaOrdinaryCompilationUnitNode> compileNamespace(
         TypedNamespaceNode node,
         JavaTargetConfig config,
-        SubtypeLookup subtypeLookup
+        SubtypeRelations subtypeRelations
     ) {
-        var context = new JavaCodeGeneratorContext(config, subtypeLookup);
+        var context = new JavaCodeGeneratorContext(config, subtypeRelations);
         var compilationUnits = new ArrayList<JavaOrdinaryCompilationUnitNode>();
         var functions = new ArrayList<JavaClassBodyDeclarationNode>();
 

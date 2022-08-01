@@ -2,7 +2,7 @@ package org.zwobble.clunk.backends.typescript.codegenerator;
 
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.typescript.ast.*;
-import org.zwobble.clunk.typechecker.SubtypeLookup;
+import org.zwobble.clunk.typechecker.SubtypeRelations;
 import org.zwobble.clunk.types.*;
 
 import java.util.ArrayList;
@@ -275,9 +275,9 @@ public class TypeScriptCodeGenerator {
         );
     }
 
-    public static TypeScriptModuleNode compileNamespace(TypedNamespaceNode node, SubtypeLookup subtypeLookup) {
+    public static TypeScriptModuleNode compileNamespace(TypedNamespaceNode node, SubtypeRelations subtypeRelations) {
         var name = String.join("/", node.name().parts());
-        var context = new TypeScriptCodeGeneratorContext(subtypeLookup);
+        var context = new TypeScriptCodeGeneratorContext(subtypeRelations);
 
         var statements = new ArrayList<TypeScriptStatementNode>();
 

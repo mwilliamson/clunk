@@ -198,7 +198,7 @@ public class TypeScriptCodeGenerator {
 
             @Override
             public TypeScriptStatementNode visit(TypedSwitchNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileSwitch(node, context);
             }
 
             @Override
@@ -401,6 +401,37 @@ public class TypeScriptCodeGenerator {
 
     private static TypeScriptExpressionNode compileStringLiteral(TypedStringLiteralNode node) {
         return new TypeScriptStringLiteralNode(node.value());
+    }
+
+    private static TypeScriptStatementNode compileSwitch(
+        TypedSwitchNode node,
+        TypeScriptCodeGeneratorContext context
+    ) {
+        var switchExpression = compileExpression(node.expression(), context);
+
+        return new TypeScriptSwitchNode(
+            new TypeScriptPropertyAccessNode(switchExpression, "type"),
+            node.cases().stream()
+                .map(typedCaseNode -> {
+                    var caseType = (RecordType) typedCaseNode.type().value();
+
+                    var body = new ArrayList<TypeScriptStatementNode>();
+                    body.add(new TypeScriptLetNode(
+                        typedCaseNode.variableName(),
+                        switchExpression
+                    ));
+
+                    for (var statement : typedCaseNode.body()) {
+                        body.add(compileFunctionStatement(statement, context));
+                    }
+
+                    return new TypeScriptSwitchCaseNode(
+                        new TypeScriptStringLiteralNode(caseType.name()),
+                        body
+                    );
+                })
+                .toList()
+        );
     }
 
     private static TypeScriptStatementNode compileTest(TypedTestNode node, TypeScriptCodeGeneratorContext context) {

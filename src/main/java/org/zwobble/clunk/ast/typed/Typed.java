@@ -101,6 +101,21 @@ public class Typed {
         return new TypedStringLiteralNode(value, NullSource.INSTANCE);
     }
 
+    public static TypedSwitchCaseNode switchCase(
+        TypedTypeLevelExpressionNode type,
+        String variableName,
+        List<TypedFunctionStatementNode> body
+    ) {
+        return new TypedSwitchCaseNode(type, variableName, body, NullSource.INSTANCE);
+    }
+
+    public static TypedSwitchNode switchStatement(
+        TypedExpressionNode expression,
+        List<TypedSwitchCaseNode> cases
+    ) {
+        return new TypedSwitchNode(expression, cases, NullSource.INSTANCE);
+    }
+
     public static TypedTypeLevelExpressionNode typeLevelReference(String name, TypeLevelValue value) {
         return new TypedTypeLevelReferenceNode(name, value, NullSource.INSTANCE);
     }

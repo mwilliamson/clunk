@@ -780,12 +780,13 @@ public class TypeChecker {
         var typedCaseNodes = new ArrayList<TypedSwitchCaseNode>();
         for (var switchCase : node.cases()) {
             var typedType = typeCheckTypeLevelExpressionNode(switchCase.type(), context);
-            var typedBody = typeCheckFunctionStatements(switchCase.body(), context);
+            // TODO: handle not a type
+            var caseType = (Type) typedType.value();
+            var bodyContext = context.addLocal(switchCase.variableName(), caseType, switchCase.source());
+            var typedBody = typeCheckFunctionStatements(switchCase.body(), bodyContext);
             var typedCaseNode = new TypedSwitchCaseNode(typedType, switchCase.variableName(), typedBody.value(), node.source());
             typedCaseNodes.add(typedCaseNode);
             returns = returns && typedBody.returns();
-            // TODO: handle not a type
-            var caseType = (Type) typedType.value();
             if (!unhandledTypes.remove(caseType)) {
                 throw new InvalidCaseTypeError(typedExpressionNode.type(), caseType, switchCase.source());
             }

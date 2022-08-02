@@ -14,8 +14,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedReferenceNode;
-import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedTypeLevelReferenceNode;
+import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
 import static org.zwobble.clunk.matchers.CastMatcher.cast;
 import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 
@@ -229,5 +228,58 @@ public class TypeCheckSwitchTests {
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
         assertThat(result.returns(), equalTo(true));
+    }
+
+    @Test
+    public void caseVariableCanBeAccessedInCaseBody() {
+        var namespaceName = NamespaceName.fromParts("example");
+        var interfaceType = Types.interfaceType(namespaceName, "X");
+        var recordType1 = Types.recordType(namespaceName, "A");
+        var recordType2 = Types.recordType(namespaceName, "B");
+        var untypedNode = Untyped.switchStatement(
+            Untyped.reference("x"),
+            List.of(
+                Untyped.switchCase(
+                    Untyped.typeLevelReference("A"),
+                    "a",
+                    List.of(
+                        Untyped.expressionStatement(Untyped.reference("a"))
+                    )
+                ),
+                Untyped.switchCase(
+                    Untyped.typeLevelReference("B"),
+                    "b",
+                    List.of(
+                        Untyped.expressionStatement(Untyped.reference("b"))
+                    )
+                )
+            )
+        );
+        var context = TypeCheckerContext.stub()
+            .addLocal("x", interfaceType, NullSource.INSTANCE)
+            .addLocal("A", Types.metaType(recordType1), NullSource.INSTANCE)
+            .addLocal("B", Types.metaType(recordType2), NullSource.INSTANCE)
+            .addSubtypeRelation(recordType1, interfaceType)
+            .addSubtypeRelation(recordType2, interfaceType);
+
+        var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
+
+        assertThat(result.value(), cast(
+            TypedSwitchNode.class,
+            has("cases", contains(
+                cast(
+                    TypedSwitchCaseNode.class,
+                    has("body", contains(
+                        isTypedExpressionStatementNode(isTypedReferenceNode().withName("a").withType(recordType1))
+                    ))
+                ),
+                cast(
+                    TypedSwitchCaseNode.class,
+                    has("body", contains(
+                        isTypedExpressionStatementNode(isTypedReferenceNode().withName("b").withType(recordType2))
+                    ))
+                )
+            ))
+        ));
     }
 }

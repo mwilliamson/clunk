@@ -118,6 +118,20 @@ public class TypeScript {
         return new TypeScriptStringLiteralNode(value);
     }
 
+    public static TypeScriptSwitchCaseNode switchCase(
+        TypeScriptExpressionNode expression,
+        List<TypeScriptStatementNode> body
+    ) {
+        return new TypeScriptSwitchCaseNode(expression, body);
+    }
+
+    public static TypeScriptSwitchNode switchStatement(
+        TypeScriptExpressionNode expression,
+        List<TypeScriptSwitchCaseNode> cases
+    ) {
+        return new TypeScriptSwitchNode(expression, cases);
+    }
+
     public static TypeScriptTypeDeclarationNode typeDeclaration(String name, TypeScriptExpressionNode value) {
         return new TypeScriptTypeDeclarationNode(name, value);
     }

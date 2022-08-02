@@ -498,6 +498,12 @@ public class TypeScriptSerialiser {
             }
 
             @Override
+            public Void visit(TypeScriptSwitchNode node) {
+                serialiseSwitch(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(TypeScriptTypeDeclarationNode node) {
                 serialiseTypeDeclaration(node, builder);
                 return null;
@@ -522,6 +528,30 @@ public class TypeScriptSerialiser {
             .replace("\"", "\\\"");
         builder.append(escapedValue);
         builder.append("\"");
+    }
+
+    private static void serialiseSwitch(TypeScriptSwitchNode node, CodeBuilder builder) {
+        builder.append("switch (");
+        serialiseExpression(node.expression(), builder, Optional.empty());
+        builder.append(") {");
+        builder.newLine();
+        builder.indent();
+
+        for (var switchCase : node.cases()) {
+            builder.append("case ");
+            serialiseExpression(switchCase.expression(), builder, Optional.empty());
+            builder.append(":");
+            builder.newLine();
+            builder.indent();
+            for (var statement: switchCase.body()) {
+                serialiseStatement(statement, builder);
+            }
+            builder.dedent();
+        }
+
+        builder.dedent();
+        builder.append("}");
+        builder.newLine();
     }
 
     private static void serialiseTypeDeclaration(TypeScriptTypeDeclarationNode node, CodeBuilder builder) {

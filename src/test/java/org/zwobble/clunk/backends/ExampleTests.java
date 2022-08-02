@@ -2,6 +2,7 @@ package org.zwobble.clunk.backends;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.Compiler;
+import org.zwobble.clunk.errors.SourceError;
 import org.zwobble.clunk.logging.Logger;
 import org.zwobble.clunk.testing.snapshots.Snapshotter;
 
@@ -100,6 +101,10 @@ public abstract class ExampleTests {
             snapshot.append(output);
 
             snapshotter.assertSnapshot(snapshot.toString());
+        } catch (SourceError error) {
+            throw new AssertionError(
+                error.getMessage() + "\n" + error.getSource().describe()
+            );
         } finally {
             deleteRecursive(outputRoot);
         }

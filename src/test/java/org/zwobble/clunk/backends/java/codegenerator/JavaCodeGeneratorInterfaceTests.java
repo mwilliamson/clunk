@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.backends.java.config.JavaTargetConfig;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
-import org.zwobble.clunk.typechecker.SubtypeRelations;
+import org.zwobble.clunk.types.SubtypeRelations;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.RecordType;
 import org.zwobble.clunk.types.Types;

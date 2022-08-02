@@ -1,10 +1,7 @@
-package org.zwobble.clunk.typechecker;
+package org.zwobble.clunk.types;
 
 import org.pcollections.PMap;
 import org.pcollections.PVector;
-import org.zwobble.clunk.types.InterfaceType;
-import org.zwobble.clunk.types.RecordType;
-import org.zwobble.clunk.types.Type;
 import org.zwobble.clunk.util.P;
 
 public class SubtypeRelations {

@@ -6,7 +6,7 @@ import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.ast.typed.TypedTestNode;
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser;
-import org.zwobble.clunk.typechecker.SubtypeRelations;
+import org.zwobble.clunk.types.SubtypeRelations;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.StaticFunctionType;
 import org.zwobble.clunk.types.Types;

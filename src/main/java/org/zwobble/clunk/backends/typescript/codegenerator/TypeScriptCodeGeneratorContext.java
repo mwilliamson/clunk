@@ -1,7 +1,7 @@
 package org.zwobble.clunk.backends.typescript.codegenerator;
 
 import org.zwobble.clunk.backends.typescript.ast.TypeScriptImportNode;
-import org.zwobble.clunk.typechecker.SubtypeRelations;
+import org.zwobble.clunk.types.SubtypeRelations;
 import org.zwobble.clunk.types.RecordType;
 import org.zwobble.clunk.types.Type;
 

@@ -2,7 +2,7 @@ package org.zwobble.clunk.backends.typescript.codegenerator;
 
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.typescript.ast.*;
-import org.zwobble.clunk.typechecker.SubtypeRelations;
+import org.zwobble.clunk.types.SubtypeRelations;
 import org.zwobble.clunk.types.*;
 
 import java.util.ArrayList;

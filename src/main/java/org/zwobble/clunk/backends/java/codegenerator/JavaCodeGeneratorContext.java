@@ -4,7 +4,7 @@ import org.zwobble.clunk.backends.java.ast.JavaImportNode;
 import org.zwobble.clunk.backends.java.ast.JavaImportStaticNode;
 import org.zwobble.clunk.backends.java.ast.JavaImportTypeNode;
 import org.zwobble.clunk.backends.java.config.JavaTargetConfig;
-import org.zwobble.clunk.typechecker.SubtypeRelations;
+import org.zwobble.clunk.types.SubtypeRelations;
 import org.zwobble.clunk.types.RecordType;
 import org.zwobble.clunk.types.Type;
 

@@ -7,7 +7,7 @@ import org.zwobble.clunk.backends.typescript.codegenerator.TypeScriptCodeGenerat
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser;
 import org.zwobble.clunk.config.ProjectConfig;
 import org.zwobble.clunk.logging.Logger;
-import org.zwobble.clunk.typechecker.SubtypeRelations;
+import org.zwobble.clunk.types.SubtypeRelations;
 import org.zwobble.clunk.typechecker.TypeCheckResult;
 import org.zwobble.clunk.types.NamespaceName;
 

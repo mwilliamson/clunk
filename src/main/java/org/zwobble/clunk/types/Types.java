@@ -13,14 +13,6 @@ public class Types {
     public static final Type STRING = StringType.INSTANCE;
     public static final Type UNIT = UnitType.INSTANCE;
 
-    public static boolean isSubType(Type subType, Type superType) {
-        if (superType == OBJECT) {
-            return true;
-        }
-
-        return subType.equals(superType);
-    }
-
     public static Type list(Type elementType) {
         return new ListType(elementType);
     }

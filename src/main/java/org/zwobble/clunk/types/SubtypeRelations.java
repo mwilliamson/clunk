@@ -26,6 +26,14 @@ public class SubtypeRelations {
         return subtypesToSupertypes.getOrDefault(subtype, P.vector());
     }
 
+    public boolean isSubType(Type subType, Type superType) {
+        if (superType.equals(Types.OBJECT)) {
+            return true;
+        }
+
+        return subType.equals(superType);
+    }
+
     public SubtypeRelations add(RecordType subtype, InterfaceType supertype) {
         var subtypesToSupertypes = this.subtypesToSupertypes.plus(
             subtype,

@@ -8,22 +8,27 @@ import static org.hamcrest.Matchers.equalTo;
 public class TypesTests {
     @Test
     public void typesAreSubTypesOfThemselves() {
-        assertThat(Types.isSubType(Types.BOOL, Types.BOOL), equalTo(true));
-        assertThat(Types.isSubType(Types.INT, Types.INT), equalTo(true));
-        assertThat(Types.isSubType(Types.OBJECT, Types.OBJECT), equalTo(true));
-        assertThat(Types.isSubType(Types.STRING, Types.STRING), equalTo(true));
+        var subtypeRelations = SubtypeRelations.EMPTY;
+        assertThat(subtypeRelations.isSubType(Types.BOOL, Types.BOOL), equalTo(true));
+        assertThat(subtypeRelations.isSubType(Types.INT, Types.INT), equalTo(true));
+        assertThat(subtypeRelations.isSubType(Types.OBJECT, Types.OBJECT), equalTo(true));
+        assertThat(subtypeRelations.isSubType(Types.STRING, Types.STRING), equalTo(true));
     }
 
     @Test
     public void scalarTypesAreNotSubTypesOfEachOther() {
-        var result = Types.isSubType(Types.BOOL, Types.INT);
+        var subtypeRelations = SubtypeRelations.EMPTY;
+
+        var result = subtypeRelations.isSubType(Types.BOOL, Types.INT);
 
         assertThat(result, equalTo(false));
     }
 
     @Test
     public void allTypesAreSubTypeOfObject() {
-        var result = Types.isSubType(Types.BOOL, Types.OBJECT);
+        var subtypeRelations = SubtypeRelations.EMPTY;
+
+        var result = subtypeRelations.isSubType(Types.BOOL, Types.OBJECT);
 
         assertThat(result, equalTo(true));
     }

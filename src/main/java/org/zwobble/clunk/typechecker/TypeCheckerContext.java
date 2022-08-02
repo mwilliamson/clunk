@@ -165,4 +165,8 @@ public record TypeCheckerContext(
     public List<RecordType> subtypesOf(Type type) {
         return subtypeRelations.subtypesOf(type);
     }
+
+    public boolean isSubType(Type subtype, Type supertype) {
+        return subtypeRelations.isSubType(subtype, supertype);
+    }
 }

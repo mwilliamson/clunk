@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.zwobble.clunk.types.Types.isSubType;
 import static org.zwobble.clunk.types.Types.metaType;
 
 public class TypeChecker {
@@ -97,7 +96,7 @@ public class TypeChecker {
             var paramType = positionalParams.get(argIndex);
             var argNode = typedPositionalArgs.get(argIndex);
             var argType = argNode.type();
-            if (!isSubType(argType, paramType)) {
+            if (!context.isSubType(argType, paramType)) {
                 throw new UnexpectedTypeError(paramType, argType, argNode.source());
             }
         }
@@ -727,7 +726,7 @@ public class TypeChecker {
         }
         var returnType = context.returnType().get();
 
-        if (!isSubType(expression.type(), returnType)) {
+        if (!context.isSubType(expression.type(), returnType)) {
             throw new UnexpectedTypeError(returnType, expression.type(), node.expression().source());
         }
 

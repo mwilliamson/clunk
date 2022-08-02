@@ -264,10 +264,15 @@ public class TypeChecker {
                 var typedParamNodes = typedParamNodesBox.get();
                 var typedReturnTypeNode = typedReturnTypeNodeBox.get();
 
+                var bodyContext = context.enterFunction(functionType.returnType());
+                for (var typedParamNode : typedParamNodes) {
+                    bodyContext = bodyContext.addLocal(typedParamNode.name(), (Type) typedParamNode.type().value(), typedParamNode.source());
+                }
+
                 var typeCheckStatementsResult = typeCheckFunctionBody(
                     node.body(),
                     node.source(),
-                    context.enterFunction(functionType.returnType())
+                    bodyContext
                 );
 
                 return new TypedFunctionNode(

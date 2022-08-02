@@ -69,6 +69,21 @@ public class TypeCheckFunctionTests {
     }
 
     @Test
+    public void bodyCanAccessParams() {
+        var untypedNode = UntypedFunctionNode.builder()
+            .addParam(Untyped.param("x", Untyped.typeLevelReference("Bool")))
+            .returnType(Untyped.typeLevelReference("Bool"))
+            .addBodyStatement(Untyped.returnStatement(Untyped.reference("x")))
+            .build();
+
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, TypeCheckerContext.stub());
+
+        assertThat(result.typedNode(), isTypedFunctionNode().withBody(contains(
+            isTypedReturnNode().withExpression(isTypedReferenceNode().withName("x").withType(Types.BOOL))
+        )));
+    }
+
+    @Test
     public void givenFunctionHasUnitReturnTypeWhenBodyDoesNotReturnThenFunctionTypeChecks() {
         var untypedNode = UntypedFunctionNode.builder()
             .returnType(Untyped.typeLevelReference("Unit"))

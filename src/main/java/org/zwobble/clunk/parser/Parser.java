@@ -91,6 +91,10 @@ public class Parser {
             return parseIntLiteral(tokens);
         } else if (tokens.isNext(TokenType.IDENTIFIER)) {
             return new UntypedReferenceNode(tokens.nextValue(TokenType.IDENTIFIER), source);
+        } else if (tokens.trySkip(TokenType.SYMBOL_PAREN_OPEN)) {
+            var expression = parseExpression(tokens);
+            tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
+            return expression;
         } else {
             throw new UnexpectedTokenException("primary expression", tokens.peek().describe(), source);
         }

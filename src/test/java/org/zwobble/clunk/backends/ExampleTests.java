@@ -65,7 +65,7 @@ public abstract class ExampleTests {
     protected abstract Backend createBackend(Logger logger);
     protected abstract TargetTestRunner targetTestRunner();
 
-    private void runExampleTest(
+    protected void runExampleTest(
         Snapshotter snapshotter,
         String exampleName
     ) throws IOException, InterruptedException {

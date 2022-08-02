@@ -1,0 +1,86 @@
+Source path: src/switchesTest.clunk
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+
+sealed interface Node {
+}
+
+record Add(left: Node, right: Node) <: Node
+
+record Literal(value: Int) <: Node
+
+test "sum" {
+    var node = Add(Add(Literal(2), Literal(7)), Literal(3));
+
+    var result = evaluate(node);
+
+    assertThat(result, equalTo(12));
+}
+
+fun evaluate(node: Node) -> Int {
+    switch (node) {
+        case Add add {
+            return evaluate(add.left) + (evaluate(add.right));
+        }
+        case Literal literal {
+            return literal.value;
+        }
+    }
+}
+
+
+==============
+
+Output path: switchesTest.ts
+import {assertThat} from "@mwilliamson/precisely";
+import {equalTo} from "@mwilliamson/precisely";
+
+type Node = Add | Literal;
+
+class Add {
+    readonly type: "Add" = "Add";
+    readonly left: Node;
+    readonly right: Node;
+
+    constructor(left: Node, right: Node) {
+        this.left = left;
+        this.right = right;
+    }
+}
+
+class Literal {
+    readonly type: "Literal" = "Literal";
+    readonly value: number;
+
+    constructor(value: number) {
+        this.value = value;
+    }
+}
+
+test("sum", function () {
+    let node = new Add(new Add(new Literal(2), new Literal(7)), new Literal(3));
+
+    let result = evaluate(node);
+
+    assertThat(result, equalTo(12));
+});
+
+function evaluate(node: Node): number {
+    switch (node.type) {
+        case "Add":
+            let add = node;
+            return evaluate(add.left) + evaluate(add.right);
+        case "Literal":
+            let literal = node;
+            return literal.value;
+    }
+}
+
+
+==============
+
+
+
+  ✔ sum
+
+  1 passing (TIME)

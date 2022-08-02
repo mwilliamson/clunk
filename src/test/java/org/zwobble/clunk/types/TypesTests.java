@@ -32,4 +32,29 @@ public class TypesTests {
 
         assertThat(result, equalTo(true));
     }
+
+    @Test
+    public void whenRecordIsExplicitSubtypeOfInterfaceThenRecordIsSubtypeOfInterface() {
+        var interfaceType = Types.interfaceType(NamespaceName.fromParts(), "Node");
+        var recordType = Types.recordType(NamespaceName.fromParts(), "Add");
+        var subtypeRelations = SubtypeRelations.EMPTY
+            .add(recordType, interfaceType);
+
+        var result = subtypeRelations.isSubType(recordType, interfaceType);
+
+        assertThat(result, equalTo(true));
+    }
+
+    @Test
+    public void whenRecordIsUnrelatedToInterfaceThenRecordIsNotSubtypeOfInterface() {
+        var unrelatedInterfaceType = Types.interfaceType(NamespaceName.fromParts(), "Node");
+        var unrelatedRecordType = Types.recordType(NamespaceName.fromParts(), "Add");
+        var recordType = Types.recordType(NamespaceName.fromParts(), "User");
+        var subtypeRelations = SubtypeRelations.EMPTY
+            .add(unrelatedRecordType, unrelatedInterfaceType);
+
+        var result = subtypeRelations.isSubType(recordType, unrelatedInterfaceType);
+
+        assertThat(result, equalTo(false));
+    }
 }

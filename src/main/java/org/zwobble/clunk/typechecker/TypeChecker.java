@@ -267,8 +267,7 @@ public class TypeChecker {
                 var typeCheckStatementsResult = typeCheckFunctionBody(
                     node.body(),
                     node.source(),
-                    functionType.returnType(),
-                    context
+                    context.enterFunction(functionType.returnType())
                 );
 
                 return new TypedFunctionNode(
@@ -285,15 +284,14 @@ public class TypeChecker {
     private static TypeCheckFunctionStatementResult<List<TypedFunctionStatementNode>> typeCheckFunctionBody(
         List<UntypedFunctionStatementNode> body,
         Source source,
-        Type returnType,
         TypeCheckerContext context
     ) {
         var typeCheckStatementsResult = typeCheckFunctionStatements(
             body,
-            context.enterFunction(returnType)
+            context
         );
 
-        if (!typeCheckStatementsResult.returns() && !returnType.equals(Types.UNIT)) {
+        if (!typeCheckStatementsResult.returns() && !context.returnType().get().equals(Types.UNIT)) {
             throw new MissingReturnError(source);
         }
         return typeCheckStatementsResult;
@@ -575,7 +573,6 @@ public class TypeChecker {
                 var typeCheckBodyResult = typeCheckFunctionBody(
                     node.body(),
                     node.source(),
-                    type,
                     bodyContext.enterFunction(type)
                 );
 

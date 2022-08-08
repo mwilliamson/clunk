@@ -248,7 +248,8 @@ public class JavaCodeGenerator {
             List.of(),
             new JavaInterfaceDeclarationNode(
                 node.name(),
-                Optional.of(permits)
+                Optional.of(permits),
+                List.of()
             )
         );
     }

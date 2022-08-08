@@ -3,6 +3,7 @@ package org.zwobble.clunk.backends.java.serialiser;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.backends.java.ast.Java;
 import org.zwobble.clunk.backends.java.ast.JavaInterfaceDeclarationNode;
+import org.zwobble.clunk.backends.java.ast.JavaInterfaceMethodDeclarationNode;
 
 import java.util.List;
 
@@ -35,6 +36,28 @@ public class JavaSerialiserInterfaceDeclarationTests {
 
         assertThat(result, equalTo("""
             public sealed interface Person permits Author, Editor {
+            }
+            """
+        ));
+    }
+
+    @Test
+    public void canSerialiseInterfaceWithBody() {
+        var node = JavaInterfaceDeclarationNode.builder().name("Person")
+            .addMemberDeclaration(
+                JavaInterfaceMethodDeclarationNode.builder()
+                    .returnType(Java.typeVariableReference("String"))
+                    .name("describe")
+                    .addParam(Java.param(Java.typeVariableReference("int"), "indentation"))
+                    .build()
+            )
+            .build();
+
+        var result = serialiseToString(node, JavaSerialiser::serialiseTypeDeclaration);
+
+        assertThat(result, equalTo("""
+            public interface Person {
+                String describe(int indentation);
             }
             """
         ));

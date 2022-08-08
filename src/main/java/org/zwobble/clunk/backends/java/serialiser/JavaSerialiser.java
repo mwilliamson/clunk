@@ -269,7 +269,42 @@ public class JavaSerialiser {
         }
         builder.append(" {");
         builder.newLine();
+        builder.indent();
+        for (var memberDeclaration : node.body()) {
+            serialiseInterfaceMemberDeclaration(memberDeclaration, builder);
+        }
+        builder.dedent();
         builder.append("}");
+        builder.newLine();
+    }
+
+    public static void serialiseInterfaceMemberDeclaration(
+        JavaInterfaceMemberDeclarationNode node,
+        CodeBuilder builder
+    ) {
+        node.accept(new JavaInterfaceMemberDeclarationNode.Visitor<Void>() {
+            @Override
+            public Void visit(JavaInterfaceMethodDeclarationNode node) {
+                serialiseInterfaceMethodDeclaration(node, builder);
+                return null;
+            }
+        });
+    }
+
+    private static void serialiseInterfaceMethodDeclaration(
+        JavaInterfaceMethodDeclarationNode node,
+        CodeBuilder builder
+    ) {
+        serialiseTypeExpression(node.returnType(), builder);
+        builder.append(" ");
+        builder.append(node.name());
+        builder.append("(");
+        forEachInterspersed(
+            node.params(),
+            param -> serialiseParam(param, builder),
+            () -> builder.append(", ")
+        );
+        builder.append(");");
         builder.newLine();
     }
 

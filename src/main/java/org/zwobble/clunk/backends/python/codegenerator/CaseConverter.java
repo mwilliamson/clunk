@@ -22,4 +22,8 @@ public class CaseConverter {
     public static String lowerCamelCaseToUpperCamelCase(String name) {
         return name.substring(0, 1).toUpperCase(Locale.ROOT) + name.substring(1);
     }
+
+    public static String upperCamelCaseToLowerCamelCase(String name) {
+        return name.substring(0, 1).toLowerCase(Locale.ROOT) + name.substring(1);
+    }
 }

@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.zwobble.clunk.backends.python.codegenerator.CaseConverter.camelCaseToSnakeCase;
+import static org.zwobble.clunk.backends.CaseConverter.camelCaseToSnakeCase;
 
 public class PythonCodeGenerator {
     private interface PythonMacro {

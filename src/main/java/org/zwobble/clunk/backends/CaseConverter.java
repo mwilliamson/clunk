@@ -1,4 +1,4 @@
-package org.zwobble.clunk.backends.python.codegenerator;
+package org.zwobble.clunk.backends;
 
 import java.util.Locale;
 

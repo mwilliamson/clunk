@@ -48,4 +48,8 @@ public class Types {
     public static InterfaceType sealedInterfaceType(NamespaceName namespaceName, String name) {
         return new InterfaceType(namespaceName, name);
     }
+
+    public static boolean isSealedInterfaceType(Type type) {
+        return type instanceof InterfaceType;
+    }
 }

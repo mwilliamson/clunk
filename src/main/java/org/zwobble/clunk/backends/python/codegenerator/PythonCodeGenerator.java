@@ -5,13 +5,11 @@ import org.zwobble.clunk.backends.python.ast.*;
 import org.zwobble.clunk.types.*;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.zwobble.clunk.backends.python.codegenerator.CaseConverter.camelCaseToSnakeCase;
+import static org.zwobble.clunk.backends.python.codegenerator.PythonNaming.upperCamelCaseToSnakeCase;
 
 public class PythonCodeGenerator {
     private interface PythonMacro {
@@ -407,7 +405,34 @@ public class PythonCodeGenerator {
             body.add(compileRecordBodyDeclaration(bodyDeclaration, context));
         }
 
+        if (node.supertypes().stream().anyMatch(supertypeNode -> {
+            var typeLevelValue = supertypeNode.value();
+            return typeLevelValue instanceof Type type && Types.isSealedInterfaceType(type);
+        })) {
+            body.add(generateAcceptMethod(node));
+        }
+
         return new PythonClassDeclarationNode(node.name(), decorators, List.of(), body);
+    }
+
+    private static PythonFunctionNode generateAcceptMethod(TypedRecordNode node) {
+        return new PythonFunctionNode(
+            "accept",
+            List.of(),
+            List.of("self", "visitor"),
+            List.of(
+                new PythonReturnNode(
+                    new PythonCallNode(
+                        new PythonAttrAccessNode(
+                            new PythonReferenceNode("visitor"),
+                            "visit_" + upperCamelCaseToSnakeCase(node.name())
+                        ),
+                        List.of(new PythonReferenceNode("self")),
+                        List.of()
+                    )
+                )
+            )
+        );
     }
 
     private static PythonStatementNode compileRecordBodyDeclaration(

@@ -5,6 +5,7 @@ import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.backends.python.serialiser.PythonSerialiser;
 import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.Types;
 
 import java.util.List;
 
@@ -30,6 +31,30 @@ public class PythonCodeGeneratorRecordTests {
                 class Example:
                     first: str
                     second: int
+                """
+        ));
+    }
+
+    @Test
+    public void whenRecordIsSubtypeOfSealedInterfaceThenAcceptMethodIsGenerated() {
+        var node = TypedRecordNode.builder("ExampleRecord")
+            .addField(Typed.recordField("first", Typed.typeLevelString()))
+            .addField(Typed.recordField("second", Typed.typeLevelInt()))
+            .addSupertype(Typed.typeLevelReference("Supertype", Types.sealedInterfaceType(NamespaceName.fromParts(), "Supertype")))
+            .build();
+        var context = PythonCodeGeneratorContext.stub();
+
+        var result = PythonCodeGenerator.compileRecord(node, context);
+
+        var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
+        assertThat(string, equalTo(
+            """
+                @dataclasses.dataclass(frozen=True)
+                class ExampleRecord:
+                    first: str
+                    second: int
+                    def accept(self, visitor):
+                        return visitor.visit_example_record(self)
                 """
         ));
     }

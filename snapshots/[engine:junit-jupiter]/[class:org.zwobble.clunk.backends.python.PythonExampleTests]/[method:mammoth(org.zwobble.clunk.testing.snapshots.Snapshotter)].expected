@@ -163,18 +163,23 @@ class DocumentElement:
 @dataclasses.dataclass(frozen=True)
 class Bookmark:
     name: str
+    def accept(self, visitor):
+        return visitor.visit_bookmark(self)
 
 @dataclasses.dataclass(frozen=True)
 class BreakLine:
-    pass
+    def accept(self, visitor):
+        return visitor.visit_break_line(self)
 
 @dataclasses.dataclass(frozen=True)
 class BreakPage:
-    pass
+    def accept(self, visitor):
+        return visitor.visit_break_page(self)
 
 @dataclasses.dataclass(frozen=True)
 class BreakColumn:
-    pass
+    def accept(self, visitor):
+        return visitor.visit_break_column(self)
 
 @dataclasses.dataclass(frozen=True)
 class Comment:
@@ -186,6 +191,8 @@ class Comment:
 @dataclasses.dataclass(frozen=True)
 class CommentReference:
     commentId: str
+    def accept(self, visitor):
+        return visitor.visit_comment_reference(self)
 
 @dataclasses.dataclass(frozen=True)
 class Document:
@@ -198,11 +205,15 @@ class Hyperlink:
     href: str
     targetFrame: typing.Optional[str]
     children: typing.List[DocumentElement]
+    def accept(self, visitor):
+        return visitor.visit_hyperlink(self)
 
 @dataclasses.dataclass(frozen=True)
 class Image:
     altText: typing.Optional[str]
     contentType: typing.Optional[str]
+    def accept(self, visitor):
+        return visitor.visit_image(self)
 
 @dataclasses.dataclass(frozen=True)
 class Note:
@@ -218,6 +229,8 @@ class NoteType(enum.Enum):
 class NoteReference:
     noteType: NoteType
     noteId: str
+    def accept(self, visitor):
+        return visitor.visit_note_reference(self)
 
 @dataclasses.dataclass(frozen=True)
 class NumberingLevel:
@@ -234,6 +247,8 @@ class Paragraph:
     numbering: typing.Optional[NumberingLevel]
     indent: ParagraphIndent
     children: typing.List[DocumentElement]
+    def accept(self, visitor):
+        return visitor.visit_paragraph(self)
 
 @dataclasses.dataclass(frozen=True)
 class ParagraphIndent:
@@ -253,6 +268,8 @@ class Run:
     verticalAlignment: VerticalAlignment
     style: typing.Optional[str]
     children: typing.List[DocumentElement]
+    def accept(self, visitor):
+        return visitor.visit_run(self)
 
 @dataclasses.dataclass(frozen=True)
 class Style:
@@ -261,27 +278,36 @@ class Style:
 
 @dataclasses.dataclass(frozen=True)
 class Tab:
-    pass
+    def accept(self, visitor):
+        return visitor.visit_tab(self)
 
 @dataclasses.dataclass(frozen=True)
 class Table:
     style: typing.Optional[Style]
     children: typing.List[DocumentElement]
+    def accept(self, visitor):
+        return visitor.visit_table(self)
 
 @dataclasses.dataclass(frozen=True)
 class TableCell:
     rowspan: int
     colspan: int
     children: typing.List[DocumentElement]
+    def accept(self, visitor):
+        return visitor.visit_table_cell(self)
 
 @dataclasses.dataclass(frozen=True)
 class TableRow:
     children: typing.List[DocumentElement]
     isHeader: bool
+    def accept(self, visitor):
+        return visitor.visit_table_row(self)
 
 @dataclasses.dataclass(frozen=True)
 class Text:
     value: str
+    def accept(self, visitor):
+        return visitor.visit_text(self)
 
 class VerticalAlignment(enum.Enum):
     SUPERSCRIPT = enum.auto()
@@ -309,10 +335,13 @@ class HtmlElement:
     @property
     def defaultTagName(self):
         return self.tag.defaultTagName
+    def accept(self, visitor):
+        return visitor.visit_html_element(self)
 
 @dataclasses.dataclass(frozen=True)
 class HtmlForceWrite:
-    pass
+    def accept(self, visitor):
+        return visitor.visit_html_force_write(self)
 
 @dataclasses.dataclass(frozen=True)
 class HtmlTag:
@@ -327,6 +356,8 @@ class HtmlTag:
 @dataclasses.dataclass(frozen=True)
 class HtmlText:
     value: str
+    def accept(self, visitor):
+        return visitor.visit_html_text(self)
 
 
 ==============

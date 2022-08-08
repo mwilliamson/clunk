@@ -44,4 +44,8 @@ public class Types {
     public static RecordType recordType(NamespaceName namespaceName, String name) {
         return new RecordType(namespaceName, name);
     }
+
+    public static InterfaceType sealedInterfaceType(NamespaceName namespaceName, String name) {
+        return new InterfaceType(namespaceName, name);
+    }
 }

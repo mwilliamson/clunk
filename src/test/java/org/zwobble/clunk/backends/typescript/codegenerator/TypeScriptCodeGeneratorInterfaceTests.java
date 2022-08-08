@@ -15,7 +15,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class TypeScriptCodeGeneratorInterfaceTests {
     @Test
     public void sealedInterfaceIsCompiledToUnion() {
-        var interfaceType = Types.interfaceType(NamespaceName.fromParts("one", "two"), "X");
+        var interfaceType = Types.sealedInterfaceType(NamespaceName.fromParts("one", "two"), "X");
         var node = Typed.interface_("X", interfaceType);
         var subtypeLookup = SubtypeRelations.EMPTY
             .add(new RecordType(NamespaceName.fromParts("one", "two"), "A"), interfaceType)

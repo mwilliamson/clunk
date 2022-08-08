@@ -15,7 +15,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class TypeScriptCodeGeneratorSwitchTests {
     @Test
     public void switchStatementIsCompiledToTypeScriptSwitchStatement() {
-        var interfaceType = Types.interfaceType(NamespaceName.fromParts(), "Node");
+        var interfaceType = Types.sealedInterfaceType(NamespaceName.fromParts(), "Node");
         var recordType = Types.recordType(NamespaceName.fromParts(), "Add");
 
         var node = Typed.switchStatement(

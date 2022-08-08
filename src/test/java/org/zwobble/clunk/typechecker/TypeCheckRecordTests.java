@@ -192,7 +192,7 @@ public class TypeCheckRecordTests {
         var untypedNode = UntypedRecordNode.builder("User")
             .addSupertype(Untyped.typeLevelReference("Person"))
             .build();
-        var interfaceType = Types.interfaceType(NamespaceName.fromParts("a", "b"), "Person");
+        var interfaceType = Types.sealedInterfaceType(NamespaceName.fromParts("a", "b"), "Person");
         var context = TypeCheckerContext.stub()
             .enterNamespace(NamespaceName.fromParts("a", "b"))
             .addLocal("Person", Types.metaType(interfaceType), NullSource.INSTANCE);
@@ -229,7 +229,7 @@ public class TypeCheckRecordTests {
             .build();
         var context = TypeCheckerContext.stub()
             .enterNamespace(NamespaceName.fromParts("a", "b"))
-            .addLocal("Person", Types.metaType(Types.interfaceType(NamespaceName.fromParts("d", "e"), "Person")), NullSource.INSTANCE);
+            .addLocal("Person", Types.metaType(Types.sealedInterfaceType(NamespaceName.fromParts("d", "e"), "Person")), NullSource.INSTANCE);
 
         assertThrows(
             CannotExtendSealedInterfaceFromDifferentNamespaceError.class,

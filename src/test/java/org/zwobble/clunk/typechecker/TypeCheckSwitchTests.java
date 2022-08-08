@@ -22,7 +22,7 @@ public class TypeCheckSwitchTests {
     @Test
     public void givenExpressionIsSealedInterfaceThenTypeChecksWhenCasesCoverAllSubtypes() {
         var namespaceName = NamespaceName.fromParts("example");
-        var interfaceType = Types.interfaceType(namespaceName, "X");
+        var interfaceType = Types.sealedInterfaceType(namespaceName, "X");
         var recordType1 = Types.recordType(namespaceName, "A");
         var recordType2 = Types.recordType(namespaceName, "B");
         var untypedNode = Untyped.switchStatement(
@@ -70,7 +70,7 @@ public class TypeCheckSwitchTests {
     @Test
     public void whenExpressionIsNotSealedInterfaceThenErrorIsThrown() {
         var namespaceName = NamespaceName.fromParts("example");
-        var interfaceType = Types.interfaceType(namespaceName, "X");
+        var interfaceType = Types.sealedInterfaceType(namespaceName, "X");
         var recordType1 = Types.recordType(namespaceName, "A");
         var untypedNode = Untyped.switchStatement(
             Untyped.reference("x"),
@@ -99,7 +99,7 @@ public class TypeCheckSwitchTests {
     @Test
     public void whenSwitchIsNotExhaustiveThenErrorIsThrown() {
         var namespaceName = NamespaceName.fromParts("example");
-        var interfaceType = Types.interfaceType(namespaceName, "X");
+        var interfaceType = Types.sealedInterfaceType(namespaceName, "X");
         var recordType1 = Types.recordType(namespaceName, "A");
         var recordType2 = Types.recordType(namespaceName, "B");
         var untypedNode = Untyped.switchStatement(
@@ -129,7 +129,7 @@ public class TypeCheckSwitchTests {
     @Test
     public void whenSwitchHasImpossibleCaseThenErrorIsThrown() {
         var namespaceName = NamespaceName.fromParts("example");
-        var interfaceType = Types.interfaceType(namespaceName, "X");
+        var interfaceType = Types.sealedInterfaceType(namespaceName, "X");
         var recordType1 = Types.recordType(namespaceName, "A");
         var recordType2 = Types.recordType(namespaceName, "B");
         var untypedNode = Untyped.switchStatement(
@@ -165,7 +165,7 @@ public class TypeCheckSwitchTests {
     @Test
     public void whenAtLeastOneCaseDoesNotReturnThenSwitchDoesNotReturn() {
         var namespaceName = NamespaceName.fromParts("example");
-        var interfaceType = Types.interfaceType(namespaceName, "X");
+        var interfaceType = Types.sealedInterfaceType(namespaceName, "X");
         var recordType1 = Types.recordType(namespaceName, "A");
         var recordType2 = Types.recordType(namespaceName, "B");
         var untypedNode = Untyped.switchStatement(
@@ -199,7 +199,7 @@ public class TypeCheckSwitchTests {
     @Test
     public void whenAllCasesReturnThenSwitchReturns() {
         var namespaceName = NamespaceName.fromParts("example");
-        var interfaceType = Types.interfaceType(namespaceName, "X");
+        var interfaceType = Types.sealedInterfaceType(namespaceName, "X");
         var recordType1 = Types.recordType(namespaceName, "A");
         var recordType2 = Types.recordType(namespaceName, "B");
         var untypedNode = Untyped.switchStatement(
@@ -233,7 +233,7 @@ public class TypeCheckSwitchTests {
     @Test
     public void caseVariableCanBeAccessedInCaseBody() {
         var namespaceName = NamespaceName.fromParts("example");
-        var interfaceType = Types.interfaceType(namespaceName, "X");
+        var interfaceType = Types.sealedInterfaceType(namespaceName, "X");
         var recordType1 = Types.recordType(namespaceName, "A");
         var recordType2 = Types.recordType(namespaceName, "B");
         var untypedNode = Untyped.switchStatement(

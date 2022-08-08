@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser;
-import org.zwobble.clunk.types.InterfaceType;
 import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.Types;
 
 import java.util.List;
 
@@ -45,7 +45,7 @@ public class TypeScriptCodeGeneratorRecordTests {
         var node = TypedRecordNode.builder("Example")
             .addField(Typed.recordField("first", Typed.typeLevelString()))
             .addField(Typed.recordField("second", Typed.typeLevelInt()))
-            .addSupertype(Typed.typeLevelReference("Supertype", new InterfaceType(NamespaceName.fromParts(), "Supertype")))
+            .addSupertype(Typed.typeLevelReference("Supertype", Types.sealedInterfaceType(NamespaceName.fromParts(), "Supertype")))
             .build();
         var context = TypeScriptCodeGeneratorContext.stub();
 

@@ -97,4 +97,39 @@ public class JavaSerialiserMethodDeclarationTests {
             """
         ));
     }
+
+    @Test
+    public void canSerialiseMethodWithOneTypeParam() {
+        var node = JavaMethodDeclarationNode.builder()
+            .addTypeParam("T")
+            .returnType(Java.typeVariableReference("void"))
+            .name("f")
+            .build();
+
+        var result = serialiseToString(node, JavaSerialiser::serialiseMethodDeclaration);
+
+        assertThat(result, equalTo("""
+            public <T> void f() {
+            }
+            """
+        ));
+    }
+
+    @Test
+    public void canSerialiseMethodWithMultipleTypeParams() {
+        var node = JavaMethodDeclarationNode.builder()
+            .addTypeParam("T")
+            .addTypeParam("U")
+            .returnType(Java.typeVariableReference("void"))
+            .name("f")
+            .build();
+
+        var result = serialiseToString(node, JavaSerialiser::serialiseMethodDeclaration);
+
+        assertThat(result, equalTo("""
+            public <T, U> void f() {
+            }
+            """
+        ));
+    }
 }

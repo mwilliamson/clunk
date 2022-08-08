@@ -157,6 +157,7 @@ public class JavaCodeGenerator {
         return new JavaMethodDeclarationNode(
             List.of(),
             true,
+            List.of(),
             compileTypeLevelExpression(node.returnType(), context),
             node.name(),
             node.params().stream().map(param -> compileParam(param, context)).toList(),
@@ -356,6 +357,7 @@ public class JavaCodeGenerator {
         return new JavaMethodDeclarationNode(
             List.of(),
             false,
+            List.of(),
             compileTypeLevelExpression(node.type(), context),
             node.name(),
             List.of(),

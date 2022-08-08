@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public record JavaInterfaceDeclarationNode(
+    List<String> typeParams,
     String name,
     Optional<List<? extends JavaTypeExpressionNode>> permits,
     List<JavaInterfaceMemberDeclarationNode> body
@@ -17,28 +18,33 @@ public record JavaInterfaceDeclarationNode(
     }
 
     public static Builder builder() {
-        return new Builder("X", Optional.empty(), P.vector());
+        return new Builder(P.vector(), "X", Optional.empty(), P.vector());
     }
 
     public record Builder(
+        PVector<String> typeParams,
         String name,
         Optional<List<? extends JavaTypeExpressionNode>> permits,
         PVector<JavaInterfaceMemberDeclarationNode> body
     ) {
         public JavaInterfaceDeclarationNode build() {
-            return new JavaInterfaceDeclarationNode(name, permits, body);
+            return new JavaInterfaceDeclarationNode(typeParams, name, permits, body);
         }
 
         public Builder name(String name) {
-            return new JavaInterfaceDeclarationNode.Builder(name, permits, body);
+            return new JavaInterfaceDeclarationNode.Builder(typeParams, name, permits, body);
         }
 
         public Builder sealed(List<JavaTypeExpressionNode> permits) {
-            return new JavaInterfaceDeclarationNode.Builder(name, Optional.of(permits), body);
+            return new JavaInterfaceDeclarationNode.Builder(typeParams, name, Optional.of(permits), body);
         }
 
         public Builder addMemberDeclaration(JavaInterfaceMemberDeclarationNode declaration) {
-            return new Builder(name, permits, body.plus(declaration));
+            return new Builder(typeParams, name, permits, body.plus(declaration));
+        }
+
+        public Builder addTypeParam(String typeParam) {
+            return new Builder(typeParams.plus(typeParam), name, permits, body);
         }
     }
 }

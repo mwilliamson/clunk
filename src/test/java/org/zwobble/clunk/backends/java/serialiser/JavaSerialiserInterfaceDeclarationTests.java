@@ -62,4 +62,35 @@ public class JavaSerialiserInterfaceDeclarationTests {
             """
         ));
     }
+
+    @Test
+    public void canSerialiseInterfaceWithOneTypeParam() {
+        var node = JavaInterfaceDeclarationNode.builder().name("Person")
+            .addTypeParam("T")
+            .build();
+
+        var result = serialiseToString(node, JavaSerialiser::serialiseTypeDeclaration);
+
+        assertThat(result, equalTo("""
+            public interface Person<T> {
+            }
+            """
+        ));
+    }
+
+    @Test
+    public void canSerialiseInterfaceWithMultipleTypeParams() {
+        var node = JavaInterfaceDeclarationNode.builder().name("Person")
+            .addTypeParam("T")
+            .addTypeParam("U")
+            .build();
+
+        var result = serialiseToString(node, JavaSerialiser::serialiseTypeDeclaration);
+
+        assertThat(result, equalTo("""
+            public interface Person<T, U> {
+            }
+            """
+        ));
+    }
 }

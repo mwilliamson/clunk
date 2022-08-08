@@ -259,6 +259,17 @@ public class JavaSerialiser {
         }
         builder.append("interface ");
         builder.append(node.name());
+
+        if (!node.typeParams().isEmpty()) {
+            builder.append("<");
+            forEachInterspersed(
+                node.typeParams(),
+                typeParam -> builder.append(typeParam),
+                () -> builder.append(", ")
+            );
+            builder.append(">");
+        }
+
         if (node.permits().isPresent()) {
             builder.append(" permits ");
             forEachInterspersed(
@@ -267,6 +278,7 @@ public class JavaSerialiser {
                 () -> builder.append(", ")
             );
         }
+
         builder.append(" {");
         builder.newLine();
         builder.indent();

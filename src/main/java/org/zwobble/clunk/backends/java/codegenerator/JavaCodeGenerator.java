@@ -247,6 +247,7 @@ public class JavaCodeGenerator {
             namespaceToPackage(((InterfaceType) node.type()).namespaceName(), context),
             List.of(),
             new JavaInterfaceDeclarationNode(
+                List.of(),
                 node.name(),
                 Optional.of(permits),
                 List.of()

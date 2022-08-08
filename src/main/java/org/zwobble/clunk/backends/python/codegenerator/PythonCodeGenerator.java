@@ -5,11 +5,13 @@ import org.zwobble.clunk.backends.python.ast.*;
 import org.zwobble.clunk.types.*;
 
 import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.zwobble.clunk.backends.python.codegenerator.CaseConverter.camelCaseToSnakeCase;
-import static org.zwobble.clunk.backends.python.codegenerator.PythonNaming.upperCamelCaseToSnakeCase;
 
 public class PythonCodeGenerator {
     private interface PythonMacro {
@@ -425,7 +427,7 @@ public class PythonCodeGenerator {
                     new PythonCallNode(
                         new PythonAttrAccessNode(
                             new PythonReferenceNode("visitor"),
-                            "visit_" + upperCamelCaseToSnakeCase(node.name())
+                            "visit_" + camelCaseToSnakeCase(node.name())
                         ),
                         List.of(new PythonReferenceNode("self")),
                         List.of()

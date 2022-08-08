@@ -6,7 +6,7 @@ public class CaseConverter {
     public static String camelCaseToSnakeCase(String name) {
         var builder = new StringBuilder();
 
-        builder.appendCodePoint(name.codePointAt(0));
+        builder.appendCodePoint(Character.toLowerCase(name.codePointAt(0)));
         name.codePoints().skip(1).forEachOrdered(codePoint -> {
             if (Character.isUpperCase(codePoint)) {
                 builder.append("_");

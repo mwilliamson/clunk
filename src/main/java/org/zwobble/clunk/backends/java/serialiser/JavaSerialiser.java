@@ -296,6 +296,12 @@ public class JavaSerialiser {
     ) {
         node.accept(new JavaInterfaceMemberDeclarationNode.Visitor<Void>() {
             @Override
+            public Void visit(JavaInterfaceDeclarationNode node) {
+                serialiseInterfaceDeclaration(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(JavaInterfaceMethodDeclarationNode node) {
                 serialiseInterfaceMethodDeclaration(node, builder);
                 return null;

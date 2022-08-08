@@ -34,6 +34,11 @@ public class JavaCodeGeneratorInterfaceTests {
                 package one.two;
                 
                 public sealed interface X permits A, B {
+                    <T> T accept(Visitor<T> visitor);
+                    public interface Visitor<T> {
+                        T visit(A a);
+                        T visit(B b);
+                    }
                 }
                 """
         ));

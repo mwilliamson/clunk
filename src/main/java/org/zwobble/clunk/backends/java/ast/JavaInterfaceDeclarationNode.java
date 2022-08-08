@@ -10,10 +10,16 @@ public record JavaInterfaceDeclarationNode(
     List<String> typeParams,
     String name,
     Optional<List<? extends JavaTypeExpressionNode>> permits,
-    List<JavaInterfaceMemberDeclarationNode> body
-) implements JavaTypeDeclarationNode {
+    List<? extends JavaInterfaceMemberDeclarationNode> body
+) implements JavaInterfaceMemberDeclarationNode, JavaTypeDeclarationNode {
+
     @Override
-    public <T> T accept(Visitor<T> visitor) {
+    public <T> T accept(JavaInterfaceMemberDeclarationNode.Visitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public <T> T accept(JavaTypeDeclarationNode.Visitor<T> visitor) {
         return visitor.visit(this);
     }
 

@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.zwobble.clunk.backends.CaseConverter.lowerCamelCaseToUpperCamelCase;
+import static org.zwobble.clunk.backends.CaseConverter.upperCamelCaseToLowerCamelCase;
 import static org.zwobble.clunk.util.Lists.last;
 
 public class JavaCodeGenerator {
@@ -244,6 +245,43 @@ public class JavaCodeGenerator {
             .map(subtype -> new JavaTypeVariableReferenceNode(subtype.name()))
             .toList();
 
+        var visitorMethods = context.subtypesOf(node.type()).stream()
+            .map(subtype -> new JavaInterfaceMethodDeclarationNode(
+                List.of(),
+                new JavaTypeVariableReferenceNode("T"),
+                "visit",
+                List.of(
+                    new JavaParamNode(
+                        new JavaTypeVariableReferenceNode(subtype.name()),
+                        upperCamelCaseToLowerCamelCase(subtype.name())
+                    )
+                )
+            ))
+            .toList();
+
+        var visitorDeclaration = new JavaInterfaceDeclarationNode(
+            List.of("T"),
+            "Visitor",
+            Optional.empty(),
+            visitorMethods
+        );
+
+        var acceptDeclaration = new JavaInterfaceMethodDeclarationNode(
+            List.of("T"),
+            new JavaTypeVariableReferenceNode("T"),
+            "accept",
+            List.of(
+                new JavaParamNode(
+                    new JavaParameterizedType(
+                        new JavaTypeVariableReferenceNode(visitorDeclaration.name()),
+                        List.of(new JavaTypeVariableReferenceNode("T"))
+                    ),
+                    "visitor"
+                )
+            )
+        );
+
+
         return new JavaOrdinaryCompilationUnitNode(
             namespaceToPackage(((InterfaceType) node.type()).namespaceName(), context),
             List.of(),
@@ -251,7 +289,7 @@ public class JavaCodeGenerator {
                 List.of(),
                 node.name(),
                 Optional.of(permits),
-                List.of()
+                List.of(acceptDeclaration, visitorDeclaration)
             )
         );
     }
@@ -375,16 +413,48 @@ public class JavaCodeGenerator {
             .map(field -> new JavaRecordComponentNode(compileTypeLevelExpression(field.type(), context), field.name()))
             .collect(Collectors.toList());
 
-        var implements_ = node.supertypes().stream()
-            .map(implementsType -> {
-                var interfaceType = (InterfaceType) implementsType.value();
-                return new JavaTypeVariableReferenceNode(interfaceType.name());
-            })
+        var supertypes = context.supertypesOf(node.type());
+
+        var implements_ = supertypes.stream()
+            .map(supertype -> new JavaTypeVariableReferenceNode(supertype.name()))
             .toList();
-        
-        var body = node.body().stream()
-            .map(declaration -> compileRecordBodyDeclaration(declaration, context))
-            .toList();
+
+        var body = new ArrayList<JavaClassBodyDeclarationNode>();
+
+        for (var declaration : node.body()) {
+            body.add(compileRecordBodyDeclaration(declaration, context));
+        }
+
+        for (var supertype : supertypes) {
+            body.add(new JavaMethodDeclarationNode(
+                List.of(),
+                false,
+                List.of("T"),
+                new JavaTypeVariableReferenceNode("T"),
+                "accept",
+                List.of(
+                    new JavaParamNode(
+                        new JavaParameterizedType(
+                            // TODO: this isn't a full qualified reference
+                            new JavaFullyQualifiedTypeReferenceNode(supertype.name(), "Visitor"),
+                            List.of(new JavaTypeVariableReferenceNode("T"))
+                        ),
+                        "visitor"
+                    )
+                ),
+                List.of(
+                    new JavaReturnNode(
+                        new JavaCallNode(
+                            new JavaMemberAccessNode(
+                                new JavaReferenceNode("visitor"),
+                                "visit"
+                            ),
+                            List.of(new JavaReferenceNode("this"))
+                        )
+                    )
+                )
+            ));
+        }
 
         return new JavaOrdinaryCompilationUnitNode(
             namespaceToPackage(node.type().namespaceName(), context),

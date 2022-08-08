@@ -6,6 +6,7 @@ import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
 import org.zwobble.clunk.types.InterfaceType;
 import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.SubtypeRelations;
 
 import java.util.List;
 
@@ -63,10 +64,11 @@ public class JavaCodeGeneratorRecordTests {
     @Test
     public void whenRecordHasInterfaceAsSupertypeThenJavaRecordImplementsInterface() {
         var node = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "Example")
-            .addSupertype(Typed.typeLevelReference("X", new InterfaceType(NamespaceName.fromParts("a", "b"), "X")))
-            .addSupertype(Typed.typeLevelReference("Y", new InterfaceType(NamespaceName.fromParts("a", "b"), "Y")))
             .build();
-        var context = JavaCodeGeneratorContext.stub();
+        var subtypeRelations = SubtypeRelations.EMPTY
+            .add(node.type(), new InterfaceType(NamespaceName.fromParts("a", "b"), "X"))
+            .add(node.type(), new InterfaceType(NamespaceName.fromParts("a", "b"), "Y"));
+        var context = JavaCodeGeneratorContext.stub(subtypeRelations);
 
         var result = JavaCodeGenerator.compileRecord(node, context);
 
@@ -76,6 +78,12 @@ public class JavaCodeGeneratorRecordTests {
                 package example.project;
                 
                 public record Example() implements X, Y {
+                    public <T> T accept(X.Visitor<T> visitor) {
+                        return visitor.visit(this);
+                    }
+                    public <T> T accept(Y.Visitor<T> visitor) {
+                        return visitor.visit(this);
+                    }
                 }"""
         ));
     }

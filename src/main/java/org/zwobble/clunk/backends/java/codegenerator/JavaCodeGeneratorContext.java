@@ -4,8 +4,9 @@ import org.zwobble.clunk.backends.java.ast.JavaImportNode;
 import org.zwobble.clunk.backends.java.ast.JavaImportStaticNode;
 import org.zwobble.clunk.backends.java.ast.JavaImportTypeNode;
 import org.zwobble.clunk.backends.java.config.JavaTargetConfig;
-import org.zwobble.clunk.types.SubtypeRelations;
+import org.zwobble.clunk.types.InterfaceType;
 import org.zwobble.clunk.types.RecordType;
+import org.zwobble.clunk.types.SubtypeRelations;
 import org.zwobble.clunk.types.Type;
 
 import java.util.LinkedHashSet;
@@ -13,6 +14,10 @@ import java.util.List;
 import java.util.Set;
 
 public class JavaCodeGeneratorContext {
+    public static JavaCodeGeneratorContext stub(SubtypeRelations subtypeRelations) {
+        return new JavaCodeGeneratorContext(JavaTargetConfig.stub(), subtypeRelations);
+    }
+
     public static JavaCodeGeneratorContext stub() {
         return new JavaCodeGeneratorContext(JavaTargetConfig.stub(), SubtypeRelations.EMPTY);
     }
@@ -45,5 +50,9 @@ public class JavaCodeGeneratorContext {
 
     public List<RecordType> subtypesOf(Type supertype) {
         return subtypeRelations.subtypesOf(supertype);
+    }
+
+    public List<InterfaceType> supertypesOf(Type supertype) {
+        return subtypeRelations.supertypesOf(supertype);
     }
 }

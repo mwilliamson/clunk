@@ -56,4 +56,37 @@ public class JavaSerialiserInterfaceMethodDeclarationTests {
             """
         ));
     }
+
+    @Test
+    public void canSerialiseMethodWithOneTypeParam() {
+        var node = JavaInterfaceMethodDeclarationNode.builder()
+            .addTypeParam("T")
+            .returnType(Java.typeVariableReference("String"))
+            .name("describe")
+            .build();
+
+        var result = serialiseToString(node, JavaSerialiser::serialiseInterfaceMemberDeclaration);
+
+        assertThat(result, equalTo("""
+            <T> String describe();
+            """
+        ));
+    }
+
+    @Test
+    public void canSerialiseMethodWithMultipleTypeParams() {
+        var node = JavaInterfaceMethodDeclarationNode.builder()
+            .addTypeParam("T")
+            .addTypeParam("U")
+            .returnType(Java.typeVariableReference("String"))
+            .name("describe")
+            .build();
+
+        var result = serialiseToString(node, JavaSerialiser::serialiseInterfaceMemberDeclaration);
+
+        assertThat(result, equalTo("""
+            <T, U> String describe();
+            """
+        ));
+    }
 }

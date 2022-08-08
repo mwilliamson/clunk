@@ -295,6 +295,16 @@ public class JavaSerialiser {
         JavaInterfaceMethodDeclarationNode node,
         CodeBuilder builder
     ) {
+        if (!node.typeParams().isEmpty()) {
+            builder.append("<");
+            forEachInterspersed(
+                node.typeParams(),
+                typeParam -> builder.append(typeParam),
+                () -> builder.append(", ")
+            );
+            builder.append("> ");
+        }
+
         serialiseTypeExpression(node.returnType(), builder);
         builder.append(" ");
         builder.append(node.name());

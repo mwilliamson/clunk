@@ -195,7 +195,7 @@ public class JavaCodeGenerator {
 
             @Override
             public JavaStatementNode visit(TypedSwitchNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileSwitch(node, context);
             }
 
             @Override
@@ -496,6 +496,58 @@ public class JavaCodeGenerator {
         return new JavaStringLiteralNode(node.value());
     }
 
+    private static JavaStatementNode compileSwitch(
+        TypedSwitchNode node,
+        JavaCodeGeneratorContext context
+    ) {
+        var expression = node.expression();
+        var interfaceType = (InterfaceType) expression.type();
+
+        // TODO: import or fully qualify?
+        context.addImportType(typeToJavaTypeName(interfaceType, context));
+        
+        return new JavaReturnNode(new JavaCallNode(
+            new JavaMemberAccessNode(
+                compileExpression(expression, context),
+                "accept"
+            ),
+            List.of(
+                new JavaCallNewNode(
+                    // TODO: model nested type reference properly
+                    new JavaReferenceNode(interfaceType.name() + ".Visitor"),
+                    Optional.of(List.of()),
+                    List.of(),
+                    Optional.of(
+                        node.cases().stream()
+                            .map(switchCase -> {
+                                var caseType = (RecordType) switchCase.type().value();
+                                context.addImportType(typeToJavaTypeName(caseType, context));
+
+                                var returnStatement = (TypedReturnNode) switchCase.body().get(switchCase.body().size() - 1);
+
+                                return new JavaMethodDeclarationNode(
+                                    List.of(
+                                        new JavaMarkerAnnotationNode(new JavaTypeVariableReferenceNode("Override"))
+                                    ),
+                                    false,
+                                    List.of(),
+                                    typeLevelValueToTypeExpression(returnStatement.expression().type(), true, context),
+                                    "visit",
+                                    List.of(
+                                        new JavaParamNode(new JavaTypeVariableReferenceNode(caseType.name()), switchCase.variableName())
+                                    ),
+                                    switchCase.body().stream()
+                                        .map(statement -> compileFunctionStatement(statement, context))
+                                        .toList()
+                                );
+                            })
+                            .toList()
+                    )
+                )
+            )
+        ));
+    }
+
     public static JavaClassBodyDeclarationNode compileTest(TypedTestNode node, JavaCodeGeneratorContext context) {
         var method = JavaMethodDeclarationNode.builder()
             .addAnnotation(Java.annotation(Java.fullyQualifiedTypeReference("org.junit.jupiter.api", "Test")))
@@ -531,18 +583,10 @@ public class JavaCodeGenerator {
 
             @Override
             public JavaTypeExpressionNode visit(TypedTypeLevelReferenceNode node) {
-                var value = node.value();
+                var builtinReference = builtinReference(node.value(), false);
 
-                if (value == BoolType.INSTANCE) {
-                    return new JavaTypeVariableReferenceNode("boolean");
-                } else if (value == IntType.INSTANCE) {
-                    return new JavaTypeVariableReferenceNode("int");
-                } else if (value == StringType.INSTANCE) {
-                    return new JavaTypeVariableReferenceNode("String");
-                } else if (value == ListTypeConstructor.INSTANCE) {
-                    return new JavaFullyQualifiedTypeReferenceNode("java.util", "List");
-                } else if (value == OptionTypeConstructor.INSTANCE) {
-                    return new JavaFullyQualifiedTypeReferenceNode("java.util", "Optional");
+                if (builtinReference.isPresent()) {
+                    return builtinReference.get();
                 } else {
                     return new JavaTypeVariableReferenceNode(node.name());
                 }
@@ -558,7 +602,56 @@ public class JavaCodeGenerator {
         return context.packagePrefix() + String.join(".", namespaceName.parts());
     }
 
+    private static JavaTypeExpressionNode typeLevelValueToTypeExpression(
+        TypeLevelValue value,
+        boolean isGeneric,
+        JavaCodeGeneratorContext context
+    ) {
+        var builtinReference = builtinReference(value, isGeneric);
+
+        if (builtinReference.isPresent()) {
+            return builtinReference.get();
+        } else if (value instanceof InterfaceType interfaceType) {
+            return new JavaFullyQualifiedTypeReferenceNode(
+                namespaceToPackage(interfaceType.namespaceName(), context),
+                interfaceType.name()
+            );
+        } else if (value instanceof RecordType recordType) {
+            return new JavaFullyQualifiedTypeReferenceNode(
+                namespaceToPackage(recordType.namespaceName(), context),
+                recordType.name()
+            );
+        } else {
+            throw new UnsupportedOperationException("TODO");
+        }
+    }
+
+    private static Optional<JavaTypeExpressionNode> builtinReference(TypeLevelValue value, boolean isGeneric) {
+        if (value == BoolType.INSTANCE) {
+            return Optional.of(new JavaTypeVariableReferenceNode("boolean"));
+        } else if (value == IntType.INSTANCE) {
+            // TODO: test isGeneric behaviour
+            return Optional.of(new JavaTypeVariableReferenceNode(isGeneric ? "Integer" : "int"));
+        } else if (value == StringType.INSTANCE) {
+            return Optional.of(new JavaTypeVariableReferenceNode("String"));
+        } else if (value == ListTypeConstructor.INSTANCE) {
+            return Optional.of(new JavaFullyQualifiedTypeReferenceNode("java.util", "List"));
+        } else if (value == OptionTypeConstructor.INSTANCE) {
+            return Optional.of(new JavaFullyQualifiedTypeReferenceNode("java.util", "Optional"));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    private static String typeToJavaTypeName(InterfaceType interfaceType, JavaCodeGeneratorContext context) {
+        return typeToJavaTypeName(interfaceType.namespaceName(), interfaceType.name(), context);
+    }
+
     private static String typeToJavaTypeName(RecordType recordType, JavaCodeGeneratorContext context) {
-        return namespaceToPackage(recordType.namespaceName(), context) + "." + recordType.name();
+        return typeToJavaTypeName(recordType.namespaceName(), recordType.name(), context);
+    }
+
+    private static String typeToJavaTypeName(NamespaceName namespaceName, String name, JavaCodeGeneratorContext context) {
+        return namespaceToPackage(namespaceName, context) + "." + name;
     }
 }

@@ -1,0 +1,123 @@
+Source path: src/switchesTest.clunk
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+
+sealed interface Node {
+}
+
+record Add(left: Node, right: Node) <: Node
+
+record Literal(value: Int) <: Node
+
+test "sum" {
+    var node = Add(Add(Literal(2), Literal(7)), Literal(3));
+
+    var result = evaluate(node);
+
+    assertThat(result, equalTo(12));
+}
+
+fun evaluate(node: Node) -> Int {
+    switch (node) {
+        case Add add {
+            return evaluate(add.left) + (evaluate(add.right));
+        }
+        case Literal literal {
+            return literal.value;
+        }
+    }
+}
+
+
+==============
+
+Output path: switchesTest/Node.java
+package switchesTest;
+
+public sealed interface Node permits Add, Literal {
+    <T> T accept(Visitor<T> visitor);
+    public interface Visitor<T> {
+        T visit(Add add);
+        T visit(Literal literal);
+    }
+}
+
+
+==============
+
+Output path: switchesTest/Add.java
+package switchesTest;
+
+public record Add(Node left, Node right) implements Node {
+    public <T> T accept(Node.Visitor<T> visitor) {
+        return visitor.visit(this);
+    }
+}
+
+==============
+
+Output path: switchesTest/Literal.java
+package switchesTest;
+
+public record Literal(int value) implements Node {
+    public <T> T accept(Node.Visitor<T> visitor) {
+        return visitor.visit(this);
+    }
+}
+
+==============
+
+Output path: switchesTest/SwitchesTest.java
+package switchesTest;
+
+import switchesTest.Literal;
+import switchesTest.Add;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import switchesTest.Node;
+
+public class SwitchesTest {
+    @org.junit.jupiter.api.Test
+    @org.junit.jupiter.api.DisplayName("sum")
+    public void sum() {
+        var node = new Add(new Add(new Literal(2), new Literal(7)), new Literal(3));
+
+        var result = evaluate(node);
+
+        assertThat(result, equalTo(12));
+    }
+    public static int evaluate(Node node) {
+        return node.accept(new Node.Visitor<>() {
+            @Override
+            public Integer visit(Add add) {
+                return evaluate(add.left()) + evaluate(add.right());
+            }
+            @Override
+            public Integer visit(Literal literal) {
+                return literal.value();
+            }
+        });
+    }
+}
+
+==============
+
+╷
+├─ JUnit Jupiter ✔
+│  └─ SwitchesTest ✔
+│     └─ sum ✔
+└─ JUnit Vintage ✔
+
+Test run finished after TIME ms
+[         3 containers found      ]
+[         0 containers skipped    ]
+[         3 containers started    ]
+[         0 containers aborted    ]
+[         3 containers successful ]
+[         0 containers failed     ]
+[         1 tests found           ]
+[         0 tests skipped         ]
+[         1 tests started         ]
+[         0 tests aborted         ]
+[         1 tests successful      ]
+[         0 tests failed          ]

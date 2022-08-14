@@ -10,7 +10,7 @@ public record JavaCallNewNode(
     JavaExpressionNode receiver,
     Optional<? extends List<JavaTypeExpressionNode>> typeArgs,
     List<JavaExpressionNode> args,
-    Optional<? extends List<JavaClassBodyDeclarationNode>> body
+    Optional<? extends List<? extends JavaClassBodyDeclarationNode>> body
 ) implements JavaExpressionNode {
     @Override
     public JavaPrecedence precedence() {

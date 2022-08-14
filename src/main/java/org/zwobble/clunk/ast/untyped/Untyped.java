@@ -131,7 +131,7 @@ public class Untyped {
     }
 
     public static UntypedSwitchNode switchStatement(
-        UntypedExpressionNode expression,
+        UntypedReferenceNode expression,
         List<UntypedSwitchCaseNode> cases
     ) {
         return new UntypedSwitchNode(expression, cases, NullSource.INSTANCE);

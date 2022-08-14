@@ -5,7 +5,7 @@ import org.zwobble.clunk.sources.Source;
 import java.util.List;
 
 public record TypedSwitchNode(
-    TypedExpressionNode expression,
+    TypedReferenceNode expression,
     List<TypedSwitchCaseNode> cases,
     Source source
 ) implements TypedFunctionStatementNode {

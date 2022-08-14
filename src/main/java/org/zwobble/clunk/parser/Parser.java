@@ -90,7 +90,7 @@ public class Parser {
         } else if (tokens.isNext(TokenType.INT)) {
             return parseIntLiteral(tokens);
         } else if (tokens.isNext(TokenType.IDENTIFIER)) {
-            return new UntypedReferenceNode(tokens.nextValue(TokenType.IDENTIFIER), source);
+            return parseReference(tokens);
         } else if (tokens.trySkip(TokenType.SYMBOL_PAREN_OPEN)) {
             var expression = parseExpression(tokens);
             tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
@@ -372,6 +372,12 @@ public class Parser {
         return new UntypedRecordFieldNode(fieldName, fieldType, fieldSource);
     }
 
+    private UntypedReferenceNode parseReference(TokenIterator<TokenType> tokens) {
+        var source = source(tokens);
+
+        return new UntypedReferenceNode(tokens.nextValue(TokenType.IDENTIFIER), source);
+    }
+
     private UntypedReturnNode parseReturn(TokenIterator<TokenType> tokens) {
         var source = tokens.peek().source();
 
@@ -396,7 +402,7 @@ public class Parser {
 
         tokens.skip(TokenType.KEYWORD_SWITCH);
         tokens.skip(TokenType.SYMBOL_PAREN_OPEN);
-        var expression = parseExpression(tokens);
+        var expression = parseReference(tokens);
         tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
         tokens.skip(TokenType.SYMBOL_BRACE_OPEN);
         var cases = parseMany(

@@ -765,7 +765,7 @@ public class TypeChecker {
         UntypedSwitchNode node,
         TypeCheckerContext context
     ) {
-        var typedExpressionNode = typeCheckExpression(node.expression(), context);
+        var typedExpressionNode = typeCheckReference(node.expression(), context);
         if (!(typedExpressionNode.type() instanceof InterfaceType)) {
             throw new UnexpectedTypeError(
                 SealedInterfaceTypeSet.INSTANCE,

@@ -110,7 +110,7 @@ public class Typed {
     }
 
     public static TypedSwitchNode switchStatement(
-        TypedExpressionNode expression,
+        TypedReferenceNode expression,
         List<TypedSwitchCaseNode> cases
     ) {
         return new TypedSwitchNode(expression, cases, NullSource.INSTANCE);

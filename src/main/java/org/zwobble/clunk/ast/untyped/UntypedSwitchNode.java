@@ -5,7 +5,7 @@ import org.zwobble.clunk.sources.Source;
 import java.util.List;
 
 public record UntypedSwitchNode(
-    UntypedExpressionNode expression,
+    UntypedReferenceNode expression,
     List<UntypedSwitchCaseNode> cases,
     Source source
 ) implements UntypedFunctionStatementNode {

@@ -711,7 +711,7 @@ public class TypeChecker {
         );
     }
 
-    private static TypedExpressionNode typeCheckReference(UntypedReferenceNode node, TypeCheckerContext context) {
+    private static TypedReferenceNode typeCheckReference(UntypedReferenceNode node, TypeCheckerContext context) {
         var variable = context.lookup(node.name(), node.source());
         if (variable.isMember()) {
             return new TypedMemberReferenceNode(node.name(), variable.type(), node.source());

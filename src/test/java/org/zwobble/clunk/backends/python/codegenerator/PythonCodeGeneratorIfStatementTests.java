@@ -17,7 +17,7 @@ public class PythonCodeGeneratorIfStatementTests {
         var node = Typed.ifStatement(
             List.of(
                 Typed.conditionalBranch(
-                    Typed.reference("x", Types.BOOL),
+                    Typed.localReference("x", Types.BOOL),
                     List.of(Typed.returnStatement(Typed.intLiteral(42)))
                 )
             ),

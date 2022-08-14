@@ -18,7 +18,7 @@ public class TypeScriptCodeGeneratorMemberAccessTests {
     public void memberAccessIsCompiledToPropertyAccess() {
         var recordType = new RecordType(NamespaceName.fromParts("example"), "Id");
         var node = new TypedMemberAccessNode(
-            Typed.reference("id", recordType),
+            Typed.localReference("id", recordType),
             "value",
             Types.INT,
             NullSource.INSTANCE

@@ -11,11 +11,11 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 
-public class TypedReferenceNodeMatcher  extends CastMatcher<Object, TypedReferenceNode> {
-    private final List<Matcher<? super TypedReferenceNode>> matchers;
+public class TypedReferenceNodeMatcher  extends CastMatcher<Object, TypedLocalReferenceNode> {
+    private final List<Matcher<? super TypedLocalReferenceNode>> matchers;
 
-    public TypedReferenceNodeMatcher(List<Matcher<? super TypedReferenceNode>> matchers) {
-        super(TypedReferenceNode.class, allOf(matchers));
+    public TypedReferenceNodeMatcher(List<Matcher<? super TypedLocalReferenceNode>> matchers) {
+        super(TypedLocalReferenceNode.class, allOf(matchers));
         this.matchers = matchers;
     }
 
@@ -27,7 +27,7 @@ public class TypedReferenceNodeMatcher  extends CastMatcher<Object, TypedReferen
         return addMatcher(has("type", equalTo(type)));
     }
 
-    private TypedReferenceNodeMatcher addMatcher(Matcher<TypedReferenceNode> matcher) {
+    private TypedReferenceNodeMatcher addMatcher(Matcher<TypedLocalReferenceNode> matcher) {
         return new TypedReferenceNodeMatcher(Lists.concatOne(matchers, matcher));
     }
 }

@@ -19,12 +19,12 @@ public class TypeScriptCodeGeneratorSwitchTests {
         var recordType = Types.recordType(NamespaceName.fromParts(), "Add");
 
         var node = Typed.switchStatement(
-            Typed.reference("node", interfaceType),
+            Typed.localReference("node", interfaceType),
             List.of(
                 Typed.switchCase(
                     Typed.typeLevelReference("Add", recordType),
                     "add",
-                    List.of(Typed.returnStatement(Typed.reference("add", recordType)))
+                    List.of(Typed.returnStatement(Typed.localReference("add", recordType)))
                 )
             )
         );

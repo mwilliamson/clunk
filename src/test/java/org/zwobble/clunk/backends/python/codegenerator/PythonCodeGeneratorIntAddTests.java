@@ -12,7 +12,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class PythonCodeGeneratorIntAddTests {
     @Test
     public void intAddIsCompiledToAdd() {
-        var node = Typed.intAdd(Typed.reference("a", Types.INT), Typed.reference("b", Types.INT));
+        var node = Typed.intAdd(Typed.localReference("a", Types.INT), Typed.localReference("b", Types.INT));
 
         var result = PythonCodeGenerator.compileExpression(node, PythonCodeGeneratorContext.stub());
 

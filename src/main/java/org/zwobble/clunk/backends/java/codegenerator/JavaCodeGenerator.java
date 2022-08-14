@@ -129,6 +129,11 @@ public class JavaCodeGenerator {
             }
 
             @Override
+            public JavaExpressionNode visit(TypedLocalReferenceNode node) {
+                return compileLocalReference(node);
+            }
+
+            @Override
             public JavaExpressionNode visit(TypedMemberAccessNode node) {
                 return compileMemberAccess(node, context);
             }
@@ -136,11 +141,6 @@ public class JavaCodeGenerator {
             @Override
             public JavaExpressionNode visit(TypedMemberReferenceNode node) {
                 return compileMemberReference(node);
-            }
-
-            @Override
-            public JavaExpressionNode visit(TypedReferenceNode node) {
-                return compileReference(node);
             }
 
             @Override
@@ -303,6 +303,10 @@ public class JavaCodeGenerator {
 
     private static JavaExpressionNode compileIntLiteral(TypedIntLiteralNode node) {
         return new JavaIntLiteralNode(node.value());
+    }
+
+    private static JavaExpressionNode compileLocalReference(TypedLocalReferenceNode node) {
+        return new JavaReferenceNode(node.name());
     }
 
     private static JavaExpressionNode compileMemberAccess(TypedMemberAccessNode node, JavaCodeGeneratorContext context) {
@@ -478,10 +482,6 @@ public class JavaCodeGenerator {
                 return compileProperty(node, context);
             }
         });
-    }
-
-    private static JavaExpressionNode compileReference(TypedReferenceNode node) {
-        return new JavaReferenceNode(node.name());
     }
 
     private static JavaStatementNode compileReturn(TypedReturnNode node, JavaCodeGeneratorContext context) {

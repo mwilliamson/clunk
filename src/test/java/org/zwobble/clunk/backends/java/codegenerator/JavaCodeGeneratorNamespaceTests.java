@@ -132,11 +132,11 @@ public class JavaCodeGeneratorNamespaceTests {
                     .name("x")
                     .addBodyStatement(Typed.expressionStatement(
                         Typed.call(
-                            Typed.reference("assertThat", assertThatType),
+                            Typed.localReference("assertThat", assertThatType),
                             List.of(
                                 Typed.intLiteral(1),
                                 Typed.call(
-                                    Typed.reference("equalTo", equalToType),
+                                    Typed.localReference("equalTo", equalToType),
                                     List.of(Typed.intLiteral(2)),
                                     Types.UNIT
                                 )

@@ -149,6 +149,11 @@ public class PythonCodeGenerator {
             }
 
             @Override
+            public PythonExpressionNode visit(TypedLocalReferenceNode node) {
+                return compileLocalReference(node);
+            }
+
+            @Override
             public PythonExpressionNode visit(TypedMemberAccessNode node) {
                 return compileMemberAccess(node, context);
             }
@@ -156,11 +161,6 @@ public class PythonCodeGenerator {
             @Override
             public PythonExpressionNode visit(TypedMemberReferenceNode node) {
                 return compileMemberReference(node, context);
-            }
-
-            @Override
-            public PythonExpressionNode visit(TypedReferenceNode node) {
-                return compileReference(node);
             }
 
             @Override
@@ -283,6 +283,10 @@ public class PythonCodeGenerator {
 
     private static PythonExpressionNode compileIntLiteral(TypedIntLiteralNode node) {
         return new PythonIntLiteralNode(BigInteger.valueOf(node.value()));
+    }
+
+    private static PythonExpressionNode compileLocalReference(TypedLocalReferenceNode node) {
+        return new PythonReferenceNode(node.name());
     }
 
     private static PythonExpressionNode compileMemberAccess(
@@ -447,10 +451,6 @@ public class PythonCodeGenerator {
                 return compileProperty(node, context);
             }
         });
-    }
-
-    private static PythonExpressionNode compileReference(TypedReferenceNode node) {
-        return new PythonReferenceNode(node.name());
     }
 
     private static PythonStatementNode compileReturn(TypedReturnNode node, PythonCodeGeneratorContext context) {

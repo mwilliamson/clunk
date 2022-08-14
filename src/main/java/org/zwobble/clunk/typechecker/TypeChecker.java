@@ -716,7 +716,7 @@ public class TypeChecker {
         if (variable.isMember()) {
             return new TypedMemberReferenceNode(node.name(), variable.type(), node.source());
         } else {
-            return new TypedReferenceNode(node.name(), variable.type(), node.source());
+            return new TypedLocalReferenceNode(node.name(), variable.type(), node.source());
         }
     }
 

@@ -9,10 +9,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
-public class JavaCodeGeneratorReferenceTests {
+public class JavaCodeGeneratorLocalReferenceTests {
     @Test
     public void referenceIsCompiledToReference() {
-        var node = Typed.reference("value", BoolType.INSTANCE);
+        var node = Typed.localReference("value", BoolType.INSTANCE);
 
         var result = JavaCodeGenerator.compileExpression(node, JavaCodeGeneratorContext.stub());
 

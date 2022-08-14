@@ -129,6 +129,11 @@ public class TypeScriptCodeGenerator {
             }
 
             @Override
+            public TypeScriptExpressionNode visit(TypedLocalReferenceNode node) {
+                return compileLocalReference(node);
+            }
+
+            @Override
             public TypeScriptExpressionNode visit(TypedMemberAccessNode node) {
                 return compileMemberAccess(node, context);
             }
@@ -136,11 +141,6 @@ public class TypeScriptCodeGenerator {
             @Override
             public TypeScriptExpressionNode visit(TypedMemberReferenceNode node) {
                 return compileMemberReference(node, context);
-            }
-
-            @Override
-            public TypeScriptExpressionNode visit(TypedReferenceNode node) {
-                return compileReference(node);
             }
 
             @Override
@@ -253,6 +253,10 @@ public class TypeScriptCodeGenerator {
 
     private static TypeScriptExpressionNode compileIntLiteral(TypedIntLiteralNode node) {
         return new TypeScriptNumberLiteralNode(node.value());
+    }
+
+    private static TypeScriptExpressionNode compileLocalReference(TypedLocalReferenceNode node) {
+        return new TypeScriptReferenceNode(node.name());
     }
 
     private static TypeScriptExpressionNode compileMemberAccess(
@@ -385,10 +389,6 @@ public class TypeScriptCodeGenerator {
                 return compileProperty(node, context);
             }
         });
-    }
-
-    private static TypeScriptExpressionNode compileReference(TypedReferenceNode node) {
-        return new TypeScriptReferenceNode(node.name());
     }
 
     private static TypeScriptStatementNode compileReturn(TypedReturnNode node, TypeScriptCodeGeneratorContext context) {

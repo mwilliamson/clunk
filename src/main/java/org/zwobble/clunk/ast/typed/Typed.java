@@ -65,6 +65,10 @@ public class Typed {
         return new TypedIntLiteralNode(value, NullSource.INSTANCE);
     }
 
+    public static TypedLocalReferenceNode localReference(String name, Type type) {
+        return new TypedLocalReferenceNode(name, type, NullSource.INSTANCE);
+    }
+
     public static TypedMemberReferenceNode memberReference(String name, Type type) {
         return new TypedMemberReferenceNode(name, type, NullSource.INSTANCE);
     }
@@ -83,10 +87,6 @@ public class Typed {
 
     public static TypedRecordFieldNode recordField(String name, TypedTypeLevelExpressionNode type) {
         return new TypedRecordFieldNode(name, type, NullSource.INSTANCE);
-    }
-
-    public static TypedReferenceNode reference(String name, Type type) {
-        return new TypedReferenceNode(name, type, NullSource.INSTANCE);
     }
 
     public static TypedReturnNode returnStatement(TypedExpressionNode expression) {

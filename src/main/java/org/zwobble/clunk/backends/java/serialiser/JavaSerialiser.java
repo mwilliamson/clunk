@@ -69,6 +69,17 @@ public class JavaSerialiser {
     private static void serialiseCallNew(JavaCallNewNode node, CodeBuilder builder) {
         builder.append("new ");
         serialiseExpression(node.receiver(), builder, Optional.of(node));
+
+        if (node.typeArgs().isPresent()) {
+            builder.append("<");
+            forEachInterspersed(
+                node.typeArgs().get(),
+                typeArg -> serialiseTypeExpression(typeArg, builder),
+                () -> builder.append(", ")
+            );
+            builder.append(">");
+        }
+
         builder.append("(");
         forEachInterspersed(
             node.args(),

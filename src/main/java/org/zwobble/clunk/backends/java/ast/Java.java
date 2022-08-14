@@ -1,6 +1,7 @@
 package org.zwobble.clunk.backends.java.ast;
 
 import java.util.List;
+import java.util.Optional;
 
 public class Java {
     public static JavaAddNode add(JavaExpressionNode left, JavaExpressionNode right) {
@@ -28,7 +29,7 @@ public class Java {
     }
 
     public static JavaCallNewNode callNew(JavaExpressionNode receiver, List<JavaExpressionNode> args) {
-        return new JavaCallNewNode(receiver, args);
+        return new JavaCallNewNode(receiver, Optional.empty(), args);
     }
 
     public static JavaConditionalBranchNode conditionalBranch(

@@ -75,7 +75,7 @@ public class JavaCodeGenerator {
         if (node.receiver().type() instanceof TypeLevelValueType typeLevelValueType) {
             var recordType = (RecordType) typeLevelValueType.value();
             context.addImportType(typeToJavaTypeName(recordType, context));
-            return new JavaCallNewNode(javaReceiver, javaArgs);
+            return new JavaCallNewNode(javaReceiver, Optional.empty(), javaArgs);
         } else {
             return new JavaCallNode(javaReceiver, javaArgs);
         }

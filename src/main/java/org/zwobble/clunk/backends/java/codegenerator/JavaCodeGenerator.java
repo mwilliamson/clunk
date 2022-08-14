@@ -3,6 +3,7 @@ package org.zwobble.clunk.backends.java.codegenerator;
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.java.ast.*;
 import org.zwobble.clunk.backends.java.config.JavaTargetConfig;
+import org.zwobble.clunk.typechecker.Box;
 import org.zwobble.clunk.types.SubtypeRelations;
 import org.zwobble.clunk.types.*;
 
@@ -505,8 +506,12 @@ public class JavaCodeGenerator {
 
         // TODO: import or fully qualify?
         context.addImportType(typeToJavaTypeName(interfaceType, context));
-        
-        return new JavaReturnNode(new JavaCallNode(
+
+        // TODO: Push this into typechecker
+        var returns = new Box<Boolean>();
+        returns.set(false);
+
+        var acceptCall = new JavaCallNode(
             new JavaMemberAccessNode(
                 compileExpression(expression, context),
                 "accept"
@@ -523,7 +528,20 @@ public class JavaCodeGenerator {
                                 var caseType = (RecordType) switchCase.type().value();
                                 context.addImportType(typeToJavaTypeName(caseType, context));
 
-                                var returnStatement = (TypedReturnNode) switchCase.body().get(switchCase.body().size() - 1);
+                                // TODO: Push this into typechecker
+                                var lastStatement = switchCase.body().get(switchCase.body().size() - 1);
+                                var javaCaseReturnType = lastStatement instanceof TypedReturnNode returnStatement
+                                    ? typeLevelValueToTypeExpression(returnStatement.expression().type(), true, context)
+                                    : new JavaTypeVariableReferenceNode("Void");
+                                returns.set(returns.get() || lastStatement instanceof TypedReturnNode);
+
+                                var body = new ArrayList<JavaStatementNode>();
+                                for (var statement : switchCase.body()) {
+                                    body.add(compileFunctionStatement(statement, context));
+                                }
+                                if (!(lastStatement instanceof TypedReturnNode)) {
+                                    body.add(new JavaReturnNode(new JavaReferenceNode("null")));
+                                }
 
                                 return new JavaMethodDeclarationNode(
                                     List.of(
@@ -531,21 +549,25 @@ public class JavaCodeGenerator {
                                     ),
                                     false,
                                     List.of(),
-                                    typeLevelValueToTypeExpression(returnStatement.expression().type(), true, context),
+                                    javaCaseReturnType,
                                     "visit",
                                     List.of(
                                         new JavaParamNode(new JavaTypeVariableReferenceNode(caseType.name()), switchCase.variableName())
                                     ),
-                                    switchCase.body().stream()
-                                        .map(statement -> compileFunctionStatement(statement, context))
-                                        .toList()
+                                    body
                                 );
                             })
                             .toList()
                     )
                 )
             )
-        ));
+        );
+
+        if (returns.get()) {
+            return new JavaReturnNode(acceptCall);
+        } else {
+            return new JavaExpressionStatementNode(acceptCall);
+        }
     }
 
     public static JavaClassBodyDeclarationNode compileTest(TypedTestNode node, JavaCodeGeneratorContext context) {

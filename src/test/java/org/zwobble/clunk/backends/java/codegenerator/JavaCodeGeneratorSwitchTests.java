@@ -42,4 +42,35 @@ public class JavaCodeGeneratorSwitchTests {
             });
             """));
     }
+
+    @Test
+    public void whenNoBranchesReturnThenSwitchStatementIsCompiledToVisitorCallExpressionStatement() {
+        var interfaceType = Types.sealedInterfaceType(NamespaceName.fromParts("example"), "Node");
+        var recordType = Types.recordType(NamespaceName.fromParts("example"), "Add");
+
+        var node = Typed.switchStatement(
+            Typed.localReference("node", interfaceType),
+            List.of(
+                Typed.switchCase(
+                    Typed.typeLevelReference("Add", recordType),
+                    "add",
+                    List.of(Typed.expressionStatement(Typed.localReference("add", recordType)))
+                )
+            )
+        );
+
+        var result = JavaCodeGenerator.compileFunctionStatement(node, JavaCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, JavaSerialiser::serialiseStatement);
+        assertThat(string, equalTo(
+            """
+            node.accept(new Node.Visitor<>() {
+                @Override
+                public Void visit(Add add) {
+                    add;
+                    return null;
+                }
+            });
+            """));
+    }
 }

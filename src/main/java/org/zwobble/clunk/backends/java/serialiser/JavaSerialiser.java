@@ -87,6 +87,17 @@ public class JavaSerialiser {
             () -> builder.append(", ")
         );
         builder.append(")");
+
+        if (node.body().isPresent()) {
+            builder.append(" {");
+            builder.newLine();
+            builder.indent();
+            for (var bodyDeclaration : node.body().get()) {
+                serialiseClassBodyDeclaration(bodyDeclaration, builder);
+            }
+            builder.dedent();
+            builder.append("}");
+        }
     }
 
     private static void serialiseClassDeclaration(JavaClassDeclarationNode node, CodeBuilder builder) {

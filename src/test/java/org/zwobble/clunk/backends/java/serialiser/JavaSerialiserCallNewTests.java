@@ -3,6 +3,7 @@ package org.zwobble.clunk.backends.java.serialiser;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.backends.java.ast.Java;
 import org.zwobble.clunk.backends.java.ast.JavaCallNewNode;
+import org.zwobble.clunk.backends.java.ast.JavaMethodDeclarationNode;
 
 import java.util.List;
 
@@ -70,5 +71,25 @@ public class JavaSerialiserCallNewTests {
         var result = serialiseToString(node, JavaSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("new X<A, B>()"));
+    }
+
+    @Test
+    public void canSerialiseCallWithBody() {
+        var node = JavaCallNewNode.builder(Java.reference("X"))
+            .addBodyDeclaration(
+                JavaMethodDeclarationNode.builder()
+                    .name("f")
+                    .returnType(Java.typeVariableReference("void"))
+                    .build()
+            )
+            .build();
+
+        var result = serialiseToString(node, JavaSerialiserTesting::serialiseExpression);
+
+        assertThat(result, equalTo("""
+            new X() {
+                public void f() {
+                }
+            }"""));
     }
 }

@@ -29,7 +29,7 @@ public class Java {
     }
 
     public static JavaCallNewNode callNew(JavaExpressionNode receiver, List<JavaExpressionNode> args) {
-        return new JavaCallNewNode(receiver, Optional.empty(), args);
+        return new JavaCallNewNode(receiver, Optional.empty(), args, Optional.empty());
     }
 
     public static JavaConditionalBranchNode conditionalBranch(

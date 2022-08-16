@@ -19,4 +19,18 @@ public class TypeUnifierTests {
 
         assertThat(result, equalTo(Types.OBJECT));
     }
+
+    @Test
+    public void unificationOfNothingWithOtherTypeIsOtherType() {
+        var result = TypeUnifier.unify(Types.NOTHING, Types.STRING);
+
+        assertThat(result, equalTo(Types.STRING));
+    }
+
+    @Test
+    public void unificationOfOtherTypeWithNothingIsOtherType() {
+        var result = TypeUnifier.unify(Types.STRING, Types.NOTHING);
+
+        assertThat(result, equalTo(Types.STRING));
+    }
 }

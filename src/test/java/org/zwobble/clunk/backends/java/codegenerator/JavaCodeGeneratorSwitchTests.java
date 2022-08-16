@@ -25,7 +25,7 @@ public class JavaCodeGeneratorSwitchTests {
                 "add",
                 List.of(Typed.returnStatement(Typed.localReference("add", recordType)))
             ))
-            .returns(true)
+            .returnType(recordType)
             .build();
 
         var result = JavaCodeGenerator.compileFunctionStatement(node, JavaCodeGeneratorContext.stub());
@@ -53,7 +53,7 @@ public class JavaCodeGeneratorSwitchTests {
                 "add",
                 List.of(Typed.expressionStatement(Typed.localReference("add", recordType)))
             ))
-            .returns(false)
+            .neverReturns()
             .build();
 
         var result = JavaCodeGenerator.compileFunctionStatement(node, JavaCodeGeneratorContext.stub());

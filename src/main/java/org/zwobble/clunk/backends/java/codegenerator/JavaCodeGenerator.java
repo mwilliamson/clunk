@@ -505,6 +505,10 @@ public class JavaCodeGenerator {
         // TODO: import or fully qualify?
         context.addImportType(typeToJavaTypeName(interfaceType, context));
 
+        var javaCaseReturnType = node.returnType().isPresent()
+            ? typeLevelValueToTypeExpression(node.returnType().get(), true, context)
+            : new JavaTypeVariableReferenceNode("Void");
+
         var acceptCall = new JavaCallNode(
             new JavaMemberAccessNode(
                 compileExpression(expression, context),
@@ -522,17 +526,11 @@ public class JavaCodeGenerator {
                                 var caseType = (RecordType) switchCase.type().value();
                                 context.addImportType(typeToJavaTypeName(caseType, context));
 
-                                // TODO: Push this into typechecker
-                                var lastStatement = switchCase.body().get(switchCase.body().size() - 1);
-                                var javaCaseReturnType = lastStatement instanceof TypedReturnNode returnStatement
-                                    ? typeLevelValueToTypeExpression(returnStatement.expression().type(), true, context)
-                                    : new JavaTypeVariableReferenceNode("Void");
-
                                 var body = new ArrayList<JavaStatementNode>();
                                 for (var statement : switchCase.body()) {
                                     body.add(compileFunctionStatement(statement, context));
                                 }
-                                if (!(lastStatement instanceof TypedReturnNode)) {
+                                if (!node.returns()) {
                                     body.add(new JavaReturnNode(new JavaReferenceNode("null")));
                                 }
 
@@ -637,7 +635,7 @@ public class JavaCodeGenerator {
                 recordType.name()
             );
         } else {
-            throw new UnsupportedOperationException("TODO");
+            throw new UnsupportedOperationException("TODO: " + value);
         }
     }
 

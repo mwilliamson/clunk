@@ -6,10 +6,7 @@ import org.zwobble.clunk.errors.SourceError;
 import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.types.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.zwobble.clunk.types.Types.metaType;
@@ -825,7 +822,7 @@ public class TypeChecker {
         var typedNode = new TypedSwitchNode(
             typedExpressionNode,
             typedCaseNodes,
-            returnBehaviour.equals(ReturnBehaviour.ALWAYS),
+            returnBehaviour.equals(ReturnBehaviour.ALWAYS) ? Optional.of(returnType) : Optional.empty(),
             node.source()
         );
 

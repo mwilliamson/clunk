@@ -774,7 +774,8 @@ public class TypeChecker {
             );
         }
 
-        var returns = true;
+        var someCasesReturn = false;
+        var someCasesDoNotReturn = false;
         var unhandledTypes = new HashSet<>(context.subtypesOf(typedExpressionNode.type()));
 
         var typedCaseNodes = new ArrayList<TypedSwitchCaseNode>();
@@ -786,7 +787,13 @@ public class TypeChecker {
             var typedBody = typeCheckFunctionStatements(switchCase.body(), bodyContext);
             var typedCaseNode = new TypedSwitchCaseNode(typedType, switchCase.variableName(), typedBody.value(), node.source());
             typedCaseNodes.add(typedCaseNode);
-            returns = returns && typedBody.returns();
+
+            if (typedBody.returns()) {
+                someCasesReturn = true;
+            } else {
+                someCasesDoNotReturn = true;
+            }
+
             if (!unhandledTypes.remove(caseType)) {
                 throw new InvalidCaseTypeError(typedExpressionNode.type(), caseType, switchCase.source());
             }
@@ -796,15 +803,20 @@ public class TypeChecker {
             throw new SwitchIsNotExhaustiveError(unhandledTypes.stream().toList(), node.source());
         }
 
+        if (someCasesReturn && someCasesDoNotReturn) {
+            throw new InconsistentSwitchCaseReturnError(node.source());
+        }
+
         var typedNode = new TypedSwitchNode(
             typedExpressionNode,
             typedCaseNodes,
+            someCasesReturn,
             node.source()
         );
 
         return new TypeCheckFunctionStatementResult<>(
             typedNode,
-            returns,
+            someCasesReturn,
             context
         );
     }

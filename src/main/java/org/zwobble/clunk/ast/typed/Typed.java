@@ -113,7 +113,7 @@ public class Typed {
         TypedReferenceNode expression,
         List<TypedSwitchCaseNode> cases
     ) {
-        return new TypedSwitchNode(expression, cases, NullSource.INSTANCE);
+        return new TypedSwitchNode(expression, cases, false, NullSource.INSTANCE);
     }
 
     public static TypedTypeLevelExpressionNode typeLevelReference(String name, TypeLevelValue value) {

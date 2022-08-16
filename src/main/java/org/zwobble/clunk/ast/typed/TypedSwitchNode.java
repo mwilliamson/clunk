@@ -7,6 +7,7 @@ import java.util.List;
 public record TypedSwitchNode(
     TypedReferenceNode expression,
     List<TypedSwitchCaseNode> cases,
+    boolean returns,
     Source source
 ) implements TypedFunctionStatementNode {
     @Override

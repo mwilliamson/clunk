@@ -151,36 +151,6 @@ public class TypeCheckSwitchTests {
     }
 
     @Test
-    public void whenAtLeastOneCaseDoesNotReturnThenSwitchDoesNotReturn() {
-        var untypedNode = Untyped.switchStatement(
-            Untyped.reference("x"),
-            List.of(
-                Untyped.switchCase(
-                    Untyped.typeLevelReference("A"),
-                    "a",
-                    List.of()
-                ),
-                Untyped.switchCase(
-                    Untyped.typeLevelReference("B"),
-                    "b",
-                    List.of(Untyped.returnStatement(Untyped.boolTrue()))
-                )
-            )
-        );
-        var context = TypeCheckerContext.stub()
-            .addLocal("x", interfaceType, NullSource.INSTANCE)
-            .addLocal("A", Types.metaType(recordType1), NullSource.INSTANCE)
-            .addLocal("B", Types.metaType(recordType2), NullSource.INSTANCE)
-            .addSubtypeRelation(recordType1, interfaceType)
-            .addSubtypeRelation(recordType2, interfaceType)
-            .enterFunction(Types.BOOL);
-
-        var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
-
-        assertThat(result.returns(), equalTo(false));
-    }
-
-    @Test
     public void whenAllCasesReturnThenSwitchReturns() {
         var untypedNode = Untyped.switchStatement(
             Untyped.reference("x"),
@@ -257,5 +227,105 @@ public class TypeCheckSwitchTests {
                 )
             ))
         ));
+    }
+
+    @Test
+    public void whenAllBranchesReturnThenSwitchReturns() {
+        var untypedNode = Untyped.switchStatement(
+            Untyped.reference("x"),
+            List.of(
+                Untyped.switchCase(
+                    Untyped.typeLevelReference("A"),
+                    "a",
+                    List.of(
+                        Untyped.returnStatement(Untyped.intLiteral())
+                    )
+                ),
+                Untyped.switchCase(
+                    Untyped.typeLevelReference("B"),
+                    "b",
+                    List.of(
+                        Untyped.returnStatement(Untyped.intLiteral())
+                    )
+                )
+            )
+        );
+        var context = TypeCheckerContext.stub()
+            .addLocal("x", interfaceType, NullSource.INSTANCE)
+            .addLocal("A", Types.metaType(recordType1), NullSource.INSTANCE)
+            .addLocal("B", Types.metaType(recordType2), NullSource.INSTANCE)
+            .addSubtypeRelation(recordType1, interfaceType)
+            .addSubtypeRelation(recordType2, interfaceType)
+            .enterFunction(Types.INT);
+
+        var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
+
+        assertThat(result.value(), cast(
+            TypedSwitchNode.class,
+            has("returns", equalTo(true))
+        ));
+    }
+
+    @Test
+    public void whenAllBranchesDoNotReturnThenSwitchDoesNotReturn() {
+        var untypedNode = Untyped.switchStatement(
+            Untyped.reference("x"),
+            List.of(
+                Untyped.switchCase(
+                    Untyped.typeLevelReference("A"),
+                    "a",
+                    List.of(
+                        Untyped.expressionStatement(Untyped.intLiteral())
+                    )
+                ),
+                Untyped.switchCase(
+                    Untyped.typeLevelReference("B"),
+                    "b",
+                    List.of()
+                )
+            )
+        );
+        var context = TypeCheckerContext.stub()
+            .addLocal("x", interfaceType, NullSource.INSTANCE)
+            .addLocal("A", Types.metaType(recordType1), NullSource.INSTANCE)
+            .addLocal("B", Types.metaType(recordType2), NullSource.INSTANCE)
+            .addSubtypeRelation(recordType1, interfaceType)
+            .addSubtypeRelation(recordType2, interfaceType)
+            .enterFunction(Types.INT);
+
+        var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
+
+        assertThat(result.value(), cast(
+            TypedSwitchNode.class,
+            has("returns", equalTo(false))
+        ));
+    }
+
+    @Test
+    public void whenSomeCasesReturnAndSomeDoNotThenAnErrorIsThrown() {
+        var untypedNode = Untyped.switchStatement(
+            Untyped.reference("x"),
+            List.of(
+                Untyped.switchCase(
+                    Untyped.typeLevelReference("A"),
+                    "a",
+                    List.of()
+                ),
+                Untyped.switchCase(
+                    Untyped.typeLevelReference("B"),
+                    "b",
+                    List.of(Untyped.returnStatement(Untyped.boolTrue()))
+                )
+            )
+        );
+        var context = TypeCheckerContext.stub()
+            .addLocal("x", interfaceType, NullSource.INSTANCE)
+            .addLocal("A", Types.metaType(recordType1), NullSource.INSTANCE)
+            .addLocal("B", Types.metaType(recordType2), NullSource.INSTANCE)
+            .addSubtypeRelation(recordType1, interfaceType)
+            .addSubtypeRelation(recordType2, interfaceType)
+            .enterFunction(Types.BOOL);
+
+        assertThrows(InconsistentSwitchCaseReturnError.class, () -> TypeChecker.typeCheckFunctionStatement(untypedNode, context));
     }
 }

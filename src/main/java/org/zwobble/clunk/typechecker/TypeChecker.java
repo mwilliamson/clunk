@@ -49,7 +49,7 @@ public class TypeChecker {
         UntypedBlankLineNode node,
         TypeCheckerContext context
     ) {
-        return new TypeCheckFunctionStatementResult<>(new TypedBlankLineNode(node.source()), false, context);
+        return TypeCheckFunctionStatementResult.neverReturns(new TypedBlankLineNode(node.source()), context);
     }
 
     private static TypeCheckNamespaceStatementResult typeCheckBlankLineInNamespace(
@@ -224,7 +224,7 @@ public class TypeChecker {
     ) {
         var typedExpression = typeCheckExpression(node.expression(), context);
         var typedStatement = new TypedExpressionStatementNode(typedExpression, node.source());
-        return new TypeCheckFunctionStatementResult<>(typedStatement, false, context);
+        return TypeCheckFunctionStatementResult.neverReturns(typedStatement, context);
     }
 
     private static TypeCheckNamespaceStatementResult typeCheckFunction(
@@ -745,7 +745,7 @@ public class TypeChecker {
         UntypedSingleLineCommentNode node,
         TypeCheckerContext context
     ) {
-        return new TypeCheckFunctionStatementResult<>(typeCheckSingleLineComment(node), false, context);
+        return TypeCheckFunctionStatementResult.neverReturns(typeCheckSingleLineComment(node), context);
     }
 
     private static TypeCheckNamespaceStatementResult typeCheckSingleLineCommentInNamespace(
@@ -878,7 +878,7 @@ public class TypeChecker {
             node.source()
         );
         var updatedContext = context.addLocal(node.name(), typedExpression.type(), node.source());
-        return new TypeCheckFunctionStatementResult<>(typedNode, false, updatedContext);
+        return TypeCheckFunctionStatementResult.neverReturns(typedNode, updatedContext);
     }
 
     private static TypeLevelValue resolveTypeLevelValue(String name, Source source, TypeCheckerContext context) {

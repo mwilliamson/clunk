@@ -5,4 +5,14 @@ public record TypeCheckFunctionStatementResult<T>(
     boolean returns,
     TypeCheckerContext context
 ) {
+    public static <T> TypeCheckFunctionStatementResult<T> neverReturns(
+        T value,
+        TypeCheckerContext context
+    ) {
+        return new TypeCheckFunctionStatementResult<>(
+            value,
+            false,
+            context
+        );
+    }
 }

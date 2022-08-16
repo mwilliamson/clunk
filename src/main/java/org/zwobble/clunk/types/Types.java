@@ -53,4 +53,8 @@ public class Types {
     public static boolean isSealedInterfaceType(Type type) {
         return type instanceof InterfaceType;
     }
+
+    public static Type unify(Type left, Type right) {
+        return TypeUnifier.unify(left, right);
+    }
 }

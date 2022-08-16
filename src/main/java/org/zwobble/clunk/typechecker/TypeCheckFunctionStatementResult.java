@@ -1,10 +1,14 @@
 package org.zwobble.clunk.typechecker;
 
+import org.zwobble.clunk.types.Type;
+import org.zwobble.clunk.types.Types;
+
 import java.util.function.Function;
 
 public record TypeCheckFunctionStatementResult<T>(
     T value,
-    boolean returns,
+    ReturnBehaviour returnBehaviour,
+    Type returnType,
     TypeCheckerContext context
 ) {
     public static <T> TypeCheckFunctionStatementResult<T> neverReturns(
@@ -13,7 +17,8 @@ public record TypeCheckFunctionStatementResult<T>(
     ) {
         return new TypeCheckFunctionStatementResult<>(
             value,
-            false,
+            ReturnBehaviour.NEVER,
+            Types.NOTHING,
             context
         );
     }
@@ -21,8 +26,13 @@ public record TypeCheckFunctionStatementResult<T>(
     public <R> TypeCheckFunctionStatementResult<R> map(Function<T, R> func) {
         return new TypeCheckFunctionStatementResult<>(
             func.apply(value),
-            returns,
+            returnBehaviour,
+            returnType,
             context
         );
+    }
+
+    public boolean alwaysReturns() {
+        return returnBehaviour.equals(ReturnBehaviour.ALWAYS);
     }
 }

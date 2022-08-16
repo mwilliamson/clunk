@@ -177,7 +177,7 @@ public class TypeCheckSwitchTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
-        assertThat(result.returns(), equalTo(true));
+        assertThat(result.returnBehaviour(), equalTo(ReturnBehaviour.ALWAYS));
     }
 
     @Test

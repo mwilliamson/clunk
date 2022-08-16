@@ -295,7 +295,7 @@ public class TypeChecker {
             context
         );
 
-        if (!typeCheckStatementsResult.returns() && !context.returnType().get().equals(Types.UNIT)) {
+        if (!typeCheckStatementsResult.alwaysReturns() && !context.returnType().get().equals(Types.UNIT)) {
             throw new MissingReturnError(source);
         }
         return typeCheckStatementsResult;
@@ -348,16 +348,24 @@ public class TypeChecker {
         TypeCheckerContext context
     ) {
         var typedStatements = new ArrayList<TypedFunctionStatementNode>();
-        var returns = false;
+        var returnBehaviour = ReturnBehaviour.NEVER;
+        var returnType = Types.NOTHING;
 
         for (var statement : body) {
             var statementResult = typeCheckFunctionStatement(statement, context);
             context = statementResult.context();
             typedStatements.add(statementResult.value());
-            returns = returns || statementResult.returns();
+
+            // TODO: test this!
+            if (statementResult.returnBehaviour().equals(ReturnBehaviour.ALWAYS)) {
+                returnBehaviour = ReturnBehaviour.ALWAYS;
+            } else if (statementResult.returnBehaviour().equals(ReturnBehaviour.SOMETIMES) && returnBehaviour.equals(ReturnBehaviour.NEVER)) {
+                returnBehaviour = ReturnBehaviour.SOMETIMES;
+            }
+            returnType = Types.unify(returnType, statementResult.returnType());
         }
 
-        return new TypeCheckFunctionStatementResult<>(typedStatements, returns, context);
+        return new TypeCheckFunctionStatementResult<>(typedStatements, returnBehaviour, returnType, context);
     }
 
     private static TypeCheckFunctionStatementResult<TypedFunctionStatementNode> typeCheckIfStatement(
@@ -365,16 +373,19 @@ public class TypeChecker {
         TypeCheckerContext context
     ) {
         var typedConditionalBranches = new ArrayList<TypedConditionalBranchNode>();
-        var allBranchesReturn = true;
+        var returnBehaviours = new ArrayList<ReturnBehaviour>();
+        var returnType = Types.NOTHING;
 
         for (var untypedConditionalBranch : node.conditionalBranches()) {
             var result = typeCheckConditionalBranch(untypedConditionalBranch, context);
             typedConditionalBranches.add(result.value());
-            allBranchesReturn = allBranchesReturn && result.returns();
+            returnBehaviours.add(result.returnBehaviour());
+            returnType = Types.unify(returnType, result.returnType());
         }
 
         var typeCheckElseResult = typeCheckFunctionStatements(node.elseBody(), context);
-        allBranchesReturn = allBranchesReturn && typeCheckElseResult.returns();
+        returnBehaviours.add(typeCheckElseResult.returnBehaviour());
+        returnType = Types.unify(returnType, typeCheckElseResult.returnType());
 
         var typedNode = new TypedIfStatementNode(
             typedConditionalBranches,
@@ -382,7 +393,12 @@ public class TypeChecker {
             node.source()
         );
 
-        return new TypeCheckFunctionStatementResult<>(typedNode, allBranchesReturn, context);
+        return new TypeCheckFunctionStatementResult<>(
+            typedNode,
+            ReturnBehaviours.or(returnBehaviours),
+            returnType,
+            context
+        );
     }
 
     public record TypeCheckImportResult(TypedImportNode node, TypeCheckerContext context) {
@@ -733,7 +749,7 @@ public class TypeChecker {
 
         var typedNode = new TypedReturnNode(expression, node.source());
 
-        return new TypeCheckFunctionStatementResult<>(typedNode, true, context);
+        return new TypeCheckFunctionStatementResult<>(typedNode, ReturnBehaviour.ALWAYS, returnType, context);
     }
 
     private static TypedSingleLineCommentNode typeCheckSingleLineComment(UntypedSingleLineCommentNode node) {
@@ -773,8 +789,9 @@ public class TypeChecker {
             );
         }
 
-        var someCasesReturn = false;
-        var someCasesDoNotReturn = false;
+        var returnBehaviours = new ArrayList<ReturnBehaviour>();
+        var returnType = Types.NOTHING;
+
         var unhandledTypes = new HashSet<>(context.subtypesOf(typedExpressionNode.type()));
 
         var typedCaseNodes = new ArrayList<TypedSwitchCaseNode>();
@@ -787,11 +804,8 @@ public class TypeChecker {
             var typedCaseNode = new TypedSwitchCaseNode(typedType, switchCase.variableName(), typedBody.value(), node.source());
             typedCaseNodes.add(typedCaseNode);
 
-            if (typedBody.returns()) {
-                someCasesReturn = true;
-            } else {
-                someCasesDoNotReturn = true;
-            }
+            returnBehaviours.add(typedBody.returnBehaviour());
+            returnType = Types.unify(returnType, typedBody.returnType());
 
             if (!unhandledTypes.remove(caseType)) {
                 throw new InvalidCaseTypeError(typedExpressionNode.type(), caseType, switchCase.source());
@@ -802,20 +816,23 @@ public class TypeChecker {
             throw new SwitchIsNotExhaustiveError(unhandledTypes.stream().toList(), node.source());
         }
 
-        if (someCasesReturn && someCasesDoNotReturn) {
+        var returnBehaviour = ReturnBehaviours.or(returnBehaviours);
+
+        if (returnBehaviour.equals(ReturnBehaviour.SOMETIMES)) {
             throw new InconsistentSwitchCaseReturnError(node.source());
         }
 
         var typedNode = new TypedSwitchNode(
             typedExpressionNode,
             typedCaseNodes,
-            someCasesReturn,
+            returnBehaviour.equals(ReturnBehaviour.ALWAYS),
             node.source()
         );
 
         return new TypeCheckFunctionStatementResult<>(
             typedNode,
-            someCasesReturn,
+            returnBehaviour,
+            returnType,
             context
         );
     }

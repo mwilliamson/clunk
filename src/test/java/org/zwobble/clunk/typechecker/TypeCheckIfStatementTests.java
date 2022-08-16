@@ -101,7 +101,7 @@ public class TypeCheckIfStatementTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
-        assertThat(result.returns(), equalTo(false));
+        assertThat(result.returnBehaviour(), equalTo(ReturnBehaviour.SOMETIMES));
     }
 
     @Test
@@ -117,7 +117,7 @@ public class TypeCheckIfStatementTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
-        assertThat(result.returns(), equalTo(false));
+        assertThat(result.returnBehaviour(), equalTo(ReturnBehaviour.SOMETIMES));
     }
 
     @Test
@@ -133,6 +133,6 @@ public class TypeCheckIfStatementTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
-        assertThat(result.returns(), equalTo(true));
+        assertThat(result.returnBehaviour(), equalTo(ReturnBehaviour.ALWAYS));
     }
 }

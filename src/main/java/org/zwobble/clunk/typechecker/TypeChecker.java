@@ -119,13 +119,12 @@ public class TypeChecker {
         }
 
         var typeCheckBodyResults = typeCheckFunctionStatements(node.body(), context);
-        var typedNode = new TypedConditionalBranchNode(
-            typedConditionNode,
-            typeCheckBodyResults.value(),
-            node.source()
-        );
 
-        return new TypeCheckFunctionStatementResult<>(typedNode, typeCheckBodyResults.returns(), typeCheckBodyResults.context());
+        return typeCheckBodyResults.map(body -> new TypedConditionalBranchNode(
+            typedConditionNode,
+            body,
+            node.source()
+        ));
     }
 
     private static TypedTypeLevelExpressionNode typeCheckConstructedTypeNode(

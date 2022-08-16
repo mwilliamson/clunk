@@ -3,8 +3,6 @@ package org.zwobble.clunk.backends.java.codegenerator;
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.java.ast.*;
 import org.zwobble.clunk.backends.java.config.JavaTargetConfig;
-import org.zwobble.clunk.typechecker.Box;
-import org.zwobble.clunk.types.SubtypeRelations;
 import org.zwobble.clunk.types.*;
 
 import java.util.ArrayList;
@@ -507,10 +505,6 @@ public class JavaCodeGenerator {
         // TODO: import or fully qualify?
         context.addImportType(typeToJavaTypeName(interfaceType, context));
 
-        // TODO: Push this into typechecker
-        var returns = new Box<Boolean>();
-        returns.set(false);
-
         var acceptCall = new JavaCallNode(
             new JavaMemberAccessNode(
                 compileExpression(expression, context),
@@ -533,7 +527,6 @@ public class JavaCodeGenerator {
                                 var javaCaseReturnType = lastStatement instanceof TypedReturnNode returnStatement
                                     ? typeLevelValueToTypeExpression(returnStatement.expression().type(), true, context)
                                     : new JavaTypeVariableReferenceNode("Void");
-                                returns.set(returns.get() || lastStatement instanceof TypedReturnNode);
 
                                 var body = new ArrayList<JavaStatementNode>();
                                 for (var statement : switchCase.body()) {
@@ -563,7 +556,7 @@ public class JavaCodeGenerator {
             )
         );
 
-        if (returns.get()) {
+        if (node.returns()) {
             return new JavaReturnNode(acceptCall);
         } else {
             return new JavaExpressionStatementNode(acceptCall);

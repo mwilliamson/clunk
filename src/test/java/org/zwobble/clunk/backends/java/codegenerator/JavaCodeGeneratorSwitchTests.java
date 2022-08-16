@@ -2,6 +2,7 @@ package org.zwobble.clunk.backends.java.codegenerator;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
+import org.zwobble.clunk.ast.typed.TypedSwitchNode;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.Types;
@@ -18,16 +19,14 @@ public class JavaCodeGeneratorSwitchTests {
         var interfaceType = Types.sealedInterfaceType(NamespaceName.fromParts("example"), "Node");
         var recordType = Types.recordType(NamespaceName.fromParts("example"), "Add");
 
-        var node = Typed.switchStatement(
-            Typed.localReference("node", interfaceType),
-            List.of(
-                Typed.switchCase(
-                    Typed.typeLevelReference("Add", recordType),
-                    "add",
-                    List.of(Typed.returnStatement(Typed.localReference("add", recordType)))
-                )
-            )
-        );
+        var node = TypedSwitchNode.builder(Typed.localReference("node", interfaceType))
+            .addCase(Typed.switchCase(
+                Typed.typeLevelReference("Add", recordType),
+                "add",
+                List.of(Typed.returnStatement(Typed.localReference("add", recordType)))
+            ))
+            .returns(true)
+            .build();
 
         var result = JavaCodeGenerator.compileFunctionStatement(node, JavaCodeGeneratorContext.stub());
 
@@ -48,16 +47,14 @@ public class JavaCodeGeneratorSwitchTests {
         var interfaceType = Types.sealedInterfaceType(NamespaceName.fromParts("example"), "Node");
         var recordType = Types.recordType(NamespaceName.fromParts("example"), "Add");
 
-        var node = Typed.switchStatement(
-            Typed.localReference("node", interfaceType),
-            List.of(
-                Typed.switchCase(
-                    Typed.typeLevelReference("Add", recordType),
-                    "add",
-                    List.of(Typed.expressionStatement(Typed.localReference("add", recordType)))
-                )
-            )
-        );
+        var node = TypedSwitchNode.builder(Typed.localReference("node", interfaceType))
+            .addCase(Typed.switchCase(
+                Typed.typeLevelReference("Add", recordType),
+                "add",
+                List.of(Typed.expressionStatement(Typed.localReference("add", recordType)))
+            ))
+            .returns(false)
+            .build();
 
         var result = JavaCodeGenerator.compileFunctionStatement(node, JavaCodeGeneratorContext.stub());
 

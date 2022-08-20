@@ -336,7 +336,7 @@ public class PythonSerialiser {
         });
     }
 
-    private static void serialiseStatements(List<? extends PythonStatementNode> statements, CodeBuilder builder) {
+    public static void serialiseStatements(List<? extends PythonStatementNode> statements, CodeBuilder builder) {
         for (var statement : statements) {
             serialiseStatement(statement, builder);
         }

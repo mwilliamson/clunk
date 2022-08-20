@@ -182,45 +182,49 @@ public class PythonCodeGenerator {
             camelCaseToSnakeCase(node.name()),
             List.of(),
             node.params().stream().map(param -> compileParam(param)).toList(),
-            node.body().stream().map(statement -> compileFunctionStatement(statement, context)).toList()
+            compileFunctionStatements(node.body(), context)
         );
     }
 
-    public static PythonStatementNode compileFunctionStatement(TypedFunctionStatementNode node, PythonCodeGeneratorContext context) {
-        return node.accept(new TypedFunctionStatementNode.Visitor<PythonStatementNode>() {
+    private static List<PythonStatementNode> compileFunctionStatements(List<TypedFunctionStatementNode> node, PythonCodeGeneratorContext context) {
+        return node.stream().flatMap(statement -> compileFunctionStatement(statement, context).stream()).toList();
+    }
+
+    public static List<PythonStatementNode> compileFunctionStatement(TypedFunctionStatementNode node, PythonCodeGeneratorContext context) {
+        return node.accept(new TypedFunctionStatementNode.Visitor<>() {
             @Override
-            public PythonStatementNode visit(TypedBlankLineNode node) {
-                return compileBlankLine(node, context);
+            public List<PythonStatementNode> visit(TypedBlankLineNode node) {
+                return List.of(compileBlankLine(node, context));
             }
 
             @Override
-            public PythonStatementNode visit(TypedExpressionStatementNode node) {
-                return compileExpressionStatement(node, context);
+            public List<PythonStatementNode> visit(TypedExpressionStatementNode node) {
+                return List.of(compileExpressionStatement(node, context));
             }
 
             @Override
-            public PythonStatementNode visit(TypedIfStatementNode node) {
-                return compileIfStatement(node, context);
+            public List<PythonStatementNode> visit(TypedIfStatementNode node) {
+                return List.of(compileIfStatement(node, context));
             }
 
             @Override
-            public PythonStatementNode visit(TypedReturnNode node) {
-                return compileReturn(node, context);
+            public List<PythonStatementNode> visit(TypedReturnNode node) {
+                return List.of(compileReturn(node, context));
             }
 
             @Override
-            public PythonStatementNode visit(TypedSingleLineCommentNode node) {
-                return compileSingleLineComment(node);
+            public List<PythonStatementNode> visit(TypedSingleLineCommentNode node) {
+                return List.of(compileSingleLineComment(node));
             }
 
             @Override
-            public PythonStatementNode visit(TypedSwitchNode node) {
+            public List<PythonStatementNode> visit(TypedSwitchNode node) {
                 throw new UnsupportedOperationException("TODO");
             }
 
             @Override
-            public PythonStatementNode visit(TypedVarNode node) {
-                return compileVar(node, context);
+            public List<PythonStatementNode> visit(TypedVarNode node) {
+                return List.of(compileVar(node, context));
             }
         });
     }
@@ -233,14 +237,10 @@ public class PythonCodeGenerator {
             node.conditionalBranches().stream()
                 .map(conditionalBranch -> new PythonConditionalBranchNode(
                     compileExpression(conditionalBranch.condition(), context),
-                    conditionalBranch.body().stream()
-                        .map(statement -> compileFunctionStatement(statement, context))
-                        .toList()
+                    compileFunctionStatements(conditionalBranch.body(), context)
                 ))
                 .toList(),
-            node.elseBody().stream()
-                .map(statement -> compileFunctionStatement(statement, context))
-                .toList()
+            compileFunctionStatements(node.elseBody(), context)
         );
     }
 
@@ -382,9 +382,7 @@ public class PythonCodeGenerator {
             node.name(),
             List.of(Python.reference("property")),
             List.of("self"),
-            node.body().stream()
-                .map(statement -> compileFunctionStatement(statement, context))
-                .toList()
+            compileFunctionStatements(node.body(), context)
         );
     }
 
@@ -470,7 +468,7 @@ public class PythonCodeGenerator {
             PythonTestNames.generateName(node.name()),
             List.of(),
             List.of(),
-            node.body().stream().map(statement -> compileFunctionStatement(statement, context)).toList()
+            compileFunctionStatements(node.body(), context)
         );
     }
 

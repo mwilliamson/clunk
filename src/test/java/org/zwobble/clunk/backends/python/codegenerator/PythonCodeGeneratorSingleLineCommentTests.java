@@ -15,7 +15,7 @@ public class PythonCodeGeneratorSingleLineCommentTests {
 
         var result = PythonCodeGenerator.compileFunctionStatement(node, PythonCodeGeneratorContext.stub());
 
-        var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
+        var string = serialiseToString(result, PythonSerialiser::serialiseStatements);
         assertThat(string, equalTo("# Beware.\n"));
     }
 

@@ -22,12 +22,4 @@ public class JavaExampleTests extends ExampleTests {
     protected TargetTestRunner targetTestRunner() {
         return new JavaTestRunner();
     }
-
-    @Test
-    public void switches(Snapshotter snapshotter) throws IOException, InterruptedException {
-        runExampleTest(
-            snapshotter,
-            "switches"
-        );
-    }
 }

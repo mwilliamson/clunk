@@ -1,0 +1,79 @@
+Source path: src/switchesTest.clunk
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+
+sealed interface Node {
+}
+
+record Add(left: Node, right: Node) <: Node
+
+record Literal(value: Int) <: Node
+
+test "sum" {
+    var node = Add(Add(Literal(2), Literal(7)), Literal(3));
+
+    var result = evaluate(node);
+
+    assertThat(result, equalTo(12));
+}
+
+fun evaluate(node: Node) -> Int {
+    switch (node) {
+        case Add add {
+            return evaluate(add.left) + (evaluate(add.right));
+        }
+        case Literal literal {
+            return literal.value;
+        }
+    }
+}
+
+
+==============
+
+Output path: switchesTest.py
+import dataclasses
+from precisely import assert_that
+from precisely import equal_to
+
+class Node:
+    pass
+
+@dataclasses.dataclass(frozen=True)
+class Add:
+    left: Node
+    right: Node
+    def accept(self, visitor):
+        return visitor.visit_add(self)
+
+@dataclasses.dataclass(frozen=True)
+class Literal:
+    value: int
+    def accept(self, visitor):
+        return visitor.visit_literal(self)
+
+def test_sum():
+    node = Add(Add(Literal(2), Literal(7)), Literal(3))
+
+    result = evaluate(node)
+
+    assert_that(result, equal_to(12))
+
+def evaluate(node):
+    class Visitor:
+        def visit_add(self, add):
+            return evaluate(add.left) + evaluate(add.right)
+        def visit_literal(self, literal):
+            return literal.value
+    return node.accept(Visitor())
+
+
+==============
+
+============================= test session starts ==============================
+rootdir: ROOTDIR, configfile: tox.ini
+collected 1 item
+
+switchesTest.py .                                                        [100%]
+
+============================== 1 passed in TIME ===============================

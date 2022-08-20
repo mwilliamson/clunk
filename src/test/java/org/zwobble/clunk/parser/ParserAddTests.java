@@ -14,7 +14,7 @@ public class ParserAddTests {
     public void canParseAddition() {
         var source = "1 + 2";
 
-        var result = parseString(source, Parser::parseExpression);
+        var result = parseString(source, Parser::parseTopLevelExpression);
 
         assertThat(result, cast(
             UntypedAddNode.class,

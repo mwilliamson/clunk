@@ -8,16 +8,37 @@ import org.zwobble.clunk.types.NamespaceName;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Parser {
     private final Source fullSource;
 
     public Parser(Source fullSource) {
         this.fullSource = fullSource;
+    }
+
+    private class ParseAdd implements OperatorParselet {
+        @Override
+        public OperatorPrecedence precedence() {
+            return OperatorPrecedence.ADDITION;
+        }
+
+        @Override
+        public UntypedExpressionNode parse(UntypedExpressionNode left, TokenIterator<TokenType> tokens) {
+            var right = parseSubexpression(tokens, this);
+            return new UntypedAddNode(left, right, left.source());
+        }
+
+        @Override
+        public TokenType tokenType() {
+            return TokenType.SYMBOL_PLUS;
+        }
     }
 
     private UntypedBlankLineNode parseBlankLine(TokenIterator<TokenType> tokens) {
@@ -36,6 +57,29 @@ public class Parser {
         return body;
     }
 
+    private class ParseCall implements OperatorParselet {
+        @Override
+        public OperatorPrecedence precedence() {
+            return OperatorPrecedence.CALL;
+        }
+
+        @Override
+        public UntypedExpressionNode parse(UntypedExpressionNode left, TokenIterator<TokenType> tokens) {
+            var positionalArgs = parseMany(
+                () -> tokens.isNext(TokenType.SYMBOL_PAREN_CLOSE),
+                () -> parseTopLevelExpression(tokens),
+                () -> tokens.trySkip(TokenType.SYMBOL_COMMA)
+            );
+            tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
+            return new UntypedCallNode(left, positionalArgs, left.source());
+        }
+
+        @Override
+        public TokenType tokenType() {
+            return TokenType.SYMBOL_PAREN_OPEN;
+        }
+    }
+
     private UntypedNamespaceStatementNode parseEnum(TokenIterator<TokenType> tokens) {
         var source = source(tokens);
         tokens.skip(TokenType.KEYWORD_ENUM);
@@ -50,33 +94,40 @@ public class Parser {
         return new UntypedEnumNode(name, members, source);
     }
 
-    public UntypedExpressionNode parseExpression(TokenIterator<TokenType> tokens) {
-        var expression = parsePrimaryExpression(tokens);
+    public UntypedExpressionNode parseTopLevelExpression(TokenIterator<TokenType> tokens) {
+        return parseExpression(tokens, Optional.empty());
+    }
 
-        // TODO: handle precedence properly
+    private UntypedExpressionNode parseSubexpression(TokenIterator<TokenType> tokens, OperatorParselet parent) {
+        return parseExpression(tokens, Optional.of(parent));
+    }
+
+    private UntypedExpressionNode parseExpression(TokenIterator<TokenType> tokens, Optional<OperatorParselet> parent) {
+        var expression = parsePrimaryExpression(tokens);
+        var parentPrecedenceOrdinal = parent.map(p -> p.precedence().ordinal()).orElse(-1);
+
         while (true) {
-            if (tokens.trySkip(TokenType.SYMBOL_DOT)) {
-                var fieldName = tokens.nextValue(TokenType.IDENTIFIER);
-                expression = new UntypedMemberAccessNode(expression, fieldName, expression.source());
-            } else if (tokens.trySkip(TokenType.SYMBOL_PAREN_OPEN)) {
-                var positionalArgs = parseMany(
-                    () -> tokens.isNext(TokenType.SYMBOL_PAREN_CLOSE),
-                    () -> parseExpression(tokens),
-                    () -> tokens.trySkip(TokenType.SYMBOL_COMMA)
-                );
-                tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
-                expression = new UntypedCallNode(expression, positionalArgs, expression.source());
-            } else if (tokens.trySkip(TokenType.SYMBOL_PLUS)) {
-                var right = parsePrimaryExpression(tokens);
-                expression = new UntypedAddNode(expression, right, expression.source());
-            } else if (tokens.trySkip(TokenType.SYMBOL_SQUARE_OPEN)) {
-                var index = parseExpression(tokens);
-                tokens.skip(TokenType.SYMBOL_SQUARE_CLOSE);
-                expression = new UntypedIndexNode(expression, index, expression.source());
-            } else {
+            var operator = parseOperator(tokens);
+            if (operator.isEmpty() || operator.get().precedence().ordinal() <= parentPrecedenceOrdinal) {
                 return expression;
             }
+            tokens.skip(operator.get().tokenType());
+            expression = operator.get().parse(expression, tokens);
         }
+    }
+
+    private final Map<TokenType, OperatorParselet> operatorParselets = Stream.of(
+        new ParseAdd(),
+        new ParseCall(),
+        new ParseIndex(),
+        new ParseMemberAccess()
+    ).collect(Collectors.toMap(
+            parselet -> parselet.tokenType(),
+            parselet -> parselet
+        ));
+
+    private Optional<OperatorParselet> parseOperator(TokenIterator<TokenType> tokens) {
+        return Optional.ofNullable(operatorParselets.get(tokens.peek().tokenType()));
     }
 
     private UntypedExpressionNode parsePrimaryExpression(TokenIterator<TokenType> tokens) {
@@ -92,7 +143,7 @@ public class Parser {
         } else if (tokens.isNext(TokenType.IDENTIFIER)) {
             return parseReference(tokens);
         } else if (tokens.trySkip(TokenType.SYMBOL_PAREN_OPEN)) {
-            var expression = parseExpression(tokens);
+            var expression = parseTopLevelExpression(tokens);
             tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
             return expression;
         } else {
@@ -102,9 +153,28 @@ public class Parser {
 
     private UntypedExpressionStatementNode parseExpressionStatement(TokenIterator<TokenType> tokens) {
         var source = source(tokens);
-        var expression = parseExpression(tokens);
+        var expression = parseTopLevelExpression(tokens);
         tokens.skip(TokenType.SYMBOL_SEMICOLON);
         return new UntypedExpressionStatementNode(expression, source);
+    }
+
+    private class ParseIndex implements OperatorParselet {
+        @Override
+        public OperatorPrecedence precedence() {
+            return OperatorPrecedence.CALL;
+        }
+
+        @Override
+        public UntypedExpressionNode parse(UntypedExpressionNode left, TokenIterator<TokenType> tokens) {
+            var index = parseTopLevelExpression(tokens);
+            tokens.skip(TokenType.SYMBOL_SQUARE_CLOSE);
+            return new UntypedIndexNode(left, index, left.source());
+        }
+
+        @Override
+        public TokenType tokenType() {
+            return TokenType.SYMBOL_SQUARE_OPEN;
+        }
     }
 
     private UntypedExpressionNode parseIntLiteral(TokenIterator<TokenType> tokens) {
@@ -147,6 +217,24 @@ public class Parser {
             case "\\" -> '\\';
             default -> throw new UnrecognisedEscapeSequenceError("\\" + code, source);
         };
+    }
+
+    private static class ParseMemberAccess implements OperatorParselet {
+        @Override
+        public OperatorPrecedence precedence() {
+            return OperatorPrecedence.CALL;
+        }
+
+        @Override
+        public UntypedExpressionNode parse(UntypedExpressionNode left, TokenIterator<TokenType> tokens) {
+            var fieldName = tokens.nextValue(TokenType.IDENTIFIER);
+            return new UntypedMemberAccessNode(left, fieldName, left.source());
+        }
+
+        @Override
+        public TokenType tokenType() {
+            return TokenType.SYMBOL_DOT;
+        }
     }
 
     public UntypedNamespaceNode parseNamespace(TokenIterator<TokenType> tokens, NamespaceName name) {
@@ -262,7 +350,7 @@ public class Parser {
         var source = source(tokens);
         tokens.skip(TokenType.KEYWORD_IF);
         tokens.skip(TokenType.SYMBOL_PAREN_OPEN);
-        var condition = parseExpression(tokens);
+        var condition = parseTopLevelExpression(tokens);
         tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
         var body = parseBlock(tokens);
         return new UntypedConditionalBranchNode(condition, body, source);
@@ -382,7 +470,7 @@ public class Parser {
         var source = tokens.peek().source();
 
         tokens.skip(TokenType.KEYWORD_RETURN);
-        var expression = parseExpression(tokens);
+        var expression = parseTopLevelExpression(tokens);
         tokens.skip(TokenType.SYMBOL_SEMICOLON);
 
         return new UntypedReturnNode(expression, source);
@@ -461,7 +549,7 @@ public class Parser {
         tokens.skip(TokenType.KEYWORD_VAR);
         var name = tokens.nextValue(TokenType.IDENTIFIER);
         tokens.skip(TokenType.SYMBOL_EQUALS);
-        var expression = parseExpression(tokens);
+        var expression = parseTopLevelExpression(tokens);
         tokens.skip(TokenType.SYMBOL_SEMICOLON);
 
         return new UntypedVarNode(name, expression, source);

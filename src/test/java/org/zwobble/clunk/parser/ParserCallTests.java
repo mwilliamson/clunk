@@ -13,7 +13,7 @@ public class ParserCallTests {
     public void canParseCallWithNoArguments() {
         var source = "f()";
 
-        var node = parseString(source, Parser::parseExpression);
+        var node = parseString(source, Parser::parseTopLevelExpression);
 
         assertThat(node, isUntypedCallNode()
             .withReceiver(isUntypedReferenceNode("f"))
@@ -25,7 +25,7 @@ public class ParserCallTests {
     public void canParseCallWithOneArgument() {
         var source = "f(true)";
 
-        var node = parseString(source, Parser::parseExpression);
+        var node = parseString(source, Parser::parseTopLevelExpression);
 
         assertThat(node, isUntypedCallNode()
             .withReceiver(isUntypedReferenceNode("f"))
@@ -37,7 +37,7 @@ public class ParserCallTests {
     public void canParseCallWithManyArguments() {
         var source = "f(true, false)";
 
-        var node = parseString(source, Parser::parseExpression);
+        var node = parseString(source, Parser::parseTopLevelExpression);
 
         assertThat(node, isUntypedCallNode()
             .withReceiver(isUntypedReferenceNode("f"))
@@ -49,7 +49,7 @@ public class ParserCallTests {
     public void argumentsMayHaveTrailingCommand() {
         var source = "f(true,)";
 
-        var node = parseString(source, Parser::parseExpression);
+        var node = parseString(source, Parser::parseTopLevelExpression);
 
         assertThat(node, isUntypedCallNode()
             .withReceiver(isUntypedReferenceNode("f"))
@@ -61,7 +61,7 @@ public class ParserCallTests {
     public void canParseCallOfCall() {
         var source = "f()()";
 
-        var node = parseString(source, Parser::parseExpression);
+        var node = parseString(source, Parser::parseTopLevelExpression);
 
         assertThat(node, isUntypedCallNode()
             .withReceiver(isUntypedCallNode()

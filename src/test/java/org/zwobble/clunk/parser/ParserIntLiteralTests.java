@@ -11,7 +11,7 @@ public class ParserIntLiteralTests {
     public void canParseZero() {
         var source = "0";
 
-        var node = parseString(source, Parser::parseExpression);
+        var node = parseString(source, Parser::parseTopLevelExpression);
 
         assertThat(node, isUntypedIntLiteralNode(0));
     }
@@ -20,7 +20,7 @@ public class ParserIntLiteralTests {
     public void canParsePositiveInteger() {
         var source = "123";
 
-        var node = parseString(source, Parser::parseExpression);
+        var node = parseString(source, Parser::parseTopLevelExpression);
 
         assertThat(node, isUntypedIntLiteralNode(123));
     }
@@ -29,7 +29,7 @@ public class ParserIntLiteralTests {
     public void canParseNegativeInteger() {
         var source = "-123";
 
-        var node = parseString(source, Parser::parseExpression);
+        var node = parseString(source, Parser::parseTopLevelExpression);
 
         assertThat(node, isUntypedIntLiteralNode(-123));
     }

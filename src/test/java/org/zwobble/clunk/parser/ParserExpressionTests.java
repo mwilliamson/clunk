@@ -13,7 +13,7 @@ public class ParserExpressionTests {
     public void whenExpressionIsNotFoundThenErrorIsThrown() {
         var source = "}";
 
-        var result = assertThrows(UnexpectedTokenException.class, () -> parseString(source, Parser::parseExpression));
+        var result = assertThrows(UnexpectedTokenException.class, () -> parseString(source, Parser::parseTopLevelExpression));
 
         assertThat(result.getExpected(), equalTo("primary expression"));
         assertThat(result.getActual(), equalTo("SYMBOL_BRACE_CLOSE: }"));

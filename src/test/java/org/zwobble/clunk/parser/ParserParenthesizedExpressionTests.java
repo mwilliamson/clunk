@@ -11,7 +11,7 @@ public class ParserParenthesizedExpressionTests {
     public void canParseParenthesizedExpression() {
         var source = "(false)";
 
-        var node = parseString(source, Parser::parseExpression);
+        var node = parseString(source, Parser::parseTopLevelExpression);
 
         assertThat(node, isUntypedBoolLiteralNode(false));
     }

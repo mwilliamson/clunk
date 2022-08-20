@@ -13,7 +13,7 @@ public class ParserMemberAccessTests {
     public void canParseMemberAccess() {
         var source = "x.f";
 
-        var node = parseString(source, Parser::parseExpression);
+        var node = parseString(source, Parser::parseTopLevelExpression);
 
         assertThat(node, isUntypedMemberAccessNode(
             isUntypedReferenceNode("x"),

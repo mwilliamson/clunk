@@ -19,7 +19,7 @@ test "sum" {
 fun evaluate(node: Node) -> Int {
     switch (node) {
         case Add add {
-            return evaluate(add.left) + (evaluate(add.right));
+            return evaluate(add.left) + evaluate(add.right);
         }
         case Literal literal {
             return literal.value;

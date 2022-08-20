@@ -13,7 +13,7 @@ public class ParserIndexTests {
     public void canParseIndex() {
         var source = "values[42]";
 
-        var node = parseString(source, Parser::parseExpression);
+        var node = parseString(source, Parser::parseTopLevelExpression);
 
         assertThat(node, isUntypedIndexNode()
             .withReceiver(isUntypedReferenceNode("values"))

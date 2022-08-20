@@ -11,7 +11,7 @@ public class ParserReferenceTests {
     public void canParseReference() {
         var source = "oneTwoThree";
 
-        var node = parseString(source, Parser::parseExpression);
+        var node = parseString(source, Parser::parseTopLevelExpression);
 
         assertThat(node, isUntypedReferenceNode("oneTwoThree"));
     }

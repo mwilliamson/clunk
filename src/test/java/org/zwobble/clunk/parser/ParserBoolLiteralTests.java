@@ -13,7 +13,7 @@ public class ParserBoolLiteralTests {
     public void canParseFalse() {
         var source = "false";
 
-        var node = parseString(source, Parser::parseExpression);
+        var node = parseString(source, Parser::parseTopLevelExpression);
 
         assertThat(node, isUntypedBoolLiteralNode(false));
     }
@@ -22,7 +22,7 @@ public class ParserBoolLiteralTests {
     public void canParseTrue() {
         var source = "true";
 
-        var node = parseString(source, Parser::parseExpression);
+        var node = parseString(source, Parser::parseTopLevelExpression);
 
         assertThat(node, isUntypedBoolLiteralNode(true));
     }

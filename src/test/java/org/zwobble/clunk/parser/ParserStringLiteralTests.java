@@ -16,7 +16,7 @@ public class ParserStringLiteralTests {
     public void canParseEmptyString() {
         var source = "\"\"";
 
-        var node = parseString(source, Parser::parseExpression);
+        var node = parseString(source, Parser::parseTopLevelExpression);
 
         assertThat(node, isUntypedStringLiteralNode(""));
     }
@@ -25,7 +25,7 @@ public class ParserStringLiteralTests {
     public void canParseStringWithUnescapedCharacters() {
         var source = "\"abc 123 XYZ\"";
 
-        var node = parseString(source, Parser::parseExpression);
+        var node = parseString(source, Parser::parseTopLevelExpression);
 
         assertThat(node, isUntypedStringLiteralNode("abc 123 XYZ"));
     }
@@ -34,7 +34,7 @@ public class ParserStringLiteralTests {
     public void canParseStringWithEscapedCharacters() {
         var source = "\"\\n\\r\\t\\\\\\\"\"";
 
-        var node = parseString(source, Parser::parseExpression);
+        var node = parseString(source, Parser::parseTopLevelExpression);
 
         assertThat(node, isUntypedStringLiteralNode("\n\r\t\\\""));
     }
@@ -45,7 +45,7 @@ public class ParserStringLiteralTests {
 
         var error = assertThrows(
             UnrecognisedEscapeSequenceError.class,
-            () -> parseString(source, Parser::parseExpression)
+            () -> parseString(source, Parser::parseTopLevelExpression)
         );
 
         assertThat(error.getMessage(), equalTo("Unrecognised escape sequence: \\a"));

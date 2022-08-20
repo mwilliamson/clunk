@@ -53,9 +53,7 @@ public class PythonSerialiser {
             builder.append("pass");
             builder.newLine();
         } else {
-            for (var statement : statements) {
-                serialiseStatement(statement, builder);
-            }
+            serialiseStatements(statements, builder);
         }
         builder.dedent();
     }
@@ -336,6 +334,12 @@ public class PythonSerialiser {
                 return null;
             }
         });
+    }
+
+    private static void serialiseStatements(List<? extends PythonStatementNode> statements, CodeBuilder builder) {
+        for (var statement : statements) {
+            serialiseStatement(statement, builder);
+        }
     }
 
     private static void serialiseStringLiteral(PythonStringLiteralNode node, CodeBuilder builder) {

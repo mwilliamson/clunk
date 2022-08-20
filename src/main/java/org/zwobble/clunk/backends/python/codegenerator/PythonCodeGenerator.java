@@ -219,7 +219,7 @@ public class PythonCodeGenerator {
 
             @Override
             public List<PythonStatementNode> visit(TypedSwitchNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileSwitch(node, context);
             }
 
             @Override
@@ -429,7 +429,7 @@ public class PythonCodeGenerator {
                     new PythonCallNode(
                         new PythonAttrAccessNode(
                             new PythonReferenceNode("visitor"),
-                            "visit_" + camelCaseToSnakeCase(node.name())
+                            generateVisitMethodName(node.type())
                         ),
                         List.of(new PythonReferenceNode("self")),
                         List.of()
@@ -437,6 +437,10 @@ public class PythonCodeGenerator {
                 )
             )
         );
+    }
+
+    private static String generateVisitMethodName(RecordType type) {
+        return "visit_" + camelCaseToSnakeCase(type.name());
     }
 
     private static PythonStatementNode compileRecordBodyDeclaration(
@@ -461,6 +465,42 @@ public class PythonCodeGenerator {
 
     private static PythonExpressionNode compileStringLiteral(TypedStringLiteralNode node) {
         return new PythonStringLiteralNode(node.value());
+    }
+
+    private static List<PythonStatementNode> compileSwitch(TypedSwitchNode node, PythonCodeGeneratorContext context) {
+        var visitorDeclaration = new PythonClassDeclarationNode(
+            "Visitor",
+            List.of(),
+            List.of(),
+            node.cases().stream()
+                .map(switchCase -> new PythonFunctionNode(
+                    generateVisitMethodName((RecordType) switchCase.type().value()),
+                    List.of(),
+                    List.of("self", switchCase.variableName()),
+                    compileFunctionStatements(switchCase.body(), context)
+                ))
+                .toList()
+        );
+
+        var acceptCall = new PythonCallNode(
+            new PythonAttrAccessNode(
+                compileExpression(node.expression(), context),
+                "accept"
+            ),
+            List.of(
+                new PythonCallNode(
+                    new PythonReferenceNode("Visitor"),
+                    List.of(),
+                    List.of()
+                )
+            ),
+            List.of()
+        );
+
+        return List.of(
+            visitorDeclaration,
+            node.returns() ? new PythonReturnNode(acceptCall) : new PythonExpressionStatementNode(acceptCall)
+        );
     }
 
     private static PythonStatementNode compileTest(TypedTestNode node, PythonCodeGeneratorContext context) {

@@ -222,6 +222,11 @@ public class TypeChecker {
             }
 
             @Override
+            public TypedExpressionNode visit(UntypedLogicalOrNode node) {
+                return typeCheckLogicalOr(node, context);
+            }
+
+            @Override
             public TypedExpressionNode visit(UntypedMemberAccessNode node) {
                 return typeCheckMemberAccess(node, context);
             }
@@ -498,6 +503,25 @@ public class TypeChecker {
 
     private static TypedExpressionNode typeCheckIntLiteral(UntypedIntLiteralNode node) {
         return new TypedIntLiteralNode(node.value(), node.source());
+    }
+
+    private static TypedExpressionNode typeCheckLogicalOr(UntypedLogicalOrNode node, TypeCheckerContext context) {
+        var left = typeCheckExpression(node.left(), context);
+        var right = typeCheckExpression(node.right(), context);
+
+        if (!left.type().equals(Types.BOOL)) {
+            throw new UnexpectedTypeError(Types.BOOL, left.type(), left.source());
+        }
+
+        if (!right.type().equals(Types.BOOL)) {
+            throw new UnexpectedTypeError(Types.BOOL, right.type(), right.source());
+        }
+
+        return new TypedLogicalOrNode(
+            left,
+            right,
+            node.source()
+        );
     }
 
     private static TypedExpressionNode typeCheckMemberAccess(UntypedMemberAccessNode node, TypeCheckerContext context) {

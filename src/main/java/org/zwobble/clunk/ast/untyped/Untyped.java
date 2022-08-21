@@ -86,6 +86,10 @@ public class Untyped {
         return new UntypedMemberAccessNode(receiver, memberAccess, NullSource.INSTANCE);
     }
 
+    public static UntypedLogicalOrNode logicalOr(UntypedExpressionNode left, UntypedExpressionNode right) {
+        return new UntypedLogicalOrNode(left, right, NullSource.INSTANCE);
+    }
+
     public static UntypedParamNode param(String name, UntypedTypeLevelExpressionNode type) {
         return new UntypedParamNode(name, type, NullSource.INSTANCE);
     }

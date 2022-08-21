@@ -1,6 +1,9 @@
 package org.zwobble.clunk.backends.java.ast;
 
-public record JavaAddNode(JavaExpressionNode left, JavaExpressionNode right) implements JavaExpressionNode {
+public record JavaAddNode(
+    JavaExpressionNode left,
+    JavaExpressionNode right
+) implements JavaBinaryOperationNode, JavaExpressionNode {
     @Override
     public JavaPrecedence precedence() {
         return JavaPrecedence.ADDITIVE;

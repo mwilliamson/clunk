@@ -202,6 +202,12 @@ public class JavaSerialiser {
             }
 
             @Override
+            public Void visit(JavaLogicalNotNode node) {
+                serialiseLogicalNot(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(JavaLogicalOrNode node) {
                 serialiseLogicalOr(node, builder);
                 return null;
@@ -393,6 +399,11 @@ public class JavaSerialiser {
 
     private static void serialiseLogicalAnd(JavaLogicalAndNode node, CodeBuilder builder) {
         serialiseBinaryOperation("&&", node, builder);
+    }
+
+    private static void serialiseLogicalNot(JavaLogicalNotNode node, CodeBuilder builder) {
+        builder.append("!");
+        serialiseExpression(node.operand(), builder, Optional.of(node));
     }
 
     private static void serialiseLogicalOr(JavaLogicalOrNode node, CodeBuilder builder) {

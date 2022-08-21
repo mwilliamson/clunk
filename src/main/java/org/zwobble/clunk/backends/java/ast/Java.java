@@ -70,6 +70,10 @@ public class Java {
         return new JavaLogicalAndNode(left, right);
     }
 
+    public static JavaLogicalNotNode logicalNot(JavaExpressionNode operand) {
+        return new JavaLogicalNotNode(operand);
+    }
+
     public static JavaLogicalOrNode logicalOr(JavaExpressionNode left, JavaExpressionNode right) {
         return new JavaLogicalOrNode(left, right);
     }

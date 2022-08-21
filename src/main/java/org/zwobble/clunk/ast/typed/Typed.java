@@ -101,6 +101,10 @@ public class Typed {
         return new TypedStringLiteralNode(value, NullSource.INSTANCE);
     }
 
+    public static TypedStringEqualsNode stringEquals(TypedExpressionNode left, TypedExpressionNode right) {
+        return new TypedStringEqualsNode(left, right, NullSource.INSTANCE);
+    }
+
     public static TypedSwitchCaseNode switchCase(
         TypedTypeLevelExpressionNode type,
         String variableName,

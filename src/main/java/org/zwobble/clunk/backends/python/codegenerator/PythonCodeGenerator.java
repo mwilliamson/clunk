@@ -164,6 +164,11 @@ public class PythonCodeGenerator {
             }
 
             @Override
+            public PythonExpressionNode visit(TypedStringEqualsNode node) {
+                return compileStringEquals(node, context);
+            }
+
+            @Override
             public PythonExpressionNode visit(TypedStringLiteralNode node) {
                 return compileStringLiteral(node);
             }
@@ -466,6 +471,13 @@ public class PythonCodeGenerator {
 
     private static PythonStatementNode compileSingleLineComment(TypedSingleLineCommentNode node) {
         return new PythonSingleLineCommentNode(node.value());
+    }
+
+    private static PythonExpressionNode compileStringEquals(TypedStringEqualsNode node, PythonCodeGeneratorContext context) {
+        return new PythonEqualsNode(
+            compileExpression(node.left(), context),
+            compileExpression(node.right(), context)
+        );
     }
 
     private static PythonExpressionNode compileStringLiteral(TypedStringLiteralNode node) {

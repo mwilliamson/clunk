@@ -144,6 +144,11 @@ public class TypeScriptCodeGenerator {
             }
 
             @Override
+            public TypeScriptExpressionNode visit(TypedStringEqualsNode node) {
+                return compileStringEquals(node, context);
+            }
+
+            @Override
             public TypeScriptExpressionNode visit(TypedStringLiteralNode node) {
                 return compileStringLiteral(node);
             }
@@ -402,6 +407,13 @@ public class TypeScriptCodeGenerator {
 
     private static TypeScriptSingleLineCommentNode compileSingleLineComment(TypedSingleLineCommentNode node) {
         return new TypeScriptSingleLineCommentNode(node.value());
+    }
+
+    private static TypeScriptExpressionNode compileStringEquals(TypedStringEqualsNode node, TypeScriptCodeGeneratorContext context) {
+        return new TypeScriptEqualsNode(
+            compileExpression(node.left(), context),
+            compileExpression(node.right(), context)
+        );
     }
 
     private static TypeScriptExpressionNode compileStringLiteral(TypedStringLiteralNode node) {

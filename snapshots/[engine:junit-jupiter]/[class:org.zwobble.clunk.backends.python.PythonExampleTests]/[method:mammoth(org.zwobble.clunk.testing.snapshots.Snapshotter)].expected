@@ -146,6 +146,12 @@ record HtmlTag(
     property defaultTagName: String {
         return tagNames[0];
     }
+
+    property isVoid: Bool {
+        return defaultTagName == "br" ||
+            defaultTagName == "hr" ||
+            defaultTagName == "img";
+    }
 }
 
 record HtmlText(value: String) <: HtmlNode
@@ -352,6 +358,10 @@ class HtmlTag:
     @property
     def defaultTagName(self):
         return self.tagNames[0]
+
+    @property
+    def isVoid(self):
+        return self.defaultTagName == "br" or self.defaultTagName == "hr" or self.defaultTagName == "img"
 
 @dataclasses.dataclass(frozen=True)
 class HtmlText:

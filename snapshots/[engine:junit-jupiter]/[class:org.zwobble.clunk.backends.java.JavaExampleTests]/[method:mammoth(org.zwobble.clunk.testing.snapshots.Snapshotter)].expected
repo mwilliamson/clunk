@@ -146,6 +146,12 @@ record HtmlTag(
     property defaultTagName: String {
         return tagNames[0];
     }
+
+    property isVoid: Bool {
+        return defaultTagName == "br" ||
+            defaultTagName == "hr" ||
+            defaultTagName == "img";
+    }
 }
 
 record HtmlText(value: String) <: HtmlNode
@@ -476,6 +482,10 @@ package org.zwobble.mammoth.internal.html;
 public record HtmlTag(java.util.List<String> tagNames, java.util.List<HtmlAttribute> attributes, boolean isCollapsible, String separator) {
     public String defaultTagName() {
         return tagNames().get(0);
+    }
+
+    public boolean isVoid() {
+        return defaultTagName().equals("br") || defaultTagName().equals("hr") || defaultTagName().equals("img");
     }
 }
 

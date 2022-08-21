@@ -146,6 +146,12 @@ record HtmlTag(
     property defaultTagName: String {
         return tagNames[0];
     }
+
+    property isVoid: Bool {
+        return defaultTagName == "br" ||
+            defaultTagName == "hr" ||
+            defaultTagName == "img";
+    }
 }
 
 record HtmlText(value: String) <: HtmlNode
@@ -448,6 +454,10 @@ class HtmlTag {
     }
     get defaultTagName(): string {
         return this.tagNames[0];
+    }
+
+    get isVoid(): boolean {
+        return this.defaultTagName == "br" || this.defaultTagName == "hr" || this.defaultTagName == "img";
     }
 }
 

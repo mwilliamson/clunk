@@ -242,6 +242,12 @@ public class TypeScriptSerialiser {
             }
 
             @Override
+            public Void visit(TypeScriptLogicalAndNode node) {
+                serialiseLogicalAnd(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(TypeScriptLogicalOrNode node) {
                 serialiseLogicalOr(node, builder);
                 return null;
@@ -328,6 +334,10 @@ public class TypeScriptSerialiser {
         builder.append("[");
         serialiseExpression(node.index(), builder, Optional.empty());
         builder.append("]");
+    }
+
+    private static void serialiseLogicalAnd(TypeScriptLogicalAndNode node, CodeBuilder builder) {
+        serialiseBinaryOperation("&&", node, builder);
     }
 
     private static void serialiseLogicalOr(TypeScriptLogicalOrNode node, CodeBuilder builder) {

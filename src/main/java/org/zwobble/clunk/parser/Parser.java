@@ -111,10 +111,18 @@ public class Parser {
     }
 
     private UntypedExpressionNode parseSubexpression(TokenIterator<TokenType> tokens, OperatorParselet parent) {
-        return parseExpression(tokens, Optional.of(parent.precedence()));
+        return parseSubexpression(tokens, parent.precedence());
+    }
+
+    private UntypedExpressionNode parseSubexpression(TokenIterator<TokenType> tokens, OperatorPrecedence parentPrecedence) {
+        return parseExpression(tokens, Optional.of(parentPrecedence));
     }
 
     private UntypedExpressionNode parseExpression(TokenIterator<TokenType> tokens, Optional<OperatorPrecedence> parentPrecedence) {
+        if (tokens.isNext(TokenType.SYMBOL_BANG)) {
+            return parseLogicalNot(tokens);
+        }
+
         var expression = parsePrimaryExpression(tokens);
         var parentPrecedenceOrdinal = parentPrecedence.map(p -> p.ordinal()).orElse(-1);
 
@@ -250,6 +258,13 @@ public class Parser {
         public TokenType tokenType() {
             return TokenType.SYMBOL_AMPERSAND_AMPERSAND;
         }
+    }
+
+    private UntypedLogicalNotNode parseLogicalNot(TokenIterator<TokenType> tokens) {
+        var source = source(tokens);
+        tokens.skip(TokenType.SYMBOL_BANG);
+        var operand = parseSubexpression(tokens, OperatorPrecedence.PREFIX);
+        return new UntypedLogicalNotNode(operand, source);
     }
 
     private class ParseLogicalOr implements OperatorParselet {

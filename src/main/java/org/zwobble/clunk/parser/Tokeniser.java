@@ -39,6 +39,7 @@ public class Tokeniser {
             RegexTokeniser.rule(TokenType.SYMBOL_EQUALS_EQUALS, "=="),
             RegexTokeniser.rule(TokenType.SYMBOL_SUBTYPE, "<:"),
 
+            RegexTokeniser.rule(TokenType.SYMBOL_BANG, "!"),
             RegexTokeniser.rule(TokenType.SYMBOL_BRACE_OPEN, "\\{"),
             RegexTokeniser.rule(TokenType.SYMBOL_BRACE_CLOSE, "\\}"),
             RegexTokeniser.rule(TokenType.SYMBOL_COLON, ":"),

@@ -210,6 +210,11 @@ public class TypeChecker {
             }
 
             @Override
+            public TypedExpressionNode visit(UntypedLogicalAndNode node) {
+                return typeCheckLogicalAnd(node, context);
+            }
+
+            @Override
             public TypedExpressionNode visit(UntypedLogicalOrNode node) {
                 return typeCheckLogicalOr(node, context);
             }
@@ -488,6 +493,20 @@ public class TypeChecker {
 
     private static TypedExpressionNode typeCheckIntLiteral(UntypedIntLiteralNode node) {
         return new TypedIntLiteralNode(node.value(), node.source());
+    }
+
+    private static TypedExpressionNode typeCheckLogicalAnd(UntypedLogicalAndNode node, TypeCheckerContext context) {
+        var left = typeCheckExpression(node.left(), context);
+        var right = typeCheckExpression(node.right(), context);
+
+        expectExpressionType(left, Types.BOOL);
+        expectExpressionType(right, Types.BOOL);
+
+        return new TypedLogicalAndNode(
+            left,
+            right,
+            node.source()
+        );
     }
 
     private static TypedExpressionNode typeCheckLogicalOr(UntypedLogicalOrNode node, TypeCheckerContext context) {

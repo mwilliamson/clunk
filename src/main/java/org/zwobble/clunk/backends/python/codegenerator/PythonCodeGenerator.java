@@ -154,6 +154,11 @@ public class PythonCodeGenerator {
             }
 
             @Override
+            public PythonExpressionNode visit(TypedLogicalOrNode node) {
+                return compileLogicalOr(node, context);
+            }
+
+            @Override
             public PythonExpressionNode visit(TypedMemberAccessNode node) {
                 return compileMemberAccess(node, context);
             }
@@ -292,6 +297,13 @@ public class PythonCodeGenerator {
 
     private static PythonExpressionNode compileLocalReference(TypedLocalReferenceNode node) {
         return new PythonReferenceNode(node.name());
+    }
+
+    private static PythonExpressionNode compileLogicalOr(TypedLogicalOrNode node, PythonCodeGeneratorContext context) {
+        return new PythonBoolOrNode(
+            compileExpression(node.left(), context),
+            compileExpression(node.right(), context)
+        );
     }
 
     private static PythonExpressionNode compileMemberAccess(

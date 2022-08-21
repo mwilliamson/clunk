@@ -20,6 +20,7 @@ public enum TokenType {
     KEYWORD_YIELD,
 
     SYMBOL_ARROW,
+    SYMBOL_BAR_BAR,
     SYMBOL_BRACE_OPEN,
     SYMBOL_BRACE_CLOSE,
     SYMBOL_COLON,

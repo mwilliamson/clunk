@@ -133,6 +133,11 @@ public class JavaCodeGenerator {
             }
 
             @Override
+            public JavaExpressionNode visit(TypedLogicalAndNode node) {
+                return compileLogicalAnd(node, context);
+            }
+
+            @Override
             public JavaExpressionNode visit(TypedLogicalOrNode node) {
                 return compileLogicalOr(node, context);
             }
@@ -316,6 +321,13 @@ public class JavaCodeGenerator {
 
     private static JavaExpressionNode compileLocalReference(TypedLocalReferenceNode node) {
         return new JavaReferenceNode(node.name());
+    }
+
+    private static JavaExpressionNode compileLogicalAnd(TypedLogicalAndNode node, JavaCodeGeneratorContext context) {
+        return new JavaLogicalAndNode(
+            compileExpression(node.left(), context),
+            compileExpression(node.right(), context)
+        );
     }
 
     private static JavaExpressionNode compileLogicalOr(TypedLogicalOrNode node, JavaCodeGeneratorContext context) {

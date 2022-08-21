@@ -69,6 +69,10 @@ public class Typed {
         return new TypedLocalReferenceNode(name, type, NullSource.INSTANCE);
     }
 
+    public static TypedLogicalAndNode logicalAnd(TypedExpressionNode left, TypedExpressionNode right) {
+        return new TypedLogicalAndNode(left, right, NullSource.INSTANCE);
+    }
+
     public static TypedLogicalOrNode logicalOr(TypedExpressionNode left, TypedExpressionNode right) {
         return new TypedLogicalOrNode(left, right, NullSource.INSTANCE);
     }

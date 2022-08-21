@@ -134,6 +134,11 @@ public class TypeScriptCodeGenerator {
             }
 
             @Override
+            public TypeScriptExpressionNode visit(TypedLogicalAndNode node) {
+                return compileLogicalAnd(node, context);
+            }
+
+            @Override
             public TypeScriptExpressionNode visit(TypedLogicalOrNode node) {
                 return compileLogicalOr(node, context);
             }
@@ -267,6 +272,13 @@ public class TypeScriptCodeGenerator {
 
     private static TypeScriptExpressionNode compileLocalReference(TypedLocalReferenceNode node) {
         return new TypeScriptReferenceNode(node.name());
+    }
+
+    private static TypeScriptExpressionNode compileLogicalAnd(TypedLogicalAndNode node, TypeScriptCodeGeneratorContext context) {
+        return new TypeScriptLogicalAndNode(
+            compileExpression(node.left(), context),
+            compileExpression(node.right(), context)
+        );
     }
 
     private static TypeScriptExpressionNode compileLogicalOr(TypedLogicalOrNode node, TypeScriptCodeGeneratorContext context) {

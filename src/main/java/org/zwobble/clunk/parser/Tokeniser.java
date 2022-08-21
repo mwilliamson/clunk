@@ -34,6 +34,9 @@ public class Tokeniser {
             RegexTokeniser.rule(TokenType.KEYWORD_YIELD, "yield"),
 
             RegexTokeniser.rule(TokenType.SYMBOL_ARROW, "->"),
+            RegexTokeniser.rule(TokenType.SYMBOL_EQUALS_EQUALS, "=="),
+            RegexTokeniser.rule(TokenType.SYMBOL_SUBTYPE, "<:"),
+
             RegexTokeniser.rule(TokenType.SYMBOL_BRACE_OPEN, "\\{"),
             RegexTokeniser.rule(TokenType.SYMBOL_BRACE_CLOSE, "\\}"),
             RegexTokeniser.rule(TokenType.SYMBOL_COLON, ":"),
@@ -47,7 +50,6 @@ public class Tokeniser {
             RegexTokeniser.rule(TokenType.SYMBOL_SEMICOLON, ";"),
             RegexTokeniser.rule(TokenType.SYMBOL_SQUARE_OPEN, "\\["),
             RegexTokeniser.rule(TokenType.SYMBOL_SQUARE_CLOSE, "\\]"),
-            RegexTokeniser.rule(TokenType.SYMBOL_SUBTYPE, "<:"),
 
             RegexTokeniser.rule(TokenType.BLANK_LINE, "[\n][\r\t ]*(?=[\n])"),
             RegexTokeniser.rule(TokenType.IDENTIFIER, "[A-Za-z][A-Za-z0-9]*"),

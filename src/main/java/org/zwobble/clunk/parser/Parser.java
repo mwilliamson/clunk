@@ -94,6 +94,24 @@ public class Parser {
         return new UntypedEnumNode(name, members, source);
     }
 
+    private class ParseEquals implements OperatorParselet {
+        @Override
+        public OperatorPrecedence precedence() {
+            return OperatorPrecedence.EQUALITY;
+        }
+
+        @Override
+        public UntypedExpressionNode parse(UntypedExpressionNode left, TokenIterator<TokenType> tokens) {
+            var right = parseSubexpression(tokens, this);
+            return new UntypedEqualsNode(left, right, left.source());
+        }
+
+        @Override
+        public TokenType tokenType() {
+            return TokenType.SYMBOL_EQUALS_EQUALS;
+        }
+    }
+
     public UntypedExpressionNode parseTopLevelExpression(TokenIterator<TokenType> tokens) {
         return parseExpression(tokens, Optional.empty());
     }
@@ -119,6 +137,7 @@ public class Parser {
     private final Map<TokenType, OperatorParselet> operatorParselets = Stream.of(
         new ParseAdd(),
         new ParseCall(),
+        new ParseEquals(),
         new ParseIndex(),
         new ParseMemberAccess()
     ).collect(Collectors.toMap(

@@ -27,13 +27,8 @@ public class TypeChecker {
         var left = typeCheckExpression(node.left(), context);
         var right = typeCheckExpression(node.right(), context);
 
-        if (!left.type().equals(Types.INT)) {
-            throw new UnexpectedTypeError(Types.INT, left.type(), left.source());
-        }
-
-        if (!right.type().equals(Types.INT)) {
-            throw new UnexpectedTypeError(Types.INT, right.type(), right.source());
-        }
+        expectExpressionType(left, Types.INT);
+        expectExpressionType(right, Types.INT);
 
         return new TypedIntAddNode(
             left,
@@ -111,9 +106,7 @@ public class TypeChecker {
     ) {
         var typedConditionNode = typeCheckExpression(node.condition(), context);
 
-        if (!typedConditionNode.type().equals(Types.BOOL)) {
-            throw new UnexpectedTypeError(Types.BOOL, typedConditionNode.type(), typedConditionNode.source());
-        }
+        expectExpressionType(typedConditionNode, Types.BOOL);
 
         var typeCheckBodyResults = typeCheckFunctionStatements(node.body(), context);
 
@@ -171,13 +164,8 @@ public class TypeChecker {
         var left = typeCheckExpression(node.left(), context);
         var right = typeCheckExpression(node.right(), context);
 
-        if (!left.type().equals(Types.STRING)) {
-            throw new UnexpectedTypeError(Types.STRING, left.type(), left.source());
-        }
-
-        if (! right.type().equals(Types.STRING)) {
-            throw new UnexpectedTypeError(Types.STRING, right.type(), right.source());
-        }
+        expectExpressionType(left, Types.STRING);
+        expectExpressionType(right, Types.STRING);
 
         return new TypedStringEqualsNode(
             left,
@@ -467,16 +455,13 @@ public class TypeChecker {
 
         var receiverType = typedReceiverNode.type();
         if (receiverType instanceof ListType listType) {
-            if (typedIndexNode.type().equals(Types.INT)) {
-                return new TypedIndexNode(
-                    typedReceiverNode,
-                    typedIndexNode,
-                    listType.elementType(),
-                    node.source()
-                );
-            } else {
-                throw new UnexpectedTypeError(Types.INT, typedIndexNode.type(), typedIndexNode.source());
-            }
+            expectExpressionType(typedIndexNode, Types.INT);
+            return new TypedIndexNode(
+                typedReceiverNode,
+                typedIndexNode,
+                listType.elementType(),
+                node.source()
+            );
         } else {
             throw new UnexpectedTypeError(IndexableTypeSet.INSTANCE, typedReceiverNode.type(), node.source());
         }
@@ -509,13 +494,8 @@ public class TypeChecker {
         var left = typeCheckExpression(node.left(), context);
         var right = typeCheckExpression(node.right(), context);
 
-        if (!left.type().equals(Types.BOOL)) {
-            throw new UnexpectedTypeError(Types.BOOL, left.type(), left.source());
-        }
-
-        if (!right.type().equals(Types.BOOL)) {
-            throw new UnexpectedTypeError(Types.BOOL, right.type(), right.source());
-        }
+        expectExpressionType(left, Types.BOOL);
+        expectExpressionType(right, Types.BOOL);
 
         return new TypedLogicalOrNode(
             left,
@@ -957,6 +937,12 @@ public class TypeChecker {
             return ((TypeLevelValueType) type).value();
         } else {
             throw new UnexpectedTypeError(TypeLevelValueTypeSet.INSTANCE, type, source);
+        }
+    }
+
+    private static void expectExpressionType(TypedExpressionNode node, Type type) {
+        if (!node.type().equals(type)) {
+            throw new UnexpectedTypeError(type, node.type(), node.source());
         }
     }
 }

@@ -60,7 +60,7 @@ public class TypeScriptCodeGenerator {
         );
     }
 
-    private static TypeScriptStatementNode compileBlankLine(TypedBlankLineNode node, TypeScriptCodeGeneratorContext context) {
+    private static TypeScriptBlankLineNode compileBlankLine(TypedBlankLineNode node, TypeScriptCodeGeneratorContext context) {
         return new TypeScriptBlankLineNode();
     }
 
@@ -413,6 +413,11 @@ public class TypeScriptCodeGenerator {
         TypeScriptCodeGeneratorContext context
     ) {
         return node.accept(new TypedRecordBodyDeclarationNode.Visitor<TypeScriptClassBodyDeclarationNode>() {
+            @Override
+            public TypeScriptClassBodyDeclarationNode visit(TypedBlankLineNode node) {
+                return compileBlankLine(node, context);
+            }
+
             @Override
             public TypeScriptClassBodyDeclarationNode visit(TypedPropertyNode node) {
                 return compileProperty(node, context);

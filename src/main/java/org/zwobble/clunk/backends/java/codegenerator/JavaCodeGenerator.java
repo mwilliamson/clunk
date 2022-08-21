@@ -57,7 +57,7 @@ public class JavaCodeGenerator {
         }
     }
 
-    private static JavaStatementNode compileBlankLine(TypedBlankLineNode node, JavaCodeGeneratorContext context) {
+    private static JavaBlankLineNode compileBlankLine(TypedBlankLineNode node, JavaCodeGeneratorContext context) {
         return new JavaBlankLineNode();
     }
 
@@ -505,6 +505,11 @@ public class JavaCodeGenerator {
         JavaCodeGeneratorContext context
     ) {
         return node.accept(new TypedRecordBodyDeclarationNode.Visitor<JavaClassBodyDeclarationNode>() {
+            @Override
+            public JavaClassBodyDeclarationNode visit(TypedBlankLineNode node) {
+                return compileBlankLine(node, context);
+            }
+
             @Override
             public JavaClassBodyDeclarationNode visit(TypedPropertyNode node) {
                 return compileProperty(node, context);

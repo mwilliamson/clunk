@@ -95,6 +95,12 @@ public class TypeScriptSerialiser {
     public static void serialiseClassBodyDeclaration(TypeScriptClassBodyDeclarationNode node, CodeBuilder builder) {
         node.accept(new TypeScriptClassBodyDeclarationNode.Visitor<Void>() {
             @Override
+            public Void visit(TypeScriptBlankLineNode node) {
+                serialiseBlankLine(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(TypeScriptFunctionDeclarationNode node) {
                 serialiseMethod(node, builder);
                 return null;

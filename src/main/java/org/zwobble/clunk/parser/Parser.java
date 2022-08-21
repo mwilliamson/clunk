@@ -492,6 +492,9 @@ public class Parser {
     public UntypedRecordBodyDeclarationNode parseRecordBodyDeclaration(TokenIterator<TokenType> tokens) {
         var source = source(tokens);
 
+        if (tokens.isNext(TokenType.BLANK_LINE)) {
+            return parseBlankLine(tokens);
+        }
         if (tokens.isNext(TokenType.COMMENT_SINGLE_LINE)) {
             return parseSingleLineComment(tokens);
         } else {

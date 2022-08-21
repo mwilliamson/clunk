@@ -753,6 +753,15 @@ public class TypeChecker {
     ) {
         return node.accept(new UntypedRecordBodyDeclarationNode.Visitor<TypeCheckRecordBodyDeclarationResult>() {
             @Override
+            public TypeCheckRecordBodyDeclarationResult visit(UntypedBlankLineNode node) {
+                return new TypeCheckRecordBodyDeclarationResult(
+                    Map.of(),
+                    context -> new TypedBlankLineNode(node.source()),
+                    node.source()
+                );
+            }
+
+            @Override
             public TypeCheckRecordBodyDeclarationResult visit(UntypedPropertyNode node) {
                 return typeCheckProperty(node, context);
             }

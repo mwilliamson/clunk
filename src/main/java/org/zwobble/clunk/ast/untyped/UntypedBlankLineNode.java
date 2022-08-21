@@ -2,7 +2,7 @@ package org.zwobble.clunk.ast.untyped;
 
 import org.zwobble.clunk.sources.Source;
 
-public record UntypedBlankLineNode(Source source) implements UntypedFunctionStatementNode, UntypedNamespaceStatementNode {
+public record UntypedBlankLineNode(Source source) implements UntypedFunctionStatementNode, UntypedNamespaceStatementNode, UntypedRecordBodyDeclarationNode {
     @Override
     public boolean isTypeDefinition() {
         return false;
@@ -15,6 +15,11 @@ public record UntypedBlankLineNode(Source source) implements UntypedFunctionStat
 
     @Override
     public <T> T accept(UntypedNamespaceStatementNode.Visitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public <T> T accept(UntypedRecordBodyDeclarationNode.Visitor<T> visitor) {
         return visitor.visit(this);
     }
 }

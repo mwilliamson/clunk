@@ -97,4 +97,32 @@ public class ParserRecordTests {
             )
         )));
     }
+
+    @Test
+    public void canParseBlankLines() {
+        var source = """
+            record User() {
+                property active: Bool {
+                }
+                
+                property isAdmin: Bool {
+                }
+            }
+            """;
+
+        var node = parseString(source, Parser::parseNamespaceStatement);
+
+        assertThat(node, isUntypedRecordNode()
+            .withBody(contains(
+                cast(
+                    UntypedPropertyNode.class,
+                    has("name", equalTo("active"))
+                ),
+                isUntypedBlankLineNode(),
+                cast(
+                    UntypedPropertyNode.class,
+                    has("name", equalTo("isAdmin"))
+                )
+        )));
+    }
 }

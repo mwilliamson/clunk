@@ -478,6 +478,11 @@ public class PythonCodeGenerator {
     ) {
         return node.accept(new TypedRecordBodyDeclarationNode.Visitor<PythonStatementNode>() {
             @Override
+            public PythonStatementNode visit(TypedBlankLineNode node) {
+                return compileBlankLine(node, context);
+            }
+
+            @Override
             public PythonStatementNode visit(TypedPropertyNode node) {
                 return compileProperty(node, context);
             }

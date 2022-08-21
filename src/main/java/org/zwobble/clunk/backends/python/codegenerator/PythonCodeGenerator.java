@@ -159,6 +159,11 @@ public class PythonCodeGenerator {
             }
 
             @Override
+            public PythonExpressionNode visit(TypedLogicalNotNode node) {
+                return compileLogicalNot(node, context);
+            }
+
+            @Override
             public PythonExpressionNode visit(TypedLogicalOrNode node) {
                 return compileLogicalOr(node, context);
             }
@@ -309,6 +314,10 @@ public class PythonCodeGenerator {
             compileExpression(node.left(), context),
             compileExpression(node.right(), context)
         );
+    }
+
+    private static PythonExpressionNode compileLogicalNot(TypedLogicalNotNode node, PythonCodeGeneratorContext context) {
+        return new PythonBoolNotNode(compileExpression(node.operand(), context));
     }
 
     private static PythonExpressionNode compileLogicalOr(TypedLogicalOrNode node, PythonCodeGeneratorContext context) {

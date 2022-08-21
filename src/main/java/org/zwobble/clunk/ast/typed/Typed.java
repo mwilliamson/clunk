@@ -73,6 +73,10 @@ public class Typed {
         return new TypedLogicalAndNode(left, right, NullSource.INSTANCE);
     }
 
+    public static TypedLogicalNotNode logicalNot(TypedExpressionNode operand) {
+        return new TypedLogicalNotNode(operand, NullSource.INSTANCE);
+    }
+
     public static TypedLogicalOrNode logicalOr(TypedExpressionNode left, TypedExpressionNode right) {
         return new TypedLogicalOrNode(left, right, NullSource.INSTANCE);
     }

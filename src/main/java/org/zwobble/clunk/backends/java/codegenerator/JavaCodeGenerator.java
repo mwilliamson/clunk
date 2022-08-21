@@ -138,6 +138,11 @@ public class JavaCodeGenerator {
             }
 
             @Override
+            public JavaExpressionNode visit(TypedLogicalNotNode node) {
+                return compileLogicalNot(node, context);
+            }
+
+            @Override
             public JavaExpressionNode visit(TypedLogicalOrNode node) {
                 return compileLogicalOr(node, context);
             }
@@ -328,6 +333,10 @@ public class JavaCodeGenerator {
             compileExpression(node.left(), context),
             compileExpression(node.right(), context)
         );
+    }
+
+    private static JavaExpressionNode compileLogicalNot(TypedLogicalNotNode node, JavaCodeGeneratorContext context) {
+        return new JavaLogicalNotNode(compileExpression(node.operand(), context));
     }
 
     private static JavaExpressionNode compileLogicalOr(TypedLogicalOrNode node, JavaCodeGeneratorContext context) {

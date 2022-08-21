@@ -139,6 +139,11 @@ public class TypeScriptCodeGenerator {
             }
 
             @Override
+            public TypeScriptExpressionNode visit(TypedLogicalNotNode node) {
+                return compileLogicalNot(node, context);
+            }
+
+            @Override
             public TypeScriptExpressionNode visit(TypedLogicalOrNode node) {
                 return compileLogicalOr(node, context);
             }
@@ -279,6 +284,10 @@ public class TypeScriptCodeGenerator {
             compileExpression(node.left(), context),
             compileExpression(node.right(), context)
         );
+    }
+
+    private static TypeScriptExpressionNode compileLogicalNot(TypedLogicalNotNode node, TypeScriptCodeGeneratorContext context) {
+        return new TypeScriptLogicalNotNode(compileExpression(node.operand(), context));
     }
 
     private static TypeScriptExpressionNode compileLogicalOr(TypedLogicalOrNode node, TypeScriptCodeGeneratorContext context) {

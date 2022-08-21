@@ -10,8 +10,14 @@ import static org.zwobble.clunk.util.Iterables.forEachInterspersed;
 
 public class TypeScriptSerialiser {
     private static void serialiseAdd(TypeScriptAddNode node, CodeBuilder builder) {
+        serialiseBinaryOperation("+", node, builder);
+    }
+
+    private static void serialiseBinaryOperation(String operator, TypeScriptBinaryOperationNode node, CodeBuilder builder) {
         serialiseExpression(node.left(), builder, Optional.of(node));
-        builder.append(" + ");
+        builder.append(" ");
+        builder.append(operator);
+        builder.append(" ");
         serialiseExpression(node.right(), builder, Optional.of(node));
     }
 

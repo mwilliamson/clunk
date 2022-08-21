@@ -94,6 +94,10 @@ public class TypeScript {
         return new TypeScriptLogicalAndNode(left, right);
     }
 
+    public static TypeScriptLogicalNotNode logicalNot(TypeScriptExpressionNode operand) {
+        return new TypeScriptLogicalNotNode(operand);
+    }
+
     public static TypeScriptLogicalOrNode logicalOr(TypeScriptExpressionNode left, TypeScriptExpressionNode right) {
         return new TypeScriptLogicalOrNode(left, right);
     }

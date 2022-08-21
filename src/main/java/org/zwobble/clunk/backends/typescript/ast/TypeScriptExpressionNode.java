@@ -14,6 +14,7 @@ public interface TypeScriptExpressionNode extends TypeScriptNode {
         T visit(TypeScriptEqualsNode node);
         T visit(TypeScriptIndexNode node);
         T visit(TypeScriptLogicalAndNode node);
+        T visit(TypeScriptLogicalNotNode node);
         T visit(TypeScriptLogicalOrNode node);
         T visit(TypeScriptNumberLiteralNode node);
         T visit(TypeScriptFunctionExpressionNode node);

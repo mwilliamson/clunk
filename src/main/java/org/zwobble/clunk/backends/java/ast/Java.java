@@ -66,6 +66,10 @@ public class Java {
         return new JavaIntLiteralNode(value);
     }
 
+    public static JavaLogicalOrNode logicalOr(JavaExpressionNode left, JavaExpressionNode right) {
+        return new JavaLogicalOrNode(left, right);
+    }
+
     public static JavaMemberAccessNode memberAccess(JavaExpressionNode receiver, String memberName) {
         return new JavaMemberAccessNode(receiver, memberName);
     }

@@ -111,12 +111,12 @@ public class Parser {
     }
 
     private UntypedExpressionNode parseSubexpression(TokenIterator<TokenType> tokens, OperatorParselet parent) {
-        return parseExpression(tokens, Optional.of(parent));
+        return parseExpression(tokens, Optional.of(parent.precedence()));
     }
 
-    private UntypedExpressionNode parseExpression(TokenIterator<TokenType> tokens, Optional<OperatorParselet> parent) {
+    private UntypedExpressionNode parseExpression(TokenIterator<TokenType> tokens, Optional<OperatorPrecedence> parentPrecedence) {
         var expression = parsePrimaryExpression(tokens);
-        var parentPrecedenceOrdinal = parent.map(p -> p.precedence().ordinal()).orElse(-1);
+        var parentPrecedenceOrdinal = parentPrecedence.map(p -> p.ordinal()).orElse(-1);
 
         while (true) {
             var operator = parseOperator(tokens);

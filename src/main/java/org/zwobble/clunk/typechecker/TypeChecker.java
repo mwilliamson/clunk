@@ -167,6 +167,25 @@ public class TypeChecker {
         );
     }
 
+    private static TypedExpressionNode typeCheckEquals(UntypedEqualsNode node, TypeCheckerContext context) {
+        var left = typeCheckExpression(node.left(), context);
+        var right = typeCheckExpression(node.right(), context);
+
+        if (!left.type().equals(Types.STRING)) {
+            throw new UnexpectedTypeError(Types.STRING, left.type(), left.source());
+        }
+
+        if (! right.type().equals(Types.STRING)) {
+            throw new UnexpectedTypeError(Types.STRING, right.type(), right.source());
+        }
+
+        return new TypedStringEqualsNode(
+            left,
+            right,
+            node.source()
+        );
+    }
+
     public static TypedExpressionNode typeCheckExpression(
         UntypedExpressionNode node,
         TypeCheckerContext context
@@ -185,6 +204,11 @@ public class TypeChecker {
             @Override
             public TypedExpressionNode visit(UntypedCallNode node) {
                 return typeCheckCall(node, context);
+            }
+
+            @Override
+            public TypedExpressionNode visit(UntypedEqualsNode node) {
+                return typeCheckEquals(node, context);
             }
 
             @Override

@@ -44,6 +44,10 @@ public class Untyped {
         return new UntypedEnumNode(name, List.of(), NullSource.INSTANCE);
     }
 
+    public static UntypedEqualsNode equals(UntypedExpressionNode left, UntypedExpressionNode right) {
+        return new UntypedEqualsNode(left, right, NullSource.INSTANCE);
+    }
+
     public static UntypedExpressionStatementNode expressionStatement(UntypedExpressionNode expression) {
         return new UntypedExpressionStatementNode(expression, NullSource.INSTANCE);
     }

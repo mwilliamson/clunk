@@ -171,6 +171,36 @@ public class TypeCheckRecordTests {
     }
 
     @Test
+    public void canAccessPropertiesInsideProperties() {
+        var untypedNode = UntypedRecordNode.builder("Example")
+            .addBodyDeclaration(Untyped.property(
+                "x",
+                Untyped.typeLevelReference("String"),
+                List.of(Untyped.returnStatement(Untyped.string("hello")))
+            ))
+            .addBodyDeclaration(Untyped.property(
+                "y",
+                Untyped.typeLevelReference("String"),
+                List.of(Untyped.returnStatement(Untyped.reference("x")))
+            ))
+            .build();
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
+
+        var typedNode = (TypedRecordNode) result.typedNode();
+        assertThat(typedNode.body(), contains(
+            has("name", equalTo("x")),
+            allOf(
+                has("name", equalTo("y")),
+                has("body", contains(
+                    isTypedReturnNode().withExpression(isTypedMemberReferenceNode().withName("x").withType(Types.STRING))
+                ))
+            )
+        ));
+    }
+
+    @Test
     public void whenRecordHasTwoMembersWithTheSameNameThenAnErrorIsThrown() {
         var untypedNode = UntypedRecordNode.builder("User")
             .addField(Untyped.recordField("x", Untyped.typeLevelReference("Int")))

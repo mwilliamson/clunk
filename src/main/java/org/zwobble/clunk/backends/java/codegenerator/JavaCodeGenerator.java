@@ -348,7 +348,10 @@ public class JavaCodeGenerator {
     }
 
     private static JavaExpressionNode compileMemberReference(TypedMemberReferenceNode node) {
-        return new JavaReferenceNode(node.name());
+        return new JavaCallNode(
+            new JavaReferenceNode(node.name()),
+            List.of()
+        );
     }
 
     public static List<JavaOrdinaryCompilationUnitNode> compileNamespace(

@@ -450,7 +450,7 @@ package org.zwobble.mammoth.internal.html;
 
 public record HtmlElement(HtmlTag tag, java.util.List<HtmlNode> children) implements HtmlNode {
     public String defaultTagName() {
-        return tag.defaultTagName();
+        return tag().defaultTagName();
     }
     public <T> T accept(HtmlNode.Visitor<T> visitor) {
         return visitor.visit(this);
@@ -475,7 +475,7 @@ package org.zwobble.mammoth.internal.html;
 
 public record HtmlTag(java.util.List<String> tagNames, java.util.List<HtmlAttribute> attributes, boolean isCollapsible, String separator) {
     public String defaultTagName() {
-        return tagNames.get(0);
+        return tagNames().get(0);
     }
 }
 

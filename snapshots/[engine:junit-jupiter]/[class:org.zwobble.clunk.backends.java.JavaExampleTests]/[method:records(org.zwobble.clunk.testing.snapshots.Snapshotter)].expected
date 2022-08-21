@@ -31,7 +31,7 @@ package recordsTest;
 
 public record Add(int left, int right) {
     public int sum() {
-        return left + right;
+        return left() + right();
     }
 }
 

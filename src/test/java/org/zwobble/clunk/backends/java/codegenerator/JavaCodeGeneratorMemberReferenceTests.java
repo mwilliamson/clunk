@@ -10,13 +10,14 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class JavaCodeGeneratorMemberReferenceTests {
+    // TODO: compile field references to be references
     @Test
-    public void referenceIsCompiledToReference() {
+    public void referenceIsCompiledToMethodCall() {
         var node = Typed.memberReference("value", BoolType.INSTANCE);
 
         var result = JavaCodeGenerator.compileExpression(node, JavaCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
-        assertThat(string, equalTo("value"));
+        assertThat(string, equalTo("value()"));
     }
 }

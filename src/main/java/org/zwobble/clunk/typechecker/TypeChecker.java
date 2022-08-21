@@ -657,6 +657,7 @@ public class TypeChecker {
         var recordTypeBox = new Box<RecordType>();
         var typedSupertypeNodesBox = new Box<List<TypedTypeLevelExpressionNode>>();
         var typedRecordFieldNodesBox = new Box<List<TypedRecordFieldNode>>();
+        var memberTypesBox = new Box<Map<String, Type>>();
         var typeCheckBodyDeclarationResultsBox = new Box<List<TypeCheckRecordBodyDeclarationResult>>();
         var typedBodyDeclarationsBox = new Box<List<? extends TypedRecordBodyDeclarationNode>>();
 
@@ -702,16 +703,18 @@ public class TypeChecker {
                             .toList();
                         typeCheckBodyDeclarationResultsBox.set(typeCheckBodyDeclarationResults);
 
-                        var memberTypes = new MemberTypesBuilder();
+                        var memberTypesBuilder = new MemberTypesBuilder();
                         for (var typedFieldNode : typedRecordFieldNodes) {
-                            memberTypes.add(typedFieldNode.name(), (Type) typedFieldNode.type().value(), typedFieldNode.source());
+                            memberTypesBuilder.add(typedFieldNode.name(), (Type) typedFieldNode.type().value(), typedFieldNode.source());
                         }
                         for (var typeCheckDeclarationResult : typeCheckBodyDeclarationResults) {
-                            memberTypes.addAll(typeCheckDeclarationResult.memberTypes(), typeCheckDeclarationResult.source());
+                            memberTypesBuilder.addAll(typeCheckDeclarationResult.memberTypes(), typeCheckDeclarationResult.source());
                         }
 
                         var newContext = context.addFields(recordType, typedRecordFieldNodes);
-                        newContext = newContext.addMemberTypes(recordType, memberTypes.build());
+                        var memberTypes = memberTypesBuilder.build();
+                        memberTypesBox.set(memberTypes);
+                        newContext = newContext.addMemberTypes(recordType, memberTypes);
                         for (var typedSupertypeNode : typedSupertypeNodes) {
                             // TODO: handle type-level values that aren't types
                             newContext = newContext.addSubtypeRelation(recordType, (InterfaceType) typedSupertypeNode.value());
@@ -722,12 +725,7 @@ public class TypeChecker {
                 new PendingTypeCheck(
                     TypeCheckerPhase.TYPE_CHECK_BODIES,
                     context -> {
-                        var fieldTypes = typedRecordFieldNodesBox.get().stream()
-                            .collect(Collectors.toMap(
-                                fieldNode -> fieldNode.name(),
-                                fieldNode -> (Type) fieldNode.type().value()
-                            ));
-                        var bodyContext = context.enterRecordBody(fieldTypes);
+                        var bodyContext = context.enterRecordBody(memberTypesBox.get());
                         var typedBody = typeCheckBodyDeclarationResultsBox.get().stream()
                             .map(result -> result.value(bodyContext))
                             .toList();

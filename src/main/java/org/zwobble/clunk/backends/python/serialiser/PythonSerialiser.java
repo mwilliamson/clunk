@@ -10,9 +10,7 @@ import static org.zwobble.clunk.util.Iterables.forEachInterspersed;
 
 public class PythonSerialiser {
     private static void serialiseAdd(PythonAddNode node, CodeBuilder builder) {
-        serialiseExpression(node.left(), builder, Optional.of(node));
-        builder.append(" + ");
-        serialiseExpression(node.right(), builder, Optional.of(node));
+        serialiseBinaryOperation("+", node, builder);
     }
 
     private static void serialiseAssert(PythonAssertNode node, CodeBuilder builder) {
@@ -41,6 +39,14 @@ public class PythonSerialiser {
         serialiseExpression(node.receiver(), builder, Optional.of(node));
         builder.append(".");
         builder.append(node.attrName());
+    }
+
+    private static void serialiseBinaryOperation(String operator, PythonBinaryOperationNode node, CodeBuilder builder) {
+        serialiseExpression(node.left(), builder, Optional.of(node));
+        builder.append(" ");
+        builder.append(operator);
+        builder.append(" ");
+        serialiseExpression(node.right(), builder, Optional.of(node));
     }
 
     private static void serialiseBlankLine(PythonBlankLineNode node, CodeBuilder builder) {
@@ -114,6 +120,10 @@ public class PythonSerialiser {
         }
     }
 
+    private static void serialiseEquals(PythonEqualsNode node, CodeBuilder builder) {
+        serialiseBinaryOperation("==", node, builder);
+    }
+
     public static void serialiseExpression(PythonExpressionNode node, CodeBuilder builder, Optional<PythonExpressionNode> parent) {
         var parenthesize = parent.isPresent() && node.precedence().ordinal() < parent.get().precedence().ordinal();
         if (parenthesize) {
@@ -142,6 +152,12 @@ public class PythonSerialiser {
             @Override
             public Void visit(PythonCallNode node) {
                 serialiseCall(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(PythonEqualsNode node) {
+                serialiseEquals(node, builder);
                 return null;
             }
 

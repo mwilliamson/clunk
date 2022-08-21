@@ -43,6 +43,10 @@ public class Python {
         return new PythonConditionalBranchNode(condition, body);
     }
 
+    public static PythonEqualsNode equals(PythonExpressionNode left, PythonExpressionNode right) {
+        return new PythonEqualsNode(left, right);
+    }
+
     public static PythonExpressionStatementNode expressionStatement(PythonExpressionNode expression) {
         return new PythonExpressionStatementNode(expression);
     }

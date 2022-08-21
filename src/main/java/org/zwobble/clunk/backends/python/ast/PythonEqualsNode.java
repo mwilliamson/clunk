@@ -1,12 +1,12 @@
 package org.zwobble.clunk.backends.python.ast;
 
-public record PythonAddNode(
+public record PythonEqualsNode(
     PythonExpressionNode left,
     PythonExpressionNode right
 ) implements PythonBinaryOperationNode, PythonExpressionNode {
     @Override
     public PythonPrecedence precedence() {
-        return PythonPrecedence.ADDITION;
+        return PythonPrecedence.COMPARISON;
     }
 
     @Override

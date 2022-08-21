@@ -15,7 +15,7 @@ public class Parsing {
     ) {
         var source = FileFragmentSource.create("<string>", sourceContents);
         var tokens = Tokeniser.tokenise(source);
-        var parser =  new Parser(source);
+        var parser =  new Parser();
         var result = parseTokens.apply(parser, tokens);
         assertThat(tokens.peek().tokenType(), equalTo(TokenType.END));
         return result;

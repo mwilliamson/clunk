@@ -17,12 +17,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Parser {
-    private final Source fullSource;
-
-    public Parser(Source fullSource) {
-        this.fullSource = fullSource;
-    }
-
     private class ParseAdd implements OperatorParselet {
         @Override
         public OperatorPrecedence precedence() {

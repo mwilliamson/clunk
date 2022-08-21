@@ -9,7 +9,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class TypeScriptSerialiserAddTests {
     @Test
-    public void canSerialiseCallWithNoArguments() {
+    public void canSerialiseAdd() {
         var node = TypeScript.add(
             TypeScript.reference("a"),
             TypeScript.reference("b")

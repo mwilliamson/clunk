@@ -28,6 +28,10 @@ public class Python {
         return new PythonBoolAndNode(left, right);
     }
 
+    public static PythonBoolNotNode boolNot(PythonExpressionNode operand) {
+        return new PythonBoolNotNode(operand);
+    }
+
     public static PythonBoolOrNode boolOr(PythonExpressionNode left, PythonExpressionNode right) {
         return new PythonBoolOrNode(left, right);
     }

@@ -24,6 +24,10 @@ public class Python {
         return new PythonAttrAccessNode(receiver, attrName);
     }
 
+    public static PythonBoolAndNode boolAnd(PythonExpressionNode left, PythonExpressionNode right) {
+        return new PythonBoolAndNode(left, right);
+    }
+
     public static PythonBoolOrNode boolOr(PythonExpressionNode left, PythonExpressionNode right) {
         return new PythonBoolOrNode(left, right);
     }

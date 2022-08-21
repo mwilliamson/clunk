@@ -64,6 +64,10 @@ public class PythonSerialiser {
         builder.dedent();
     }
 
+    private static void serialiseBoolAnd(PythonBoolAndNode node, CodeBuilder builder) {
+        serialiseBinaryOperation("and", node, builder);
+    }
+
     private static void serialiseBoolLiteral(PythonBoolLiteralNode node, CodeBuilder builder) {
         builder.append(node.value() ? "True" : "False");
     }
@@ -144,6 +148,12 @@ public class PythonSerialiser {
             @Override
             public Void visit(PythonAttrAccessNode node) {
                 serialiseAttrAccess(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(PythonBoolAndNode node) {
+                serialiseBoolAnd(node, builder);
                 return null;
             }
 

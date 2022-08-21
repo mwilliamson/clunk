@@ -68,6 +68,10 @@ public class PythonSerialiser {
         builder.append(node.value() ? "True" : "False");
     }
 
+    private static void serialiseBoolOr(PythonBoolOrNode node, CodeBuilder builder) {
+        serialiseBinaryOperation("or", node, builder);
+    }
+
     private static void serialiseCall(PythonCallNode node, CodeBuilder builder) {
         serialiseExpression(node.receiver(), builder, Optional.of(node));
         builder.append("(");
@@ -146,6 +150,12 @@ public class PythonSerialiser {
             @Override
             public Void visit(PythonBoolLiteralNode node) {
                 serialiseBoolLiteral(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(PythonBoolOrNode node) {
+                serialiseBoolOr(node, builder);
                 return null;
             }
 

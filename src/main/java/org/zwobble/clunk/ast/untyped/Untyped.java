@@ -90,6 +90,10 @@ public class Untyped {
         return new UntypedLogicalAndNode(left, right, NullSource.INSTANCE);
     }
 
+    public static UntypedLogicalNotNode logicalNot(UntypedExpressionNode operand) {
+        return new UntypedLogicalNotNode(operand, NullSource.INSTANCE);
+    }
+
     public static UntypedLogicalOrNode logicalOr(UntypedExpressionNode left, UntypedExpressionNode right) {
         return new UntypedLogicalOrNode(left, right, NullSource.INSTANCE);
     }

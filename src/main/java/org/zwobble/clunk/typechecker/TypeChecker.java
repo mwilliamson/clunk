@@ -215,6 +215,11 @@ public class TypeChecker {
             }
 
             @Override
+            public TypedExpressionNode visit(UntypedLogicalNotNode node) {
+                return typeCheckLogicalNot(node, context);
+            }
+
+            @Override
             public TypedExpressionNode visit(UntypedLogicalOrNode node) {
                 return typeCheckLogicalOr(node, context);
             }
@@ -507,6 +512,14 @@ public class TypeChecker {
             right,
             node.source()
         );
+    }
+
+    private static TypedExpressionNode typeCheckLogicalNot(UntypedLogicalNotNode node, TypeCheckerContext context) {
+        var operand = typeCheckExpression(node.operand(), context);
+
+        expectExpressionType(operand, Types.BOOL);
+
+        return new TypedLogicalNotNode(operand, node.source());
     }
 
     private static TypedExpressionNode typeCheckLogicalOr(UntypedLogicalOrNode node, TypeCheckerContext context) {

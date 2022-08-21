@@ -139,6 +139,7 @@ public class Parser {
         new ParseCall(),
         new ParseEquals(),
         new ParseIndex(),
+        new ParseLogicalAnd(),
         new ParseLogicalOr(),
         new ParseMemberAccess()
     ).collect(Collectors.toMap(
@@ -237,6 +238,24 @@ public class Parser {
             case "\\" -> '\\';
             default -> throw new UnrecognisedEscapeSequenceError("\\" + code, source);
         };
+    }
+
+    private class ParseLogicalAnd implements OperatorParselet {
+        @Override
+        public OperatorPrecedence precedence() {
+            return OperatorPrecedence.LOGICAL_AND;
+        }
+
+        @Override
+        public UntypedExpressionNode parse(UntypedExpressionNode left, TokenIterator<TokenType> tokens) {
+            var right = parseSubexpression(tokens, this);
+            return new UntypedLogicalAndNode(left, right, left.source());
+        }
+
+        @Override
+        public TokenType tokenType() {
+            return TokenType.SYMBOL_AMPERSAND_AMPERSAND;
+        }
     }
 
     private class ParseLogicalOr implements OperatorParselet {

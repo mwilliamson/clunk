@@ -33,6 +33,7 @@ public class Tokeniser {
             RegexTokeniser.rule(TokenType.KEYWORD_VAR, "var"),
             RegexTokeniser.rule(TokenType.KEYWORD_YIELD, "yield"),
 
+            RegexTokeniser.rule(TokenType.SYMBOL_AMPERSAND_AMPERSAND, "&&"),
             RegexTokeniser.rule(TokenType.SYMBOL_ARROW, "->"),
             RegexTokeniser.rule(TokenType.SYMBOL_BAR_BAR, "\\|\\|"),
             RegexTokeniser.rule(TokenType.SYMBOL_EQUALS_EQUALS, "=="),

@@ -10,9 +10,7 @@ import static org.zwobble.clunk.util.Iterables.forEachInterspersed;
 
 public class JavaSerialiser {
     private static void serialiseAdd(JavaAddNode node, CodeBuilder builder) {
-        serialiseExpression(node.left(), builder, Optional.of(node));
-        builder.append(" + ");
-        serialiseExpression(node.right(), builder, Optional.of(node));
+        serialiseBinaryOperation("+", node, builder);
     }
 
     public static void serialiseAnnotation(JavaAnnotationNode node, CodeBuilder builder) {
@@ -34,6 +32,13 @@ public class JavaSerialiser {
                 return null;
             }
         });
+    }
+    private static void serialiseBinaryOperation(String operator, JavaBinaryOperationNode node, CodeBuilder builder) {
+        serialiseExpression(node.left(), builder, Optional.of(node));
+        builder.append(" ");
+        builder.append(operator);
+        builder.append(" ");
+        serialiseExpression(node.right(), builder, Optional.of(node));
     }
 
     private static void serialiseBlankLine(JavaBlankLineNode node, CodeBuilder builder) {

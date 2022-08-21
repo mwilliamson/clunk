@@ -5,7 +5,7 @@ import org.zwobble.clunk.sources.Source;
 public record UntypedSingleLineCommentNode(
     String value,
     Source source
-) implements UntypedFunctionStatementNode, UntypedNamespaceStatementNode {
+) implements UntypedFunctionStatementNode, UntypedNamespaceStatementNode, UntypedRecordBodyDeclarationNode {
     @Override
     public boolean isTypeDefinition() {
         return false;
@@ -18,6 +18,11 @@ public record UntypedSingleLineCommentNode(
 
     @Override
     public <T> T accept(UntypedNamespaceStatementNode.Visitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public <T> T accept(UntypedRecordBodyDeclarationNode.Visitor<T> visitor) {
         return visitor.visit(this);
     }
 }

@@ -480,6 +480,11 @@ public class JavaCodeGenerator {
             public JavaClassBodyDeclarationNode visit(TypedPropertyNode node) {
                 return compileProperty(node, context);
             }
+
+            @Override
+            public JavaClassBodyDeclarationNode visit(TypedSingleLineCommentNode node) {
+                return compileSingleLineComment(node);
+            }
         });
     }
 
@@ -487,7 +492,7 @@ public class JavaCodeGenerator {
         return new JavaReturnNode(compileExpression(node.expression(), context));
     }
 
-    private static JavaStatementNode compileSingleLineComment(TypedSingleLineCommentNode node) {
+    private static JavaSingleLineCommentNode compileSingleLineComment(TypedSingleLineCommentNode node) {
         return new JavaSingleLineCommentNode(node.value());
     }
 

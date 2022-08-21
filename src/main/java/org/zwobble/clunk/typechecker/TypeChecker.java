@@ -709,6 +709,15 @@ public class TypeChecker {
             public TypeCheckRecordBodyDeclarationResult visit(UntypedPropertyNode node) {
                 return typeCheckProperty(node, context);
             }
+
+            @Override
+            public TypeCheckRecordBodyDeclarationResult visit(UntypedSingleLineCommentNode node) {
+                return new TypeCheckRecordBodyDeclarationResult(
+                    Map.of(),
+                    context -> typeCheckSingleLineComment(node),
+                    node.source()
+                );
+            }
         });
     }
 

@@ -388,6 +388,11 @@ public class TypeScriptCodeGenerator {
             public TypeScriptClassBodyDeclarationNode visit(TypedPropertyNode node) {
                 return compileProperty(node, context);
             }
+
+            @Override
+            public TypeScriptClassBodyDeclarationNode visit(TypedSingleLineCommentNode node) {
+                return compileSingleLineComment(node);
+            }
         });
     }
 
@@ -395,7 +400,7 @@ public class TypeScriptCodeGenerator {
         return new TypeScriptReturnNode(compileExpression(node.expression(), context));
     }
 
-    private static TypeScriptStatementNode compileSingleLineComment(TypedSingleLineCommentNode node) {
+    private static TypeScriptSingleLineCommentNode compileSingleLineComment(TypedSingleLineCommentNode node) {
         return new TypeScriptSingleLineCommentNode(node.value());
     }
 

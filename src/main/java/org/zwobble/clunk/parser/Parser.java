@@ -438,16 +438,19 @@ public class Parser {
         return new UntypedRecordNode(name, fieldNodes, supertypes, body, recordSource);
     }
 
-    private UntypedRecordBodyDeclarationNode parseRecordBodyDeclaration(TokenIterator<TokenType> tokens) {
+    public UntypedRecordBodyDeclarationNode parseRecordBodyDeclaration(TokenIterator<TokenType> tokens) {
         var source = source(tokens);
 
-        tokens.skip(TokenType.KEYWORD_PROPERTY);
-        var name = tokens.nextValue(TokenType.IDENTIFIER);
-        tokens.skip(TokenType.SYMBOL_COLON);
-        var type = parseTypeLevelExpression(tokens);
-        var body = parseBlock(tokens);
-
-        return new UntypedPropertyNode(name, type, body, source);
+        if (tokens.isNext(TokenType.COMMENT_SINGLE_LINE)) {
+            return parseSingleLineComment(tokens);
+        } else {
+            tokens.skip(TokenType.KEYWORD_PROPERTY);
+            var name = tokens.nextValue(TokenType.IDENTIFIER);
+            tokens.skip(TokenType.SYMBOL_COLON);
+            var type = parseTypeLevelExpression(tokens);
+            var body = parseBlock(tokens);
+            return new UntypedPropertyNode(name, type, body, source);
+        }
     }
 
     private UntypedRecordFieldNode parseRecordField(TokenIterator<TokenType> tokens) {

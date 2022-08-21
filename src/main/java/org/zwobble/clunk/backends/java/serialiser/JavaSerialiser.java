@@ -120,6 +120,12 @@ public class JavaSerialiser {
                 serialiseMethodDeclaration(node, builder);
                 return null;
             }
+
+            @Override
+            public Void visit(JavaSingleLineCommentNode node) {
+                serialiseSingleLineComment(node, builder);
+                return null;
+            }
         });
     }
 

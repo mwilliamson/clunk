@@ -452,6 +452,11 @@ public class PythonCodeGenerator {
             public PythonStatementNode visit(TypedPropertyNode node) {
                 return compileProperty(node, context);
             }
+
+            @Override
+            public PythonStatementNode visit(TypedSingleLineCommentNode node) {
+                return compileSingleLineComment(node);
+            }
         });
     }
 

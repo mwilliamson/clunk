@@ -5,7 +5,7 @@ import org.zwobble.clunk.sources.Source;
 public record TypedSingleLineCommentNode(
     String value,
     Source source
-) implements TypedFunctionStatementNode, TypedNamespaceStatementNode {
+) implements TypedFunctionStatementNode, TypedNamespaceStatementNode, TypedRecordBodyDeclarationNode {
     @Override
     public <T> T accept(TypedFunctionStatementNode.Visitor<T> visitor) {
         return visitor.visit(this);
@@ -13,6 +13,11 @@ public record TypedSingleLineCommentNode(
 
     @Override
     public <T> T accept(TypedNamespaceStatementNode.Visitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public <T> T accept(TypedRecordBodyDeclarationNode.Visitor<T> visitor) {
         return visitor.visit(this);
     }
 }

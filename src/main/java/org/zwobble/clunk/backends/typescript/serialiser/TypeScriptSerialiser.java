@@ -99,6 +99,12 @@ public class TypeScriptSerialiser {
                 serialiseGetter(node, builder);
                 return null;
             }
+
+            @Override
+            public Void visit(TypeScriptSingleLineCommentNode node) {
+                serialiseSingleLineComment(node, builder);
+                return null;
+            }
         });
     }
 

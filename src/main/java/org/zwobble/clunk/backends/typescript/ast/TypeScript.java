@@ -90,6 +90,10 @@ public class TypeScript {
         return new TypeScriptLetNode(name, expression);
     }
 
+    public static TypeScriptLogicalOrNode logicalOr(TypeScriptExpressionNode left, TypeScriptExpressionNode right) {
+        return new TypeScriptLogicalOrNode(left, right);
+    }
+
     public static TypeScriptModuleNode module(String name, List<TypeScriptStatementNode> statements) {
         return new TypeScriptModuleNode(name, statements);
     }

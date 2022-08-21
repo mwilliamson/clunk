@@ -9,7 +9,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class JavaSerialiserAddTests {
     @Test
-    public void canSerialiseCallWithNoArguments() {
+    public void canSerialiseAdd() {
         var node = Java.add(
             Java.reference("a"),
             Java.reference("b")

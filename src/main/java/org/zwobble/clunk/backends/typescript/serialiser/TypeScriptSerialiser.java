@@ -188,6 +188,10 @@ public class TypeScriptSerialiser {
         builder.newLine();
     }
 
+    private static void serialiseEquals(TypeScriptEqualsNode node, CodeBuilder builder) {
+        serialiseBinaryOperation("==", node, builder);
+    }
+
     public static void serialiseExpression(TypeScriptExpressionNode node, CodeBuilder builder, Optional<TypeScriptExpressionNode> parent) {
         var parenthesize = parent.isPresent() && node.precedence().ordinal() < parent.get().precedence().ordinal();
         if (parenthesize) {
@@ -222,6 +226,12 @@ public class TypeScriptSerialiser {
             @Override
             public Void visit(TypeScriptConstructedTypeNode node) {
                 serialiseConstructedType(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(TypeScriptEqualsNode node) {
+                serialiseEquals(node, builder);
                 return null;
             }
 

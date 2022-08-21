@@ -56,6 +56,10 @@ public class TypeScript {
         return new TypeScriptConstructedTypeNode(receiver, args);
     }
 
+    public static TypeScriptEqualsNode equals(TypeScriptExpressionNode left, TypeScriptExpressionNode right) {
+        return new TypeScriptEqualsNode(left, right);
+    }
+
     public static TypeScriptStatementNode expressionStatement(TypeScriptExpressionNode expression) {
         return new TypeScriptExpressionStatementNode(expression);
     }

@@ -18,7 +18,7 @@ public record TypeCheckerContext(
     PStack<StackFrame> stack,
     PMap<NamespaceName, NamespaceType> namespaceTypes,
     PMap<RecordType, List<TypedRecordFieldNode>> typeToFields,
-    PMap<RecordType, Map<String, Type>> memberTypes,
+    PMap<Type, Map<String, Type>> memberTypes,
     SubtypeRelations subtypeRelations
 ) {
     public static final TypeCheckerContext EMPTY = new TypeCheckerContext(
@@ -153,7 +153,7 @@ public record TypeCheckerContext(
         return typeToFields.get(type);
     }
 
-    public Optional<Type> memberType(RecordType type, String memberName) {
+    public Optional<Type> memberType(Type type, String memberName) {
         var typeMembers = memberTypes.get(type);
         if (typeMembers == null) {
             return Optional.empty();

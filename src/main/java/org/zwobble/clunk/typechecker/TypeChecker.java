@@ -525,8 +525,7 @@ public class TypeChecker {
 
     private static TypedExpressionNode typeCheckMemberAccess(UntypedMemberAccessNode node, TypeCheckerContext context) {
         var typedReceiverNode = typeCheckExpression(node.receiver(), context);
-        // TODO: handle not a record
-        var recordType = (RecordType) typedReceiverNode.type();
+        var recordType = typedReceiverNode.type();
         var memberType = context.memberType(recordType, node.memberName());
 
         if (memberType.isEmpty()) {

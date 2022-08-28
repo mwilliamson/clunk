@@ -12,7 +12,9 @@ public class Types {
     public static final Type NOTHING = NothingType.INSTANCE;
     public static final Type OBJECT = ObjectType.INSTANCE;
     public static final Type STRING = StringType.INSTANCE;
+    public static final Type STRING_BUILDER = StringBuilderType.INSTANCE;
     public static final Type UNIT = UnitType.INSTANCE;
+
 
     public static Type list(Type elementType) {
         return new ListType(elementType);

@@ -60,32 +60,19 @@ public class TypeChecker {
     private static TypedExpressionNode typeCheckCall(UntypedCallNode node, TypeCheckerContext context) {
         var receiver = typeCheckExpression(node.receiver(), context);
 
-        // TODO: handle not callable
-        List<Type> positionalParams;
-        Type returnType;
-        if (receiver.type() instanceof StaticFunctionType functionType) {
-            positionalParams = functionType.positionalParams();
-            returnType = functionType.returnType();
-        } else if (receiver.type() instanceof TypeLevelValueType typeLevelValueType && typeLevelValueType.value() instanceof RecordType recordType) {
-            positionalParams = context.fieldsOf(recordType).stream()
-                .map(field -> (Type)field.type().value())
-                .toList();
-            returnType = recordType;
-        } else {
-            throw new UnsupportedOperationException("TODO");
-        }
+        var signature = Signatures.toSignature(receiver.type(), context);
 
-        if (node.positionalArgs().size() != positionalParams.size()) {
+        if (node.positionalArgs().size() != signature.positionalParams().size()) {
             throw new WrongNumberOfArgumentsError(
-                positionalParams.size(),
+                signature.positionalParams().size(),
                 node.positionalArgs().size(),
                 node.source()
             );
         }
         var typedPositionalArgs = node.positionalArgs().stream().map(arg -> typeCheckExpression(arg, context)).toList();
 
-        for (var argIndex = 0; argIndex < positionalParams.size(); argIndex++) {
-            var paramType = positionalParams.get(argIndex);
+        for (var argIndex = 0; argIndex < signature.positionalParams().size(); argIndex++) {
+            var paramType = signature.positionalParams().get(argIndex);
             var argNode = typedPositionalArgs.get(argIndex);
             var argType = argNode.type();
             if (!context.isSubType(argType, paramType)) {
@@ -95,7 +82,7 @@ public class TypeChecker {
         return new TypedCallNode(
             receiver,
             typedPositionalArgs,
-            returnType,
+            signature.returnType(),
             node.source()
         );
     }

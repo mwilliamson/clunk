@@ -44,4 +44,16 @@ public class SignaturesTests {
             has("returnType", equalTo(recordType))
         ));
     }
+
+    @Test
+    public void stringBuilderIsConstructedWithoutAnyArguments() {
+        var context = TypeCheckerContext.stub();
+
+        var result = Signatures.toSignature(Types.metaType(Types.STRING_BUILDER), context);
+
+        assertThat(result, allOf(
+            has("positionalParams", empty()),
+            has("returnType", equalTo(Types.STRING_BUILDER))
+        ));
+    }
 }

@@ -1,9 +1,8 @@
 package org.zwobble.clunk.typechecker;
 
-import org.zwobble.clunk.types.RecordType;
-import org.zwobble.clunk.types.StaticFunctionType;
-import org.zwobble.clunk.types.Type;
-import org.zwobble.clunk.types.TypeLevelValueType;
+import org.zwobble.clunk.types.*;
+
+import java.util.List;
 
 public class Signatures {
     private Signatures() {
@@ -18,6 +17,8 @@ public class Signatures {
                 .map(field -> (Type)field.type().value())
                 .toList();
             return new Signature(positionalParams, recordType);
+        } else if (type instanceof TypeLevelValueType typeLevelValueType && typeLevelValueType.value().equals(Types.STRING_BUILDER)) {
+            return new Signature(List.of(), Types.STRING_BUILDER);
         } else {
             throw new UnsupportedOperationException("Not callable");
         }

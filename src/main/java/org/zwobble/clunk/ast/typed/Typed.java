@@ -81,6 +81,14 @@ public class Typed {
         return new TypedLogicalOrNode(left, right, NullSource.INSTANCE);
     }
 
+    public static TypedMemberAccessNode memberAccess(
+        TypedLocalReferenceNode receiver,
+        String memberName,
+        Type type
+    ) {
+        return new TypedMemberAccessNode(receiver, memberName, type, NullSource.INSTANCE);
+    }
+
     public static TypedMemberReferenceNode memberReference(String name, Type type) {
         return new TypedMemberReferenceNode(name, type, NullSource.INSTANCE);
     }

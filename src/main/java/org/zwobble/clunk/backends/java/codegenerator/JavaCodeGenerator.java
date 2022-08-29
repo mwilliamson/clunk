@@ -94,6 +94,11 @@ public class JavaCodeGenerator {
 
         if (macro.isPresent()) {
             return macro.get().compileReceiver(context);
+        } else if (receiver.type() instanceof MethodType && receiver instanceof TypedMemberAccessNode receiverMemberAccess) {
+            return new JavaMemberAccessNode(
+                compileExpression(receiverMemberAccess.receiver(), context),
+                receiverMemberAccess.memberName()
+            );
         } else {
             return compileExpression(receiver, context);
         }

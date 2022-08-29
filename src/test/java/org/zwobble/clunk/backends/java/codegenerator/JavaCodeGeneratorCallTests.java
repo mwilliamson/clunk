@@ -64,6 +64,28 @@ public class JavaCodeGeneratorCallTests {
     }
 
     @Test
+    public void stringBuilderBuildIsCompiledToToString() {
+        var node = new TypedCallNode(
+            Typed.memberAccess(
+                Typed.localReference(
+                    "builder",
+                    Types.STRING_BUILDER
+                ),
+                "build",
+                Types.methodType(List.of(), Types.STRING)
+            ),
+            List.of(),
+            Types.UNIT,
+            NullSource.INSTANCE
+        );
+
+        var result = JavaCodeGenerator.compileExpression(node, JavaCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("builder.toString()"));
+    }
+
+    @Test
     public void callToStringBuilderIsCompiledToConstructorCall() {
         var node = new TypedCallNode(
             Typed.localReference("StringBuilder", Types.metaType(Types.STRING_BUILDER)),

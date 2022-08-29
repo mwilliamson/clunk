@@ -7,7 +7,6 @@ import org.zwobble.clunk.types.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -16,42 +15,9 @@ import static org.zwobble.clunk.backends.CaseConverter.upperCamelCaseToLowerCame
 import static org.zwobble.clunk.util.Lists.last;
 
 public class JavaCodeGenerator {
-    private interface JavaMacro {
-        JavaExpressionNode compileReceiver(JavaCodeGeneratorContext context);
-    }
-
-    private static final Map<NamespaceName, Map<String, JavaMacro>> STATIC_FUNCTION_MACROS = Map.ofEntries(
-        Map.entry(
-            NamespaceName.fromParts("stdlib", "assertions"),
-            Map.ofEntries(
-                Map.entry("assertThat", new JavaMacro() {
-                    @Override
-                    public JavaExpressionNode compileReceiver(JavaCodeGeneratorContext context) {
-                        context.addImportStatic("org.hamcrest.MatcherAssert", "assertThat");
-                        return new JavaReferenceNode("assertThat");
-                    }
-                })
-            )
-        ),
-        Map.entry(
-            NamespaceName.fromParts("stdlib", "matchers"),
-            Map.ofEntries(
-                Map.entry("equalTo", new JavaMacro() {
-                    @Override
-                    public JavaExpressionNode compileReceiver(JavaCodeGeneratorContext context) {
-                        context.addImportStatic("org.hamcrest.Matchers", "equalTo");
-                        return new JavaReferenceNode("equalTo");
-                    }
-                })
-            )
-        )
-    );
-
-    private static Optional<JavaMacro> lookupMacro(Type type) {
+    private static Optional<JavaStaticFunctionMacro> lookupMacro(Type type) {
         if (type instanceof StaticFunctionType staticFunctionType) {
-            var macro = STATIC_FUNCTION_MACROS.getOrDefault(staticFunctionType.namespaceName(), Map.of())
-                .get(staticFunctionType.functionName());
-            return Optional.ofNullable(macro);
+            return JavaMacros.lookupStaticFunctionMacro(staticFunctionType);
         } else {
             return Optional.empty();
         }

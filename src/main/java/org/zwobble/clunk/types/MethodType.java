@@ -3,9 +3,7 @@ package org.zwobble.clunk.types;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public record StaticFunctionType(
-    NamespaceName namespaceName,
-    String functionName,
+public record MethodType(
     List<Type> positionalParams,
     Type returnType
 ) implements FunctionType {
@@ -15,6 +13,6 @@ public record StaticFunctionType(
             .map(param -> param.describe())
             .collect(Collectors.joining(", "));
 
-        return namespaceName + "." + functionName + ": (" + paramsString + ") -> " + returnType.describe();
+        return "(" + paramsString + ") -> " + returnType.describe();
     }
 }

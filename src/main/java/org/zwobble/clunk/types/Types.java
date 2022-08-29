@@ -44,6 +44,10 @@ public class Types {
         return new InterfaceType(namespaceName, name);
     }
 
+    public static MethodType methodType(List<Type> positionalParams, Type returnType) {
+        return new MethodType(positionalParams, returnType);
+    }
+
     public static RecordType recordType(NamespaceName namespaceName, String name) {
         return new RecordType(namespaceName, name);
     }

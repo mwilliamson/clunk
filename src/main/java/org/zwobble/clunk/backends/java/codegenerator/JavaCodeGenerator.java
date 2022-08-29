@@ -32,19 +32,28 @@ public class JavaCodeGenerator {
     }
 
     private static JavaExpressionNode compileCall(TypedCallNode node, JavaCodeGeneratorContext context) {
-        if (node.receiver().type().equals(Types.metaType(Types.STRING_BUILDER))) {
-            return new JavaCallNewNode(
-                new JavaReferenceNode("StringBuilder"),
-                Optional.empty(),
-                List.of(),
-                Optional.empty()
-            );
-        }
-
         var javaReceiver = compileCallReceiver(node.receiver(), context);
         var javaArgs = node.positionalArgs().stream()
             .map(arg -> compileExpression(arg, context))
             .toList();
+
+        if (node.receiver().type() instanceof TypeLevelValueType typeLevelValueType && typeLevelValueType.value() instanceof Type receiverType) {
+            var classMacro = JavaMacros.lookupClassMacro(receiverType);
+            if (classMacro.isPresent()) {
+                return classMacro.get().compileConstructorCall(javaArgs);
+            }
+        }
+
+        if (node.receiver().type() instanceof MethodType && node.receiver() instanceof TypedMemberAccessNode receiverMemberAccess) {
+            var classMacro = JavaMacros.lookupClassMacro(receiverMemberAccess.receiver().type());
+            if (classMacro.isPresent()) {
+                return classMacro.get().compileMethodCall(
+                    compileExpression(receiverMemberAccess.receiver(), context),
+                    receiverMemberAccess.memberName(),
+                    javaArgs
+                );
+            }
+        }
 
         if (node.receiver().type() instanceof TypeLevelValueType typeLevelValueType) {
             var recordType = (RecordType) typeLevelValueType.value();
@@ -60,16 +69,6 @@ public class JavaCodeGenerator {
 
         if (macro.isPresent()) {
             return macro.get().compileReceiver(context);
-        } else if (receiver.type() instanceof MethodType && receiver instanceof TypedMemberAccessNode receiverMemberAccess) {
-            var methodName = receiverMemberAccess.memberName();
-            if (receiverMemberAccess.receiver().type().equals(Types.STRING_BUILDER) && methodName.equals("build")) {
-                methodName = "toString";
-            }
-
-            return new JavaMemberAccessNode(
-                compileExpression(receiverMemberAccess.receiver(), context),
-                methodName
-            );
         } else {
             return compileExpression(receiver, context);
         }

@@ -1,0 +1,12 @@
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+
+test "string builder" {
+    var node = StringBuilder();
+    node.append("Hello");
+    node.append(", ");
+    node.append("world!");
+    var result = node.build();
+
+    assertThat(result, equalTo("Hello, world!"));
+}

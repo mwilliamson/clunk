@@ -2,6 +2,7 @@ package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
+import org.zwobble.clunk.types.MethodType;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.StaticFunctionType;
 import org.zwobble.clunk.types.Types;
@@ -13,6 +14,22 @@ import static org.hamcrest.Matchers.*;
 import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 
 public class SignaturesTests {
+    @Test
+    public void methodHasSignature() {
+        var methodType = new MethodType(
+            List.of(Types.INT),
+            Types.INT
+        );
+        var context = TypeCheckerContext.stub();
+
+        var result = Signatures.toSignature(methodType, context);
+
+        assertThat(result, allOf(
+            has("positionalParams", contains(equalTo(Types.INT))),
+            has("returnType", equalTo(Types.INT))
+        ));
+    }
+
     @Test
     public void staticFunctionHasSignature() {
         var functionType = new StaticFunctionType(

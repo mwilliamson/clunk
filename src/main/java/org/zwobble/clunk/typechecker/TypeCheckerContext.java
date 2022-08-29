@@ -134,7 +134,7 @@ public record TypeCheckerContext(
         return new TypeCheckerContext(stack, namespaceTypes, typeToFields, memberTypes, subtypeRelations);
     }
 
-    public TypeCheckerContext addMemberTypes(RecordType type, Map<String, Type> memberTypes) {
+    public TypeCheckerContext addMemberTypes(Type type, Map<String, Type> memberTypes) {
         return new TypeCheckerContext(
             stack,
             namespaceTypes,

@@ -46,5 +46,9 @@ public class Builtins {
                 Types.UNIT
             ))
         )))
-        .withBuiltins(Builtins.ENVIRONMENT);
+        .withBuiltins(Builtins.ENVIRONMENT)
+        .addMemberTypes(Types.STRING_BUILDER, Map.ofEntries(
+            Map.entry("append", Types.methodType(List.of(Types.STRING), Types.UNIT)),
+            Map.entry("build", Types.methodType(List.of(), Types.STRING))
+        ));
 }

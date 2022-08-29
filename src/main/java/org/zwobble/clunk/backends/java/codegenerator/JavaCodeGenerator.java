@@ -66,6 +66,15 @@ public class JavaCodeGenerator {
     }
 
     private static JavaExpressionNode compileCall(TypedCallNode node, JavaCodeGeneratorContext context) {
+        if (node.receiver().type().equals(Types.metaType(Types.STRING_BUILDER))) {
+            return new JavaCallNewNode(
+                new JavaReferenceNode("StringBuilder"),
+                Optional.empty(),
+                List.of(),
+                Optional.empty()
+            );
+        }
+
         var javaReceiver = compileCallReceiver(node.receiver(), context);
         var javaArgs = node.positionalArgs().stream()
             .map(arg -> compileExpression(arg, context))

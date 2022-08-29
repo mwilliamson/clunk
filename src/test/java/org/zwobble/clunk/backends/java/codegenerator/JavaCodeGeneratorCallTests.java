@@ -14,8 +14,7 @@ import org.zwobble.clunk.types.Types;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class JavaCodeGeneratorCallTests {
@@ -40,6 +39,23 @@ public class JavaCodeGeneratorCallTests {
 
         var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("abs(123)"));
+    }
+
+    @Test
+    public void callToStringBuilderIsCompiledToConstructorCall() {
+        var node = new TypedCallNode(
+            Typed.localReference("StringBuilder", Types.metaType(Types.STRING_BUILDER)),
+            List.of(),
+            Types.STRING_BUILDER,
+            NullSource.INSTANCE
+        );
+        var context = JavaCodeGeneratorContext.stub();
+
+        var result = JavaCodeGenerator.compileExpression(node, context);
+
+        var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("new StringBuilder()"));
+        assertThat(context.imports(), empty());
     }
 
     @Test

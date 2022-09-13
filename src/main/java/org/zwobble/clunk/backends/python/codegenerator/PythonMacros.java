@@ -1,17 +1,39 @@
 package org.zwobble.clunk.backends.python.codegenerator;
 
 import org.zwobble.clunk.backends.python.ast.PythonExpressionNode;
+import org.zwobble.clunk.backends.python.ast.PythonListNode;
 import org.zwobble.clunk.backends.python.ast.PythonReferenceNode;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.StaticFunctionType;
 import org.zwobble.clunk.types.Type;
+import org.zwobble.clunk.types.Types;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PythonMacros {
     private PythonMacros() {
+    }
+
+    private static final Map<Type, PythonClassMacro> CLASS_MACROS = Stream.of(
+        new PythonClassMacro() {
+            @Override
+            public Type receiverType() {
+                return Types.STRING_BUILDER;
+            }
+
+            @Override
+            public PythonExpressionNode compileConstructorCall(List<PythonExpressionNode> positionalArgs) {
+                return new PythonListNode(List.of());
+            }
+        }
+    ).collect(Collectors.toMap(x -> x.receiverType(), x -> x));
+
+    public static Optional<PythonClassMacro> lookupClassMacro(Type type) {
+        return Optional.ofNullable(CLASS_MACROS.get(type));
     }
 
     private static final Map<NamespaceName, Map<String, PythonStaticFunctionMacro>> STATIC_FUNCTION_MACROS = Map.ofEntries(

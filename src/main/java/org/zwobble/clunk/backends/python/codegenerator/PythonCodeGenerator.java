@@ -32,9 +32,19 @@ public class PythonCodeGenerator {
         TypedCallNode node,
         PythonCodeGeneratorContext context
     ) {
+
+        var pythonArgs = node.positionalArgs().stream().map(arg -> compileExpression(arg, context)).toList();
+
+        if (node.receiver().type() instanceof TypeLevelValueType typeLevelValueType && typeLevelValueType.value() instanceof Type receiverType) {
+            var classMacro = PythonMacros.lookupClassMacro(receiverType);
+            if (classMacro.isPresent()) {
+                return classMacro.get().compileConstructorCall(pythonArgs);
+            }
+        }
+
         return new PythonCallNode(
             compileCallReceiver(node.receiver(), context),
-            node.positionalArgs().stream().map(arg -> compileExpression(arg, context)).toList(),
+            pythonArgs,
             List.of()
         );
     }

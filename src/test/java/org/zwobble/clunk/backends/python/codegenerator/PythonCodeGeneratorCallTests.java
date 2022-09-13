@@ -12,6 +12,7 @@ import org.zwobble.clunk.types.Types;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
@@ -37,5 +38,22 @@ public class PythonCodeGeneratorCallTests {
 
         var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("abs(123)"));
+    }
+
+    @Test
+    public void callToStringBuilderIsCompiledToEmptyList() {
+        var node = new TypedCallNode(
+            Typed.localReference("StringBuilder", Types.metaType(Types.STRING_BUILDER)),
+            List.of(),
+            Types.STRING_BUILDER,
+            NullSource.INSTANCE
+        );
+        var context = PythonCodeGeneratorContext.stub();
+
+        var result = PythonCodeGenerator.compileExpression(node, context);
+
+        var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("[]"));
+        assertThat(context.imports(), empty());
     }
 }

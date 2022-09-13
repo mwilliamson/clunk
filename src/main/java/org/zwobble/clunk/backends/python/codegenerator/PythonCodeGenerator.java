@@ -54,19 +54,17 @@ public class PythonCodeGenerator {
     }
 
     private static PythonExpressionNode compileCallConstructor(TypedCallConstructorNode node, PythonCodeGeneratorContext context) {
-        if (node.receiver().type() instanceof TypeLevelValueType typeLevelValueType && typeLevelValueType.value() instanceof Type receiverType) {
+        var classMacro = PythonMacros.lookupClassMacro(node.type());
+        if (classMacro.isPresent()) {
             var pythonArgs = compileArgs(node.positionalArgs(), context);
-            var classMacro = PythonMacros.lookupClassMacro(receiverType);
-            if (classMacro.isPresent()) {
-                return classMacro.get().compileConstructorCall(pythonArgs);
-            }
+            return classMacro.get().compileConstructorCall(pythonArgs);
+        } else {
+            return new PythonCallNode(
+                compileCallReceiver(node.receiver(), context),
+                compileArgs(node.positionalArgs(), context),
+                List.of()
+            );
         }
-
-        return new PythonCallNode(
-            compileCallReceiver(node.receiver(), context),
-            compileArgs(node.positionalArgs(), context),
-            List.of()
-        );
     }
 
     private static PythonExpressionNode compileCallReceiver(

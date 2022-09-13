@@ -1,0 +1,40 @@
+Source path: src/stringBuilderTest.clunk
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+
+test "string builder" {
+    var node = StringBuilder();
+    node.append("Hello");
+    node.append(", ");
+    node.append("world!");
+    var result = node.build();
+
+    assertThat(result, equalTo("Hello, world!"));
+}
+
+
+==============
+
+Output path: stringBuilderTest.py
+from precisely import assert_that
+from precisely import equal_to
+
+def test_string_builder():
+    node = []
+    node.append("Hello")
+    node.append(", ")
+    node.append("world!")
+    result = "".join(node)
+
+    assert_that(result, equal_to("Hello, world!"))
+
+
+==============
+
+============================= test session starts ==============================
+rootdir: ROOTDIR, configfile: tox.ini
+collected 1 item
+
+stringBuilderTest.py .                                                   [100%]
+
+============================== 1 passed in TIME ===============================

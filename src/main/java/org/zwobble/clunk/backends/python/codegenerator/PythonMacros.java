@@ -1,8 +1,6 @@
 package org.zwobble.clunk.backends.python.codegenerator;
 
-import org.zwobble.clunk.backends.python.ast.PythonExpressionNode;
-import org.zwobble.clunk.backends.python.ast.PythonListNode;
-import org.zwobble.clunk.backends.python.ast.PythonReferenceNode;
+import org.zwobble.clunk.backends.python.ast.*;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.StaticFunctionType;
 import org.zwobble.clunk.types.Type;
@@ -28,6 +26,29 @@ public class PythonMacros {
             @Override
             public PythonExpressionNode compileConstructorCall(List<PythonExpressionNode> positionalArgs) {
                 return new PythonListNode(List.of());
+            }
+
+            @Override
+            public PythonExpressionNode compileMethodCall(PythonExpressionNode receiver, String methodName, List<PythonExpressionNode> positionalArgs) {
+                switch (methodName) {
+                    case "append":
+                        return new PythonCallNode(
+                            new PythonAttrAccessNode(receiver, "append"),
+                            positionalArgs,
+                            List.of()
+                        );
+                    case "build":
+                        return new PythonCallNode(
+                            new PythonAttrAccessNode(
+                                new PythonStringLiteralNode(""),
+                                "join"
+                            ),
+                            List.of(receiver),
+                            List.of()
+                        );
+                    default:
+                        throw new UnsupportedOperationException("unexpected method: " + methodName);
+                }
             }
         }
     ).collect(Collectors.toMap(x -> x.receiverType(), x -> x));

@@ -32,19 +32,30 @@ public class PythonCodeGenerator {
         TypedCallNode node,
         PythonCodeGeneratorContext context
     ) {
-
-        var pythonArgs = node.positionalArgs().stream().map(arg -> compileExpression(arg, context)).toList();
-
         if (node.receiver().type() instanceof TypeLevelValueType typeLevelValueType && typeLevelValueType.value() instanceof Type receiverType) {
+            var pythonArgs = node.positionalArgs().stream().map(arg -> compileExpression(arg, context)).toList();
             var classMacro = PythonMacros.lookupClassMacro(receiverType);
             if (classMacro.isPresent()) {
                 return classMacro.get().compileConstructorCall(pythonArgs);
             }
         }
 
+        if (node.receiver().type() instanceof MethodType && node.receiver() instanceof TypedMemberAccessNode receiverMemberAccess) {
+            var pythonArgs = node.positionalArgs().stream().map(arg -> compileExpression(arg, context)).toList();
+            var classMacro = PythonMacros.lookupClassMacro(receiverMemberAccess.receiver().type());
+            if (classMacro.isPresent()) {
+                var pythonReceiver = compileExpression(receiverMemberAccess.receiver(), context);
+                return classMacro.get().compileMethodCall(
+                    pythonReceiver,
+                    receiverMemberAccess.memberName(),
+                    pythonArgs
+                );
+            }
+        }
+
         return new PythonCallNode(
             compileCallReceiver(node.receiver(), context),
-            pythonArgs,
+            node.positionalArgs().stream().map(arg -> compileExpression(arg, context)).toList(),
             List.of()
         );
     }

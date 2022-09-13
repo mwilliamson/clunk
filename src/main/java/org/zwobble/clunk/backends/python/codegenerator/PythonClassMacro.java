@@ -8,4 +8,5 @@ import java.util.List;
 public interface PythonClassMacro {
     Type receiverType();
     PythonExpressionNode compileConstructorCall(List<PythonExpressionNode> positionalArgs);
+    PythonExpressionNode compileMethodCall(PythonExpressionNode receiver, String methodName, List<PythonExpressionNode> positionalArgs);
 }

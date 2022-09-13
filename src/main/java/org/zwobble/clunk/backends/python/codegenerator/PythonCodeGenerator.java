@@ -35,21 +35,20 @@ public class PythonCodeGenerator {
         PythonCodeGeneratorContext context
     ) {
         if (node.receiver().type() instanceof MethodType && node.receiver() instanceof TypedMemberAccessNode receiverMemberAccess) {
-            var pythonArgs = node.positionalArgs().stream().map(arg -> compileExpression(arg, context)).toList();
             var classMacro = PythonMacros.lookupClassMacro(receiverMemberAccess.receiver().type());
             if (classMacro.isPresent()) {
                 var pythonReceiver = compileExpression(receiverMemberAccess.receiver(), context);
                 return classMacro.get().compileMethodCall(
                     pythonReceiver,
                     receiverMemberAccess.memberName(),
-                    pythonArgs
+                    compileArgs(node.positionalArgs(), context)
                 );
             }
         }
 
         return new PythonCallNode(
             compileCallReceiver(node.receiver(), context),
-            node.positionalArgs().stream().map(arg -> compileExpression(arg, context)).toList(),
+            compileArgs(node.positionalArgs(), context),
             List.of()
         );
     }

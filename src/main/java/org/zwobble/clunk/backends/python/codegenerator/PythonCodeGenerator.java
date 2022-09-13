@@ -7,50 +7,12 @@ import org.zwobble.clunk.types.*;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.zwobble.clunk.backends.CaseConverter.camelCaseToSnakeCase;
 
 public class PythonCodeGenerator {
-    private static final Map<NamespaceName, Map<String, PythonStaticFunctionMacro>> STATIC_FUNCTION_MACROS = Map.ofEntries(
-        Map.entry(
-            NamespaceName.fromParts("stdlib", "assertions"),
-            Map.ofEntries(
-                Map.entry("assertThat", new PythonStaticFunctionMacro() {
-                    @Override
-                    public PythonExpressionNode compileReceiver(PythonCodeGeneratorContext context) {
-                        context.addImport(List.of("precisely", "assert_that"));
-                        return new PythonReferenceNode("assert_that");
-                    }
-                })
-            )
-        ),
-        Map.entry(
-            NamespaceName.fromParts("stdlib", "matchers"),
-            Map.ofEntries(
-                Map.entry("equalTo", new PythonStaticFunctionMacro() {
-                    @Override
-                    public PythonExpressionNode compileReceiver(PythonCodeGeneratorContext context) {
-                        context.addImport(List.of("precisely", "equal_to"));
-                        return new PythonReferenceNode("equal_to");
-                    }
-                })
-            )
-        )
-    );
-
-    private static Optional<PythonStaticFunctionMacro> lookupMacro(Type type) {
-        if (type instanceof StaticFunctionType staticFunctionType) {
-            var macro = STATIC_FUNCTION_MACROS.getOrDefault(staticFunctionType.namespaceName(), Map.of())
-                .get(staticFunctionType.functionName());
-            return Optional.ofNullable(macro);
-        } else {
-            return Optional.empty();
-        }
-    }
-
     private static PythonExpressionNode compileAdd(TypedIntAddNode node, PythonCodeGeneratorContext context) {
         return new PythonAddNode(
             compileExpression(node.left(), context),
@@ -81,7 +43,7 @@ public class PythonCodeGenerator {
         TypedExpressionNode receiver,
         PythonCodeGeneratorContext context
     ) {
-        var macro = lookupMacro(receiver.type());
+        var macro = PythonMacros.lookupStaticFunctionMacro(receiver.type());
 
         if (macro.isPresent()) {
             return macro.get().compileReceiver(context);
@@ -261,7 +223,7 @@ public class PythonCodeGenerator {
     }
 
     private static List<PythonStatementNode> compileImport(TypedImportNode import_) {
-        var macro = lookupMacro(import_.type());
+        var macro = PythonMacros.lookupStaticFunctionMacro(import_.type());
         if (macro.isPresent()) {
             return List.of();
         } else if (import_.fieldName().isPresent()) {

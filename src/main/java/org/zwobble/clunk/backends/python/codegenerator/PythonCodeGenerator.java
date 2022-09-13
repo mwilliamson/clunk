@@ -14,15 +14,15 @@ import java.util.stream.Collectors;
 import static org.zwobble.clunk.backends.CaseConverter.camelCaseToSnakeCase;
 
 public class PythonCodeGenerator {
-    private interface PythonMacro {
+    private interface PythonStaticFunctionMacro {
         PythonExpressionNode compileReceiver(PythonCodeGeneratorContext context);
     }
 
-    private static final Map<NamespaceName, Map<String, PythonMacro>> STATIC_FUNCTION_MACROS = Map.ofEntries(
+    private static final Map<NamespaceName, Map<String, PythonStaticFunctionMacro>> STATIC_FUNCTION_MACROS = Map.ofEntries(
         Map.entry(
             NamespaceName.fromParts("stdlib", "assertions"),
             Map.ofEntries(
-                Map.entry("assertThat", new PythonMacro() {
+                Map.entry("assertThat", new PythonStaticFunctionMacro() {
                     @Override
                     public PythonExpressionNode compileReceiver(PythonCodeGeneratorContext context) {
                         context.addImport(List.of("precisely", "assert_that"));
@@ -34,7 +34,7 @@ public class PythonCodeGenerator {
         Map.entry(
             NamespaceName.fromParts("stdlib", "matchers"),
             Map.ofEntries(
-                Map.entry("equalTo", new PythonMacro() {
+                Map.entry("equalTo", new PythonStaticFunctionMacro() {
                     @Override
                     public PythonExpressionNode compileReceiver(PythonCodeGeneratorContext context) {
                         context.addImport(List.of("precisely", "equal_to"));
@@ -45,7 +45,7 @@ public class PythonCodeGenerator {
         )
     );
 
-    private static Optional<PythonMacro> lookupMacro(Type type) {
+    private static Optional<PythonStaticFunctionMacro> lookupMacro(Type type) {
         if (type instanceof StaticFunctionType staticFunctionType) {
             var macro = STATIC_FUNCTION_MACROS.getOrDefault(staticFunctionType.namespaceName(), Map.of())
                 .get(staticFunctionType.functionName());

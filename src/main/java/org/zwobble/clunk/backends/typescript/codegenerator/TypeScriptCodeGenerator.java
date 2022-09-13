@@ -60,6 +60,15 @@ public class TypeScriptCodeGenerator {
         );
     }
 
+    private static List<TypeScriptExpressionNode> compileArgs(
+        List<TypedExpressionNode> positionalArgs,
+        TypeScriptCodeGeneratorContext context
+    ) {
+        return positionalArgs.stream()
+            .map(arg -> compileExpression(arg, context))
+            .toList();
+    }
+
     private static TypeScriptBlankLineNode compileBlankLine(TypedBlankLineNode node, TypeScriptCodeGeneratorContext context) {
         return new TypeScriptBlankLineNode();
     }
@@ -70,18 +79,19 @@ public class TypeScriptCodeGenerator {
 
     private static TypeScriptExpressionNode compileCall(TypedCallNode node, TypeScriptCodeGeneratorContext context) {
         var typeScriptReceiver = compileCallReceiver(node.receiver(), context);
-        var typeScriptArgs = node.positionalArgs().stream()
-            .map(arg -> compileExpression(arg, context))
-            .toList();
+        var typeScriptArgs = compileArgs(node.positionalArgs(), context);
 
-        if (node.receiver().type() instanceof TypeLevelValueType typeLevelValueType) {
-            return new TypeScriptCallNewNode(typeScriptReceiver, typeScriptArgs);
-        } else {
-            return new TypeScriptCallNode(
-                typeScriptReceiver,
-                typeScriptArgs
-            );
-        }
+        return new TypeScriptCallNode(
+            typeScriptReceiver,
+            typeScriptArgs
+        );
+    }
+
+    private static TypeScriptExpressionNode compileCallConstructor(TypedCallConstructorNode node, TypeScriptCodeGeneratorContext context) {
+        var typeScriptReceiver = compileExpression(node.receiver(), context);
+        var typeScriptArgs = compileArgs(node.positionalArgs(), context);
+
+        return new TypeScriptCallNewNode(typeScriptReceiver, typeScriptArgs);
     }
 
     private static TypeScriptExpressionNode compileCallReceiver(TypedExpressionNode receiver, TypeScriptCodeGeneratorContext context) {
@@ -111,6 +121,11 @@ public class TypeScriptCodeGenerator {
             @Override
             public TypeScriptExpressionNode visit(TypedCallNode node) {
                 return compileCall(node, context);
+            }
+
+            @Override
+            public TypeScriptExpressionNode visit(TypedCallConstructorNode node) {
+                return compileCallConstructor(node, context);
             }
 
             @Override

@@ -23,6 +23,12 @@ public class JavaCodeGenerator {
         }
     }
 
+    private static List<JavaExpressionNode> compileArgs(List<TypedExpressionNode> positionalArgs, JavaCodeGeneratorContext context) {
+        return positionalArgs.stream()
+            .map(arg -> compileExpression(arg, context))
+            .toList();
+    }
+
     private static JavaBlankLineNode compileBlankLine(TypedBlankLineNode node, JavaCodeGeneratorContext context) {
         return new JavaBlankLineNode();
     }
@@ -33,16 +39,7 @@ public class JavaCodeGenerator {
 
     private static JavaExpressionNode compileCall(TypedCallNode node, JavaCodeGeneratorContext context) {
         var javaReceiver = compileCallReceiver(node.receiver(), context);
-        var javaArgs = node.positionalArgs().stream()
-            .map(arg -> compileExpression(arg, context))
-            .toList();
-
-        if (node.receiver().type() instanceof TypeLevelValueType typeLevelValueType && typeLevelValueType.value() instanceof Type receiverType) {
-            var classMacro = JavaMacros.lookupClassMacro(receiverType);
-            if (classMacro.isPresent()) {
-                return classMacro.get().compileConstructorCall(javaArgs);
-            }
-        }
+        var javaArgs = compileArgs(node.positionalArgs(), context);
 
         if (node.receiver().type() instanceof MethodType && node.receiver() instanceof TypedMemberAccessNode receiverMemberAccess) {
             var classMacro = JavaMacros.lookupClassMacro(receiverMemberAccess.receiver().type());
@@ -55,13 +52,25 @@ public class JavaCodeGenerator {
             }
         }
 
-        if (node.receiver().type() instanceof TypeLevelValueType typeLevelValueType) {
-            var recordType = (RecordType) typeLevelValueType.value();
+        return new JavaCallNode(javaReceiver, javaArgs);
+    }
+
+    private static JavaExpressionNode compileCallConstructor(TypedCallConstructorNode node, JavaCodeGeneratorContext context) {
+        var javaReceiver = compileExpression(node.receiver(), context);
+        var javaArgs = node.positionalArgs().stream()
+            .map(arg -> compileExpression(arg, context))
+            .toList();
+
+        var classMacro = JavaMacros.lookupClassMacro(node.type());
+        if (classMacro.isPresent()) {
+            return classMacro.get().compileConstructorCall(javaArgs);
+        } else {
+            // TODO: handle not a record type
+            var recordType = (RecordType) node.type();
             context.addImportType(typeToJavaTypeName(recordType, context));
             return new JavaCallNewNode(javaReceiver, Optional.empty(), javaArgs, Optional.empty());
-        } else {
-            return new JavaCallNode(javaReceiver, javaArgs);
         }
+
     }
 
     private static JavaExpressionNode compileCallReceiver(TypedExpressionNode receiver, JavaCodeGeneratorContext context) {
@@ -94,6 +103,11 @@ public class JavaCodeGenerator {
             @Override
             public JavaExpressionNode visit(TypedCallNode node) {
                 return compileCall(node, context);
+            }
+
+            @Override
+            public JavaExpressionNode visit(TypedCallConstructorNode node) {
+                return compileCallConstructor(node, context);
             }
 
             @Override

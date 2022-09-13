@@ -52,7 +52,7 @@ public class TypeCheckCallTests {
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 
-        assertThat(result, isTypedCallNode()
+        assertThat(result, isTypedCallConstructorNode()
             .withReceiver(isTypedReferenceNode().withName("Id").withType(Types.metaType(recordType)))
             .withPositionalArgs(contains(isTypedIntLiteralNode(123)))
             .withType(recordType)

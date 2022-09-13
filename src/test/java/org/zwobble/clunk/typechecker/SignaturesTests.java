@@ -25,6 +25,7 @@ public class SignaturesTests {
         var result = Signatures.toSignature(methodType, context);
 
         assertThat(result, allOf(
+            has("isConstructor", equalTo(false)),
             has("positionalParams", contains(equalTo(Types.INT))),
             has("returnType", equalTo(Types.INT))
         ));
@@ -43,6 +44,7 @@ public class SignaturesTests {
         var result = Signatures.toSignature(functionType, context);
 
         assertThat(result, allOf(
+            has("isConstructor", equalTo(false)),
             has("positionalParams", contains(equalTo(Types.INT))),
             has("returnType", equalTo(Types.INT))
         ));
@@ -57,6 +59,7 @@ public class SignaturesTests {
         var result = Signatures.toSignature(Types.metaType(recordType), context);
 
         assertThat(result, allOf(
+            has("isConstructor", equalTo(true)),
             has("positionalParams", contains(equalTo(Types.INT))),
             has("returnType", equalTo(recordType))
         ));
@@ -69,6 +72,7 @@ public class SignaturesTests {
         var result = Signatures.toSignature(Types.metaType(Types.STRING_BUILDER), context);
 
         assertThat(result, allOf(
+            has("isConstructor", equalTo(true)),
             has("positionalParams", empty()),
             has("returnType", equalTo(Types.STRING_BUILDER))
         ));

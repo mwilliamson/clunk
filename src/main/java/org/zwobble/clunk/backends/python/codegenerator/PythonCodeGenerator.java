@@ -20,6 +20,15 @@ public class PythonCodeGenerator {
         );
     }
 
+    private static List<PythonExpressionNode> compileArgs(
+        List<TypedExpressionNode> positionalArgs,
+        PythonCodeGeneratorContext context
+    ) {
+        return positionalArgs.stream()
+            .map(arg -> compileExpression(arg, context))
+            .toList();
+    }
+
     private static PythonStatementNode compileBlankLine(TypedBlankLineNode node, PythonCodeGeneratorContext context) {
         return new PythonBlankLineNode();
     }
@@ -32,14 +41,6 @@ public class PythonCodeGenerator {
         TypedCallNode node,
         PythonCodeGeneratorContext context
     ) {
-        if (node.receiver().type() instanceof TypeLevelValueType typeLevelValueType && typeLevelValueType.value() instanceof Type receiverType) {
-            var pythonArgs = node.positionalArgs().stream().map(arg -> compileExpression(arg, context)).toList();
-            var classMacro = PythonMacros.lookupClassMacro(receiverType);
-            if (classMacro.isPresent()) {
-                return classMacro.get().compileConstructorCall(pythonArgs);
-            }
-        }
-
         if (node.receiver().type() instanceof MethodType && node.receiver() instanceof TypedMemberAccessNode receiverMemberAccess) {
             var pythonArgs = node.positionalArgs().stream().map(arg -> compileExpression(arg, context)).toList();
             var classMacro = PythonMacros.lookupClassMacro(receiverMemberAccess.receiver().type());
@@ -56,6 +57,22 @@ public class PythonCodeGenerator {
         return new PythonCallNode(
             compileCallReceiver(node.receiver(), context),
             node.positionalArgs().stream().map(arg -> compileExpression(arg, context)).toList(),
+            List.of()
+        );
+    }
+
+    private static PythonExpressionNode compileCallConstructor(TypedCallConstructorNode node, PythonCodeGeneratorContext context) {
+        if (node.receiver().type() instanceof TypeLevelValueType typeLevelValueType && typeLevelValueType.value() instanceof Type receiverType) {
+            var pythonArgs = compileArgs(node.positionalArgs(), context);
+            var classMacro = PythonMacros.lookupClassMacro(receiverType);
+            if (classMacro.isPresent()) {
+                return classMacro.get().compileConstructorCall(pythonArgs);
+            }
+        }
+
+        return new PythonCallNode(
+            compileCallReceiver(node.receiver(), context),
+            compileArgs(node.positionalArgs(), context),
             List.of()
         );
     }
@@ -110,6 +127,11 @@ public class PythonCodeGenerator {
             @Override
             public PythonExpressionNode visit(TypedCallNode node) {
                 return compileCall(node, context);
+            }
+
+            @Override
+            public PythonExpressionNode visit(TypedCallConstructorNode node) {
+                return compileCallConstructor(node, context);
             }
 
             @Override

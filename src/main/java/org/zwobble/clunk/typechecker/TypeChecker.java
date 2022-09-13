@@ -79,12 +79,22 @@ public class TypeChecker {
                 throw new UnexpectedTypeError(paramType, argType, argNode.source());
             }
         }
-        return new TypedCallNode(
-            receiver,
-            typedPositionalArgs,
-            signature.returnType(),
-            node.source()
-        );
+
+        if (signature.isConstructor()) {
+            return new TypedCallConstructorNode(
+                receiver,
+                typedPositionalArgs,
+                signature.returnType(),
+                node.source()
+            );
+        } else {
+            return new TypedCallNode(
+                receiver,
+                typedPositionalArgs,
+                signature.returnType(),
+                node.source()
+            );
+        }
     }
 
     private static TypeCheckFunctionStatementResult<TypedConditionalBranchNode> typeCheckConditionalBranch(

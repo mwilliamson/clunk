@@ -14,10 +14,6 @@ import java.util.stream.Collectors;
 import static org.zwobble.clunk.backends.CaseConverter.camelCaseToSnakeCase;
 
 public class PythonCodeGenerator {
-    private interface PythonStaticFunctionMacro {
-        PythonExpressionNode compileReceiver(PythonCodeGeneratorContext context);
-    }
-
     private static final Map<NamespaceName, Map<String, PythonStaticFunctionMacro>> STATIC_FUNCTION_MACROS = Map.ofEntries(
         Map.entry(
             NamespaceName.fromParts("stdlib", "assertions"),

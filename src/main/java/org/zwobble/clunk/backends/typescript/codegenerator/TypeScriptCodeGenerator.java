@@ -53,13 +53,6 @@ public class TypeScriptCodeGenerator {
         }
     }
 
-    private static TypeScriptExpressionNode compileAdd(TypedIntAddNode node, TypeScriptCodeGeneratorContext context) {
-        return new TypeScriptAddNode(
-            compileExpression(node.left(), context),
-            compileExpression(node.right(), context)
-        );
-    }
-
     private static List<TypeScriptExpressionNode> compileArgs(
         List<TypedExpressionNode> positionalArgs,
         TypeScriptCodeGeneratorContext context
@@ -135,7 +128,7 @@ public class TypeScriptCodeGenerator {
 
             @Override
             public TypeScriptExpressionNode visit(TypedIntAddNode node) {
-                return compileAdd(node, context);
+                return compileIntAdd(node, context);
             }
 
             @Override
@@ -283,6 +276,13 @@ public class TypeScriptCodeGenerator {
                     .map(subtype -> new TypeScriptReferenceNode(subtype.name()))
                     .toList()
             )
+        );
+    }
+
+    private static TypeScriptExpressionNode compileIntAdd(TypedIntAddNode node, TypeScriptCodeGeneratorContext context) {
+        return new TypeScriptAddNode(
+            compileExpression(node.left(), context),
+            compileExpression(node.right(), context)
         );
     }
 

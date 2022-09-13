@@ -13,13 +13,6 @@ import java.util.stream.Collectors;
 import static org.zwobble.clunk.backends.CaseConverter.camelCaseToSnakeCase;
 
 public class PythonCodeGenerator {
-    private static PythonExpressionNode compileAdd(TypedIntAddNode node, PythonCodeGeneratorContext context) {
-        return new PythonAddNode(
-            compileExpression(node.left(), context),
-            compileExpression(node.right(), context)
-        );
-    }
-
     private static List<PythonExpressionNode> compileArgs(
         List<TypedExpressionNode> positionalArgs,
         PythonCodeGeneratorContext context
@@ -141,7 +134,7 @@ public class PythonCodeGenerator {
 
             @Override
             public PythonExpressionNode visit(TypedIntAddNode node) {
-                return compileAdd(node, context);
+                return compileIntAdd(node, context);
             }
 
             @Override
@@ -300,6 +293,13 @@ public class PythonCodeGenerator {
 
     private static PythonStatementNode compileInterface(TypedInterfaceNode node, PythonCodeGeneratorContext context) {
         return new PythonClassDeclarationNode(node.name(), List.of(), List.of(), List.of());
+    }
+
+    private static PythonExpressionNode compileIntAdd(TypedIntAddNode node, PythonCodeGeneratorContext context) {
+        return new PythonAddNode(
+            compileExpression(node.left(), context),
+            compileExpression(node.right(), context)
+        );
     }
 
     private static PythonExpressionNode compileIntLiteral(TypedIntLiteralNode node) {

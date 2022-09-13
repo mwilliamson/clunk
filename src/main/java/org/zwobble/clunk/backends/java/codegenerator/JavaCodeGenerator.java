@@ -57,9 +57,7 @@ public class JavaCodeGenerator {
 
     private static JavaExpressionNode compileCallConstructor(TypedCallConstructorNode node, JavaCodeGeneratorContext context) {
         var javaReceiver = compileExpression(node.receiver(), context);
-        var javaArgs = node.positionalArgs().stream()
-            .map(arg -> compileExpression(arg, context))
-            .toList();
+        var javaArgs = compileArgs(node.positionalArgs(), context);
 
         var classMacro = JavaMacros.lookupClassMacro(node.type());
         if (classMacro.isPresent()) {

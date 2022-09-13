@@ -199,6 +199,12 @@ public class PythonSerialiser {
             }
 
             @Override
+            public Void visit(PythonListNode node) {
+                serialiseList(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(PythonReferenceNode node) {
                 serialiseReference(node, builder);
                 return null;
@@ -289,6 +295,16 @@ public class PythonSerialiser {
 
     private static void serialiseIntLiteral(PythonIntLiteralNode node, CodeBuilder builder) {
         builder.append(node.value().toString());
+    }
+
+    private static void serialiseList(PythonListNode node, CodeBuilder builder) {
+        builder.append("[");
+        forEachInterspersed(
+            node.elements(),
+            element -> serialiseExpression(element, builder, Optional.empty()),
+            () -> builder.append(", ")
+        );
+        builder.append("]");
     }
 
     public static void serialiseModule(PythonModuleNode node, CodeBuilder builder) {

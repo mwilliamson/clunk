@@ -78,6 +78,10 @@ public class Python {
         return new PythonIntLiteralNode(BigInteger.valueOf(value));
     }
 
+    public static PythonListNode list(List<PythonExpressionNode> elements) {
+        return new PythonListNode(elements);
+    }
+
     public static PythonStringLiteralNode string(String value) {
         return new PythonStringLiteralNode(value);
     }

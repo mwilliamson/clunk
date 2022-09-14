@@ -80,28 +80,32 @@ public class TypeChecker {
 
     private static TypedExpressionNode typeCheckCall(UntypedCallNode node, TypeCheckerContext context) {
         var receiver = typeCheckExpression(node.receiver(), context);
-
         var signature = Signatures.toSignature(receiver.type(), context);
-
         var typedPositionalArgs = typeCheckArgs(signature, node, context);
 
-        return switch (signature.signatureType()) {
-            case CONSTRUCTOR -> new TypedCallConstructorNode(
+        return switch (signature) {
+            case SignatureConstructorRecord signature2 -> new TypedCallConstructorNode(
                 receiver,
                 typedPositionalArgs,
-                signature.returnType(),
+                signature2.returnType(),
                 node.source()
             );
-            case METHOD -> new TypedCallNode(
+            case SignatureConstructorStringBuilder signature2 -> new TypedCallConstructorNode(
                 receiver,
                 typedPositionalArgs,
-                signature.returnType(),
+                signature2.returnType(),
                 node.source()
             );
-            case STATIC_METHOD -> new TypedCallNode(
+            case SignatureMethod signature2 -> new TypedCallNode(
                 receiver,
                 typedPositionalArgs,
-                signature.returnType(),
+                signature2.returnType(),
+                node.source()
+            );
+            case SignatureStaticFunction signature2 -> new TypedCallNode(
+                receiver,
+                typedPositionalArgs,
+                signature2.returnType(),
                 node.source()
             );
         };

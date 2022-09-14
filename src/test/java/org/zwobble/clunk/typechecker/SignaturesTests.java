@@ -11,6 +11,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.zwobble.clunk.matchers.CastMatcher.cast;
 import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 
 public class SignaturesTests {
@@ -24,8 +25,8 @@ public class SignaturesTests {
 
         var result = Signatures.toSignature(methodType, context);
 
-        assertThat(result, allOf(
-            has("signatureType", equalTo(SignatureType.METHOD)),
+        assertThat(result, cast(
+            SignatureMethod.class,
             has("positionalParams", contains(equalTo(Types.INT))),
             has("returnType", equalTo(Types.INT))
         ));
@@ -43,8 +44,8 @@ public class SignaturesTests {
 
         var result = Signatures.toSignature(functionType, context);
 
-        assertThat(result, allOf(
-            has("signatureType", equalTo(SignatureType.STATIC_METHOD)),
+        assertThat(result, cast(
+            SignatureStaticFunction.class,
             has("positionalParams", contains(equalTo(Types.INT))),
             has("returnType", equalTo(Types.INT))
         ));
@@ -58,8 +59,8 @@ public class SignaturesTests {
 
         var result = Signatures.toSignature(Types.metaType(recordType), context);
 
-        assertThat(result, allOf(
-            has("signatureType", equalTo(SignatureType.CONSTRUCTOR)),
+        assertThat(result, cast(
+            SignatureConstructorRecord.class,
             has("positionalParams", contains(equalTo(Types.INT))),
             has("returnType", equalTo(recordType))
         ));
@@ -71,8 +72,8 @@ public class SignaturesTests {
 
         var result = Signatures.toSignature(Types.metaType(Types.STRING_BUILDER), context);
 
-        assertThat(result, allOf(
-            has("signatureType", equalTo(SignatureType.CONSTRUCTOR)),
+        assertThat(result, cast(
+            SignatureConstructorStringBuilder.class,
             has("positionalParams", empty()),
             has("returnType", equalTo(Types.STRING_BUILDER))
         ));

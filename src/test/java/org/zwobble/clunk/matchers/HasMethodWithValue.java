@@ -49,7 +49,9 @@ public class HasMethodWithValue<T> extends TypeSafeDiagnosingMatcher<T> {
 
     private Condition<Method> recordComponentOn(T actual, Description mismatch) {
         try {
-            return matched(actual.getClass().getMethod(methodName), mismatch);
+            var method = actual.getClass().getMethod(methodName);
+            method.setAccessible(true);
+            return matched(method, mismatch);
         } catch (NoSuchMethodException e) {
             mismatch.appendText("No method \"" + methodName + "\"");
             return notMatched();

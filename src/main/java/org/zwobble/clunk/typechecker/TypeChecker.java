@@ -37,6 +37,27 @@ public class TypeChecker {
         );
     }
 
+    private static List<TypedExpressionNode> typeCheckArgs(Signature signature, UntypedCallNode node, TypeCheckerContext context) {
+        if (node.positionalArgs().size() != signature.positionalParams().size()) {
+            throw new WrongNumberOfArgumentsError(
+                signature.positionalParams().size(),
+                node.positionalArgs().size(),
+                node.source()
+            );
+        }
+        var typedPositionalArgs = node.positionalArgs().stream().map(arg -> typeCheckExpression(arg, context)).toList();
+
+        for (var argIndex = 0; argIndex < signature.positionalParams().size(); argIndex++) {
+            var paramType = signature.positionalParams().get(argIndex);
+            var argNode = typedPositionalArgs.get(argIndex);
+            var argType = argNode.type();
+            if (!context.isSubType(argType, paramType)) {
+                throw new UnexpectedTypeError(paramType, argType, argNode.source());
+            }
+        }
+        return typedPositionalArgs;
+    }
+
     private static TypeCheckFunctionStatementResult<TypedFunctionStatementNode> typeCheckBlankLineInFunction(
         UntypedBlankLineNode node,
         TypeCheckerContext context
@@ -62,23 +83,7 @@ public class TypeChecker {
 
         var signature = Signatures.toSignature(receiver.type(), context);
 
-        if (node.positionalArgs().size() != signature.positionalParams().size()) {
-            throw new WrongNumberOfArgumentsError(
-                signature.positionalParams().size(),
-                node.positionalArgs().size(),
-                node.source()
-            );
-        }
-        var typedPositionalArgs = node.positionalArgs().stream().map(arg -> typeCheckExpression(arg, context)).toList();
-
-        for (var argIndex = 0; argIndex < signature.positionalParams().size(); argIndex++) {
-            var paramType = signature.positionalParams().get(argIndex);
-            var argNode = typedPositionalArgs.get(argIndex);
-            var argType = argNode.type();
-            if (!context.isSubType(argType, paramType)) {
-                throw new UnexpectedTypeError(paramType, argType, argNode.source());
-            }
-        }
+        var typedPositionalArgs = typeCheckArgs(signature, node, context);
 
         if (signature.isConstructor()) {
             return new TypedCallConstructorNode(

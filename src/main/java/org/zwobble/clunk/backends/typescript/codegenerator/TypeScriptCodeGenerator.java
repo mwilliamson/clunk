@@ -43,14 +43,10 @@ public class TypeScriptCodeGenerator {
         )
     );
 
-    private static Optional<TypeScriptMacro> lookupMacro(Type type) {
-        if (type instanceof StaticFunctionType staticFunctionType) {
-            var macro = STATIC_FUNCTION_MACROS.getOrDefault(staticFunctionType.namespaceName(), Map.of())
-                .get(staticFunctionType.functionName());
-            return Optional.ofNullable(macro);
-        } else {
-            return Optional.empty();
-        }
+    private static Optional<TypeScriptMacro> lookupStaticFunctionMacro(StaticFunctionType staticFunctionType) {
+        var macro = STATIC_FUNCTION_MACROS.getOrDefault(staticFunctionType.namespaceName(), Map.of())
+            .get(staticFunctionType.functionName());
+        return Optional.ofNullable(macro);
     }
 
     private static List<TypeScriptExpressionNode> compileArgs(
@@ -88,7 +84,7 @@ public class TypeScriptCodeGenerator {
     }
 
     private static TypeScriptExpressionNode compileCallStaticFunction(TypedCallStaticFunctionNode node, TypeScriptCodeGeneratorContext context) {
-        var macro = lookupMacro(node.receiver().type());
+        var macro = lookupStaticFunctionMacro(node.receiverType());
 
         if (macro.isPresent()) {
             return new TypeScriptCallNode(

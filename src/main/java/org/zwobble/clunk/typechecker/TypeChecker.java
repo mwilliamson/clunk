@@ -109,7 +109,7 @@ public class TypeChecker {
             case SignatureStaticFunction signature2 -> new TypedCallStaticFunctionNode(
                 receiver,
                 typedPositionalArgs,
-                signature2.returnType(),
+                signature2.type(),
                 node.source()
             );
         };

@@ -15,8 +15,9 @@ public class Typed {
         return new TypedBoolLiteralNode(true, NullSource.INSTANCE);
     }
 
-    public static TypedCallStaticFunctionNode callStatic(TypedExpressionNode receiver, List<TypedExpressionNode> args, Type type) {
-        return new TypedCallStaticFunctionNode(receiver, args, type, NullSource.INSTANCE);
+    public static TypedCallStaticFunctionNode callStatic(TypedExpressionNode receiver, List<TypedExpressionNode> args) {
+        var staticFunctionType = (StaticFunctionType) receiver.type();
+        return new TypedCallStaticFunctionNode(receiver, args, staticFunctionType, NullSource.INSTANCE);
     }
 
     public static TypedConditionalBranchNode conditionalBranch(

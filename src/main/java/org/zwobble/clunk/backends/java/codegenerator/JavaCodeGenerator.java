@@ -64,7 +64,7 @@ public class JavaCodeGenerator {
     }
 
     private static JavaExpressionNode compileCallStaticFunction(TypedCallStaticFunctionNode node, JavaCodeGeneratorContext context) {
-        var macro = JavaMacros.lookupStaticFunctionMacro((StaticFunctionType) node.receiver().type());
+        var macro = JavaMacros.lookupStaticFunctionMacro(node.receiverType());
 
         if (macro.isPresent()) {
             return new JavaCallNode(

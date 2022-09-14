@@ -137,11 +137,9 @@ public class JavaCodeGeneratorNamespaceTests {
                                 Typed.intLiteral(1),
                                 Typed.callStatic(
                                     Typed.localReference("equalTo", equalToType),
-                                    List.of(Typed.intLiteral(2)),
-                                    Types.UNIT
+                                    List.of(Typed.intLiteral(2))
                                 )
-                            ),
-                            Types.UNIT
+                            )
                         )
                     ))
                     .build()

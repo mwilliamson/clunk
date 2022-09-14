@@ -34,18 +34,6 @@ public class PythonCodeGenerator {
         TypedCallNode node,
         PythonCodeGeneratorContext context
     ) {
-        if (node.receiver().type() instanceof MethodType && node.receiver() instanceof TypedMemberAccessNode receiverMemberAccess) {
-            var classMacro = PythonMacros.lookupClassMacro(receiverMemberAccess.receiver().type());
-            if (classMacro.isPresent()) {
-                var pythonReceiver = compileExpression(receiverMemberAccess.receiver(), context);
-                return classMacro.get().compileMethodCall(
-                    pythonReceiver,
-                    receiverMemberAccess.memberName(),
-                    compileArgs(node.positionalArgs(), context)
-                );
-            }
-        }
-
         return new PythonCallNode(
             compileCallReceiver(node.receiver(), context),
             compileArgs(node.positionalArgs(), context),
@@ -65,6 +53,27 @@ public class PythonCodeGenerator {
                 List.of()
             );
         }
+    }
+
+    private static PythonExpressionNode compileCallMethod(TypedCallMethodNode node, PythonCodeGeneratorContext context) {
+        var classMacro = PythonMacros.lookupClassMacro(node.receiver().type());
+        if (classMacro.isPresent()) {
+            var pythonReceiver = compileExpression(node.receiver(), context);
+            return classMacro.get().compileMethodCall(
+                pythonReceiver,
+                node.methodName(),
+                compileArgs(node.positionalArgs(), context)
+            );
+        }
+
+        return new PythonCallNode(
+            new PythonAttrAccessNode(
+                compileExpression(node.receiver(), context),
+                node.methodName()
+            ),
+            compileArgs(node.positionalArgs(), context),
+            List.of()
+        );
     }
 
     private static PythonExpressionNode compileCallReceiver(
@@ -122,6 +131,11 @@ public class PythonCodeGenerator {
             @Override
             public PythonExpressionNode visit(TypedCallConstructorNode node) {
                 return compileCallConstructor(node, context);
+            }
+
+            @Override
+            public PythonExpressionNode visit(TypedCallMethodNode node) {
+                return compileCallMethod(node, context);
             }
 
             @Override

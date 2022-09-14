@@ -25,6 +25,10 @@ public class TypedNodeMatchers {
         return new TypedCallConstructorNodeMatcher(List.of());
     }
 
+    public static TypedCallMethodNodeMatcher isTypedCallMethodNode() {
+        return new TypedCallMethodNodeMatcher(List.of());
+    }
+
     public static Matcher<TypedFunctionStatementNode> isTypedExpressionStatementNode(Matcher<? super TypedExpressionNode> expression) {
         return cast(TypedExpressionStatementNode.class, has("expression", expression));
     }

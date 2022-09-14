@@ -41,17 +41,6 @@ public class JavaCodeGenerator {
         var javaReceiver = compileCallReceiver(node.receiver(), context);
         var javaArgs = compileArgs(node.positionalArgs(), context);
 
-        if (node.receiver().type() instanceof MethodType && node.receiver() instanceof TypedMemberAccessNode receiverMemberAccess) {
-            var classMacro = JavaMacros.lookupClassMacro(receiverMemberAccess.receiver().type());
-            if (classMacro.isPresent()) {
-                return classMacro.get().compileMethodCall(
-                    compileExpression(receiverMemberAccess.receiver(), context),
-                    receiverMemberAccess.memberName(),
-                    javaArgs
-                );
-            }
-        }
-
         return new JavaCallNode(javaReceiver, javaArgs);
     }
 
@@ -68,7 +57,25 @@ public class JavaCodeGenerator {
             context.addImportType(typeToJavaTypeName(recordType, context));
             return new JavaCallNewNode(javaReceiver, Optional.empty(), javaArgs, Optional.empty());
         }
+    }
 
+    private static JavaExpressionNode compileCallMethod(TypedCallMethodNode node, JavaCodeGeneratorContext context) {
+        var classMacro = JavaMacros.lookupClassMacro(node.receiver().type());
+        if (classMacro.isPresent()) {
+            return classMacro.get().compileMethodCall(
+                compileExpression(node.receiver(), context),
+                node.methodName(),
+                compileArgs(node.positionalArgs(), context)
+            );
+        }
+
+        return new JavaCallNode(
+            new JavaMemberAccessNode(
+                compileExpression(node.receiver(), context),
+                node.methodName()
+            ),
+            compileArgs(node.positionalArgs(), context)
+        );
     }
 
     private static JavaExpressionNode compileCallReceiver(TypedExpressionNode receiver, JavaCodeGeneratorContext context) {
@@ -106,6 +113,11 @@ public class JavaCodeGenerator {
             @Override
             public JavaExpressionNode visit(TypedCallConstructorNode node) {
                 return compileCallConstructor(node, context);
+            }
+
+            @Override
+            public JavaExpressionNode visit(TypedCallMethodNode node) {
+                return compileCallMethod(node, context);
             }
 
             @Override

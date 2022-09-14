@@ -87,6 +87,16 @@ public class TypeScriptCodeGenerator {
         return new TypeScriptCallNewNode(typeScriptReceiver, typeScriptArgs);
     }
 
+    private static TypeScriptExpressionNode compileCallMethod(TypedCallMethodNode node, TypeScriptCodeGeneratorContext context) {
+        var typeScriptReceiver = compileExpression(node.receiver(), context);
+        var typeScriptArgs = compileArgs(node.positionalArgs(), context);
+
+        return new TypeScriptCallNode(
+            new TypeScriptPropertyAccessNode(typeScriptReceiver, node.methodName()),
+            typeScriptArgs
+        );
+    }
+
     private static TypeScriptExpressionNode compileCallReceiver(TypedExpressionNode receiver, TypeScriptCodeGeneratorContext context) {
         var macro = lookupMacro(receiver.type());
 
@@ -119,6 +129,11 @@ public class TypeScriptCodeGenerator {
             @Override
             public TypeScriptExpressionNode visit(TypedCallConstructorNode node) {
                 return compileCallConstructor(node, context);
+            }
+
+            @Override
+            public TypeScriptExpressionNode visit(TypedCallMethodNode node) {
+                return compileCallMethod(node, context);
             }
 
             @Override

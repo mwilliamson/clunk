@@ -38,48 +38,4 @@ public class PythonCodeGeneratorCallTests {
         var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("abs(123)"));
     }
-
-    @Test
-    public void stringBuilderAppendIsCompiledToListAppend() {
-        var node = new TypedCallNode(
-            Typed.memberAccess(
-                Typed.localReference(
-                    "builder",
-                    Types.STRING_BUILDER
-                ),
-                "append",
-                Types.methodType(List.of(Types.STRING), Types.UNIT)
-            ),
-            List.of(Typed.string("hello")),
-            Types.INT,
-            NullSource.INSTANCE
-        );
-
-        var result = PythonCodeGenerator.compileExpression(node, PythonCodeGeneratorContext.stub());
-
-        var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
-        assertThat(string, equalTo("builder.append(\"hello\")"));
-    }
-
-    @Test
-    public void stringBuilderBuildIsCompiledToStringJoin() {
-        var node = new TypedCallNode(
-            Typed.memberAccess(
-                Typed.localReference(
-                    "builder",
-                    Types.STRING_BUILDER
-                ),
-                "build",
-                Types.methodType(List.of(), Types.STRING)
-            ),
-            List.of(),
-            Types.UNIT,
-            NullSource.INSTANCE
-        );
-
-        var result = PythonCodeGenerator.compileExpression(node, PythonCodeGeneratorContext.stub());
-
-        var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
-        assertThat(string, equalTo("\"\".join(builder)"));
-    }
 }

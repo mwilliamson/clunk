@@ -2,11 +2,11 @@ package org.zwobble.clunk.backends.typescript.codegenerator;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
-import org.zwobble.clunk.ast.typed.TypedCallNode;
+import org.zwobble.clunk.ast.typed.TypedCallMethodNode;
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiserTesting;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.NamespaceName;
-import org.zwobble.clunk.types.StaticFunctionType;
+import org.zwobble.clunk.types.RecordType;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
@@ -15,19 +15,15 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
-public class TypeScriptCodeGeneratorCallTests {
+public class TypeScriptCodeGeneratorCallMethodTests {
     @Test
-    public void callToStaticFunctionsAreCompiledToCalls() {
-        var node = new TypedCallNode(
+    public void callToMethodsAreCompiledToCalls() {
+        var node = new TypedCallMethodNode(
             Typed.localReference(
-                "abs",
-                new StaticFunctionType(
-                    NamespaceName.fromParts("Math"),
-                    "abs",
-                    List.of(Types.INT),
-                    Types.INT
-                )
+                "x",
+                new RecordType(NamespaceName.fromParts("example"), "X")
             ),
+            "y",
             List.of(Typed.intLiteral(123)),
             Types.INT,
             NullSource.INSTANCE
@@ -36,6 +32,6 @@ public class TypeScriptCodeGeneratorCallTests {
         var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
-        assertThat(string, equalTo("abs(123)"));
+        assertThat(string, equalTo("x.y(123)"));
     }
 }

@@ -7,6 +7,7 @@ import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.*;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
@@ -15,6 +16,30 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
 
 public class TypeCheckCallTests {
+    @Test
+    public void canTypeCheckCallToMethod() {
+        var untypedNode = Untyped.call(
+            Untyped.memberAccess(
+                Untyped.reference("x"),
+                "y"
+            ),
+            List.of(Untyped.intLiteral(123))
+        );
+        var recordType = Types.recordType(NamespaceName.fromParts("example"), "X");
+        var context = TypeCheckerContext.stub()
+            .addLocal("x", recordType, NullSource.INSTANCE)
+            .addMemberTypes(recordType, Map.of("y", Types.methodType(List.of(Types.INT), Types.INT)));
+
+        var result = TypeChecker.typeCheckExpression(untypedNode, context);
+
+        assertThat(result, isTypedCallMethodNode()
+            .withReceiver(isTypedReferenceNode().withName("x").withType(recordType))
+            .withMethodName("y")
+            .withPositionalArgs(contains(isTypedIntLiteralNode(123)))
+            .withType(Types.INT)
+        );
+    }
+
     @Test
     public void canTypeCheckCallToStaticFunction() {
         var untypedNode = Untyped.call(

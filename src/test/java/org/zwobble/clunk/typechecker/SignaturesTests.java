@@ -44,7 +44,7 @@ public class SignaturesTests {
         var result = Signatures.toSignature(functionType, context);
 
         assertThat(result, allOf(
-            has("signatureType", equalTo(SignatureType.METHOD)),
+            has("signatureType", equalTo(SignatureType.STATIC_METHOD)),
             has("positionalParams", contains(equalTo(Types.INT))),
             has("returnType", equalTo(Types.INT))
         ));

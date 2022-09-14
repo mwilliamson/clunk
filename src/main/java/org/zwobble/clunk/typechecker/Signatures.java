@@ -10,7 +10,9 @@ public class Signatures {
 
     public static Signature toSignature(Type type, TypeCheckerContext context) {
         // TODO: handle not callable
-        if (type instanceof FunctionType functionType) {
+        if (type instanceof StaticFunctionType staticFunctionType) {
+            return new Signature(SignatureType.STATIC_METHOD, staticFunctionType.positionalParams(), staticFunctionType.returnType());
+        } else if (type instanceof FunctionType functionType) {
             return new Signature(SignatureType.METHOD, functionType.positionalParams(), functionType.returnType());
         } else if (type instanceof TypeLevelValueType typeLevelValueType && typeLevelValueType.value() instanceof RecordType recordType) {
             var positionalParams = context.fieldsOf(recordType).stream()

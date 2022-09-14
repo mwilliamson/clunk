@@ -98,6 +98,12 @@ public class TypeChecker {
                 signature.returnType(),
                 node.source()
             );
+            case STATIC_METHOD -> new TypedCallNode(
+                receiver,
+                typedPositionalArgs,
+                signature.returnType(),
+                node.source()
+            );
         };
     }
 

@@ -55,6 +55,14 @@ public abstract class ExampleTests {
     }
 
     @Test
+    public void stringBuilder(Snapshotter snapshotter) throws IOException, InterruptedException {
+        runExampleTest(
+            snapshotter,
+            "stringBuilder"
+        );
+    }
+
+    @Test
     public void switches(Snapshotter snapshotter) throws IOException, InterruptedException {
         runExampleTest(
             snapshotter,

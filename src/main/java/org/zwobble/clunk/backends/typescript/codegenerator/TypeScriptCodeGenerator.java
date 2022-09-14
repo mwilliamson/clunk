@@ -28,20 +28,37 @@ public class TypeScriptCodeGenerator {
     }
 
     private static TypeScriptExpressionNode compileCallConstructor(TypedCallConstructorNode node, TypeScriptCodeGeneratorContext context) {
-        var typeScriptReceiver = compileExpression(node.receiver(), context);
-        var typeScriptArgs = compileArgs(node.positionalArgs(), context);
-
-        return new TypeScriptCallNewNode(typeScriptReceiver, typeScriptArgs);
+        var classMacro = TypeScriptMacros.lookupClassMacro(node.type());
+        if (classMacro.isPresent()) {
+            return classMacro.get().compileConstructorCall(
+                compileArgs(node.positionalArgs(), context)
+            );
+        } else {
+            return new TypeScriptCallNewNode(
+                compileExpression(node.receiver(), context),
+                compileArgs(node.positionalArgs(), context)
+            );
+        }
     }
 
     private static TypeScriptExpressionNode compileCallMethod(TypedCallMethodNode node, TypeScriptCodeGeneratorContext context) {
-        var typeScriptReceiver = compileExpression(node.receiver(), context);
-        var typeScriptArgs = compileArgs(node.positionalArgs(), context);
+        var macro = TypeScriptMacros.lookupClassMacro(node.receiver().type());
 
-        return new TypeScriptCallNode(
-            new TypeScriptPropertyAccessNode(typeScriptReceiver, node.methodName()),
-            typeScriptArgs
-        );
+        if (macro.isPresent()) {
+            return macro.get().compileMethodCall(
+                compileExpression(node.receiver(), context),
+                node.methodName(),
+                compileArgs(node.positionalArgs(), context)
+            );
+        } else {
+            return new TypeScriptCallNode(
+                new TypeScriptPropertyAccessNode(
+                    compileExpression(node.receiver(), context),
+                    node.methodName()
+                ),
+                compileArgs(node.positionalArgs(), context)
+            );
+        }
     }
 
     private static TypeScriptExpressionNode compileCallStaticFunction(TypedCallStaticFunctionNode node, TypeScriptCodeGeneratorContext context) {

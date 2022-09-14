@@ -12,6 +12,7 @@ import org.zwobble.clunk.types.Types;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
@@ -30,5 +31,22 @@ public class TypeScriptCodeGeneratorCallConstructorTests {
 
         var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("new Id(123)"));
+    }
+
+    @Test
+    public void callToStringBuilderIsCompiledToEmptyArray() {
+        var node = new TypedCallConstructorNode(
+            Typed.localReference("StringBuilder", Types.metaType(Types.STRING_BUILDER)),
+            List.of(),
+            Types.STRING_BUILDER,
+            NullSource.INSTANCE
+        );
+        var context = TypeScriptCodeGeneratorContext.stub();
+
+        var result = TypeScriptCodeGenerator.compileExpression(node, context);
+
+        var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("[]"));
+        assertThat(context.imports(), empty());
     }
 }

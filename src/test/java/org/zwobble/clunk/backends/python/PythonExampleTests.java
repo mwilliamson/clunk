@@ -22,12 +22,4 @@ public class PythonExampleTests extends ExampleTests {
     protected TargetTestRunner targetTestRunner() {
         return new PythonTestRunner();
     }
-
-    @Test
-    public void stringBuilder(Snapshotter snapshotter) throws IOException, InterruptedException {
-        runExampleTest(
-            snapshotter,
-            "stringBuilder"
-        );
-    }
 }

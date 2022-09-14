@@ -34,4 +34,42 @@ public class TypeScriptCodeGeneratorCallMethodTests {
         var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("x.y(123)"));
     }
+
+    @Test
+    public void stringBuilderAppendIsCompiledToArrayPush() {
+        var node = new TypedCallMethodNode(
+            Typed.localReference(
+                "builder",
+                Types.STRING_BUILDER
+            ),
+            "append",
+            List.of(Typed.string("hello")),
+            Types.INT,
+            NullSource.INSTANCE
+        );
+
+        var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("builder.push(\"hello\")"));
+    }
+
+    @Test
+    public void stringBuilderBuildIsCompiledToArrayJoin() {
+        var node = new TypedCallMethodNode(
+            Typed.localReference(
+                "builder",
+                Types.STRING_BUILDER
+            ),
+            "build",
+            List.of(),
+            Types.UNIT,
+            NullSource.INSTANCE
+        );
+
+        var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("builder.join(\"\")"));
+    }
 }

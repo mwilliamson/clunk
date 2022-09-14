@@ -1,0 +1,39 @@
+Source path: src/stringBuilderTest.clunk
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+
+test "string builder" {
+    var node = StringBuilder();
+    node.append("Hello");
+    node.append(", ");
+    node.append("world!");
+    var result = node.build();
+
+    assertThat(result, equalTo("Hello, world!"));
+}
+
+
+==============
+
+Output path: stringBuilderTest.ts
+import {assertThat} from "@mwilliamson/precisely";
+import {equalTo} from "@mwilliamson/precisely";
+
+test("string builder", function () {
+    let node = [];
+    node.push("Hello");
+    node.push(", ");
+    node.push("world!");
+    let result = node.join("");
+
+    assertThat(result, equalTo("Hello, world!"));
+});
+
+
+==============
+
+
+
+  ✔ string builder
+
+  1 passing (TIME)

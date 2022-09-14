@@ -12,6 +12,10 @@ public class TypeScript {
         return new TypeScriptAddNode(left, right);
     }
 
+    public static TypeScriptArrayNode array(List<TypeScriptExpressionNode> elements) {
+        return new TypeScriptArrayNode(elements);
+    }
+
     public static TypeScriptBoolLiteralNode boolFalse() {
         return new TypeScriptBoolLiteralNode(false);
     }

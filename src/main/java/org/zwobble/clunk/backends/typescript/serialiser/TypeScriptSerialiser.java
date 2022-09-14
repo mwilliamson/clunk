@@ -13,6 +13,16 @@ public class TypeScriptSerialiser {
         serialiseBinaryOperation("+", node, builder);
     }
 
+    private static void serialiseArray(TypeScriptArrayNode node, CodeBuilder builder) {
+        builder.append("[");
+        forEachInterspersed(
+            node.elements(),
+            element -> serialiseExpression(element, builder, Optional.empty()),
+            () -> builder.append(", ")
+        );
+        builder.append("]");
+    }
+
     private static void serialiseBinaryOperation(String operator, TypeScriptBinaryOperationNode node, CodeBuilder builder) {
         serialiseExpression(node.left(), builder, Optional.of(node));
         builder.append(" ");
@@ -208,6 +218,12 @@ public class TypeScriptSerialiser {
             @Override
             public Void visit(TypeScriptAddNode node) {
                 serialiseAdd(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(TypeScriptArrayNode node) {
+                serialiseArray(node, builder);
                 return null;
             }
 

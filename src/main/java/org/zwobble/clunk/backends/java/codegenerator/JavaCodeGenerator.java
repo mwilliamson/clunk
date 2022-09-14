@@ -15,14 +15,6 @@ import static org.zwobble.clunk.backends.CaseConverter.upperCamelCaseToLowerCame
 import static org.zwobble.clunk.util.Lists.last;
 
 public class JavaCodeGenerator {
-    private static Optional<JavaStaticFunctionMacro> lookupMacro(Type type) {
-        if (type instanceof StaticFunctionType staticFunctionType) {
-            return JavaMacros.lookupStaticFunctionMacro(staticFunctionType);
-        } else {
-            return Optional.empty();
-        }
-    }
-
     private static List<JavaExpressionNode> compileArgs(List<TypedExpressionNode> positionalArgs, JavaCodeGeneratorContext context) {
         return positionalArgs.stream()
             .map(arg -> compileExpression(arg, context))
@@ -72,19 +64,18 @@ public class JavaCodeGenerator {
     }
 
     private static JavaExpressionNode compileCallStaticFunction(TypedCallStaticFunctionNode node, JavaCodeGeneratorContext context) {
-        var javaReceiver = compileCallReceiver(node.receiver(), context);
-        var javaArgs = compileArgs(node.positionalArgs(), context);
-
-        return new JavaCallNode(javaReceiver, javaArgs);
-    }
-
-    private static JavaExpressionNode compileCallReceiver(TypedExpressionNode receiver, JavaCodeGeneratorContext context) {
-        var macro = lookupMacro(receiver.type());
+        var macro = JavaMacros.lookupStaticFunctionMacro((StaticFunctionType) node.receiver().type());
 
         if (macro.isPresent()) {
-            return macro.get().compileReceiver(context);
+            return new JavaCallNode(
+                macro.get().compileReceiver(context),
+                compileArgs(node.positionalArgs(), context)
+            );
         } else {
-            return compileExpression(receiver, context);
+            return new JavaCallNode(
+                compileExpression(node.receiver(), context),
+                compileArgs(node.positionalArgs(), context)
+            );
         }
     }
 

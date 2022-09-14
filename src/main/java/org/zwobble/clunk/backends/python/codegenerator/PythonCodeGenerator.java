@@ -37,7 +37,7 @@ public class PythonCodeGenerator {
             return classMacro.get().compileConstructorCall(pythonArgs);
         } else {
             return new PythonCallNode(
-                compileCallReceiver(node.receiver(), context),
+                compileExpression(node.receiver(), context),
                 compileArgs(node.positionalArgs(), context),
                 List.of()
             );
@@ -69,23 +69,20 @@ public class PythonCodeGenerator {
         TypedCallStaticFunctionNode node,
         PythonCodeGeneratorContext context
     ) {
-        return new PythonCallNode(
-            compileCallReceiver(node.receiver(), context),
-            compileArgs(node.positionalArgs(), context),
-            List.of()
-        );
-    }
-
-    private static PythonExpressionNode compileCallReceiver(
-        TypedExpressionNode receiver,
-        PythonCodeGeneratorContext context
-    ) {
-        var macro = PythonMacros.lookupStaticFunctionMacro(receiver.type());
+        var macro = PythonMacros.lookupStaticFunctionMacro(node.receiver().type());
 
         if (macro.isPresent()) {
-            return macro.get().compileReceiver(context);
+            return new PythonCallNode(
+                macro.get().compileReceiver(context),
+                compileArgs(node.positionalArgs(), context),
+                List.of()
+            );
         } else {
-            return compileExpression(receiver, context);
+            return new PythonCallNode(
+                compileExpression(node.receiver(), context),
+                compileArgs(node.positionalArgs(), context),
+                List.of()
+            );
         }
     }
 

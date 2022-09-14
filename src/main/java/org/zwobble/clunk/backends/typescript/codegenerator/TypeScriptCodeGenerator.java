@@ -88,22 +88,18 @@ public class TypeScriptCodeGenerator {
     }
 
     private static TypeScriptExpressionNode compileCallStaticFunction(TypedCallStaticFunctionNode node, TypeScriptCodeGeneratorContext context) {
-        var typeScriptReceiver = compileCallReceiver(node.receiver(), context);
-        var typeScriptArgs = compileArgs(node.positionalArgs(), context);
-
-        return new TypeScriptCallNode(
-            typeScriptReceiver,
-            typeScriptArgs
-        );
-    }
-
-    private static TypeScriptExpressionNode compileCallReceiver(TypedExpressionNode receiver, TypeScriptCodeGeneratorContext context) {
-        var macro = lookupMacro(receiver.type());
+        var macro = lookupMacro(node.receiver().type());
 
         if (macro.isPresent()) {
-            return macro.get().compileReceiver(context);
+            return new TypeScriptCallNode(
+                macro.get().compileReceiver(context),
+                compileArgs(node.positionalArgs(), context)
+            );
         } else {
-            return compileExpression(receiver, context);
+            return new TypeScriptCallNode(
+                compileExpression(node.receiver(), context),
+                compileArgs(node.positionalArgs(), context)
+            );
         }
     }
 

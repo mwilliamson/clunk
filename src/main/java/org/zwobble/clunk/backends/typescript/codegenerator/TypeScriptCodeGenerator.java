@@ -2,53 +2,14 @@ package org.zwobble.clunk.backends.typescript.codegenerator;
 
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.typescript.ast.*;
-import org.zwobble.clunk.types.SubtypeRelations;
 import org.zwobble.clunk.types.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class TypeScriptCodeGenerator {
-    private interface TypeScriptMacro {
-        TypeScriptExpressionNode compileReceiver(TypeScriptCodeGeneratorContext context);
-    }
-
-    private static final Map<NamespaceName, Map<String, TypeScriptMacro>> STATIC_FUNCTION_MACROS = Map.ofEntries(
-        Map.entry(
-            NamespaceName.fromParts("stdlib", "assertions"),
-            Map.ofEntries(
-                Map.entry("assertThat", new TypeScriptMacro() {
-                    @Override
-                    public TypeScriptExpressionNode compileReceiver(TypeScriptCodeGeneratorContext context) {
-                        context.addImport("@mwilliamson/precisely", "assertThat");
-                        return new TypeScriptReferenceNode("assertThat");
-                    }
-                })
-            )
-        ),
-        Map.entry(
-            NamespaceName.fromParts("stdlib", "matchers"),
-            Map.ofEntries(
-                Map.entry("equalTo", new TypeScriptMacro() {
-                    @Override
-                    public TypeScriptExpressionNode compileReceiver(TypeScriptCodeGeneratorContext context) {
-                        context.addImport("@mwilliamson/precisely", "equalTo");
-                        return new TypeScriptReferenceNode("equalTo");
-                    }
-                })
-            )
-        )
-    );
-
-    private static Optional<TypeScriptMacro> lookupStaticFunctionMacro(StaticFunctionType staticFunctionType) {
-        var macro = STATIC_FUNCTION_MACROS.getOrDefault(staticFunctionType.namespaceName(), Map.of())
-            .get(staticFunctionType.functionName());
-        return Optional.ofNullable(macro);
-    }
-
     private static List<TypeScriptExpressionNode> compileArgs(
         List<TypedExpressionNode> positionalArgs,
         TypeScriptCodeGeneratorContext context
@@ -84,7 +45,7 @@ public class TypeScriptCodeGenerator {
     }
 
     private static TypeScriptExpressionNode compileCallStaticFunction(TypedCallStaticFunctionNode node, TypeScriptCodeGeneratorContext context) {
-        var macro = lookupStaticFunctionMacro(node.receiverType());
+        var macro = TypeScriptMacros.lookupStaticFunctionMacro(node.receiverType());
 
         if (macro.isPresent()) {
             return new TypeScriptCallNode(

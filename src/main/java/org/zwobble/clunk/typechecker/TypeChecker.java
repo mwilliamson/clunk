@@ -85,21 +85,20 @@ public class TypeChecker {
 
         var typedPositionalArgs = typeCheckArgs(signature, node, context);
 
-        if (signature.isConstructor()) {
-            return new TypedCallConstructorNode(
+        return switch (signature.signatureType()) {
+            case CONSTRUCTOR -> new TypedCallConstructorNode(
                 receiver,
                 typedPositionalArgs,
                 signature.returnType(),
                 node.source()
             );
-        } else {
-            return new TypedCallNode(
+            case METHOD -> new TypedCallNode(
                 receiver,
                 typedPositionalArgs,
                 signature.returnType(),
                 node.source()
             );
-        }
+        };
     }
 
     private static TypeCheckFunctionStatementResult<TypedConditionalBranchNode> typeCheckConditionalBranch(

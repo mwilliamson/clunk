@@ -8,9 +8,9 @@ public interface TypedExpressionNode extends TypedNode {
 
     interface Visitor<T> {
         T visit(TypedBoolLiteralNode node);
-        T visit(TypedCallNode node);
         T visit(TypedCallConstructorNode node);
         T visit(TypedCallMethodNode node);
+        T visit(TypedCallStaticFunctionNode node);
         T visit(TypedIndexNode node);
         T visit(TypedIntAddNode node);
         T visit(TypedIntLiteralNode node);

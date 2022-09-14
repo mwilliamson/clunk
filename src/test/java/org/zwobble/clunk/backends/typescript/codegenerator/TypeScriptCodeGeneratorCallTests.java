@@ -2,7 +2,7 @@ package org.zwobble.clunk.backends.typescript.codegenerator;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
-import org.zwobble.clunk.ast.typed.TypedCallNode;
+import org.zwobble.clunk.ast.typed.TypedCallStaticFunctionNode;
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiserTesting;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.NamespaceName;
@@ -18,7 +18,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class TypeScriptCodeGeneratorCallTests {
     @Test
     public void callToStaticFunctionsAreCompiledToCalls() {
-        var node = new TypedCallNode(
+        var node = new TypedCallStaticFunctionNode(
             Typed.localReference(
                 "abs",
                 new StaticFunctionType(

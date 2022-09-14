@@ -5,7 +5,7 @@ import org.zwobble.clunk.types.Type;
 
 import java.util.List;
 
-public record TypedCallNode(
+public record TypedCallStaticFunctionNode(
     TypedExpressionNode receiver,
     List<TypedExpressionNode> positionalArgs,
     Type type,

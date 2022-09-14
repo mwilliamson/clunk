@@ -70,16 +70,6 @@ public class TypeScriptCodeGenerator {
         return new TypeScriptBoolLiteralNode(node.value());
     }
 
-    private static TypeScriptExpressionNode compileCall(TypedCallNode node, TypeScriptCodeGeneratorContext context) {
-        var typeScriptReceiver = compileCallReceiver(node.receiver(), context);
-        var typeScriptArgs = compileArgs(node.positionalArgs(), context);
-
-        return new TypeScriptCallNode(
-            typeScriptReceiver,
-            typeScriptArgs
-        );
-    }
-
     private static TypeScriptExpressionNode compileCallConstructor(TypedCallConstructorNode node, TypeScriptCodeGeneratorContext context) {
         var typeScriptReceiver = compileExpression(node.receiver(), context);
         var typeScriptArgs = compileArgs(node.positionalArgs(), context);
@@ -93,6 +83,16 @@ public class TypeScriptCodeGenerator {
 
         return new TypeScriptCallNode(
             new TypeScriptPropertyAccessNode(typeScriptReceiver, node.methodName()),
+            typeScriptArgs
+        );
+    }
+
+    private static TypeScriptExpressionNode compileCallStaticFunction(TypedCallStaticFunctionNode node, TypeScriptCodeGeneratorContext context) {
+        var typeScriptReceiver = compileCallReceiver(node.receiver(), context);
+        var typeScriptArgs = compileArgs(node.positionalArgs(), context);
+
+        return new TypeScriptCallNode(
+            typeScriptReceiver,
             typeScriptArgs
         );
     }
@@ -122,11 +122,6 @@ public class TypeScriptCodeGenerator {
             }
 
             @Override
-            public TypeScriptExpressionNode visit(TypedCallNode node) {
-                return compileCall(node, context);
-            }
-
-            @Override
             public TypeScriptExpressionNode visit(TypedCallConstructorNode node) {
                 return compileCallConstructor(node, context);
             }
@@ -134,6 +129,11 @@ public class TypeScriptCodeGenerator {
             @Override
             public TypeScriptExpressionNode visit(TypedCallMethodNode node) {
                 return compileCallMethod(node, context);
+            }
+
+            @Override
+            public TypeScriptExpressionNode visit(TypedCallStaticFunctionNode node) {
+                return compileCallStaticFunction(node, context);
             }
 
             @Override

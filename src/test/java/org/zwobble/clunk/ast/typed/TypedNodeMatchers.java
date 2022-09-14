@@ -17,16 +17,16 @@ public class TypedNodeMatchers {
         return cast(TypedBoolLiteralNode.class, has("value", equalTo(value)));
     }
 
-    public static TypedCallNodeMatcher isTypedCallNode() {
-        return new TypedCallNodeMatcher(List.of());
-    }
-
     public static TypedCallConstructorNodeMatcher isTypedCallConstructorNode() {
         return new TypedCallConstructorNodeMatcher(List.of());
     }
 
     public static TypedCallMethodNodeMatcher isTypedCallMethodNode() {
         return new TypedCallMethodNodeMatcher(List.of());
+    }
+
+    public static TypedCallStaticFunctionNodeMatcher isTypedCallStaticFunctionNode() {
+        return new TypedCallStaticFunctionNodeMatcher(List.of());
     }
 
     public static Matcher<TypedFunctionStatementNode> isTypedExpressionStatementNode(Matcher<? super TypedExpressionNode> expression) {

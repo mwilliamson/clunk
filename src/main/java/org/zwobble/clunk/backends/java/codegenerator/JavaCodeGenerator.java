@@ -37,13 +37,6 @@ public class JavaCodeGenerator {
         return new JavaBoolLiteralNode(node.value());
     }
 
-    private static JavaExpressionNode compileCall(TypedCallNode node, JavaCodeGeneratorContext context) {
-        var javaReceiver = compileCallReceiver(node.receiver(), context);
-        var javaArgs = compileArgs(node.positionalArgs(), context);
-
-        return new JavaCallNode(javaReceiver, javaArgs);
-    }
-
     private static JavaExpressionNode compileCallConstructor(TypedCallConstructorNode node, JavaCodeGeneratorContext context) {
         var javaReceiver = compileExpression(node.receiver(), context);
         var javaArgs = compileArgs(node.positionalArgs(), context);
@@ -78,6 +71,13 @@ public class JavaCodeGenerator {
         );
     }
 
+    private static JavaExpressionNode compileCallStaticFunction(TypedCallStaticFunctionNode node, JavaCodeGeneratorContext context) {
+        var javaReceiver = compileCallReceiver(node.receiver(), context);
+        var javaArgs = compileArgs(node.positionalArgs(), context);
+
+        return new JavaCallNode(javaReceiver, javaArgs);
+    }
+
     private static JavaExpressionNode compileCallReceiver(TypedExpressionNode receiver, JavaCodeGeneratorContext context) {
         var macro = lookupMacro(receiver.type());
 
@@ -106,11 +106,6 @@ public class JavaCodeGenerator {
             }
 
             @Override
-            public JavaExpressionNode visit(TypedCallNode node) {
-                return compileCall(node, context);
-            }
-
-            @Override
             public JavaExpressionNode visit(TypedCallConstructorNode node) {
                 return compileCallConstructor(node, context);
             }
@@ -118,6 +113,11 @@ public class JavaCodeGenerator {
             @Override
             public JavaExpressionNode visit(TypedCallMethodNode node) {
                 return compileCallMethod(node, context);
+            }
+
+            @Override
+            public JavaExpressionNode visit(TypedCallStaticFunctionNode node) {
+                return compileCallStaticFunction(node, context);
             }
 
             @Override

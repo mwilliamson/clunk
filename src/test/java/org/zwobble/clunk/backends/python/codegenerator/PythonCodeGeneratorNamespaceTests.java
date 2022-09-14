@@ -131,11 +131,11 @@ public class PythonCodeGeneratorNamespaceTests {
                 TypedTestNode.builder()
                     .name("x")
                     .addBodyStatement(Typed.expressionStatement(
-                        Typed.call(
+                        Typed.callStatic(
                             Typed.localReference("assertThat", assertThatType),
                             List.of(
                                 Typed.intLiteral(1),
-                                Typed.call(
+                                Typed.callStatic(
                                     Typed.localReference("equalTo", equalToType),
                                     List.of(Typed.intLiteral(2)),
                                     Types.UNIT

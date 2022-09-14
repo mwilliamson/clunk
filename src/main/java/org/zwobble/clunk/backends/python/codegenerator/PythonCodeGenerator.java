@@ -30,17 +30,6 @@ public class PythonCodeGenerator {
         return new PythonBoolLiteralNode(node.value());
     }
 
-    private static PythonExpressionNode compileCall(
-        TypedCallNode node,
-        PythonCodeGeneratorContext context
-    ) {
-        return new PythonCallNode(
-            compileCallReceiver(node.receiver(), context),
-            compileArgs(node.positionalArgs(), context),
-            List.of()
-        );
-    }
-
     private static PythonExpressionNode compileCallConstructor(TypedCallConstructorNode node, PythonCodeGeneratorContext context) {
         var classMacro = PythonMacros.lookupClassMacro(node.type());
         if (classMacro.isPresent()) {
@@ -71,6 +60,17 @@ public class PythonCodeGenerator {
                 compileExpression(node.receiver(), context),
                 node.methodName()
             ),
+            compileArgs(node.positionalArgs(), context),
+            List.of()
+        );
+    }
+
+    private static PythonExpressionNode compileCallStaticFunction(
+        TypedCallStaticFunctionNode node,
+        PythonCodeGeneratorContext context
+    ) {
+        return new PythonCallNode(
+            compileCallReceiver(node.receiver(), context),
             compileArgs(node.positionalArgs(), context),
             List.of()
         );
@@ -124,11 +124,6 @@ public class PythonCodeGenerator {
             }
 
             @Override
-            public PythonExpressionNode visit(TypedCallNode node) {
-                return compileCall(node, context);
-            }
-
-            @Override
             public PythonExpressionNode visit(TypedCallConstructorNode node) {
                 return compileCallConstructor(node, context);
             }
@@ -136,6 +131,11 @@ public class PythonCodeGenerator {
             @Override
             public PythonExpressionNode visit(TypedCallMethodNode node) {
                 return compileCallMethod(node, context);
+            }
+
+            @Override
+            public PythonExpressionNode visit(TypedCallStaticFunctionNode node) {
+                return compileCallStaticFunction(node, context);
             }
 
             @Override

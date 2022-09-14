@@ -57,7 +57,7 @@ public class TypeCheckCallTests {
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 
-        assertThat(result, isTypedCallNode()
+        assertThat(result, isTypedCallStaticFunctionNode()
             .withReceiver(isTypedReferenceNode().withName("abs").withType(functionType))
             .withPositionalArgs(contains(isTypedIntLiteralNode(123)))
             .withType(Types.INT)

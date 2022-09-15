@@ -63,4 +63,10 @@ public class Types {
     public static Type unify(Type left, Type right) {
         return TypeUnifier.unify(left, right);
     }
+
+    public static Type unify(List<Type> types) {
+        return types.stream()
+            .reduce((x, y) -> unify(x, y))
+            .orElse(Types.OBJECT);
+    }
 }

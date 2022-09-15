@@ -225,6 +225,11 @@ public class TypeChecker {
             }
 
             @Override
+            public TypedExpressionNode visit(UntypedListLiteralNode node) {
+                return typeCheckListLiteral(node, context);
+            }
+
+            @Override
             public TypedExpressionNode visit(UntypedLogicalAndNode node) {
                 return typeCheckLogicalAnd(node, context);
             }
@@ -513,6 +518,25 @@ public class TypeChecker {
 
     private static TypedExpressionNode typeCheckIntLiteral(UntypedIntLiteralNode node) {
         return new TypedIntLiteralNode(node.value(), node.source());
+    }
+
+    private static TypedExpressionNode typeCheckListLiteral(UntypedListLiteralNode node, TypeCheckerContext context) {
+        var elements = node.elements().stream()
+            .map(element -> typeCheckExpression(element, context))
+            .toList();
+
+        var elementTypes = elements.stream()
+            .map(element -> element.type())
+            .distinct()
+            .toList();
+
+        var elementType = Types.unify(elementTypes);
+
+        return new TypedListLiteralNode(
+            elements,
+            elementType,
+            node.source()
+        );
     }
 
     private static TypedExpressionNode typeCheckLogicalAnd(UntypedLogicalAndNode node, TypeCheckerContext context) {

@@ -86,6 +86,10 @@ public class Untyped {
         return new UntypedMemberAccessNode(receiver, memberAccess, NullSource.INSTANCE);
     }
 
+    public static UntypedListLiteralNode listLiteral(List<UntypedExpressionNode> elements) {
+        return new UntypedListLiteralNode(elements, NullSource.INSTANCE);
+    }
+
     public static UntypedLogicalAndNode logicalAnd(UntypedExpressionNode left, UntypedExpressionNode right) {
         return new UntypedLogicalAndNode(left, right, NullSource.INSTANCE);
     }

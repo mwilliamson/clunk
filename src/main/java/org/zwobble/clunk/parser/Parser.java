@@ -169,6 +169,8 @@ public class Parser {
             var expression = parseTopLevelExpression(tokens);
             tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
             return expression;
+        } else if (tokens.isNext(TokenType.SYMBOL_SQUARE_OPEN)) {
+            return parseListLiteral(tokens);
         } else {
             throw new UnexpectedTokenException("primary expression", tokens.peek().describe(), source);
         }
@@ -240,6 +242,22 @@ public class Parser {
             case "\\" -> '\\';
             default -> throw new UnrecognisedEscapeSequenceError("\\" + code, source);
         };
+    }
+
+    private UntypedListLiteralNode parseListLiteral(TokenIterator<TokenType> tokens) {
+        var source = source(tokens);
+
+        tokens.skip(TokenType.SYMBOL_SQUARE_OPEN);
+
+        var elements = parseMany(
+            () -> tokens.isNext(TokenType.SYMBOL_SQUARE_CLOSE),
+            () -> parseTopLevelExpression(tokens),
+            () -> tokens.trySkip(TokenType.SYMBOL_COMMA)
+        );
+
+        tokens.skip(TokenType.SYMBOL_SQUARE_CLOSE);
+
+        return new UntypedListLiteralNode(elements, source);
     }
 
     private class ParseLogicalAnd implements OperatorParselet {

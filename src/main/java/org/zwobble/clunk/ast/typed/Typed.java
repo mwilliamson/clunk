@@ -66,6 +66,10 @@ public class Typed {
         return new TypedIntLiteralNode(value, NullSource.INSTANCE);
     }
 
+    public static TypedListLiteralNode listLiteral(List<TypedExpressionNode> elements, Type elementType) {
+        return new TypedListLiteralNode(elements, elementType, NullSource.INSTANCE);
+    }
+
     public static TypedLocalReferenceNode localReference(String name, Type type) {
         return new TypedLocalReferenceNode(name, type, NullSource.INSTANCE);
     }

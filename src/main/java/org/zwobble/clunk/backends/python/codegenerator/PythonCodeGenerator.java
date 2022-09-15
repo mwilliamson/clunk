@@ -151,6 +151,11 @@ public class PythonCodeGenerator {
             }
 
             @Override
+            public PythonExpressionNode visit(TypedListLiteralNode node) {
+                return compileListLiteral(node, context);
+            }
+
+            @Override
             public PythonExpressionNode visit(TypedLocalReferenceNode node) {
                 return compileLocalReference(node);
             }
@@ -312,6 +317,17 @@ public class PythonCodeGenerator {
 
     private static PythonExpressionNode compileIntLiteral(TypedIntLiteralNode node) {
         return new PythonIntLiteralNode(BigInteger.valueOf(node.value()));
+    }
+
+    private static PythonExpressionNode compileListLiteral(
+        TypedListLiteralNode node,
+        PythonCodeGeneratorContext context
+    ) {
+        return new PythonListNode(
+            node.elements().stream()
+                .map(element -> compileExpression(element, context))
+                .toList()
+        );
     }
 
     private static PythonExpressionNode compileLocalReference(TypedLocalReferenceNode node) {

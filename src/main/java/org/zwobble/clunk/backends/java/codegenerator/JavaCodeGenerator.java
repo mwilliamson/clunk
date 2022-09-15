@@ -127,6 +127,11 @@ public class JavaCodeGenerator {
             }
 
             @Override
+            public JavaExpressionNode visit(TypedListLiteralNode node) {
+                return compileListLiteral(node, context);
+            }
+
+            @Override
             public JavaExpressionNode visit(TypedLocalReferenceNode node) {
                 return compileLocalReference(node);
             }
@@ -321,6 +326,19 @@ public class JavaCodeGenerator {
 
     private static JavaExpressionNode compileIntLiteral(TypedIntLiteralNode node) {
         return new JavaIntLiteralNode(node.value());
+    }
+
+    private static JavaExpressionNode compileListLiteral(
+        TypedListLiteralNode node,
+        JavaCodeGeneratorContext context
+    ) {
+        return new JavaCallNode(
+            // TODO: handle fully-qualified references
+            new JavaReferenceNode("java.util.List.of"),
+            node.elements().stream()
+                .map(element -> compileExpression(element, context))
+                .toList()
+        );
     }
 
     private static JavaExpressionNode compileLocalReference(TypedLocalReferenceNode node) {

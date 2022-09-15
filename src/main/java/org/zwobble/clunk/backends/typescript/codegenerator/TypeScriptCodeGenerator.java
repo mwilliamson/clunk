@@ -122,6 +122,11 @@ public class TypeScriptCodeGenerator {
             }
 
             @Override
+            public TypeScriptExpressionNode visit(TypedListLiteralNode node) {
+                return compileListLiteral(node, context);
+            }
+
+            @Override
             public TypeScriptExpressionNode visit(TypedLocalReferenceNode node) {
                 return compileLocalReference(node);
             }
@@ -273,6 +278,17 @@ public class TypeScriptCodeGenerator {
 
     private static TypeScriptExpressionNode compileIntLiteral(TypedIntLiteralNode node) {
         return new TypeScriptNumberLiteralNode(node.value());
+    }
+
+    private static TypeScriptExpressionNode compileListLiteral(
+        TypedListLiteralNode node,
+        TypeScriptCodeGeneratorContext context
+    ) {
+        return new TypeScriptArrayNode(
+            node.elements().stream()
+                .map(element -> compileExpression(element, context))
+                .toList()
+        );
     }
 
     private static TypeScriptExpressionNode compileLocalReference(TypedLocalReferenceNode node) {

@@ -447,6 +447,15 @@ public class TypeScriptSerialiser {
         builder.newLine();
     }
 
+    private static void serialiseImportNamespace(TypeScriptImportNamespaceNode node, CodeBuilder builder) {
+        builder.append("import * as ");
+        builder.append(node.name());
+        builder.append(" from ");
+        serialiseStringLiteral(node.module(), builder);
+        builder.append(";");
+        builder.newLine();
+    }
+
     private static void serialiseInterfaceDeclaration(TypeScriptInterfaceDeclarationNode node, CodeBuilder builder) {
         builder.append("interface ");
         builder.append(node.name());
@@ -545,6 +554,12 @@ public class TypeScriptSerialiser {
             @Override
             public Void visit(TypeScriptImportNode node) {
                 serialiseImport(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(TypeScriptImportNamespaceNode node) {
+                serialiseImportNamespace(node, builder);
                 return null;
             }
 

@@ -79,6 +79,10 @@ public class TypeScript {
         return new TypeScriptImportNode(module, exports);
     }
 
+    public static TypeScriptImportNamespaceNode importNamespace(String module, String name) {
+        return new TypeScriptImportNamespaceNode(module, name);
+    }
+
     public static TypeScriptIndexNode index(
         TypeScriptExpressionNode receiver,
         TypeScriptExpressionNode index

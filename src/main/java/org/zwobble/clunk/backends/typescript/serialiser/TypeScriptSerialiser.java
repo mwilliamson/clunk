@@ -208,6 +208,17 @@ public class TypeScriptSerialiser {
         serialiseBinaryOperation("==", node, builder);
     }
 
+    private static void serialiseExport(TypeScriptExportNode node, CodeBuilder builder) {
+        builder.append("export {");
+        forEachInterspersed(
+            node.names(),
+            name -> builder.append(name),
+            () -> builder.append(", ")
+        );
+        builder.append("};");
+        builder.newLine();
+    }
+
     public static void serialiseExpression(TypeScriptExpressionNode node, CodeBuilder builder, Optional<TypeScriptExpressionNode> parent) {
         var parenthesize = parent.isPresent() && node.precedence().ordinal() < parent.get().precedence().ordinal();
         if (parenthesize) {
@@ -530,6 +541,12 @@ public class TypeScriptSerialiser {
             @Override
             public Void visit(TypeScriptEnumDeclarationNode node) {
                 serialiseEnumDeclaration(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(TypeScriptExportNode node) {
+                serialiseExport(node, builder);
                 return null;
             }
 

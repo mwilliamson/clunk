@@ -64,6 +64,10 @@ public class TypeScript {
         return new TypeScriptEqualsNode(left, right);
     }
 
+    public static TypeScriptExportNode export(List<String> names) {
+        return new TypeScriptExportNode(names);
+    }
+
     public static TypeScriptStatementNode expressionStatement(TypeScriptExpressionNode expression) {
         return new TypeScriptExpressionStatementNode(expression);
     }

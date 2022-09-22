@@ -6,9 +6,9 @@ import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.ast.typed.TypedTestNode;
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser;
-import org.zwobble.clunk.types.SubtypeRelations;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.StaticFunctionType;
+import org.zwobble.clunk.types.SubtypeRelations;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
@@ -39,6 +39,24 @@ public class TypeScriptCodeGeneratorNamespaceTests {
                 class Second {
                 }
                 """
+        ));
+    }
+
+    @Test
+    public void fieldImportsAreCompiled() {
+        var node = TypedNamespaceNode
+            .builder(NamespaceName.fromParts("example", "project"))
+            .addImport(Typed.import_(NamespaceName.fromParts("a", "b"), "C", Types.INT))
+            .addImport(Typed.import_(NamespaceName.fromParts("example", "sibling"), "D", Types.INT))
+            .build();
+
+        var result = TypeScriptCodeGenerator.compileNamespace(node, SubtypeRelations.EMPTY);
+
+        var string = serialiseToString(result, TypeScriptSerialiser::serialiseModule);
+        assertThat(string, equalTo("""
+            import {C} from "../a/b";
+            import {D} from "./sibling";
+            """
         ));
     }
 

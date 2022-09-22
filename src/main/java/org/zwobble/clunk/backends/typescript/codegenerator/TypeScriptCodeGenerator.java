@@ -245,6 +245,41 @@ public class TypeScriptCodeGenerator {
         );
     }
 
+    private static List<TypeScriptStatementNode> compileImport(TypedImportNode import_, NamespaceName importNamespaceName) {
+        var macro = TypeScriptMacros.lookupStaticFunctionMacro(import_.type());
+        if (macro.isPresent()) {
+            return List.of();
+        } else if (import_.fieldName().isPresent()) {
+            return List.of(new TypeScriptImportNode(
+                namespaceNameToModulePath(import_.namespaceName(), importNamespaceName),
+                List.of(import_.fieldName().get())
+            ));
+        } else {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    private static String namespaceNameToModulePath(NamespaceName importedNamespace, NamespaceName importingNamespace) {
+        var path = new ArrayList<String>();
+
+        var currentNamespaceParts = importingNamespace.parts().subList(0, importedNamespace.parts().size() - 1);
+        while (!currentNamespaceParts.equals(importedNamespace.parts().subList(0, currentNamespaceParts.size()))) {
+            currentNamespaceParts = currentNamespaceParts.subList(0, currentNamespaceParts.size() - 1);
+            path.add("..");
+        }
+
+        if (path.size() == 0) {
+            path.add(".");
+        }
+
+        path.addAll(importedNamespace.parts().subList(
+            currentNamespaceParts.size(),
+            importedNamespace.parts().size()
+        ));
+
+        return String.join("/", path);
+    }
+
     private static TypeScriptExpressionNode compileIndex(
         TypedIndexNode node,
         TypeScriptCodeGeneratorContext context
@@ -338,6 +373,10 @@ public class TypeScriptCodeGenerator {
         var context = new TypeScriptCodeGeneratorContext(subtypeRelations);
 
         var statements = new ArrayList<TypeScriptStatementNode>();
+
+        node.imports().stream()
+            .map(import_ -> compileImport(import_, node.name()))
+            .forEachOrdered(statements::addAll);
 
         node.statements().stream()
             .map(statement -> compileNamespaceStatement(statement, context))

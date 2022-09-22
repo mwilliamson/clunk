@@ -90,9 +90,13 @@ public class TypeScriptMacros {
         )
     );
 
-    public static Optional<TypeScriptStaticFunctionMacro> lookupStaticFunctionMacro(StaticFunctionType staticFunctionType) {
-        var macro = STATIC_FUNCTION_MACROS.getOrDefault(staticFunctionType.namespaceName(), Map.of())
-            .get(staticFunctionType.functionName());
-        return Optional.ofNullable(macro);
+    public static Optional<TypeScriptStaticFunctionMacro> lookupStaticFunctionMacro(Type type) {
+        if (type instanceof StaticFunctionType staticFunctionType) {
+            var macro = STATIC_FUNCTION_MACROS.getOrDefault(staticFunctionType.namespaceName(), Map.of())
+                .get(staticFunctionType.functionName());
+            return Optional.ofNullable(macro);
+        } else {
+            return Optional.empty();
+        }
     }
 }

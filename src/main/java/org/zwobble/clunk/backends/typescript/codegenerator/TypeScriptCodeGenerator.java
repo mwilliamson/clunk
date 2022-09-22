@@ -392,6 +392,11 @@ public class TypeScriptCodeGenerator {
 
         statements.addAll(0, context.imports());
 
+        var exports = node.type().fields().keySet().stream().sorted().toList();
+        if (exports.size() > 0) {
+            statements.add(new TypeScriptExportNode(exports));
+        }
+
         return new TypeScriptModuleNode(name, statements);
     }
 

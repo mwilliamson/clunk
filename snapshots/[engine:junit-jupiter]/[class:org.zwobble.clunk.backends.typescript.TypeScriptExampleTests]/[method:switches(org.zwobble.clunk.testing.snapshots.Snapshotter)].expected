@@ -75,6 +75,7 @@ function evaluate(node: Node): number {
             return literal.value;
     }
 }
+export {Add, Literal, Node, evaluate};
 
 
 ==============

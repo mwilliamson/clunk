@@ -29,5 +29,11 @@ public record NamespaceType(NamespaceName name, Map<String, Type> fields) implem
             fields.add(Map.entry(functionName, type));
             return new Builder(name, fields);
         }
+
+        public Builder addField(String fieldName, Type fieldType) {
+            var fields = new ArrayList<>(this.fields);
+            fields.add(Map.entry(fieldName, fieldType));
+            return new Builder(name, fields);
+        }
     }
 }

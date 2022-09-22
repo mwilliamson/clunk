@@ -57,6 +57,7 @@ test("assert sum", function () {
 
     assertThat(result, equalTo(5));
 });
+export {Add};
 
 
 ==============

@@ -26,6 +26,8 @@ public class TypeScriptCodeGeneratorNamespaceTests {
             .builder(NamespaceName.fromParts("example", "project"))
             .addStatement(record1)
             .addStatement(record2)
+            .addFieldType("First", record1.type())
+            .addFieldType("Second", record2.type())
             .build();
 
         var result = TypeScriptCodeGenerator.compileNamespace(node, SubtypeRelations.EMPTY);
@@ -38,6 +40,7 @@ public class TypeScriptCodeGeneratorNamespaceTests {
                 }
                 class Second {
                 }
+                export {First, Second};
                 """
         ));
     }

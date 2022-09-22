@@ -664,15 +664,16 @@ public class TypeChecker {
             }
         }
 
+        var namespaceType = new NamespaceType(node.name(), fieldTypes);
+
         var typedNode = new TypedNamespaceNode(
             node.name(),
             typedImports,
             typedBody,
+            namespaceType,
             node.sourceType(),
             node.source()
         );
-
-        var namespaceType = new NamespaceType(node.name(), fieldTypes);
 
         return new TypeCheckResult<>(typedNode, context.updateNamespaceType(namespaceType).leave());
     }

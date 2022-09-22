@@ -413,6 +413,7 @@ enum VerticalAlignment {
     SUBSCRIPT,
     BASELINE,
 }
+export {Bookmark, BreakColumn, BreakLine, BreakPage, Comment, CommentReference, Document, DocumentElement, Hyperlink, Image, Note, NoteReference, NoteType, NumberingLevel, NumberingStyle, Paragraph, ParagraphIndent, Run, Style, Tab, Table, TableCell, TableRow, Text, VerticalAlignment};
 
 
 ==============
@@ -485,6 +486,7 @@ class HtmlText {
 function stripEmpty(nodes: (Array)<HtmlNode>): (Array)<HtmlNode> {
     return nodes;
 }
+export {HtmlAttribute, HtmlElement, HtmlForceWrite, HtmlNode, HtmlTag, HtmlText, stripEmpty, text};
 
 
 ==============

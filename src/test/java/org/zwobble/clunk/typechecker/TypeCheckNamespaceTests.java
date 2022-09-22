@@ -40,6 +40,25 @@ public class TypeCheckNamespaceTests {
     }
 
     @Test
+    public void namespaceTypeIsUpdatedInContext() {
+        var namespaceName = NamespaceName.fromParts("example", "project");
+        var untypedNode = UntypedNamespaceNode
+            .builder(namespaceName)
+            .addStatement(UntypedRecordNode.builder("X").build())
+            .build();
+
+        var result = TypeChecker.typeCheckNamespace(untypedNode, TypeCheckerContext.stub());
+
+        assertThat(
+            result.context().typeOfNamespace(namespaceName),
+            equalTo(Optional.of(new NamespaceType(
+                namespaceName,
+                Map.of("X", Types.metaType(Types.recordType(namespaceName, "X")))
+            )))
+        );
+    }
+
+    @Test
     public void importedFieldIsAddedToEnvironment() {
         var untypedNode = UntypedNamespaceNode.builder(NamespaceName.fromParts("example", "project"))
             .addImport(Untyped.import_(NamespaceName.fromParts("x", "y"), "IntAlias"))

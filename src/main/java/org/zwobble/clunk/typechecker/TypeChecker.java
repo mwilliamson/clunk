@@ -70,7 +70,8 @@ public class TypeChecker {
     ) {
         return new TypeCheckNamespaceStatementResult(
             List.of(),
-            context -> new TypedBlankLineNode(node.source())
+            context -> new TypedBlankLineNode(node.source()),
+            () -> Optional.empty()
         );
     }
 
@@ -171,7 +172,8 @@ public class TypeChecker {
                     }
                 )
             ),
-            context -> new TypedEnumNode(typeBox.get(), node.source())
+            context -> new TypedEnumNode(typeBox.get(), node.source()),
+            () -> Optional.empty()
         );
     }
 
@@ -325,7 +327,8 @@ public class TypeChecker {
                     typeCheckStatementsResult.value(),
                     node.source()
                 );
-            }
+            },
+            () -> Optional.empty()
         );
     }
 
@@ -512,7 +515,8 @@ public class TypeChecker {
                     }
                 )
             ),
-            context ->  new TypedInterfaceNode(node.name(), interfaceTypeBox.get(), node.source())
+            context ->  new TypedInterfaceNode(node.name(), interfaceTypeBox.get(), node.source()),
+            () -> Optional.empty()
         );
     }
 
@@ -622,8 +626,13 @@ public class TypeChecker {
         }
 
         var typedBody = new ArrayList<TypedNamespaceStatementNode>();
+        var fieldTypes = new HashMap<String, Type>();
         for (var result : typeCheckResults) {
             typedBody.add(result.value(context));
+            var fieldType = result.fieldType();
+            if (fieldType.isPresent()) {
+                fieldTypes.put(fieldType.get().getKey(), fieldType.get().getValue());
+            }
         }
 
         var typedNode = new TypedNamespaceNode(
@@ -633,7 +642,10 @@ public class TypeChecker {
             node.sourceType(),
             node.source()
         );
-        return new TypeCheckResult<>(typedNode, context.leave());
+
+        var namespaceType = new NamespaceType(node.name(), fieldTypes);
+
+        return new TypeCheckResult<>(typedNode, context.updateNamespaceType(namespaceType).leave());
     }
 
     public static TypeCheckNamespaceStatementResult typeCheckNamespaceStatement(
@@ -793,7 +805,8 @@ public class TypeChecker {
                 typedSupertypeNodesBox.get(),
                 typedBodyDeclarationsBox.get(),
                 node.source()
-            )
+            ),
+            () -> Optional.of(Map.entry(node.name(), Types.metaType(recordTypeBox.get())))
         );
     }
 
@@ -880,7 +893,8 @@ public class TypeChecker {
     ) {
         return new TypeCheckNamespaceStatementResult(
             List.of(),
-            context -> typeCheckSingleLineComment(node)
+            context -> typeCheckSingleLineComment(node),
+            () -> Optional.empty()
         );
     }
 
@@ -966,7 +980,8 @@ public class TypeChecker {
                     typedStatements,
                     node.source()
                 );
-            }
+            },
+            () -> Optional.empty()
         );
     }
 

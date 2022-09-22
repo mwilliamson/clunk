@@ -33,7 +33,7 @@ fun evaluate(node: Node) -> Int {
 
 Output path: switches.test.ts
 import {assertThat} from "@mwilliamson/precisely";
-import {equalTo} from "@mwilliamson/precisely";
+import {deepEqualTo} from "@mwilliamson/precisely";
 
 type Node = Add | Literal;
 
@@ -62,7 +62,7 @@ test("sum", function () {
 
     let result = evaluate(node);
 
-    assertThat(result, equalTo(12));
+    assertThat(result, deepEqualTo(12));
 });
 
 function evaluate(node: Node): number {

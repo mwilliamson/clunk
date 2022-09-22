@@ -11,10 +11,10 @@ test "assert False" {
 
 Output path: simple.test.ts
 import {assertThat} from "@mwilliamson/precisely";
-import {equalTo} from "@mwilliamson/precisely";
+import {deepEqualTo} from "@mwilliamson/precisely";
 
 test("assert False", function () {
-    assertThat(false, equalTo(true));
+    assertThat(false, deepEqualTo(true));
 });
 
 

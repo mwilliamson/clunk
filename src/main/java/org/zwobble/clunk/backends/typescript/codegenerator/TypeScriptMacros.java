@@ -1,9 +1,5 @@
 package org.zwobble.clunk.backends.typescript.codegenerator;
 
-import org.zwobble.clunk.backends.python.ast.PythonAttrAccessNode;
-import org.zwobble.clunk.backends.python.ast.PythonCallNode;
-import org.zwobble.clunk.backends.python.ast.PythonExpressionNode;
-import org.zwobble.clunk.backends.python.ast.PythonStringLiteralNode;
 import org.zwobble.clunk.backends.typescript.ast.*;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.StaticFunctionType;
@@ -82,8 +78,8 @@ public class TypeScriptMacros {
                 Map.entry("equalTo", new TypeScriptStaticFunctionMacro() {
                     @Override
                     public TypeScriptExpressionNode compileReceiver(TypeScriptCodeGeneratorContext context) {
-                        context.addImport("@mwilliamson/precisely", "equalTo");
-                        return new TypeScriptReferenceNode("equalTo");
+                        context.addImport("@mwilliamson/precisely", "deepEqualTo");
+                        return new TypeScriptReferenceNode("deepEqualTo");
                     }
                 })
             )

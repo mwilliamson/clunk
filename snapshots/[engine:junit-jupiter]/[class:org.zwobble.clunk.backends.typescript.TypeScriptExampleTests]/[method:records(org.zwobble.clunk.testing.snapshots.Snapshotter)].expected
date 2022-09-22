@@ -28,7 +28,7 @@ test "assert sum" {
 
 Output path: records.test.ts
 import {assertThat} from "@mwilliamson/precisely";
-import {equalTo} from "@mwilliamson/precisely";
+import {deepEqualTo} from "@mwilliamson/precisely";
 
 class Add {
     readonly left: number;
@@ -46,8 +46,8 @@ class Add {
 test("assert field", function () {
     let add = new Add(2, 3);
 
-    assertThat(add.left, equalTo(2));
-    assertThat(add.right, equalTo(3));
+    assertThat(add.left, deepEqualTo(2));
+    assertThat(add.right, deepEqualTo(3));
 });
 
 test("assert sum", function () {
@@ -55,7 +55,7 @@ test("assert sum", function () {
 
     let result = add.sum;
 
-    assertThat(result, equalTo(5));
+    assertThat(result, deepEqualTo(5));
 });
 export {Add};
 

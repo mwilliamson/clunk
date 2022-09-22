@@ -13,12 +13,12 @@ test "var statement" {
 
 Output path: varStatements.test.ts
 import {assertThat} from "@mwilliamson/precisely";
-import {equalTo} from "@mwilliamson/precisely";
+import {deepEqualTo} from "@mwilliamson/precisely";
 
 test("var statement", function () {
     let result = 5;
 
-    assertThat(result, equalTo(5));
+    assertThat(result, deepEqualTo(5));
 });
 
 

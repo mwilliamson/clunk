@@ -23,22 +23,22 @@ test "assert 42 == 42" {
 
 Output path: simple.test.ts
 import {assertThat} from "@mwilliamson/precisely";
-import {equalTo} from "@mwilliamson/precisely";
+import {deepEqualTo} from "@mwilliamson/precisely";
 
 test("assert False", function () {
-    assertThat(false, equalTo(true));
+    assertThat(false, deepEqualTo(true));
 });
 
 test("assert True", function () {
-    assertThat(true, equalTo(false));
+    assertThat(true, deepEqualTo(false));
 });
 
 test("assert 42 == 47", function () {
-    assertThat(42, equalTo(47));
+    assertThat(42, deepEqualTo(47));
 });
 
 test("assert 42 == 42", function () {
-    assertThat(42, equalTo(42));
+    assertThat(42, deepEqualTo(42));
 });
 
 

@@ -173,7 +173,7 @@ public class TypeChecker {
                 )
             ),
             context -> new TypedEnumNode(typeBox.get(), node.source()),
-            () -> Optional.empty()
+            () -> Optional.of(Map.entry(node.name(), Types.metaType(typeBox.get())))
         );
     }
 

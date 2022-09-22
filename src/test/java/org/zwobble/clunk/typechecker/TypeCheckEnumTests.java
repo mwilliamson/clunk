@@ -8,6 +8,11 @@ import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.EnumType;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.TypeLevelValueType;
+import org.zwobble.clunk.types.Types;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
@@ -30,6 +35,22 @@ public class TypeCheckEnumTests {
                 TypeLevelValueType.class,
                 has("value", isEnumType(NamespaceName.fromParts("a", "b"), "NoteType"))
             )
+        );
+    }
+
+    @Test
+    public void addsNamespaceField() {
+        var untypedNode = Untyped.enum_("NoteType");
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
+
+        assertThat(
+            result.fieldType(),
+            equalTo(Optional.of(Map.entry(
+                "NoteType",
+                Types.metaType(Types.enumType(NamespaceName.fromParts("a", "b"), "NoteType", List.of()))
+            )))
         );
     }
 

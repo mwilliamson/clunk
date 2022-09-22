@@ -154,6 +154,10 @@ record HtmlTag(
     }
 }
 
+fun text(value: String) -> HtmlText {
+    return HtmlText(value);
+}
+
 record HtmlText(value: String) <: HtmlNode
 
 
@@ -459,6 +463,10 @@ class HtmlTag {
     get isVoid(): boolean {
         return this.defaultTagName == "br" || this.defaultTagName == "hr" || this.defaultTagName == "img";
     }
+}
+
+function text(value: string): HtmlText {
+    return new HtmlText(value);
 }
 
 class HtmlText {

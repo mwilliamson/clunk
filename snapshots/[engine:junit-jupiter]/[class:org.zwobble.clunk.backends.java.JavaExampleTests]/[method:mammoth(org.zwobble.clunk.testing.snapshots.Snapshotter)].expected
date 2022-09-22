@@ -154,6 +154,10 @@ record HtmlTag(
     }
 }
 
+fun text(value: String) -> HtmlText {
+    return HtmlText(value);
+}
+
 record HtmlText(value: String) <: HtmlNode
 
 
@@ -497,6 +501,19 @@ package org.zwobble.mammoth.internal.mammoth.html;
 public record HtmlText(String value) implements HtmlNode {
     public <T> T accept(HtmlNode.Visitor<T> visitor) {
         return visitor.visit(this);
+    }
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/mammoth/html/Html.java
+package org.zwobble.mammoth.internal.mammoth.html;
+
+import org.zwobble.mammoth.internal.mammoth.html.HtmlText;
+
+public class Html {
+    public static HtmlText text(String value) {
+        return new HtmlText(value);
     }
 }
 

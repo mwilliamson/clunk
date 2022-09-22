@@ -154,6 +154,10 @@ record HtmlTag(
     }
 }
 
+fun text(value: String) -> HtmlText {
+    return HtmlText(value);
+}
+
 record HtmlText(value: String) <: HtmlNode
 
 
@@ -362,6 +366,9 @@ class HtmlTag:
     @property
     def isVoid(self):
         return self.defaultTagName == "br" or self.defaultTagName == "hr" or self.defaultTagName == "img"
+
+def text(value):
+    return HtmlText(value)
 
 @dataclasses.dataclass(frozen=True)
 class HtmlText:

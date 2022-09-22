@@ -28,4 +28,8 @@ record HtmlTag(
     }
 }
 
+fun text(value: String) -> HtmlText {
+    return HtmlText(value);
+}
+
 record HtmlText(value: String) <: HtmlNode

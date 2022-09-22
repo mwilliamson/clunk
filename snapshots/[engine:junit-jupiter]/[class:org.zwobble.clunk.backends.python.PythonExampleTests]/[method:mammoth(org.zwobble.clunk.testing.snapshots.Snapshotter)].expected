@@ -195,14 +195,14 @@ class BreakColumn:
 
 @dataclasses.dataclass(frozen=True)
 class Comment:
-    commentId: str
+    comment_id: str
     body: typing.List[DocumentElement]
-    authorName: typing.Optional[str]
-    authorInitials: typing.Optional[str]
+    author_name: typing.Optional[str]
+    author_initials: typing.Optional[str]
 
 @dataclasses.dataclass(frozen=True)
 class CommentReference:
-    commentId: str
+    comment_id: str
     def accept(self, visitor):
         return visitor.visit_comment_reference(self)
 
@@ -215,21 +215,21 @@ class Document:
 @dataclasses.dataclass(frozen=True)
 class Hyperlink:
     href: str
-    targetFrame: typing.Optional[str]
+    target_frame: typing.Optional[str]
     children: typing.List[DocumentElement]
     def accept(self, visitor):
         return visitor.visit_hyperlink(self)
 
 @dataclasses.dataclass(frozen=True)
 class Image:
-    altText: typing.Optional[str]
-    contentType: typing.Optional[str]
+    alt_text: typing.Optional[str]
+    content_type: typing.Optional[str]
     def accept(self, visitor):
         return visitor.visit_image(self)
 
 @dataclasses.dataclass(frozen=True)
 class Note:
-    noteType: NoteType
+    note_type: NoteType
     id: str
     body: typing.List[DocumentElement]
 
@@ -239,19 +239,19 @@ class NoteType(enum.Enum):
 
 @dataclasses.dataclass(frozen=True)
 class NoteReference:
-    noteType: NoteType
-    noteId: str
+    note_type: NoteType
+    note_id: str
     def accept(self, visitor):
         return visitor.visit_note_reference(self)
 
 @dataclasses.dataclass(frozen=True)
 class NumberingLevel:
-    levelIndex: str
-    isOrdered: bool
+    level_index: str
+    is_ordered: bool
 
 @dataclasses.dataclass(frozen=True)
 class NumberingStyle:
-    numId: str
+    num_id: str
 
 @dataclasses.dataclass(frozen=True)
 class Paragraph:
@@ -266,18 +266,18 @@ class Paragraph:
 class ParagraphIndent:
     start: typing.Optional[str]
     end: typing.Optional[str]
-    firstLine: typing.Optional[str]
+    first_line: typing.Optional[str]
     hanging: typing.Optional[str]
 
 @dataclasses.dataclass(frozen=True)
 class Run:
-    isBold: bool
-    isItalic: bool
-    isUnderline: bool
-    isStrikethrough: bool
-    isAllCaps: bool
-    isSmallCaps: bool
-    verticalAlignment: VerticalAlignment
+    is_bold: bool
+    is_italic: bool
+    is_underline: bool
+    is_strikethrough: bool
+    is_all_caps: bool
+    is_small_caps: bool
+    vertical_alignment: VerticalAlignment
     style: typing.Optional[str]
     children: typing.List[DocumentElement]
     def accept(self, visitor):
@@ -285,7 +285,7 @@ class Run:
 
 @dataclasses.dataclass(frozen=True)
 class Style:
-    styleId: str
+    style_id: str
     name: typing.Optional[str]
 
 @dataclasses.dataclass(frozen=True)
@@ -311,7 +311,7 @@ class TableCell:
 @dataclasses.dataclass(frozen=True)
 class TableRow:
     children: typing.List[DocumentElement]
-    isHeader: bool
+    is_header: bool
     def accept(self, visitor):
         return visitor.visit_table_row(self)
 
@@ -347,8 +347,8 @@ class HtmlElement:
     tag: HtmlTag
     children: typing.List[HtmlNode]
     @property
-    def defaultTagName(self):
-        return self.tag.defaultTagName
+    def default_tag_name(self):
+        return self.tag.default_tag_name
     def accept(self, visitor):
         return visitor.visit_html_element(self)
 
@@ -359,16 +359,16 @@ class HtmlForceWrite:
 
 @dataclasses.dataclass(frozen=True)
 class HtmlTag:
-    tagNames: typing.List[str]
+    tag_names: typing.List[str]
     attributes: typing.List[HtmlAttribute]
-    isCollapsible: bool
+    is_collapsible: bool
     separator: str
     @property
-    def defaultTagName(self):
+    def default_tag_name(self):
         return self.tagNames[0]
 
     @property
-    def isVoid(self):
+    def is_void(self):
         return self.defaultTagName == "br" or self.defaultTagName == "hr" or self.defaultTagName == "img"
 
 def text(value):

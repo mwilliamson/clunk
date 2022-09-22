@@ -206,7 +206,7 @@ public class PythonCodeGenerator {
 
     private static PythonStatementNode compileFunction(TypedFunctionNode node, PythonCodeGeneratorContext context) {
         return new PythonFunctionNode(
-            camelCaseToSnakeCase(node.name()),
+            pythonizeName(node.name()),
             List.of(),
             node.params().stream().map(param -> compileParam(param)).toList(),
             compileFunctionStatements(node.body(), context)
@@ -358,7 +358,7 @@ public class PythonCodeGenerator {
     ) {
         return new PythonAttrAccessNode(
             compileExpression(node.receiver(), context),
-            node.memberName()
+            pythonizeName(node.memberName())
         );
     }
 
@@ -434,7 +434,7 @@ public class PythonCodeGenerator {
     }
 
     private static String compileParam(TypedParamNode node) {
-        return camelCaseToSnakeCase(node.name());
+        return pythonizeName(node.name());
     }
 
     private static PythonStatementNode compileProperty(
@@ -442,7 +442,7 @@ public class PythonCodeGenerator {
         PythonCodeGeneratorContext context
     ) {
         return new PythonFunctionNode(
-            node.name(),
+            pythonizeName(node.name()),
             List.of(Python.reference("property")),
             List.of("self"),
             compileFunctionStatements(node.body(), context)
@@ -465,7 +465,10 @@ public class PythonCodeGenerator {
         var body = new ArrayList<PythonStatementNode>();
 
         node.fields().stream()
-            .map(field -> Python.variableType(field.name(), compileTypeLevelExpression(field.type(), context)))
+            .map(field -> Python.variableType(
+                pythonizeName(field.name()),
+                compileTypeLevelExpression(field.type(), context)
+            ))
             .collect(Collectors.toCollection(() -> body));
         
         for (var bodyDeclaration : node.body()) {
@@ -650,5 +653,13 @@ public class PythonCodeGenerator {
 
     private static String namespaceNameToModuleName(List<String> parts) {
         return String.join(".", parts);
+    }
+
+    private static String pythonizeName(String name) {
+        if (Character.isLowerCase(name.codePointAt(0))) {
+            return camelCaseToSnakeCase(name);
+        } else {
+            return name;
+        }
     }
 }

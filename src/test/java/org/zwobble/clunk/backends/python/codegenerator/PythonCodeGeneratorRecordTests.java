@@ -36,6 +36,25 @@ public class PythonCodeGeneratorRecordTests {
     }
 
     @Test
+    public void fieldNamesArePythonized() {
+        var node = TypedRecordNode.builder("User")
+            .addField(Typed.recordField("fullName", Typed.typeLevelString()))
+            .build();
+        var context = PythonCodeGeneratorContext.stub();
+
+        var result = PythonCodeGenerator.compileRecord(node, context);
+
+        var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
+        assertThat(string, equalTo(
+            """
+                @dataclasses.dataclass(frozen=True)
+                class User:
+                    full_name: str
+                """
+        ));
+    }
+
+    @Test
     public void whenRecordIsSubtypeOfSealedInterfaceThenAcceptMethodIsGenerated() {
         var node = TypedRecordNode.builder("ExampleRecord")
             .addField(Typed.recordField("first", Typed.typeLevelString()))
@@ -80,6 +99,31 @@ public class PythonCodeGeneratorRecordTests {
                     @property
                     def value(self):
                         return "hello"
+                """
+        ));
+    }
+
+    @Test
+    public void propertyNamesArePythonized() {
+        var node = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "User")
+            .addProperty(Typed.property(
+                "fullName",
+                Typed.typeLevelString(),
+                List.of(Typed.returnStatement(Typed.string("Bob")))
+            ))
+            .build();
+        var context = PythonCodeGeneratorContext.stub();
+
+        var result = PythonCodeGenerator.compileRecord(node, context);
+
+        var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
+        assertThat(string, equalTo(
+            """
+                @dataclasses.dataclass(frozen=True)
+                class User:
+                    @property
+                    def full_name(self):
+                        return "Bob"
                 """
         ));
     }

@@ -61,6 +61,26 @@ public class TypeScriptCodeGeneratorNamespaceTests {
     }
 
     @Test
+    public void namespaceImportsAreCompiled() {
+        var node = TypedNamespaceNode
+            .builder(NamespaceName.fromParts("example", "project"))
+            .addImport(Typed.import_(NamespaceName.fromParts("a"), Types.INT))
+            .addImport(Typed.import_(NamespaceName.fromParts("b", "c"), Types.INT))
+            .addImport(Typed.import_(NamespaceName.fromParts("d", "e", "f"), Types.INT))
+            .build();
+
+        var result = TypeScriptCodeGenerator.compileNamespace(node, SubtypeRelations.EMPTY);
+
+        var string = serialiseToString(result, TypeScriptSerialiser::serialiseModule);
+        assertThat(string, equalTo("""
+            import * as a from "../a";
+            import * as c from "../b/c";
+            import * as f from "../d/e/f";
+            """
+        ));
+    }
+
+    @Test
     public void macroImportsDoNotImmediatelyGenerateImports() {
         var node = TypedNamespaceNode
             .builder(NamespaceName.fromParts("example", "project"))

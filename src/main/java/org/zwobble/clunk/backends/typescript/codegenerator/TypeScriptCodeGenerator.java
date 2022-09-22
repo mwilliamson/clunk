@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.zwobble.clunk.util.Lists.last;
+
 public class TypeScriptCodeGenerator {
     private static List<TypeScriptExpressionNode> compileArgs(
         List<TypedExpressionNode> positionalArgs,
@@ -245,24 +247,30 @@ public class TypeScriptCodeGenerator {
         );
     }
 
-    private static List<TypeScriptStatementNode> compileImport(TypedImportNode import_, NamespaceName importNamespaceName) {
+    private static List<TypeScriptStatementNode> compileImport(TypedImportNode import_, NamespaceName importingNamespaceName) {
         var macro = TypeScriptMacros.lookupStaticFunctionMacro(import_.type());
         if (macro.isPresent()) {
             return List.of();
-        } else if (import_.fieldName().isPresent()) {
+        }
+
+        var modulePath = namespaceNameToModulePath(import_.namespaceName(), importingNamespaceName);
+        if (import_.fieldName().isPresent()) {
             return List.of(new TypeScriptImportNode(
-                namespaceNameToModulePath(import_.namespaceName(), importNamespaceName),
+                modulePath,
                 List.of(import_.fieldName().get())
             ));
         } else {
-            throw new UnsupportedOperationException();
+            return List.of(new TypeScriptImportNamespaceNode(
+                modulePath,
+                last(import_.namespaceName().parts())
+            ));
         }
     }
 
     private static String namespaceNameToModulePath(NamespaceName importedNamespace, NamespaceName importingNamespace) {
         var path = new ArrayList<String>();
 
-        var currentNamespaceParts = importingNamespace.parts().subList(0, importedNamespace.parts().size() - 1);
+        var currentNamespaceParts = importingNamespace.parts().subList(0, importingNamespace.parts().size() - 1);
         while (!currentNamespaceParts.equals(importedNamespace.parts().subList(0, currentNamespaceParts.size()))) {
             currentNamespaceParts = currentNamespaceParts.subList(0, currentNamespaceParts.size() - 1);
             path.add("..");

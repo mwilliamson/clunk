@@ -7,18 +7,17 @@ import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.EnumType;
 import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.Type;
 import org.zwobble.clunk.types.TypeLevelValueType;
-import org.zwobble.clunk.types.Types;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.matchers.CastMatcher.cast;
 import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.clunk.matchers.MapEntryMatcher.isMapEntry;
+import static org.zwobble.clunk.matchers.OptionalMatcher.present;
+import static org.zwobble.clunk.matchers.TypeMatchers.isMetaType;
 import static org.zwobble.clunk.typechecker.TypeCheckNamespaceStatementTesting.typeCheckNamespaceStatementAllPhases;
 
 public class TypeCheckEnumTests {
@@ -47,10 +46,10 @@ public class TypeCheckEnumTests {
 
         assertThat(
             result.fieldType(),
-            equalTo(Optional.of(Map.entry(
-                "NoteType",
-                Types.metaType(Types.enumType(NamespaceName.fromParts("a", "b"), "NoteType", List.of()))
-            )))
+            present(isMapEntry(
+                equalTo("NoteType"),
+                isMetaType(isEnumType(NamespaceName.fromParts("a", "b"), "NoteType"))
+            ))
         );
     }
 
@@ -67,7 +66,7 @@ public class TypeCheckEnumTests {
         ));
     }
 
-    private Matcher<?> isEnumType(NamespaceName namespaceName, String name) {
+    private Matcher<Type> isEnumType(NamespaceName namespaceName, String name) {
         return cast(EnumType.class, has("namespaceName", equalTo(namespaceName)), has("name", equalTo(name)));
     }
 }

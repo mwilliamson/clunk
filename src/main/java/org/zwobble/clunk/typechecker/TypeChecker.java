@@ -278,6 +278,7 @@ public class TypeChecker {
         var functionTypeBox = new Box<StaticFunctionType>();
         var typedParamNodesBox = new Box<List<TypedParamNode>>();
         var typedReturnTypeNodeBox = new Box<TypedTypeLevelExpressionNode>();
+        var typedBodyBox = new Box<List<TypedFunctionStatementNode>>();
 
         return new TypeCheckNamespaceStatementResult(
             List.of(
@@ -302,6 +303,28 @@ public class TypeChecker {
                         functionTypeBox.set(type);
                         return context.addLocal(node.name(), type, node.source());
                     }
+                ),
+
+                new PendingTypeCheck(
+                    TypeCheckerPhase.TYPE_CHECK_BODIES,
+                    context -> {
+                        var functionType = functionTypeBox.get();
+                        var typedParamNodes = typedParamNodesBox.get();
+
+                        var bodyContext = context.enterFunction(functionType.returnType());
+                        for (var typedParamNode : typedParamNodes) {
+                            bodyContext = bodyContext.addLocal(typedParamNode.name(), (Type) typedParamNode.type().value(), typedParamNode.source());
+                        }
+
+                        var typeCheckStatementsResult = typeCheckFunctionBody(
+                            node.body(),
+                            node.source(),
+                            bodyContext
+                        );
+                        typedBodyBox.set(typeCheckStatementsResult.value());
+
+                        return context;
+                    }
                 )
             ),
             context -> {
@@ -314,17 +337,11 @@ public class TypeChecker {
                     bodyContext = bodyContext.addLocal(typedParamNode.name(), (Type) typedParamNode.type().value(), typedParamNode.source());
                 }
 
-                var typeCheckStatementsResult = typeCheckFunctionBody(
-                    node.body(),
-                    node.source(),
-                    bodyContext
-                );
-
                 return new TypedFunctionNode(
                     node.name(),
                     typedParamNodes,
                     typedReturnTypeNode,
-                    typeCheckStatementsResult.value(),
+                    typedBodyBox.get(),
                     node.source()
                 );
             },

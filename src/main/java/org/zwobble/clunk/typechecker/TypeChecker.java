@@ -536,7 +536,10 @@ public class TypeChecker {
                 )
             ),
             context ->  new TypedInterfaceNode(node.name(), interfaceTypeBox.get(), node.source()),
-            () -> Optional.empty()
+            () -> Optional.of(Map.entry(
+                node.name(),
+                Types.metaType(interfaceTypeBox.get())
+            ))
         );
     }
 

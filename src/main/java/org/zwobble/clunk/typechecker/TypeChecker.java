@@ -345,7 +345,10 @@ public class TypeChecker {
                     node.source()
                 );
             },
-            () -> Optional.empty()
+            () -> Optional.of(Map.entry(
+                node.name(),
+                functionTypeBox.get()
+            ))
         );
     }
 

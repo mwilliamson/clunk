@@ -13,6 +13,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
+import static org.zwobble.clunk.matchers.CastMatcher.cast;
+import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.clunk.matchers.MapEntryMatcher.isMapEntry;
+import static org.zwobble.clunk.matchers.OptionalMatcher.present;
 import static org.zwobble.clunk.typechecker.TypeCheckNamespaceStatementTesting.typeCheckNamespaceStatementAllPhases;
 
 public class TypeCheckFunctionTests {
@@ -137,5 +141,23 @@ public class TypeCheckFunctionTests {
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, TypeCheckerContext.stub());
 
         assertThat(result.context().currentFrame().environment().containsKey("x"), equalTo(false));
+    }
+
+    @Test
+    public void addsNamespaceField() {
+        var untypedNode = UntypedFunctionNode.builder()
+            .name("f")
+            .build();
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
+
+        assertThat(
+            result.fieldType(),
+            present(isMapEntry(
+                equalTo("f"),
+                cast(StaticFunctionType.class, has("functionName", equalTo("f")))
+            ))
+        );
     }
 }

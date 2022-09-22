@@ -160,6 +160,10 @@ fun text(value: String) -> HtmlText {
 
 record HtmlText(value: String) <: HtmlNode
 
+fun stripEmpty(nodes: List[HtmlNode]) -> List[HtmlNode] {
+    return nodes;
+}
+
 
 ==============
 
@@ -514,6 +518,9 @@ import org.zwobble.mammoth.internal.mammoth.html.HtmlText;
 public class Html {
     public static HtmlText text(String value) {
         return new HtmlText(value);
+    }
+    public static java.util.List<HtmlNode> stripEmpty(java.util.List<HtmlNode> nodes) {
+        return nodes;
     }
 }
 

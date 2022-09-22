@@ -160,6 +160,10 @@ fun text(value: String) -> HtmlText {
 
 record HtmlText(value: String) <: HtmlNode
 
+fun stripEmpty(nodes: List[HtmlNode]) -> List[HtmlNode] {
+    return nodes;
+}
+
 
 ==============
 
@@ -379,6 +383,9 @@ class HtmlText:
     value: str
     def accept(self, visitor):
         return visitor.visit_html_text(self)
+
+def strip_empty(nodes):
+    return nodes
 
 
 ==============

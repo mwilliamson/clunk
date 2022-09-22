@@ -33,3 +33,7 @@ fun text(value: String) -> HtmlText {
 }
 
 record HtmlText(value: String) <: HtmlNode
+
+fun stripEmpty(nodes: List[HtmlNode]) -> List[HtmlNode] {
+    return nodes;
+}

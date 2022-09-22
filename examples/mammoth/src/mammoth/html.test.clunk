@@ -1,0 +1,11 @@
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+import mammoth/html;
+
+test "text nodes with text are not stripped" {
+    var nodes = [html.text("H")];
+
+    var result = html.stripEmpty(nodes);
+
+    assertThat(result, equalTo([html.text("H")]));
+}

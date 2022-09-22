@@ -57,4 +57,40 @@ public class TypesTests {
 
         assertThat(result, equalTo(false));
     }
+
+    @Test
+    public void listOfXIsSubtypeOfListOfX() {
+        var subtypeRelations = SubtypeRelations.EMPTY;
+
+        var result = subtypeRelations.isSubType(Types.list(Types.STRING), Types.list(Types.STRING));
+
+        assertThat(result, equalTo(true));
+    }
+
+    @Test
+    public void listOfXIsNotSubtypeOfListOfUnrelatedY() {
+        var subtypeRelations = SubtypeRelations.EMPTY;
+
+        var result = subtypeRelations.isSubType(Types.list(Types.STRING), Types.list(Types.INT));
+
+        assertThat(result, equalTo(false));
+    }
+
+    @Test
+    public void whenXIsSubtypeOfYThenListOfXIsSubtypeOfListOfY() {
+        var subtypeRelations = SubtypeRelations.EMPTY;
+
+        var result = subtypeRelations.isSubType(Types.list(Types.STRING), Types.list(Types.OBJECT));
+
+        assertThat(result, equalTo(true));
+    }
+
+    @Test
+    public void whenXIsSupertypeOfYThenListOfXIsNotSubtypeOfListOfY() {
+        var subtypeRelations = SubtypeRelations.EMPTY;
+
+        var result = subtypeRelations.isSubType(Types.list(Types.OBJECT), Types.list(Types.STRING));
+
+        assertThat(result, equalTo(false));
+    }
 }

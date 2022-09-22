@@ -40,6 +40,10 @@ public class SubtypeRelations {
             return true;
         }
 
+        if (subtype instanceof ListType subtypeList && supertype instanceof ListType supertypeList) {
+            return isSubType(subtypeList.elementType(), supertypeList.elementType());
+        }
+
         return false;
     }
 

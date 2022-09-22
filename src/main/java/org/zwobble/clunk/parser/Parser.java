@@ -1,5 +1,6 @@
 package org.zwobble.clunk.parser;
 
+import org.zwobble.clunk.ast.SourceType;
 import org.zwobble.clunk.ast.untyped.*;
 import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.tokeniser.TokenIterator;
@@ -321,7 +322,7 @@ public class Parser {
         }
     }
 
-    public UntypedNamespaceNode parseNamespace(TokenIterator<TokenType> tokens, NamespaceName name) {
+    public UntypedNamespaceNode parseNamespace(TokenIterator<TokenType> tokens, NamespaceName name, SourceType sourceType) {
         var source = source(tokens);
 
         var imports = parseMany(
@@ -336,7 +337,7 @@ public class Parser {
             () -> true
         );
 
-        return new UntypedNamespaceNode(name, imports, statements, source);
+        return new UntypedNamespaceNode(name, imports, statements, sourceType, source);
     }
 
     private UntypedImportNode parseImport(TokenIterator<TokenType> tokens) {

@@ -1,5 +1,6 @@
 package org.zwobble.clunk;
 
+import org.zwobble.clunk.ast.SourceType;
 import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
 import org.zwobble.clunk.backends.Backend;
 import org.zwobble.clunk.builtins.Builtins;
@@ -39,16 +40,30 @@ public class Compiler {
         var typedNamespaceNodes = new ArrayList<TypedNamespaceNode>();
         var typeCheckerContext = Builtins.TYPE_CHECKER_CONTEXT;
         for (var sourcePath : sourcePaths) {
-            var namespaceParts = sourceRoot.relativize(sourcePath).resolveSibling(
-                sourcePath.getFileName().toString().replaceAll("\\.clunk$", "")
-            );
-            var namespaceName = new NamespaceName(pathToParts(namespaceParts));
-            var result = readFile(sourcePath, namespaceName, typeCheckerContext);
+            var sourcePathInfo = sourcePathInfo(sourceRoot.relativize(sourcePath));
+            var result = readFile(sourcePath, sourcePathInfo, typeCheckerContext);
             typedNamespaceNodes.add(result.typedNode());
             typeCheckerContext = result.context();
         }
 
         backend.compile(new TypeCheckResult<>(typedNamespaceNodes, typeCheckerContext), outputRoot, projectConfig);
+    }
+
+    private record SourcePathInfo(NamespaceName namespaceName, SourceType sourceType) {
+    }
+
+    private SourcePathInfo sourcePathInfo(Path sourcePath) {
+        // TODO: tidy this up! and test it
+        var fileNameParts = sourcePath.getFileName().toString().split("\\.");
+        var namespaceParts = sourcePath.resolveSibling(fileNameParts[0]);
+        var namespaceName = new NamespaceName(pathToParts(namespaceParts));
+        if (fileNameParts.length == 2) {
+            return new SourcePathInfo(namespaceName, SourceType.SOURCE);
+        } else if (fileNameParts.length == 3 && fileNameParts[1].equals("test")) {
+            return new SourcePathInfo(namespaceName, SourceType.TEST);
+        } else {
+            throw new UnsupportedOperationException();
+        }
     }
 
     private List<String> pathToParts(Path namespaceParts) {
@@ -87,7 +102,7 @@ public class Compiler {
 
     private TypeCheckResult<TypedNamespaceNode> readFile(
         Path sourcePath,
-        NamespaceName namespaceName,
+        SourcePathInfo sourcePathInfo,
         TypeCheckerContext context
     ) throws IOException {
         var sourceContents = Files.readString(sourcePath);
@@ -95,7 +110,7 @@ public class Compiler {
         var source = FileFragmentSource.create(sourcePath.toString(), sourceContents);
         var tokens = Tokeniser.tokenise(source);
         var parser = new Parser();
-        var untypedNamespaceNode = parser.parseNamespace(tokens, namespaceName);
+        var untypedNamespaceNode = parser.parseNamespace(tokens, sourcePathInfo.namespaceName, sourcePathInfo.sourceType);
 
         return TypeChecker.typeCheckNamespace(untypedNamespaceNode, context);
     }

@@ -630,6 +630,7 @@ public class TypeChecker {
             node.name(),
             typedImports,
             typedBody,
+            node.sourceType(),
             node.source()
         );
         return new TypeCheckResult<>(typedNode, context.leave());

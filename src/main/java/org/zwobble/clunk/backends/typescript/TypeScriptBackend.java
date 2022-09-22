@@ -1,5 +1,6 @@
 package org.zwobble.clunk.backends.typescript;
 
+import org.zwobble.clunk.ast.SourceType;
 import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
 import org.zwobble.clunk.backends.Backend;
 import org.zwobble.clunk.backends.CodeBuilder;
@@ -7,9 +8,8 @@ import org.zwobble.clunk.backends.typescript.codegenerator.TypeScriptCodeGenerat
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser;
 import org.zwobble.clunk.config.ProjectConfig;
 import org.zwobble.clunk.logging.Logger;
-import org.zwobble.clunk.types.SubtypeRelations;
 import org.zwobble.clunk.typechecker.TypeCheckResult;
-import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.SubtypeRelations;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -42,7 +42,7 @@ public class TypeScriptBackend implements Backend {
         var codeBuilder = new CodeBuilder();
         TypeScriptSerialiser.serialiseModule(typeScriptModule, codeBuilder);
 
-        var outputPath = generateOutputPath(outputRoot, typedNamespaceNode.name());
+        var outputPath = generateOutputPath(outputRoot, typedNamespaceNode);
 
         Files.createDirectories(outputPath.getParent());
         var outputContents = codeBuilder.toString();
@@ -50,11 +50,12 @@ public class TypeScriptBackend implements Backend {
         Files.writeString(outputPath, outputContents, StandardCharsets.UTF_8);
     }
 
-    private Path generateOutputPath(Path outputRoot, NamespaceName namespaceName) {
+    private Path generateOutputPath(Path outputRoot, TypedNamespaceNode namespaceNode) {
         var outputPath = outputRoot;
-        for (var part : namespaceName.parts()) {
+        for (var part : namespaceNode.name().parts()) {
             outputPath = outputPath.resolve(part);
         }
-        return outputPath.resolveSibling(outputPath.getFileName().toString() + ".ts");
+        var testSuffix = namespaceNode.sourceType() == SourceType.TEST ? ".test" : "";
+        return outputPath.resolveSibling(outputPath.getFileName().toString() + testSuffix + ".ts");
     }
 }

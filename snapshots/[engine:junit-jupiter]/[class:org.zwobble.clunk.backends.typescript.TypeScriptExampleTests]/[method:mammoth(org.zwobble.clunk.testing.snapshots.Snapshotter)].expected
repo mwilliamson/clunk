@@ -473,4 +473,4 @@ class HtmlText {
 
 ==============
 
-[31mError: No test files found: "src/**/*Test.ts"[39m
+[31mError: No test files found: "src/**/*.test.ts"[39m

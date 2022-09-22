@@ -1,6 +1,7 @@
 package org.zwobble.clunk.parser;
 
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.ast.SourceType;
 import org.zwobble.clunk.types.NamespaceName;
 
 import java.util.Optional;
@@ -19,7 +20,8 @@ public class ParserNamespaceTests {
             source,
             (parser, tokens) -> parser.parseNamespace(
                 tokens,
-                NamespaceName.fromParts("example", "project")
+                NamespaceName.fromParts("example", "project"),
+                SourceType.SOURCE
             )
         );
 
@@ -38,7 +40,8 @@ public class ParserNamespaceTests {
             source,
             (parser, tokens) -> parser.parseNamespace(
                 tokens,
-                NamespaceName.fromParts("example", "project")
+                NamespaceName.fromParts("example", "project"),
+                SourceType.SOURCE
             )
         );
 
@@ -57,7 +60,8 @@ public class ParserNamespaceTests {
             source,
             (parser, tokens) -> parser.parseNamespace(
                 tokens,
-                NamespaceName.fromParts("example", "project")
+                NamespaceName.fromParts("example", "project"),
+                SourceType.SOURCE
             )
         );
 
@@ -75,7 +79,8 @@ public class ParserNamespaceTests {
             source,
             (parser, tokens) -> parser.parseNamespace(
                 tokens,
-                NamespaceName.fromParts("example", "project")
+                NamespaceName.fromParts("example", "project"),
+                SourceType.SOURCE
             )
         );
 

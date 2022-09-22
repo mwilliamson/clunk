@@ -1,4 +1,4 @@
-Source path: src/switchesTest.clunk
+Source path: src/switches.test.clunk
 import stdlib/assertions.assertThat;
 import stdlib/matchers.equalTo;
 
@@ -31,7 +31,7 @@ fun evaluate(node: Node) -> Int {
 
 ==============
 
-Output path: switchesTest.ts
+Output path: switches.test.ts
 import {assertThat} from "@mwilliamson/precisely";
 import {equalTo} from "@mwilliamson/precisely";
 

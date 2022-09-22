@@ -1,4 +1,4 @@
-Source path: src/switchesTest.clunk
+Source path: src/switches.test.clunk
 import stdlib/assertions.assertThat;
 import stdlib/matchers.equalTo;
 
@@ -31,8 +31,8 @@ fun evaluate(node: Node) -> Int {
 
 ==============
 
-Output path: switchesTest/Node.java
-package switchesTest;
+Output path: switches/Node.java
+package switches;
 
 public sealed interface Node permits Add, Literal {
     <T> T accept(Visitor<T> visitor);
@@ -45,8 +45,8 @@ public sealed interface Node permits Add, Literal {
 
 ==============
 
-Output path: switchesTest/Add.java
-package switchesTest;
+Output path: switches/Add.java
+package switches;
 
 public record Add(Node left, Node right) implements Node {
     public <T> T accept(Node.Visitor<T> visitor) {
@@ -56,8 +56,8 @@ public record Add(Node left, Node right) implements Node {
 
 ==============
 
-Output path: switchesTest/Literal.java
-package switchesTest;
+Output path: switches/Literal.java
+package switches;
 
 public record Literal(int value) implements Node {
     public <T> T accept(Node.Visitor<T> visitor) {
@@ -67,16 +67,16 @@ public record Literal(int value) implements Node {
 
 ==============
 
-Output path: switchesTest/SwitchesTest.java
-package switchesTest;
+Output path: switches/SwitchesTests.java
+package switches;
 
-import switchesTest.Literal;
-import switchesTest.Add;
+import switches.Literal;
+import switches.Add;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import switchesTest.Node;
+import switches.Node;
 
-public class SwitchesTest {
+public class SwitchesTests {
     @org.junit.jupiter.api.Test
     @org.junit.jupiter.api.DisplayName("sum")
     public void sum() {
@@ -104,7 +104,7 @@ public class SwitchesTest {
 
 ╷
 ├─ JUnit Jupiter ✔
-│  └─ SwitchesTest ✔
+│  └─ SwitchesTests ✔
 │     └─ sum ✔
 └─ JUnit Vintage ✔
 

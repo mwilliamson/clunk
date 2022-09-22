@@ -1,4 +1,4 @@
-Source path: src/varStatementsTest.clunk
+Source path: src/varStatements.test.clunk
 import stdlib/assertions.assertThat;
 import stdlib/matchers.equalTo;
 
@@ -11,7 +11,7 @@ test "var statement" {
 
 ==============
 
-Output path: varStatementsTest.py
+Output path: varStatements_test.py
 from precisely import assert_that
 from precisely import equal_to
 
@@ -27,6 +27,6 @@ def test_var_statement():
 rootdir: ROOTDIR, configfile: tox.ini
 collected 1 item
 
-varStatementsTest.py .                                                   [100%]
+varStatements_test.py .                                                  [100%]
 
 ============================== 1 passed in TIME ===============================

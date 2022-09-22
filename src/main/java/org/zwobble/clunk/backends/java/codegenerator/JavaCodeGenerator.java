@@ -1,5 +1,6 @@
 package org.zwobble.clunk.backends.java.codegenerator;
 
+import org.zwobble.clunk.ast.SourceType;
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.java.ast.*;
 import org.zwobble.clunk.backends.java.config.JavaTargetConfig;
@@ -435,10 +436,13 @@ public class JavaCodeGenerator {
         }
 
         if (!functions.isEmpty()) {
+            var classNameSuffix = node.sourceType().equals(SourceType.TEST) ? "Tests" : "";
+            var className = lowerCamelCaseToUpperCamelCase(last(node.name().parts())) + classNameSuffix;
+
             compilationUnits.add(new JavaOrdinaryCompilationUnitNode(
                 namespaceToPackage(node.name(), context),
                 context.imports().stream().toList(),
-                new JavaClassDeclarationNode(lowerCamelCaseToUpperCamelCase(last(node.name().parts())), functions)
+                new JavaClassDeclarationNode(className, functions)
             ));
         }
 

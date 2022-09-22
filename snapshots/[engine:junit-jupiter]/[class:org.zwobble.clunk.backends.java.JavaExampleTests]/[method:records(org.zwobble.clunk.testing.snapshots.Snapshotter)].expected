@@ -1,4 +1,4 @@
-Source path: src/recordsTest.clunk
+Source path: src/records.test.clunk
 import stdlib/assertions.assertThat;
 import stdlib/matchers.equalTo;
 
@@ -26,8 +26,8 @@ test "assert sum" {
 
 ==============
 
-Output path: recordsTest/Add.java
-package recordsTest;
+Output path: records/Add.java
+package records;
 
 public record Add(int left, int right) {
     public int sum() {
@@ -37,14 +37,14 @@ public record Add(int left, int right) {
 
 ==============
 
-Output path: recordsTest/RecordsTest.java
-package recordsTest;
+Output path: records/RecordsTests.java
+package records;
 
-import recordsTest.Add;
+import records.Add;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-public class RecordsTest {
+public class RecordsTests {
     @org.junit.jupiter.api.Test
     @org.junit.jupiter.api.DisplayName("assert field")
     public void assertField() {
@@ -68,7 +68,7 @@ public class RecordsTest {
 
 ╷
 ├─ JUnit Jupiter ✔
-│  └─ RecordsTest ✔
+│  └─ RecordsTests ✔
 │     ├─ assert field ✔
 │     └─ assert sum ✔
 └─ JUnit Vintage ✔

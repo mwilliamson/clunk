@@ -1,4 +1,4 @@
-Source path: src/recordsTest.clunk
+Source path: src/records.test.clunk
 import stdlib/assertions.assertThat;
 import stdlib/matchers.equalTo;
 
@@ -26,7 +26,7 @@ test "assert sum" {
 
 ==============
 
-Output path: recordsTest.ts
+Output path: records.test.ts
 import {assertThat} from "@mwilliamson/precisely";
 import {equalTo} from "@mwilliamson/precisely";
 

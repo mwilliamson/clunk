@@ -1,4 +1,4 @@
-Source path: src/SimpleTest.clunk
+Source path: src/simple.test.clunk
 import stdlib/assertions.assertThat;
 import stdlib/matchers.equalTo;
 
@@ -21,13 +21,13 @@ test "assert 42 == 42" {
 
 ==============
 
-Output path: SimpleTest/SimpleTest.java
-package SimpleTest;
+Output path: simple/SimpleTests.java
+package simple;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-public class SimpleTest {
+public class SimpleTests {
     @org.junit.jupiter.api.Test
     @org.junit.jupiter.api.DisplayName("assert False")
     public void assertFalse() {
@@ -54,7 +54,7 @@ public class SimpleTest {
 
 ╷
 ├─ JUnit Jupiter ✔
-│  └─ SimpleTest ✔
+│  └─ SimpleTests ✔
 │     ├─ assert 42 == 42 ✔
 │     ├─ assert 42 == 47 ✘ 
 │     │        Expected: <47>
@@ -68,14 +68,14 @@ public class SimpleTest {
 └─ JUnit Vintage ✔
 
 Failures (3):
-  JUnit Jupiter:SimpleTest:assert 42 == 47
-    MethodSource [className = 'SimpleTest.SimpleTest', methodName = 'assert42Equals47', methodParameterTypes = '']
+  JUnit Jupiter:SimpleTests:assert 42 == 47
+    MethodSource [className = 'simple.SimpleTests', methodName = 'assert42Equals47', methodParameterTypes = '']
     => java.lang.AssertionError: 
 Expected: <47>
      but: was <42>
        org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:20)
        org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:8)
-       SimpleTest.SimpleTest.assert42Equals47(Unknown Source)
+       simple.SimpleTests.assert42Equals47(Unknown Source)
        java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
        java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
        java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -84,14 +84,14 @@ Expected: <47>
        org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
        org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
        [...]
-  JUnit Jupiter:SimpleTest:assert False
-    MethodSource [className = 'SimpleTest.SimpleTest', methodName = 'assertFalse', methodParameterTypes = '']
+  JUnit Jupiter:SimpleTests:assert False
+    MethodSource [className = 'simple.SimpleTests', methodName = 'assertFalse', methodParameterTypes = '']
     => java.lang.AssertionError: 
 Expected: <true>
      but: was <false>
        org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:20)
        org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:8)
-       SimpleTest.SimpleTest.assertFalse(Unknown Source)
+       simple.SimpleTests.assertFalse(Unknown Source)
        java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
        java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
        java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -100,14 +100,14 @@ Expected: <true>
        org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
        org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
        [...]
-  JUnit Jupiter:SimpleTest:assert True
-    MethodSource [className = 'SimpleTest.SimpleTest', methodName = 'assertTrue', methodParameterTypes = '']
+  JUnit Jupiter:SimpleTests:assert True
+    MethodSource [className = 'simple.SimpleTests', methodName = 'assertTrue', methodParameterTypes = '']
     => java.lang.AssertionError: 
 Expected: <false>
      but: was <true>
        org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:20)
        org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:8)
-       SimpleTest.SimpleTest.assertTrue(Unknown Source)
+       simple.SimpleTests.assertTrue(Unknown Source)
        java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
        java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
        java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)

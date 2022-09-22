@@ -1,4 +1,4 @@
-Source path: src/stringBuilderTest.clunk
+Source path: src/stringBuilder.test.clunk
 import stdlib/assertions.assertThat;
 import stdlib/matchers.equalTo;
 
@@ -15,13 +15,13 @@ test "string builder" {
 
 ==============
 
-Output path: stringBuilderTest/StringBuilderTest.java
-package stringBuilderTest;
+Output path: stringBuilder/StringBuilderTests.java
+package stringBuilder;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-public class StringBuilderTest {
+public class StringBuilderTests {
     @org.junit.jupiter.api.Test
     @org.junit.jupiter.api.DisplayName("string builder")
     public void stringBuilder() {
@@ -39,7 +39,7 @@ public class StringBuilderTest {
 
 ╷
 ├─ JUnit Jupiter ✔
-│  └─ StringBuilderTest ✔
+│  └─ StringBuilderTests ✔
 │     └─ string builder ✔
 └─ JUnit Vintage ✔
 

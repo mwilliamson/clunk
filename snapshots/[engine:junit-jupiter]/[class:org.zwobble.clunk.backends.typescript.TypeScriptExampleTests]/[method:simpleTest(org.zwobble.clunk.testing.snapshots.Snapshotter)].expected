@@ -1,4 +1,4 @@
-Source path: src/SimpleTest.clunk
+Source path: src/simple.test.clunk
 import stdlib/assertions.assertThat;
 import stdlib/matchers.equalTo;
 
@@ -21,7 +21,7 @@ test "assert 42 == 42" {
 
 ==============
 
-Output path: SimpleTest.ts
+Output path: simple.test.ts
 import {assertThat} from "@mwilliamson/precisely";
 import {equalTo} from "@mwilliamson/precisely";
 
@@ -61,7 +61,7 @@ Expected:
 but:
   was false
       at assertThat (node_modules/@mwilliamson/precisely/lib/assertThat.js:14:15)
-      at Context.<anonymous> (src/SimpleTest.ts:5:15)
+      at Context.<anonymous> (src/simple.test.ts:5:15)
       at processImmediate (node:internal/timers:466:21)
 
   2) assert True:
@@ -71,7 +71,7 @@ Expected:
 but:
   was true
       at assertThat (node_modules/@mwilliamson/precisely/lib/assertThat.js:14:15)
-      at Context.<anonymous> (src/SimpleTest.ts:9:15)
+      at Context.<anonymous> (src/simple.test.ts:9:15)
       at processImmediate (node:internal/timers:466:21)
 
   3) assert 42 == 47:
@@ -81,7 +81,7 @@ Expected:
 but:
   was 42
       at assertThat (node_modules/@mwilliamson/precisely/lib/assertThat.js:14:15)
-      at Context.<anonymous> (src/SimpleTest.ts:13:15)
+      at Context.<anonymous> (src/simple.test.ts:13:15)
       at processImmediate (node:internal/timers:466:21)
 
 

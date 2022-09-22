@@ -1,4 +1,4 @@
-Source path: src/switchesTest.clunk
+Source path: src/switches.test.clunk
 import stdlib/assertions.assertThat;
 import stdlib/matchers.equalTo;
 
@@ -31,7 +31,7 @@ fun evaluate(node: Node) -> Int {
 
 ==============
 
-Output path: switchesTest.py
+Output path: switches_test.py
 import dataclasses
 from precisely import assert_that
 from precisely import equal_to
@@ -74,6 +74,6 @@ def evaluate(node):
 rootdir: ROOTDIR, configfile: tox.ini
 collected 1 item
 
-switchesTest.py .                                                        [100%]
+switches_test.py .                                                       [100%]
 
 ============================== 1 passed in TIME ===============================

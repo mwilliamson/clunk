@@ -1,4 +1,4 @@
-Source path: src/varStatementsTest.clunk
+Source path: src/varStatements.test.clunk
 import stdlib/assertions.assertThat;
 import stdlib/matchers.equalTo;
 
@@ -11,7 +11,7 @@ test "var statement" {
 
 ==============
 
-Output path: varStatementsTest.ts
+Output path: varStatements.test.ts
 import {assertThat} from "@mwilliamson/precisely";
 import {equalTo} from "@mwilliamson/precisely";
 

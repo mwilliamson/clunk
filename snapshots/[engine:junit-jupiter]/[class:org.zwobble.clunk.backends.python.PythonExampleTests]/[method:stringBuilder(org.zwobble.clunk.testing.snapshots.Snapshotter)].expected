@@ -1,4 +1,4 @@
-Source path: src/stringBuilderTest.clunk
+Source path: src/stringBuilder.test.clunk
 import stdlib/assertions.assertThat;
 import stdlib/matchers.equalTo;
 
@@ -15,7 +15,7 @@ test "string builder" {
 
 ==============
 
-Output path: stringBuilderTest.py
+Output path: stringBuilder_test.py
 from precisely import assert_that
 from precisely import equal_to
 
@@ -35,6 +35,6 @@ def test_string_builder():
 rootdir: ROOTDIR, configfile: tox.ini
 collected 1 item
 
-stringBuilderTest.py .                                                   [100%]
+stringBuilder_test.py .                                                  [100%]
 
 ============================== 1 passed in TIME ===============================

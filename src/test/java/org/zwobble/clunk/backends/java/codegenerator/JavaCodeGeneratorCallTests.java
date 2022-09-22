@@ -20,7 +20,7 @@ public class JavaCodeGeneratorCallTests {
             Typed.localReference(
                 "abs",
                 new StaticFunctionType(
-                    NamespaceName.fromParts("Math"),
+                    NamespaceName.fromParts("math"),
                     "abs",
                     List.of(Types.INT),
                     Types.INT

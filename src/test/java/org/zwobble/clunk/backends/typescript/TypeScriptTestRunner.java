@@ -32,7 +32,7 @@ public class TypeScriptTestRunner implements TargetTestRunner {
         var processBuilder = new ProcessBuilder(
             nodeModules.resolve(".bin/mocha").toString(),
             // TODO: escaping
-            "src/**/*Test.ts",
+            "src/**/*.test.ts",
             "--require", "ts-node/register",
             "--ui", "tdd"
         )

@@ -1,4 +1,4 @@
-Source path: src/recordsTest.clunk
+Source path: src/records.test.clunk
 import stdlib/assertions.assertThat;
 import stdlib/matchers.equalTo;
 
@@ -26,7 +26,7 @@ test "assert sum" {
 
 ==============
 
-Output path: recordsTest.py
+Output path: records_test.py
 import dataclasses
 from precisely import assert_that
 from precisely import equal_to
@@ -59,6 +59,6 @@ def test_assert_sum():
 rootdir: ROOTDIR, configfile: tox.ini
 collected 2 items
 
-recordsTest.py ..                                                        [100%]
+records_test.py ..                                                       [100%]
 
 ============================== 2 passed in TIME ===============================

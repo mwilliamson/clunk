@@ -1,4 +1,4 @@
-Source path: src/SimpleTest.clunk
+Source path: src/simple.test.clunk
 import stdlib/assertions.assertThat;
 import stdlib/matchers.equalTo;
 
@@ -21,7 +21,7 @@ test "assert 42 == 42" {
 
 ==============
 
-Output path: SimpleTest.py
+Output path: simple_test.py
 from precisely import assert_that
 from precisely import equal_to
 
@@ -44,11 +44,11 @@ def test_assert_42_equals_42():
 rootdir: ROOTDIR, configfile: tox.ini
 collected 4 items
 
-SimpleTest.py FFF.                                                       [100%]
+simple_test.py FFF.                                                      [100%]
 
 =================================== FAILURES ===================================
 ______________________________ test_assert_false _______________________________
-SimpleTest.py:5: in test_assert_false
+simple_test.py:5: in test_assert_false
     assert_that(False, equal_to(True))
 SITE-PACKAGES/precisely/__init__.py:50: in assert_that
     raise AssertionError("\nExpected:{0}\nbut:{1}".format(
@@ -58,7 +58,7 @@ E     True
 E   but:
 E     was False
 _______________________________ test_assert_true _______________________________
-SimpleTest.py:8: in test_assert_true
+simple_test.py:8: in test_assert_true
     assert_that(True, equal_to(False))
 SITE-PACKAGES/precisely/__init__.py:50: in assert_that
     raise AssertionError("\nExpected:{0}\nbut:{1}".format(
@@ -68,7 +68,7 @@ E     False
 E   but:
 E     was True
 ___________________________ test_assert_42_equals_47 ___________________________
-SimpleTest.py:11: in test_assert_42_equals_47
+simple_test.py:11: in test_assert_42_equals_47
     assert_that(42, equal_to(47))
 SITE-PACKAGES/precisely/__init__.py:50: in assert_that
     raise AssertionError("\nExpected:{0}\nbut:{1}".format(
@@ -78,7 +78,7 @@ E     47
 E   but:
 E     was 42
 =========================== short test summary info ============================
-FAILED SimpleTest.py::test_assert_false - AssertionError: 
-FAILED SimpleTest.py::test_assert_true - AssertionError: 
-FAILED SimpleTest.py::test_assert_42_equals_47 - AssertionError: 
+FAILED simple_test.py::test_assert_false - AssertionError: 
+FAILED simple_test.py::test_assert_true - AssertionError: 
+FAILED simple_test.py::test_assert_42_equals_47 - AssertionError: 
 ========================= 3 failed, 1 passed in TIME ==========================

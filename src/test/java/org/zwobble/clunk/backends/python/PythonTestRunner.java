@@ -16,13 +16,16 @@ public class PythonTestRunner implements TargetTestRunner {
     public String runTests(Path outputRoot) throws IOException, InterruptedException {
         var virtualenvPath = findRoot().resolve("testing/python/_virtualenv");
 
-        var process = new ProcessBuilder(
+        var processBuilder = new ProcessBuilder(
             virtualenvPath.resolve("bin/py.test").toString(),
             "--tb=short",
             outputRoot.toString()
         )
-            .directory(outputRoot.toFile())
-            .start();
+            .directory(outputRoot.toFile());
+
+        processBuilder.environment().put("PYTHONPATH", ".");
+
+        var process = processBuilder.start();
 
         var output = new BufferedReader(new InputStreamReader(process.getInputStream()))
             .lines()

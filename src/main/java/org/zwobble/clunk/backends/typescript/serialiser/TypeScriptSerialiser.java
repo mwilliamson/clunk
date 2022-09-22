@@ -172,9 +172,7 @@ public class TypeScriptSerialiser {
     }
 
     private static void serialiseConstructedType(TypeScriptConstructedTypeNode node, CodeBuilder builder) {
-        builder.append("(");
         serialiseExpression(node.receiver(), builder, Optional.of(node));
-        builder.append(")");
 
         builder.append("<");
         forEachInterspersed(

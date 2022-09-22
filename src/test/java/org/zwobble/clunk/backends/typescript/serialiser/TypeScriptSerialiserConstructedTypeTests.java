@@ -16,7 +16,7 @@ public class TypeScriptSerialiserConstructedTypeTests {
 
         var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
 
-        assertThat(result, equalTo("(A)<B>"));
+        assertThat(result, equalTo("A<B>"));
     }
 
     @Test
@@ -25,6 +25,6 @@ public class TypeScriptSerialiserConstructedTypeTests {
 
         var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
 
-        assertThat(result, equalTo("(A)<B, C>"));
+        assertThat(result, equalTo("A<B, C>"));
     }
 }

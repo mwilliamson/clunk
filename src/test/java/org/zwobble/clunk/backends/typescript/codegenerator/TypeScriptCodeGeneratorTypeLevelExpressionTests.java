@@ -63,7 +63,7 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
         var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
 
         var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
-        assertThat(string, equalTo("(Array)<number>"));
+        assertThat(string, equalTo("Array<number>"));
     }
 
     @Test

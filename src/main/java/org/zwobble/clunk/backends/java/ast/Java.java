@@ -32,6 +32,10 @@ public class Java {
         return new JavaCallNewNode(receiver, Optional.empty(), args, Optional.empty());
     }
 
+    public static JavaCallStaticNode callStatic(JavaTypeVariableReferenceNode receiver, List<JavaExpressionNode> args) {
+        return new JavaCallStaticNode(receiver, args);
+    }
+
     public static JavaConditionalBranchNode conditionalBranch(
         JavaExpressionNode condition,
         List<JavaStatementNode> body

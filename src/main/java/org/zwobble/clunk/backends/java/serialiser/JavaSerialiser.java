@@ -105,6 +105,17 @@ public class JavaSerialiser {
         }
     }
 
+    private static void serialiseCallStatic(JavaCallStaticNode node, CodeBuilder builder) {
+        serialiseTypeExpression(node.receiver(), builder);
+        builder.append("(");
+        forEachInterspersed(
+            node.args(),
+            arg -> serialiseExpression(arg, builder, Optional.empty()),
+            () -> builder.append(", ")
+        );
+        builder.append(")");
+    }
+
     private static void serialiseClassDeclaration(JavaClassDeclarationNode node, CodeBuilder builder) {
         builder.append("public class ");
         builder.append(node.name());
@@ -186,6 +197,12 @@ public class JavaSerialiser {
             @Override
             public Void visit(JavaCallNewNode node) {
                 serialiseCallNew(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(JavaCallStaticNode node) {
+                serialiseCallStatic(node, builder);
                 return null;
             }
 

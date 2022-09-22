@@ -10,6 +10,7 @@ public interface JavaExpressionNode extends JavaNode {
         T visit(JavaBoolLiteralNode node);
         T visit(JavaCallNode node);
         T visit(JavaCallNewNode node);
+        T visit(JavaCallStaticNode node);
         T visit(JavaIntLiteralNode node);
         T visit(JavaLogicalAndNode node);
         T visit(JavaLogicalNotNode node);

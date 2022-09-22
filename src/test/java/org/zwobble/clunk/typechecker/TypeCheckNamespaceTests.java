@@ -56,6 +56,10 @@ public class TypeCheckNamespaceTests {
                 Map.of("X", Types.metaType(Types.recordType(namespaceName, "X")))
             )))
         );
+        assertThat(
+            result.context().memberType(result.context().typeOfNamespace(namespaceName).get(), "X"),
+            equalTo(Optional.of(Types.metaType(Types.recordType(namespaceName, "X"))))
+        );
     }
 
     @Test

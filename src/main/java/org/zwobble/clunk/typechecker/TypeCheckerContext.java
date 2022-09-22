@@ -89,8 +89,13 @@ public record TypeCheckerContext(
     }
 
     public TypeCheckerContext updateNamespaceType(NamespaceType namespaceType) {
-        var namespaceTypes = this.namespaceTypes.plus(namespaceType.name(), namespaceType);
-        return new TypeCheckerContext(stack, namespaceTypes, typeToFields, memberTypes, subtypeRelations);
+        return new TypeCheckerContext(
+            stack,
+            this.namespaceTypes.plus(namespaceType.name(), namespaceType),
+            typeToFields,
+            memberTypes.plus(namespaceType, namespaceType.fields()),
+            subtypeRelations
+        );
     }
 
     public Optional<NamespaceType> typeOfNamespace(NamespaceName name) {

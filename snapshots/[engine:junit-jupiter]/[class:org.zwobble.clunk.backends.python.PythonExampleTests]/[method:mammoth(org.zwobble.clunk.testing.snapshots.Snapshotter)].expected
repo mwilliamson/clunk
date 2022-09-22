@@ -1,4 +1,4 @@
-Source path: src/documents.clunk
+Source path: src/mammoth/documents.clunk
 sealed interface DocumentElement {
 }
 
@@ -123,7 +123,7 @@ enum VerticalAlignment {
 
 ==============
 
-Source path: src/html.clunk
+Source path: src/mammoth/html.clunk
 sealed interface HtmlNode {
 }
 
@@ -159,7 +159,7 @@ record HtmlText(value: String) <: HtmlNode
 
 ==============
 
-Output path: documents.py
+Output path: mammoth/documents.py
 import dataclasses
 import typing
 import enum
@@ -323,7 +323,7 @@ class VerticalAlignment(enum.Enum):
 
 ==============
 
-Output path: html.py
+Output path: mammoth/html.py
 import dataclasses
 import typing
 class HtmlNode:

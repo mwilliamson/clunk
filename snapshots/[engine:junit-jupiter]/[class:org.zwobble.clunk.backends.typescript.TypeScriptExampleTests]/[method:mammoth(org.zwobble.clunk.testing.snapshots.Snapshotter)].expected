@@ -1,4 +1,4 @@
-Source path: src/documents.clunk
+Source path: src/mammoth/documents.clunk
 sealed interface DocumentElement {
 }
 
@@ -123,7 +123,7 @@ enum VerticalAlignment {
 
 ==============
 
-Source path: src/html.clunk
+Source path: src/mammoth/html.clunk
 sealed interface HtmlNode {
 }
 
@@ -159,7 +159,7 @@ record HtmlText(value: String) <: HtmlNode
 
 ==============
 
-Output path: documents.ts
+Output path: mammoth/documents.ts
 type DocumentElement = Bookmark | BreakLine | BreakPage | BreakColumn | CommentReference | Hyperlink | Image | NoteReference | Paragraph | Run | Tab | Table | TableCell | TableRow | Text;
 
 class Bookmark {
@@ -409,7 +409,7 @@ enum VerticalAlignment {
 
 ==============
 
-Output path: html.ts
+Output path: mammoth/html.ts
 type HtmlNode = HtmlElement | HtmlForceWrite | HtmlText;
 
 class HtmlAttribute {

@@ -1,4 +1,4 @@
-Source path: src/documents.clunk
+Source path: src/mammoth/documents.clunk
 sealed interface DocumentElement {
 }
 
@@ -123,7 +123,7 @@ enum VerticalAlignment {
 
 ==============
 
-Source path: src/html.clunk
+Source path: src/mammoth/html.clunk
 sealed interface HtmlNode {
 }
 
@@ -159,8 +159,8 @@ record HtmlText(value: String) <: HtmlNode
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/documents/DocumentElement.java
-package org.zwobble.mammoth.internal.documents;
+Output path: org/zwobble/mammoth/internal/mammoth/documents/DocumentElement.java
+package org.zwobble.mammoth.internal.mammoth.documents;
 
 public sealed interface DocumentElement permits Bookmark, BreakLine, BreakPage, BreakColumn, CommentReference, Hyperlink, Image, NoteReference, Paragraph, Run, Tab, Table, TableCell, TableRow, Text {
     <T> T accept(Visitor<T> visitor);
@@ -186,8 +186,8 @@ public sealed interface DocumentElement permits Bookmark, BreakLine, BreakPage, 
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/documents/Bookmark.java
-package org.zwobble.mammoth.internal.documents;
+Output path: org/zwobble/mammoth/internal/mammoth/documents/Bookmark.java
+package org.zwobble.mammoth.internal.mammoth.documents;
 
 public record Bookmark(String name) implements DocumentElement {
     public <T> T accept(DocumentElement.Visitor<T> visitor) {
@@ -197,8 +197,8 @@ public record Bookmark(String name) implements DocumentElement {
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/documents/BreakLine.java
-package org.zwobble.mammoth.internal.documents;
+Output path: org/zwobble/mammoth/internal/mammoth/documents/BreakLine.java
+package org.zwobble.mammoth.internal.mammoth.documents;
 
 public record BreakLine() implements DocumentElement {
     public <T> T accept(DocumentElement.Visitor<T> visitor) {
@@ -208,8 +208,8 @@ public record BreakLine() implements DocumentElement {
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/documents/BreakPage.java
-package org.zwobble.mammoth.internal.documents;
+Output path: org/zwobble/mammoth/internal/mammoth/documents/BreakPage.java
+package org.zwobble.mammoth.internal.mammoth.documents;
 
 public record BreakPage() implements DocumentElement {
     public <T> T accept(DocumentElement.Visitor<T> visitor) {
@@ -219,8 +219,8 @@ public record BreakPage() implements DocumentElement {
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/documents/BreakColumn.java
-package org.zwobble.mammoth.internal.documents;
+Output path: org/zwobble/mammoth/internal/mammoth/documents/BreakColumn.java
+package org.zwobble.mammoth.internal.mammoth.documents;
 
 public record BreakColumn() implements DocumentElement {
     public <T> T accept(DocumentElement.Visitor<T> visitor) {
@@ -230,16 +230,16 @@ public record BreakColumn() implements DocumentElement {
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/documents/Comment.java
-package org.zwobble.mammoth.internal.documents;
+Output path: org/zwobble/mammoth/internal/mammoth/documents/Comment.java
+package org.zwobble.mammoth.internal.mammoth.documents;
 
 public record Comment(String commentId, java.util.List<DocumentElement> body, java.util.Optional<String> authorName, java.util.Optional<String> authorInitials) {
 }
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/documents/CommentReference.java
-package org.zwobble.mammoth.internal.documents;
+Output path: org/zwobble/mammoth/internal/mammoth/documents/CommentReference.java
+package org.zwobble.mammoth.internal.mammoth.documents;
 
 public record CommentReference(String commentId) implements DocumentElement {
     public <T> T accept(DocumentElement.Visitor<T> visitor) {
@@ -249,16 +249,16 @@ public record CommentReference(String commentId) implements DocumentElement {
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/documents/Document.java
-package org.zwobble.mammoth.internal.documents;
+Output path: org/zwobble/mammoth/internal/mammoth/documents/Document.java
+package org.zwobble.mammoth.internal.mammoth.documents;
 
 public record Document(java.util.List<DocumentElement> children, java.util.List<Note> notes, java.util.List<Comment> comments) {
 }
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/documents/Hyperlink.java
-package org.zwobble.mammoth.internal.documents;
+Output path: org/zwobble/mammoth/internal/mammoth/documents/Hyperlink.java
+package org.zwobble.mammoth.internal.mammoth.documents;
 
 public record Hyperlink(String href, java.util.Optional<String> targetFrame, java.util.List<DocumentElement> children) implements DocumentElement {
     public <T> T accept(DocumentElement.Visitor<T> visitor) {
@@ -268,8 +268,8 @@ public record Hyperlink(String href, java.util.Optional<String> targetFrame, jav
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/documents/Image.java
-package org.zwobble.mammoth.internal.documents;
+Output path: org/zwobble/mammoth/internal/mammoth/documents/Image.java
+package org.zwobble.mammoth.internal.mammoth.documents;
 
 public record Image(java.util.Optional<String> altText, java.util.Optional<String> contentType) implements DocumentElement {
     public <T> T accept(DocumentElement.Visitor<T> visitor) {
@@ -279,16 +279,16 @@ public record Image(java.util.Optional<String> altText, java.util.Optional<Strin
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/documents/Note.java
-package org.zwobble.mammoth.internal.documents;
+Output path: org/zwobble/mammoth/internal/mammoth/documents/Note.java
+package org.zwobble.mammoth.internal.mammoth.documents;
 
 public record Note(NoteType noteType, String id, java.util.List<DocumentElement> body) {
 }
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/documents/NoteType.java
-package org.zwobble.mammoth.internal.documents;
+Output path: org/zwobble/mammoth/internal/mammoth/documents/NoteType.java
+package org.zwobble.mammoth.internal.mammoth.documents;
 
 public enum NoteType {
     FOOTNOTE,
@@ -297,8 +297,8 @@ public enum NoteType {
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/documents/NoteReference.java
-package org.zwobble.mammoth.internal.documents;
+Output path: org/zwobble/mammoth/internal/mammoth/documents/NoteReference.java
+package org.zwobble.mammoth.internal.mammoth.documents;
 
 public record NoteReference(NoteType noteType, String noteId) implements DocumentElement {
     public <T> T accept(DocumentElement.Visitor<T> visitor) {
@@ -308,24 +308,24 @@ public record NoteReference(NoteType noteType, String noteId) implements Documen
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/documents/NumberingLevel.java
-package org.zwobble.mammoth.internal.documents;
+Output path: org/zwobble/mammoth/internal/mammoth/documents/NumberingLevel.java
+package org.zwobble.mammoth.internal.mammoth.documents;
 
 public record NumberingLevel(String levelIndex, boolean isOrdered) {
 }
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/documents/NumberingStyle.java
-package org.zwobble.mammoth.internal.documents;
+Output path: org/zwobble/mammoth/internal/mammoth/documents/NumberingStyle.java
+package org.zwobble.mammoth.internal.mammoth.documents;
 
 public record NumberingStyle(String numId) {
 }
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/documents/Paragraph.java
-package org.zwobble.mammoth.internal.documents;
+Output path: org/zwobble/mammoth/internal/mammoth/documents/Paragraph.java
+package org.zwobble.mammoth.internal.mammoth.documents;
 
 public record Paragraph(java.util.Optional<String> style, java.util.Optional<NumberingLevel> numbering, ParagraphIndent indent, java.util.List<DocumentElement> children) implements DocumentElement {
     public <T> T accept(DocumentElement.Visitor<T> visitor) {
@@ -335,16 +335,16 @@ public record Paragraph(java.util.Optional<String> style, java.util.Optional<Num
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/documents/ParagraphIndent.java
-package org.zwobble.mammoth.internal.documents;
+Output path: org/zwobble/mammoth/internal/mammoth/documents/ParagraphIndent.java
+package org.zwobble.mammoth.internal.mammoth.documents;
 
 public record ParagraphIndent(java.util.Optional<String> start, java.util.Optional<String> end, java.util.Optional<String> firstLine, java.util.Optional<String> hanging) {
 }
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/documents/Run.java
-package org.zwobble.mammoth.internal.documents;
+Output path: org/zwobble/mammoth/internal/mammoth/documents/Run.java
+package org.zwobble.mammoth.internal.mammoth.documents;
 
 public record Run(boolean isBold, boolean isItalic, boolean isUnderline, boolean isStrikethrough, boolean isAllCaps, boolean isSmallCaps, VerticalAlignment verticalAlignment, java.util.Optional<String> style, java.util.List<DocumentElement> children) implements DocumentElement {
     public <T> T accept(DocumentElement.Visitor<T> visitor) {
@@ -354,16 +354,16 @@ public record Run(boolean isBold, boolean isItalic, boolean isUnderline, boolean
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/documents/Style.java
-package org.zwobble.mammoth.internal.documents;
+Output path: org/zwobble/mammoth/internal/mammoth/documents/Style.java
+package org.zwobble.mammoth.internal.mammoth.documents;
 
 public record Style(String styleId, java.util.Optional<String> name) {
 }
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/documents/Tab.java
-package org.zwobble.mammoth.internal.documents;
+Output path: org/zwobble/mammoth/internal/mammoth/documents/Tab.java
+package org.zwobble.mammoth.internal.mammoth.documents;
 
 public record Tab() implements DocumentElement {
     public <T> T accept(DocumentElement.Visitor<T> visitor) {
@@ -373,8 +373,8 @@ public record Tab() implements DocumentElement {
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/documents/Table.java
-package org.zwobble.mammoth.internal.documents;
+Output path: org/zwobble/mammoth/internal/mammoth/documents/Table.java
+package org.zwobble.mammoth.internal.mammoth.documents;
 
 public record Table(java.util.Optional<Style> style, java.util.List<DocumentElement> children) implements DocumentElement {
     public <T> T accept(DocumentElement.Visitor<T> visitor) {
@@ -384,8 +384,8 @@ public record Table(java.util.Optional<Style> style, java.util.List<DocumentElem
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/documents/TableCell.java
-package org.zwobble.mammoth.internal.documents;
+Output path: org/zwobble/mammoth/internal/mammoth/documents/TableCell.java
+package org.zwobble.mammoth.internal.mammoth.documents;
 
 public record TableCell(int rowspan, int colspan, java.util.List<DocumentElement> children) implements DocumentElement {
     public <T> T accept(DocumentElement.Visitor<T> visitor) {
@@ -395,8 +395,8 @@ public record TableCell(int rowspan, int colspan, java.util.List<DocumentElement
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/documents/TableRow.java
-package org.zwobble.mammoth.internal.documents;
+Output path: org/zwobble/mammoth/internal/mammoth/documents/TableRow.java
+package org.zwobble.mammoth.internal.mammoth.documents;
 
 public record TableRow(java.util.List<DocumentElement> children, boolean isHeader) implements DocumentElement {
     public <T> T accept(DocumentElement.Visitor<T> visitor) {
@@ -406,8 +406,8 @@ public record TableRow(java.util.List<DocumentElement> children, boolean isHeade
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/documents/Text.java
-package org.zwobble.mammoth.internal.documents;
+Output path: org/zwobble/mammoth/internal/mammoth/documents/Text.java
+package org.zwobble.mammoth.internal.mammoth.documents;
 
 public record Text(String value) implements DocumentElement {
     public <T> T accept(DocumentElement.Visitor<T> visitor) {
@@ -417,8 +417,8 @@ public record Text(String value) implements DocumentElement {
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/documents/VerticalAlignment.java
-package org.zwobble.mammoth.internal.documents;
+Output path: org/zwobble/mammoth/internal/mammoth/documents/VerticalAlignment.java
+package org.zwobble.mammoth.internal.mammoth.documents;
 
 public enum VerticalAlignment {
     SUPERSCRIPT,
@@ -428,8 +428,8 @@ public enum VerticalAlignment {
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/html/HtmlNode.java
-package org.zwobble.mammoth.internal.html;
+Output path: org/zwobble/mammoth/internal/mammoth/html/HtmlNode.java
+package org.zwobble.mammoth.internal.mammoth.html;
 
 public sealed interface HtmlNode permits HtmlElement, HtmlForceWrite, HtmlText {
     <T> T accept(Visitor<T> visitor);
@@ -443,16 +443,16 @@ public sealed interface HtmlNode permits HtmlElement, HtmlForceWrite, HtmlText {
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/html/HtmlAttribute.java
-package org.zwobble.mammoth.internal.html;
+Output path: org/zwobble/mammoth/internal/mammoth/html/HtmlAttribute.java
+package org.zwobble.mammoth.internal.mammoth.html;
 
 public record HtmlAttribute(String name, String value) {
 }
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/html/HtmlElement.java
-package org.zwobble.mammoth.internal.html;
+Output path: org/zwobble/mammoth/internal/mammoth/html/HtmlElement.java
+package org.zwobble.mammoth.internal.mammoth.html;
 
 public record HtmlElement(HtmlTag tag, java.util.List<HtmlNode> children) implements HtmlNode {
     public String defaultTagName() {
@@ -465,8 +465,8 @@ public record HtmlElement(HtmlTag tag, java.util.List<HtmlNode> children) implem
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/html/HtmlForceWrite.java
-package org.zwobble.mammoth.internal.html;
+Output path: org/zwobble/mammoth/internal/mammoth/html/HtmlForceWrite.java
+package org.zwobble.mammoth.internal.mammoth.html;
 
 public record HtmlForceWrite() implements HtmlNode {
     public <T> T accept(HtmlNode.Visitor<T> visitor) {
@@ -476,8 +476,8 @@ public record HtmlForceWrite() implements HtmlNode {
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/html/HtmlTag.java
-package org.zwobble.mammoth.internal.html;
+Output path: org/zwobble/mammoth/internal/mammoth/html/HtmlTag.java
+package org.zwobble.mammoth.internal.mammoth.html;
 
 public record HtmlTag(java.util.List<String> tagNames, java.util.List<HtmlAttribute> attributes, boolean isCollapsible, String separator) {
     public String defaultTagName() {
@@ -491,8 +491,8 @@ public record HtmlTag(java.util.List<String> tagNames, java.util.List<HtmlAttrib
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/html/HtmlText.java
-package org.zwobble.mammoth.internal.html;
+Output path: org/zwobble/mammoth/internal/mammoth/html/HtmlText.java
+package org.zwobble.mammoth.internal.mammoth.html;
 
 public record HtmlText(String value) implements HtmlNode {
     public <T> T accept(HtmlNode.Visitor<T> visitor) {

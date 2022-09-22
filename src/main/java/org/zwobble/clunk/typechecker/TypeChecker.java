@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.zwobble.clunk.types.Types.metaType;
+import static org.zwobble.clunk.util.Lists.last;
 
 public class TypeChecker {
     private static TypedParamNode typeCheckParam(
@@ -498,7 +499,12 @@ public class TypeChecker {
 
             return new TypeCheckImportResult(typedNode, newContext);
         } else {
-            throw new RuntimeException("TODO");
+            var variableName = last(import_.namespaceName().parts());
+            var newContext = context.addLocal(variableName, type.get(), import_.source());
+
+            var typedNode = new TypedImportNode(import_.namespaceName(), import_.fieldName(), type.get(), import_.source());
+
+            return new TypeCheckImportResult(typedNode, newContext);
         }
     }
 

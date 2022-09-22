@@ -59,6 +59,10 @@ public class Untyped {
         return new UntypedIfStatementNode(conditionalBranches, elseBody, NullSource.INSTANCE);
     }
 
+    public static UntypedImportNode import_(NamespaceName name) {
+        return new UntypedImportNode(name, Optional.empty(), NullSource.INSTANCE);
+    }
+
     public static UntypedImportNode import_(NamespaceName name, String fieldName) {
         return new UntypedImportNode(name, Optional.of(fieldName), NullSource.INSTANCE);
     }

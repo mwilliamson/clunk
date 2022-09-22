@@ -20,7 +20,40 @@ import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 
 public class TypeCheckImportTests {
     // TODO: test unknown namespace
-    // TODO: test import of namespace (no field)
+    @Test
+    public void importedNamespaceIsTypeChecked() {
+        var untypedNode = Untyped.import_(NamespaceName.fromParts("x", "y"));
+        var namespaceType = new NamespaceType(
+            NamespaceName.fromParts("x", "y"),
+            Map.of("IntAlias", Types.metaType(Types.INT))
+        );
+        var context = TypeCheckerContext.stub()
+            .updateNamespaceType(namespaceType);
+
+        var result = TypeChecker.typeCheckImport(untypedNode, context);
+
+        assertThat(result.node(), isTypedImportNode(allOf(
+            has("namespaceName", equalTo(NamespaceName.fromParts("x", "y"))),
+            has("fieldName", equalTo(Optional.empty())),
+            has("type", equalTo(namespaceType)
+        ))));
+    }
+
+    @Test
+    public void importedNamespaceIsAddedToEnvironment() {
+        var untypedNode = Untyped.import_(NamespaceName.fromParts("x", "y"));
+        var namespaceType = new NamespaceType(
+            NamespaceName.fromParts("x", "y"),
+            Map.of("IntAlias", Types.metaType(Types.INT))
+        );
+        var context = TypeCheckerContext.stub()
+            .updateNamespaceType(namespaceType);
+
+        var result = TypeChecker.typeCheckImport(untypedNode, context);
+
+        assertThat(result.context().typeOf("y", NullSource.INSTANCE), equalTo(namespaceType));
+    }
+
     @Test
     public void importedFieldIsTypeChecked() {
         var untypedNode = Untyped.import_(NamespaceName.fromParts("x", "y"), "IntAlias");

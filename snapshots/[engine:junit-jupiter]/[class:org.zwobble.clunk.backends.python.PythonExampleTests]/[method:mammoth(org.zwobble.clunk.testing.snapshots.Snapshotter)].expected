@@ -164,6 +164,8 @@ record HtmlText(value: String) <: HtmlNode
 ==============
 
 Output path: mammoth/documents.py
+from __future__ import annotations
+
 import dataclasses
 import typing
 import enum
@@ -328,6 +330,8 @@ class VerticalAlignment(enum.Enum):
 ==============
 
 Output path: mammoth/html.py
+from __future__ import annotations
+
 import dataclasses
 import typing
 class HtmlNode:

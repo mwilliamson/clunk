@@ -22,6 +22,8 @@ test "assert 42 == 42" {
 ==============
 
 Output path: simple_test.py
+from __future__ import annotations
+
 from precisely import assert_that
 from precisely import equal_to
 
@@ -48,7 +50,7 @@ simple_test.py FFF.                                                      [100%]
 
 =================================== FAILURES ===================================
 ______________________________ test_assert_false _______________________________
-simple_test.py:5: in test_assert_false
+simple_test.py:7: in test_assert_false
     assert_that(False, equal_to(True))
 SITE-PACKAGES/precisely/__init__.py:50: in assert_that
     raise AssertionError("\nExpected:{0}\nbut:{1}".format(
@@ -58,7 +60,7 @@ E     True
 E   but:
 E     was False
 _______________________________ test_assert_true _______________________________
-simple_test.py:8: in test_assert_true
+simple_test.py:10: in test_assert_true
     assert_that(True, equal_to(False))
 SITE-PACKAGES/precisely/__init__.py:50: in assert_that
     raise AssertionError("\nExpected:{0}\nbut:{1}".format(
@@ -68,7 +70,7 @@ E     False
 E   but:
 E     was True
 ___________________________ test_assert_42_equals_47 ___________________________
-simple_test.py:11: in test_assert_42_equals_47
+simple_test.py:13: in test_assert_42_equals_47
     assert_that(42, equal_to(47))
 SITE-PACKAGES/precisely/__init__.py:50: in assert_that
     raise AssertionError("\nExpected:{0}\nbut:{1}".format(

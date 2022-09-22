@@ -10,6 +10,8 @@ test "assert False" {
 ==============
 
 Output path: simple_test.py
+from __future__ import annotations
+
 from precisely import assert_that
 from precisely import equal_to
 
@@ -27,7 +29,7 @@ simple_test.py F                                                         [100%]
 
 =================================== FAILURES ===================================
 ______________________________ test_assert_false _______________________________
-simple_test.py:5: in test_assert_false
+simple_test.py:7: in test_assert_false
     assert_that(False, equal_to(True))
 SITE-PACKAGES/precisely/__init__.py:50: in assert_that
     raise AssertionError("\nExpected:{0}\nbut:{1}".format(

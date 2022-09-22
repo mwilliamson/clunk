@@ -43,7 +43,7 @@ public class PythonBackend implements Backend {
         var outputPath = generateOutputPath(outputRoot, typedNamespaceNode);
 
         Files.createDirectories(outputPath.getParent());
-        var outputContents = codeBuilder.toString();
+        var outputContents = "from __future__ import annotations\n\n" + codeBuilder.toString();
         logger.outputFile(outputPath, outputContents);
         Files.writeString(outputPath, outputContents, StandardCharsets.UTF_8);
     }

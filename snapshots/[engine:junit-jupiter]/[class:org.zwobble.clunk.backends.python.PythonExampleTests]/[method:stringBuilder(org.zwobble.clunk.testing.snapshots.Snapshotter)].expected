@@ -16,6 +16,8 @@ test "string builder" {
 ==============
 
 Output path: stringBuilder_test.py
+from __future__ import annotations
+
 from precisely import assert_that
 from precisely import equal_to
 

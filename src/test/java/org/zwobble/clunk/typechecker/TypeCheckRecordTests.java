@@ -9,6 +9,7 @@ import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -37,6 +38,22 @@ public class TypeCheckRecordTests {
                     has("name", equalTo("Example"))
                 ))
             )
+        );
+    }
+
+    @Test
+    public void addsNamespaceField() {
+        var untypedNode = UntypedRecordNode.builder("Example").build();
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
+
+        assertThat(
+            result.fieldType(),
+            equalTo(Optional.of(Map.entry(
+                "Example",
+                Types.metaType(Types.recordType(NamespaceName.fromParts("a", "b"), "Example"))
+            )))
         );
     }
 

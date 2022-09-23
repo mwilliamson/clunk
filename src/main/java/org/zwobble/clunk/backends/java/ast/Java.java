@@ -120,4 +120,8 @@ public class Java {
     public static JavaVariableDeclarationNode variableDeclaration(String name, JavaExpressionNode expression) {
         return new JavaVariableDeclarationNode(name, expression);
     }
+
+    public static JavaWildcardTypeNode wildcardType() {
+        return new JavaWildcardTypeNode();
+    }
 }

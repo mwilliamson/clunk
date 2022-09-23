@@ -660,6 +660,12 @@ public class JavaSerialiser {
                 serialiseTypeVariableReference(node, builder);
                 return null;
             }
+
+            @Override
+            public Void visit(JavaWildcardTypeNode node) {
+                serialiseWildcardType(builder);
+                return null;
+            }
         });
     }
 
@@ -674,5 +680,9 @@ public class JavaSerialiser {
         serialiseExpression(node.expression(), builder, Optional.empty());
         builder.append(";");
         builder.newLine();
+    }
+
+    private static void serialiseWildcardType(CodeBuilder builder) {
+        builder.append("?");
     }
 }

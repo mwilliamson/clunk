@@ -401,8 +401,9 @@ public class JavaCodeGenerator {
             .flatMap(import_ -> {
                 if (import_.fieldName().isEmpty()) {
                     var packageName = namespaceToPackage(import_.namespaceName(), context);
+                    var className = namespaceNameToClassName(import_.namespaceName(), SourceType.SOURCE);
                     return Stream.of(
-                        new JavaImportTypeNode(packageName + "." + namespaceNameToClassName(import_.namespaceName(), SourceType.SOURCE))
+                        new JavaImportTypeNode(packageName + "." + className)
                     );
                 } else {
                     return Stream.empty();

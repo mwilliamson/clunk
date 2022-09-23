@@ -180,6 +180,14 @@ test "text nodes with text are not stripped" {
     assertThat(result, equalTo([html.text("H")]));
 }
 
+test "empty text nodes are stripped" {
+    var nodes = [html.text("")];
+
+    var result = html.stripEmpty(nodes);
+
+    assertThat(result, equalTo([]));
+}
+
 
 ==============
 
@@ -420,13 +428,33 @@ def test_text_nodes_with_text_are_not_stripped():
 
     assert_that(result, equal_to([html.text("H")]))
 
+def test_empty_text_nodes_are_stripped():
+    nodes = [html.text("")]
+
+    result = html.strip_empty(nodes)
+
+    assert_that(result, equal_to([]))
+
 
 ==============
 
 ============================= test session starts ==============================
 rootdir: ROOTDIR, configfile: tox.ini
-collected 1 item
+collected 2 items
 
-mammoth/html_test.py .                                                   [100%]
+mammoth/html_test.py .F                                                  [100%]
 
-============================== 1 passed in TIME ===============================
+=================================== FAILURES ===================================
+______________________ test_empty_text_nodes_are_stripped ______________________
+mammoth/html_test.py:19: in test_empty_text_nodes_are_stripped
+    assert_that(result, equal_to([]))
+SITE-PACKAGES/precisely/__init__.py:50: in assert_that
+    raise AssertionError("\nExpected:{0}\nbut:{1}".format(
+E   AssertionError: 
+E   Expected:
+E     []
+E   but:
+E     was [HtmlText(value='')]
+=========================== short test summary info ============================
+FAILED mammoth/html_test.py::test_empty_text_nodes_are_stripped - AssertionEr...
+========================= 1 failed, 1 passed in TIME ==========================

@@ -180,6 +180,14 @@ test "text nodes with text are not stripped" {
     assertThat(result, equalTo([html.text("H")]));
 }
 
+test "empty text nodes are stripped" {
+    var nodes = [html.text("")];
+
+    var result = html.stripEmpty(nodes);
+
+    assertThat(result, equalTo([]));
+}
+
 
 ==============
 
@@ -520,11 +528,33 @@ test("text nodes with text are not stripped", function () {
     assertThat(result, deepEqualTo([html.text("H")]));
 });
 
+test("empty text nodes are stripped", function () {
+    let nodes = [html.text("")];
+
+    let result = html.stripEmpty(nodes);
+
+    assertThat(result, deepEqualTo([]));
+});
+
 
 ==============
 
 
 
   ✔ text nodes with text are not stripped
+  1) empty text nodes are stripped
 
   1 passing (TIME)
+  1 failing
+
+  1) empty text nodes are stripped:
+     AssertionError: 
+Expected:
+  []
+but:
+  was [ HtmlText { type: 'HtmlText', value: '' } ]
+      at assertThat (node_modules/@mwilliamson/precisely/lib/assertThat.js:14:15)
+      at Context.<anonymous> (src/mammoth/html.test.ts:18:15)
+      at processImmediate (node:internal/timers:466:21)
+
+

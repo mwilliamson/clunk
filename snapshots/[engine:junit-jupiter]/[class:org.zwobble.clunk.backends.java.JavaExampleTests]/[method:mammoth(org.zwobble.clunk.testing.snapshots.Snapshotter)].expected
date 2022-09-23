@@ -180,6 +180,14 @@ test "text nodes with text are not stripped" {
     assertThat(result, equalTo([html.text("H")]));
 }
 
+test "empty text nodes are stripped" {
+    var nodes = [html.text("")];
+
+    var result = html.stripEmpty(nodes);
+
+    assertThat(result, equalTo([]));
+}
+
 
 ==============
 
@@ -559,6 +567,15 @@ public class HtmlTests {
 
         assertThat(result, equalTo(java.util.List.of(Html.text("H"))));
     }
+    @org.junit.jupiter.api.Test
+    @org.junit.jupiter.api.DisplayName("empty text nodes are stripped")
+    public void emptyTextNodesAreStripped() {
+        var nodes = java.util.List.of(Html.text(""));
+
+        var result = Html.stripEmpty(nodes);
+
+        assertThat(result, equalTo(java.util.List.of()));
+    }
 }
 
 ==============
@@ -566,8 +583,29 @@ public class HtmlTests {
 ╷
 ├─ JUnit Jupiter ✔
 │  └─ HtmlTests ✔
-│     └─ text nodes with text are not stripped ✔
+│     ├─ text nodes with text are not stripped ✔
+│     └─ empty text nodes are stripped ✘ 
+│              Expected: <[]>
+│                   but: was <[HtmlText[value=]]>
 └─ JUnit Vintage ✔
+
+Failures (1):
+  JUnit Jupiter:HtmlTests:empty text nodes are stripped
+    MethodSource [className = 'org.zwobble.mammoth.internal.mammoth.html.HtmlTests', methodName = 'emptyTextNodesAreStripped', methodParameterTypes = '']
+    => java.lang.AssertionError: 
+Expected: <[]>
+     but: was <[HtmlText[value=]]>
+       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:20)
+       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:8)
+       org.zwobble.mammoth.internal.mammoth.html.HtmlTests.emptyTextNodesAreStripped(Unknown Source)
+       java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+       java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+       java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+       java.base/java.lang.reflect.Method.invoke(Method.java:568)
+       org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:725)
+       org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+       org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+       [...]
 
 Test run finished after TIME ms
 [         3 containers found      ]
@@ -576,9 +614,9 @@ Test run finished after TIME ms
 [         0 containers aborted    ]
 [         3 containers successful ]
 [         0 containers failed     ]
-[         1 tests found           ]
+[         2 tests found           ]
 [         0 tests skipped         ]
-[         1 tests started         ]
+[         2 tests started         ]
 [         0 tests aborted         ]
 [         1 tests successful      ]
-[         0 tests failed          ]
+[         1 tests failed          ]

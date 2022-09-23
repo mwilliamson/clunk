@@ -9,3 +9,11 @@ test "text nodes with text are not stripped" {
 
     assertThat(result, equalTo([html.text("H")]));
 }
+
+test "empty text nodes are stripped" {
+    var nodes = [html.text("")];
+
+    var result = html.stripEmpty(nodes);
+
+    assertThat(result, equalTo([]));
+}

@@ -51,4 +51,37 @@ public class ParserSwitchTests {
             ))
         ));
     }
+
+    @Test
+    public void blankLinesAreAllowedBeforeAndAfterEachCase() {
+        var source = """
+            switch (x) {
+
+                case A a {
+                    return 1;
+                }
+
+                case B b {
+                    return 2;
+                }
+
+            }
+            """;
+
+        var node = parseString(source, Parser::parseFunctionStatement);
+
+        assertThat(node, cast(
+            UntypedSwitchNode.class,
+            has("cases", contains(
+                cast(
+                    UntypedSwitchCaseNode.class,
+                    has("type", isUntypedTypeLevelReferenceNode("A"))
+                ),
+                cast(
+                    UntypedSwitchCaseNode.class,
+                    has("type", isUntypedTypeLevelReferenceNode("B"))
+                )
+            ))
+        ));
+    }
 }

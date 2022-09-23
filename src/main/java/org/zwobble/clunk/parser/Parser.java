@@ -584,10 +584,16 @@ public class Parser {
         var expression = parseReference(tokens);
         tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
         tokens.skip(TokenType.SYMBOL_BRACE_OPEN);
+
+        skipBlankLines(tokens);
+
         var cases = parseMany(
             () -> tokens.isNext(TokenType.SYMBOL_BRACE_CLOSE),
             () -> parseSwitchCase(tokens),
-            () -> true
+            () -> {
+                skipBlankLines(tokens);
+                return true;
+            }
         );
         tokens.skip(TokenType.SYMBOL_BRACE_CLOSE);
 
@@ -644,6 +650,11 @@ public class Parser {
         tokens.skip(TokenType.SYMBOL_SEMICOLON);
 
         return new UntypedVarNode(name, expression, source);
+    }
+
+    private void skipBlankLines(TokenIterator<TokenType> tokens) {
+        while (tokens.trySkip(TokenType.BLANK_LINE)) {
+        }
     }
 
     private <T> List<T> parseRepeated(BooleanSupplier stop, Supplier<T> parseElement) {

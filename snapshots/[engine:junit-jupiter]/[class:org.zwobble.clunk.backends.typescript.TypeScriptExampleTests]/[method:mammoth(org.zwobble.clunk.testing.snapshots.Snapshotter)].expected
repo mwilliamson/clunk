@@ -167,6 +167,22 @@ fun stripEmpty(nodes: List[HtmlNode]) -> List[HtmlNode] {
 
 ==============
 
+Source path: src/mammoth/html.test.clunk
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+import mammoth/html;
+
+test "text nodes with text are not stripped" {
+    var nodes = [html.text("H")];
+
+    var result = html.stripEmpty(nodes);
+
+    assertThat(result, equalTo([html.text("H")]));
+}
+
+
+==============
+
 Output path: mammoth/documents.ts
 type DocumentElement = Bookmark | BreakLine | BreakPage | BreakColumn | CommentReference | Hyperlink | Image | NoteReference | Paragraph | Run | Tab | Table | TableCell | TableRow | Text;
 
@@ -491,4 +507,24 @@ export {HtmlAttribute, HtmlElement, HtmlForceWrite, HtmlNode, HtmlTag, HtmlText,
 
 ==============
 
-[31mError: No test files found: "src/**/*.test.ts"[39m
+Output path: mammoth/html.test.ts
+import {assertThat} from "@mwilliamson/precisely";
+import {deepEqualTo} from "@mwilliamson/precisely";
+import * as html from "./html";
+
+test("text nodes with text are not stripped", function () {
+    let nodes = [html.text("H")];
+
+    let result = html.stripEmpty(nodes);
+
+    assertThat(result, deepEqualTo([html.text("H")]));
+});
+
+
+==============
+
+
+
+  ✔ text nodes with text are not stripped
+
+  1 passing (TIME)

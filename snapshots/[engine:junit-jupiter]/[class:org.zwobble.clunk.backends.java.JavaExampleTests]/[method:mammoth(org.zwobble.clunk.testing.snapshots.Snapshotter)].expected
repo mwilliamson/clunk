@@ -167,6 +167,22 @@ fun stripEmpty(nodes: List[HtmlNode]) -> List[HtmlNode] {
 
 ==============
 
+Source path: src/mammoth/html.test.clunk
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+import mammoth/html;
+
+test "text nodes with text are not stripped" {
+    var nodes = [html.text("H")];
+
+    var result = html.stripEmpty(nodes);
+
+    assertThat(result, equalTo([html.text("H")]));
+}
+
+
+==============
+
 Output path: org/zwobble/mammoth/internal/mammoth/documents/DocumentElement.java
 package org.zwobble.mammoth.internal.mammoth.documents;
 
@@ -526,20 +542,43 @@ public class Html {
 
 ==============
 
+Output path: org/zwobble/mammoth/internal/mammoth/html/HtmlTests.java
+package org.zwobble.mammoth.internal.mammoth.html;
+
+import org.zwobble.mammoth.internal.mammoth.html.Html;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+
+public class HtmlTests {
+    @org.junit.jupiter.api.Test
+    @org.junit.jupiter.api.DisplayName("text nodes with text are not stripped")
+    public void textNodesWithTextAreNotStripped() {
+        var nodes = java.util.List.of(Html.text("H"));
+
+        var result = Html.stripEmpty(nodes);
+
+        assertThat(result, equalTo(java.util.List.of(Html.text("H"))));
+    }
+}
+
+==============
+
 ╷
 ├─ JUnit Jupiter ✔
+│  └─ HtmlTests ✔
+│     └─ text nodes with text are not stripped ✔
 └─ JUnit Vintage ✔
 
 Test run finished after TIME ms
-[         2 containers found      ]
+[         3 containers found      ]
 [         0 containers skipped    ]
-[         2 containers started    ]
+[         3 containers started    ]
 [         0 containers aborted    ]
-[         2 containers successful ]
+[         3 containers successful ]
 [         0 containers failed     ]
-[         0 tests found           ]
+[         1 tests found           ]
 [         0 tests skipped         ]
-[         0 tests started         ]
+[         1 tests started         ]
 [         0 tests aborted         ]
-[         0 tests successful      ]
+[         1 tests successful      ]
 [         0 tests failed          ]

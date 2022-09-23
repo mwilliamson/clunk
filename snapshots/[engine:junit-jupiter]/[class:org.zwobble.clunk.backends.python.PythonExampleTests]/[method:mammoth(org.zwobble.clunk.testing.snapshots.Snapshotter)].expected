@@ -167,6 +167,22 @@ fun stripEmpty(nodes: List[HtmlNode]) -> List[HtmlNode] {
 
 ==============
 
+Source path: src/mammoth/html.test.clunk
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+import mammoth/html;
+
+test "text nodes with text are not stripped" {
+    var nodes = [html.text("H")];
+
+    var result = html.stripEmpty(nodes);
+
+    assertThat(result, equalTo([html.text("H")]));
+}
+
+
+==============
+
 Output path: mammoth/documents.py
 from __future__ import annotations
 
@@ -390,8 +406,27 @@ def strip_empty(nodes):
 
 ==============
 
+Output path: mammoth/html_test.py
+from __future__ import annotations
+
+from precisely import assert_that
+from precisely import equal_to
+from mammoth import html
+
+def test_text_nodes_with_text_are_not_stripped():
+    nodes = [html.text("H")]
+
+    result = html.strip_empty(nodes)
+
+    assert_that(result, equal_to([html.text("H")]))
+
+
+==============
+
 ============================= test session starts ==============================
 rootdir: ROOTDIR, configfile: tox.ini
-collected 0 items
+collected 1 item
 
-============================ no tests ran in TIME =============================
+mammoth/html_test.py .                                                   [100%]
+
+============================== 1 passed in TIME ===============================

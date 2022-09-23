@@ -575,14 +575,14 @@ public class TypeScriptCodeGenerator {
             public TypeScriptExpressionNode visit(TypedConstructedTypeNode node) {
                 if (node.receiver().value() == OptionTypeConstructor.INSTANCE) {
                     return new TypeScriptUnionNode(List.of(
-                        compileTypeLevelExpression(node.args().get(0)),
+                        compileTypeLevelExpression(node.args().get(0).type()),
                         new TypeScriptReferenceNode("null")
                     ));
                 } else {
                     return new TypeScriptConstructedTypeNode(
                         compileTypeLevelExpression(node.receiver()),
                         node.args().stream()
-                            .map(arg -> compileTypeLevelExpression(arg))
+                            .map(arg -> compileTypeLevelExpression(arg.type()))
                             .toList()
                     );
                 }

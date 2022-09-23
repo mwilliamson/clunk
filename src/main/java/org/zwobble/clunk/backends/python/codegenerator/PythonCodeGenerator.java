@@ -605,7 +605,7 @@ public class PythonCodeGenerator {
                 return new PythonSubscriptionNode(
                     compileTypeLevelExpression(node.receiver(), context),
                     node.args().stream()
-                        .map(arg -> compileTypeLevelExpression(arg, context))
+                        .map(arg -> compileTypeLevelExpression(arg.type(), context))
                         .toList()
                 );
             }

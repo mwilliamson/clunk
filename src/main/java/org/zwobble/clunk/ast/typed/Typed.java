@@ -32,7 +32,12 @@ public class Typed {
         List<TypedTypeLevelExpressionNode> args,
         TypeLevelValue value
     ) {
-        return new TypedConstructedTypeNode(receiver, args, value, NullSource.INSTANCE);
+        return new TypedConstructedTypeNode(
+            receiver,
+            args.stream().map(arg -> TypedConstructedTypeNode.Arg.invariant(arg)).toList(),
+            value,
+            NullSource.INSTANCE
+        );
     }
 
     public static TypedExpressionStatementNode expressionStatement(TypedExpressionNode expression) {

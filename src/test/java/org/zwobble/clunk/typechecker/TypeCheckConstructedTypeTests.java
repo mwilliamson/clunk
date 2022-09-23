@@ -1,7 +1,9 @@
 package org.zwobble.clunk.typechecker;
 
+import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.TypedConstructedTypeNode;
+import org.zwobble.clunk.ast.typed.TypedTypeLevelExpressionNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.types.ListTypeConstructor;
 import org.zwobble.clunk.types.TypeConstructorTypeSet;
@@ -14,6 +16,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedTypeLevelReferenceNode;
+import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 
 public class TypeCheckConstructedTypeTests {
     @Test
@@ -43,7 +46,11 @@ public class TypeCheckConstructedTypeTests {
         var result = (TypedConstructedTypeNode) TypeChecker.typeCheckTypeLevelExpressionNode(untypedNode, context);
 
         assertThat(result.receiver(), isTypedTypeLevelReferenceNode("List", ListTypeConstructor.INSTANCE));
-        assertThat(result.args(), contains(isTypedTypeLevelReferenceNode("Int", Types.INT)));
+        assertThat(result.args(), contains(isArg(isTypedTypeLevelReferenceNode("Int", Types.INT))));
         assertThat(result.value(), equalTo(Types.list(Types.INT)));
+    }
+
+    private static Matcher<TypedConstructedTypeNode.Arg> isArg(Matcher<TypedTypeLevelExpressionNode> type) {
+        return has("type", type);
     }
 }

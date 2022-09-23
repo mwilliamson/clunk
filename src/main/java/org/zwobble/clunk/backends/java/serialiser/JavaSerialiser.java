@@ -263,6 +263,12 @@ public class JavaSerialiser {
         builder.newLine();
     }
 
+    private static void serialiseExtendsType(JavaExtendsTypeNode node, CodeBuilder builder) {
+        serialiseWildcardType(node.arg(), builder);
+        builder.append(" extends ");
+        serialiseTypeExpression(node.extends_(), builder);
+    }
+
     private static void serialiseFullyQualifiedTypeReference(
         JavaFullyQualifiedTypeReferenceNode node,
         CodeBuilder builder
@@ -644,6 +650,12 @@ public class JavaSerialiser {
     public static void serialiseTypeExpression(JavaTypeExpressionNode node, CodeBuilder builder) {
         node.accept(new JavaTypeExpressionNode.Visitor<Void>() {
             @Override
+            public Void visit(JavaExtendsTypeNode node) {
+                serialiseExtendsType(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(JavaFullyQualifiedTypeReferenceNode node) {
                 serialiseFullyQualifiedTypeReference(node, builder);
                 return null;
@@ -663,7 +675,7 @@ public class JavaSerialiser {
 
             @Override
             public Void visit(JavaWildcardTypeNode node) {
-                serialiseWildcardType(builder);
+                serialiseWildcardType(node, builder);
                 return null;
             }
         });
@@ -682,7 +694,7 @@ public class JavaSerialiser {
         builder.newLine();
     }
 
-    private static void serialiseWildcardType(CodeBuilder builder) {
+    private static void serialiseWildcardType(JavaWildcardTypeNode node, CodeBuilder builder) {
         builder.append("?");
     }
 }

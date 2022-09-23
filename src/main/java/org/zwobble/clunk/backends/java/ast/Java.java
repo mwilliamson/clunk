@@ -47,6 +47,10 @@ public class Java {
         return new JavaExpressionStatementNode(expression);
     }
 
+    public static JavaExtendsTypeNode extendsType(JavaWildcardTypeNode arg, JavaTypeExpressionNode extends_) {
+        return new JavaExtendsTypeNode(arg, extends_);
+    }
+
     public static JavaTypeExpressionNode fullyQualifiedTypeReference(String packageName, String typeName) {
         return new JavaFullyQualifiedTypeReferenceNode(packageName, typeName);
     }

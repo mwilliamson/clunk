@@ -58,7 +58,7 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void listTypeIsCompiledToListType() {
-        var node = Typed.constructedType(
+        var node = Typed.constructedTypeInvariant(
             Typed.typeLevelReference("List", ListTypeConstructor.INSTANCE),
             List.of(Typed.typeLevelReference("String", Types.STRING)),
             Types.list(Types.STRING)
@@ -73,7 +73,7 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void optionTypeIsCompiledToOptionalType() {
-        var node = Typed.constructedType(
+        var node = Typed.constructedTypeInvariant(
             Typed.typeLevelReference("Option", OptionTypeConstructor.INSTANCE),
             List.of(Typed.typeLevelReference("STRING", Types.STRING)),
             Types.option(Types.STRING)
@@ -106,5 +106,40 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
 
         var string = serialiseToString(result, JavaSerialiser::serialiseTypeExpression);
         assertThat(string, equalTo("String"));
+    }
+
+    @Test
+    public void whenArgHasNoSubtypesAndIsCovariantThenArgIsWildcardExtends() {
+        var argType = Types.interfaceType(NamespaceName.fromParts(), "Node");
+        var node = Typed.constructedType(
+            Typed.typeLevelReference("List", ListTypeConstructor.INSTANCE),
+            List.of(Typed.covariant(Typed.typeLevelReference("Node", argType))),
+            Types.list(argType)
+        );
+        var context = JavaCodeGeneratorContext.stub(SubtypeRelations.EMPTY);
+
+        var result = JavaCodeGenerator.compileTypeLevelExpression(node, context);
+
+        var string = serialiseToString(result, JavaSerialiser::serialiseTypeExpression);
+        assertThat(string, equalTo("java.util.List<Node>"));
+    }
+
+    @Test
+    public void whenArgHasSubtypesAndIsCovariantThenArgIsWildcardExtends() {
+        var argType = Types.interfaceType(NamespaceName.fromParts(), "Node");
+        var node = Typed.constructedType(
+            Typed.typeLevelReference("List", ListTypeConstructor.INSTANCE),
+            List.of(Typed.covariant(Typed.typeLevelReference("Node", argType))),
+            Types.list(argType)
+        );
+        var context = JavaCodeGeneratorContext.stub(SubtypeRelations.EMPTY.add(
+            Types.recordType(NamespaceName.fromParts(), "Record"),
+            argType
+        ));
+
+        var result = JavaCodeGenerator.compileTypeLevelExpression(node, context);
+
+        var string = serialiseToString(result, JavaSerialiser::serialiseTypeExpression);
+        assertThat(string, equalTo("java.util.List<? extends Node>"));
     }
 }

@@ -24,6 +24,10 @@ public record TypedConstructedTypeNode(
         public static Arg covariant(TypedTypeLevelExpressionNode type) {
             return new Arg(type, Variance.COVARIANT);
         }
+
+        public boolean isCovariant() {
+            return variance == Variance.COVARIANT;
+        }
     }
 
     @Override

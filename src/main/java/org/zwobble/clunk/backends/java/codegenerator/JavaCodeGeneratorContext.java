@@ -50,6 +50,10 @@ public class JavaCodeGeneratorContext {
         return subtypeRelations.subtypesOf(supertype);
     }
 
+    public boolean hasSubtypes(Type supertype) {
+        return !subtypesOf(supertype).isEmpty();
+    }
+
     public List<InterfaceType> supertypesOf(Type supertype) {
         return subtypeRelations.supertypesOf(supertype);
     }

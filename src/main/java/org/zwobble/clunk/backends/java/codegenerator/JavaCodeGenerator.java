@@ -687,7 +687,14 @@ public class JavaCodeGenerator {
                 return new JavaParameterizedType(
                     compileTypeLevelExpression(node.receiver(), context),
                     node.args().stream()
-                        .map(arg -> compileTypeLevelExpression(arg.type(), context))
+                        .map(arg -> {
+                            var argType = compileTypeLevelExpression(arg.type(), context);
+                            if (arg.isCovariant() && context.hasSubtypes((Type) arg.type().value())) {
+                                return new JavaExtendsTypeNode(new JavaWildcardTypeNode(), argType);
+                            } else {
+                                return argType;
+                            }
+                        })
                         .toList()
                 );
             }

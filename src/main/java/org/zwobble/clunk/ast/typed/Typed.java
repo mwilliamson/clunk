@@ -27,17 +27,33 @@ public class Typed {
         return new TypedConditionalBranchNode(condition, body, NullSource.INSTANCE);
     }
 
-    public static TypedConstructedTypeNode constructedType(
+    public static TypedConstructedTypeNode constructedTypeInvariant(
         TypedTypeLevelExpressionNode receiver,
         List<TypedTypeLevelExpressionNode> args,
         TypeLevelValue value
     ) {
-        return new TypedConstructedTypeNode(
+        return constructedType(
             receiver,
             args.stream().map(arg -> TypedConstructedTypeNode.Arg.invariant(arg)).toList(),
+            value
+        );
+    }
+
+    public static TypedConstructedTypeNode constructedType(
+        TypedTypeLevelExpressionNode receiver,
+        List<TypedConstructedTypeNode.Arg> args,
+        TypeLevelValue value
+    ) {
+        return new TypedConstructedTypeNode(
+            receiver,
+            args,
             value,
             NullSource.INSTANCE
         );
+    }
+
+    public static TypedConstructedTypeNode.Arg covariant(TypedTypeLevelExpressionNode type) {
+        return TypedConstructedTypeNode.Arg.covariant(type);
     }
 
     public static TypedExpressionStatementNode expressionStatement(TypedExpressionNode expression) {

@@ -241,7 +241,7 @@ public record BreakColumn() implements DocumentElement {
 Output path: org/zwobble/mammoth/internal/mammoth/documents/Comment.java
 package org.zwobble.mammoth.internal.mammoth.documents;
 
-public record Comment(String commentId, java.util.List<DocumentElement> body, java.util.Optional<String> authorName, java.util.Optional<String> authorInitials) {
+public record Comment(String commentId, java.util.List<? extends DocumentElement> body, java.util.Optional<String> authorName, java.util.Optional<String> authorInitials) {
 }
 
 ==============
@@ -260,7 +260,7 @@ public record CommentReference(String commentId) implements DocumentElement {
 Output path: org/zwobble/mammoth/internal/mammoth/documents/Document.java
 package org.zwobble.mammoth.internal.mammoth.documents;
 
-public record Document(java.util.List<DocumentElement> children, java.util.List<Note> notes, java.util.List<Comment> comments) {
+public record Document(java.util.List<? extends DocumentElement> children, java.util.List<Note> notes, java.util.List<Comment> comments) {
 }
 
 ==============
@@ -268,7 +268,7 @@ public record Document(java.util.List<DocumentElement> children, java.util.List<
 Output path: org/zwobble/mammoth/internal/mammoth/documents/Hyperlink.java
 package org.zwobble.mammoth.internal.mammoth.documents;
 
-public record Hyperlink(String href, java.util.Optional<String> targetFrame, java.util.List<DocumentElement> children) implements DocumentElement {
+public record Hyperlink(String href, java.util.Optional<String> targetFrame, java.util.List<? extends DocumentElement> children) implements DocumentElement {
     public <T> T accept(DocumentElement.Visitor<T> visitor) {
         return visitor.visit(this);
     }
@@ -290,7 +290,7 @@ public record Image(java.util.Optional<String> altText, java.util.Optional<Strin
 Output path: org/zwobble/mammoth/internal/mammoth/documents/Note.java
 package org.zwobble.mammoth.internal.mammoth.documents;
 
-public record Note(NoteType noteType, String id, java.util.List<DocumentElement> body) {
+public record Note(NoteType noteType, String id, java.util.List<? extends DocumentElement> body) {
 }
 
 ==============
@@ -335,7 +335,7 @@ public record NumberingStyle(String numId) {
 Output path: org/zwobble/mammoth/internal/mammoth/documents/Paragraph.java
 package org.zwobble.mammoth.internal.mammoth.documents;
 
-public record Paragraph(java.util.Optional<String> style, java.util.Optional<NumberingLevel> numbering, ParagraphIndent indent, java.util.List<DocumentElement> children) implements DocumentElement {
+public record Paragraph(java.util.Optional<String> style, java.util.Optional<NumberingLevel> numbering, ParagraphIndent indent, java.util.List<? extends DocumentElement> children) implements DocumentElement {
     public <T> T accept(DocumentElement.Visitor<T> visitor) {
         return visitor.visit(this);
     }
@@ -354,7 +354,7 @@ public record ParagraphIndent(java.util.Optional<String> start, java.util.Option
 Output path: org/zwobble/mammoth/internal/mammoth/documents/Run.java
 package org.zwobble.mammoth.internal.mammoth.documents;
 
-public record Run(boolean isBold, boolean isItalic, boolean isUnderline, boolean isStrikethrough, boolean isAllCaps, boolean isSmallCaps, VerticalAlignment verticalAlignment, java.util.Optional<String> style, java.util.List<DocumentElement> children) implements DocumentElement {
+public record Run(boolean isBold, boolean isItalic, boolean isUnderline, boolean isStrikethrough, boolean isAllCaps, boolean isSmallCaps, VerticalAlignment verticalAlignment, java.util.Optional<String> style, java.util.List<? extends DocumentElement> children) implements DocumentElement {
     public <T> T accept(DocumentElement.Visitor<T> visitor) {
         return visitor.visit(this);
     }
@@ -384,7 +384,7 @@ public record Tab() implements DocumentElement {
 Output path: org/zwobble/mammoth/internal/mammoth/documents/Table.java
 package org.zwobble.mammoth.internal.mammoth.documents;
 
-public record Table(java.util.Optional<Style> style, java.util.List<DocumentElement> children) implements DocumentElement {
+public record Table(java.util.Optional<Style> style, java.util.List<? extends DocumentElement> children) implements DocumentElement {
     public <T> T accept(DocumentElement.Visitor<T> visitor) {
         return visitor.visit(this);
     }
@@ -395,7 +395,7 @@ public record Table(java.util.Optional<Style> style, java.util.List<DocumentElem
 Output path: org/zwobble/mammoth/internal/mammoth/documents/TableCell.java
 package org.zwobble.mammoth.internal.mammoth.documents;
 
-public record TableCell(int rowspan, int colspan, java.util.List<DocumentElement> children) implements DocumentElement {
+public record TableCell(int rowspan, int colspan, java.util.List<? extends DocumentElement> children) implements DocumentElement {
     public <T> T accept(DocumentElement.Visitor<T> visitor) {
         return visitor.visit(this);
     }
@@ -406,7 +406,7 @@ public record TableCell(int rowspan, int colspan, java.util.List<DocumentElement
 Output path: org/zwobble/mammoth/internal/mammoth/documents/TableRow.java
 package org.zwobble.mammoth.internal.mammoth.documents;
 
-public record TableRow(java.util.List<DocumentElement> children, boolean isHeader) implements DocumentElement {
+public record TableRow(java.util.List<? extends DocumentElement> children, boolean isHeader) implements DocumentElement {
     public <T> T accept(DocumentElement.Visitor<T> visitor) {
         return visitor.visit(this);
     }
@@ -462,7 +462,7 @@ public record HtmlAttribute(String name, String value) {
 Output path: org/zwobble/mammoth/internal/mammoth/html/HtmlElement.java
 package org.zwobble.mammoth.internal.mammoth.html;
 
-public record HtmlElement(HtmlTag tag, java.util.List<HtmlNode> children) implements HtmlNode {
+public record HtmlElement(HtmlTag tag, java.util.List<? extends HtmlNode> children) implements HtmlNode {
     public String defaultTagName() {
         return tag().defaultTagName();
     }
@@ -519,7 +519,7 @@ public class Html {
     public static HtmlText text(String value) {
         return new HtmlText(value);
     }
-    public static java.util.List<HtmlNode> stripEmpty(java.util.List<HtmlNode> nodes) {
+    public static java.util.List<? extends HtmlNode> stripEmpty(java.util.List<? extends HtmlNode> nodes) {
         return nodes;
     }
 }

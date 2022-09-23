@@ -365,13 +365,18 @@ public class JavaCodeGenerator {
     }
 
     private static JavaExpressionNode compileMemberAccess(TypedMemberAccessNode node, JavaCodeGeneratorContext context) {
-        return new JavaCallNode(
-            new JavaMemberAccessNode(
-                compileExpression(node.receiver(), context),
-                node.memberName()
-            ),
-            List.of()
+        var javaMemberAccess = new JavaMemberAccessNode(
+            compileExpression(node.receiver(), context),
+            node.memberName()
         );
+        if (node.receiver().type() instanceof NamespaceType) {
+            return javaMemberAccess;
+        } else {
+            return new JavaCallNode(
+                javaMemberAccess,
+                List.of()
+            );
+        }
     }
 
     private static JavaExpressionNode compileMemberReference(TypedMemberReferenceNode node) {

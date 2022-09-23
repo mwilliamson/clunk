@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.zwobble.clunk.backends.CaseConverter.lowerCamelCaseToUpperCamelCase;
 import static org.zwobble.clunk.backends.CaseConverter.upperCamelCaseToLowerCamelCase;
@@ -397,19 +396,13 @@ public class JavaCodeGenerator {
         var functions = new ArrayList<JavaClassBodyDeclarationNode>();
         var imports = new ArrayList<JavaImportNode>();
 
-        node.imports().stream()
-            .flatMap(import_ -> {
-                if (import_.fieldName().isEmpty()) {
-                    var packageName = namespaceToPackage(import_.namespaceName(), context);
-                    var className = namespaceNameToClassName(import_.namespaceName(), SourceType.SOURCE);
-                    return Stream.of(
-                        new JavaImportTypeNode(packageName + "." + className)
-                    );
-                } else {
-                    return Stream.empty();
-                }
-            })
-            .collect(Collectors.toCollection(() -> imports));
+        for (var import_ : node.imports()) {
+            if (import_.fieldName().isEmpty()) {
+                var packageName = namespaceToPackage(import_.namespaceName(), context);
+                var className = namespaceNameToClassName(import_.namespaceName(), SourceType.SOURCE);
+                imports.add(new JavaImportTypeNode(packageName + "." + className));
+            }
+        }
 
         for (var statement : node.statements()) {
             statement.accept(new TypedNamespaceStatementNode.Visitor<Void>() {

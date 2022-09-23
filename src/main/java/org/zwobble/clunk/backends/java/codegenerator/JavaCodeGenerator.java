@@ -134,7 +134,7 @@ public class JavaCodeGenerator {
 
             @Override
             public JavaExpressionNode visit(TypedLocalReferenceNode node) {
-                return compileLocalReference(node);
+                return compileLocalReference(node, context);
             }
 
             @Override
@@ -342,8 +342,8 @@ public class JavaCodeGenerator {
         );
     }
 
-    private static JavaExpressionNode compileLocalReference(TypedLocalReferenceNode node) {
-        return new JavaReferenceNode(node.name());
+    private static JavaExpressionNode compileLocalReference(TypedLocalReferenceNode node, JavaCodeGeneratorContext context) {
+        return new JavaReferenceNode(context.variableName(node.name()));
     }
 
     private static JavaExpressionNode compileLogicalAnd(TypedLogicalAndNode node, JavaCodeGeneratorContext context) {
@@ -401,6 +401,7 @@ public class JavaCodeGenerator {
                 var packageName = namespaceToPackage(import_.namespaceName(), context);
                 var className = namespaceNameToClassName(import_.namespaceName(), SourceType.SOURCE);
                 imports.add(new JavaImportTypeNode(packageName + "." + className));
+                context.renameVariable(import_.variableName(), className);
             }
         }
 

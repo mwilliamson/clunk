@@ -9,9 +9,7 @@ import org.zwobble.clunk.types.RecordType;
 import org.zwobble.clunk.types.SubtypeRelations;
 import org.zwobble.clunk.types.Type;
 
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class JavaCodeGeneratorContext {
     public static JavaCodeGeneratorContext stub(SubtypeRelations subtypeRelations) {
@@ -23,14 +21,14 @@ public class JavaCodeGeneratorContext {
     }
 
     private final JavaTargetConfig config;
+    private final Set<JavaImportNode> imports = new LinkedHashSet<>();
     private final SubtypeRelations subtypeRelations;
+    private final Map<String, String> variableRenames = new HashMap<>();
 
     public JavaCodeGeneratorContext(JavaTargetConfig config, SubtypeRelations subtypeRelations) {
         this.config = config;
         this.subtypeRelations = subtypeRelations;
     }
-
-    private final Set<JavaImportNode> imports = new LinkedHashSet<>();
 
     public void addImportStatic(String packageName, String identifier) {
         imports.add(new JavaImportStaticNode(packageName, identifier));
@@ -54,5 +52,13 @@ public class JavaCodeGeneratorContext {
 
     public List<InterfaceType> supertypesOf(Type supertype) {
         return subtypeRelations.supertypesOf(supertype);
+    }
+
+    public void renameVariable(String from, String to) {
+        variableRenames.put(from, to);
+    }
+
+    public String variableName(String from) {
+        return variableRenames.getOrDefault(from, from);
     }
 }

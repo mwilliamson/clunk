@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.zwobble.clunk.backends.CaseConverter.lowerCamelCaseToUpperCamelCase;
 import static org.zwobble.clunk.backends.CaseConverter.upperCamelCaseToLowerCamelCase;
@@ -394,6 +395,20 @@ public class JavaCodeGenerator {
         var context = new JavaCodeGeneratorContext(config, subtypeRelations);
         var compilationUnits = new ArrayList<JavaOrdinaryCompilationUnitNode>();
         var functions = new ArrayList<JavaClassBodyDeclarationNode>();
+        var imports = new ArrayList<JavaImportNode>();
+
+        node.imports().stream()
+            .flatMap(import_ -> {
+                if (import_.fieldName().isEmpty()) {
+                    var packageName = namespaceToPackage(import_.namespaceName(), context);
+                    return Stream.of(
+                        new JavaImportTypeNode(packageName + "." + namespaceNameToClassName(import_.namespaceName(), SourceType.SOURCE))
+                    );
+                } else {
+                    return Stream.empty();
+                }
+            })
+            .collect(Collectors.toCollection(() -> imports));
 
         for (var statement : node.statements()) {
             statement.accept(new TypedNamespaceStatementNode.Visitor<Void>() {
@@ -440,13 +455,14 @@ public class JavaCodeGenerator {
             });
         }
 
+        imports.addAll(context.imports());
+
         if (!functions.isEmpty()) {
-            var classNameSuffix = node.sourceType().equals(SourceType.TEST) ? "Tests" : "";
-            var className = lowerCamelCaseToUpperCamelCase(last(node.name().parts())) + classNameSuffix;
+            var className = namespaceNameToClassName(node.name(), node.sourceType());
 
             compilationUnits.add(new JavaOrdinaryCompilationUnitNode(
                 namespaceToPackage(node.name(), context),
-                context.imports().stream().toList(),
+                imports,
                 new JavaClassDeclarationNode(className, functions)
             ));
         }
@@ -753,5 +769,10 @@ public class JavaCodeGenerator {
 
     private static String typeToJavaTypeName(NamespaceName namespaceName, String name, JavaCodeGeneratorContext context) {
         return namespaceToPackage(namespaceName, context) + "." + name;
+    }
+
+    private static String namespaceNameToClassName(NamespaceName name, SourceType sourceType) {
+        var classNameSuffix = sourceType.equals(SourceType.TEST) ? "Tests" : "";
+        return lowerCamelCaseToUpperCamelCase(last(name.parts())) + classNameSuffix;
     }
 }

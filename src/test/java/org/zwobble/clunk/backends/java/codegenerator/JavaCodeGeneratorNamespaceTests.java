@@ -5,9 +5,9 @@ import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.java.ast.JavaOrdinaryCompilationUnitNode;
 import org.zwobble.clunk.backends.java.config.JavaTargetConfig;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
-import org.zwobble.clunk.types.SubtypeRelations;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.StaticFunctionType;
+import org.zwobble.clunk.types.SubtypeRelations;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
@@ -97,6 +97,35 @@ public class JavaCodeGeneratorNamespaceTests {
                         @org.junit.jupiter.api.Test
                         @org.junit.jupiter.api.DisplayName("g")
                         public void g() {
+                        }
+                    }"""
+            )
+        ));
+    }
+
+    @Test
+    public void namespaceImportsAreCompiled() {
+        var node = TypedNamespaceNode
+            .builder(NamespaceName.fromParts("example", "project"))
+            .addImport(Typed.import_(NamespaceName.fromParts("a"), Types.INT))
+            .addImport(Typed.import_(NamespaceName.fromParts("b", "c"), Types.INT))
+            .addImport(Typed.import_(NamespaceName.fromParts("d", "e", "f"), Types.INT))
+            .addStatement(TypedFunctionNode.builder().name("f").returnType(Typed.typeLevelString()).build())
+            .build();
+
+        var result = JavaCodeGenerator.compileNamespace(node, JavaTargetConfig.stub(), SubtypeRelations.EMPTY);
+
+        assertThat(serialise(result), contains(
+            equalTo(
+                """
+                    package example.project;
+
+                    import a.A;
+                    import b.c.C;
+                    import d.e.f.F;
+
+                    public class Project {
+                        public static String f() {
                         }
                     }"""
             )

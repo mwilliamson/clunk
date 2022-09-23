@@ -12,8 +12,7 @@ import org.zwobble.clunk.types.Types;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedTypeLevelReferenceNode;
 import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
@@ -46,11 +45,47 @@ public class TypeCheckConstructedTypeTests {
         var result = (TypedConstructedTypeNode) TypeChecker.typeCheckTypeLevelExpressionNode(untypedNode, context);
 
         assertThat(result.receiver(), isTypedTypeLevelReferenceNode("List", ListTypeConstructor.INSTANCE));
-        assertThat(result.args(), contains(isArg(isTypedTypeLevelReferenceNode("Int", Types.INT))));
+        assertThat(result.args(), contains(
+            isArg(isTypedTypeLevelReferenceNode("Int", Types.INT))
+        ));
         assertThat(result.value(), equalTo(Types.list(Types.INT)));
     }
 
+    @Test
+    public void listTypeArgIsCovariant() {
+        var untypedNode = Untyped.constructedType(
+            Untyped.typeLevelReference("List"),
+            List.of(Untyped.typeLevelReference("Int"))
+        );
+        var context = TypeCheckerContext.stub();
+
+        var result = (TypedConstructedTypeNode) TypeChecker.typeCheckTypeLevelExpressionNode(untypedNode, context);
+
+        assertThat(result.args(), contains(
+            isArg(isTypedTypeLevelReferenceNode("Int", Types.INT), TypedConstructedTypeNode.Variance.COVARIANT)
+        ));
+    }
+
+    @Test
+    public void optionTypeArgIsCovariant() {
+        var untypedNode = Untyped.constructedType(
+            Untyped.typeLevelReference("Option"),
+            List.of(Untyped.typeLevelReference("Int"))
+        );
+        var context = TypeCheckerContext.stub();
+
+        var result = (TypedConstructedTypeNode) TypeChecker.typeCheckTypeLevelExpressionNode(untypedNode, context);
+
+        assertThat(result.args(), contains(
+            isArg(isTypedTypeLevelReferenceNode("Int", Types.INT), TypedConstructedTypeNode.Variance.COVARIANT)
+        ));
+    }
+
+    private static Matcher<TypedConstructedTypeNode.Arg> isArg(Matcher<TypedTypeLevelExpressionNode> type, TypedConstructedTypeNode.Variance variance) {
+        return allOf(has("type", type), has("variance", equalTo(variance)));
+    }
+
     private static Matcher<TypedConstructedTypeNode.Arg> isArg(Matcher<TypedTypeLevelExpressionNode> type) {
-        return has("type", type);
+        return allOf(has("type", type));
     }
 }

@@ -20,6 +20,10 @@ public record TypedConstructedTypeNode(
         public static Arg invariant(TypedTypeLevelExpressionNode type) {
             return new Arg(type, Variance.INVARIANT);
         }
+
+        public static Arg covariant(TypedTypeLevelExpressionNode type) {
+            return new Arg(type, Variance.COVARIANT);
+        }
     }
 
     @Override

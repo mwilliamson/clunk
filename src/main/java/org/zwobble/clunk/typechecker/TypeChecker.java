@@ -143,7 +143,7 @@ public class TypeChecker {
 
         if (receiverType instanceof TypeConstructor typeConstructor) {
             var typedArgNodes = node.args().stream()
-                .map(arg -> TypedConstructedTypeNode.Arg.invariant(typeCheckTypeLevelExpressionNode(arg, context)))
+                .map(arg -> TypedConstructedTypeNode.Arg.covariant(typeCheckTypeLevelExpressionNode(arg, context)))
                 .toList();
             // TODO: handle non-type args
             var args = typedArgNodes.stream().map(arg -> (Type) arg.type().value()).toList();

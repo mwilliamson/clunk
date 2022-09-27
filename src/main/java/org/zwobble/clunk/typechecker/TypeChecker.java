@@ -50,16 +50,11 @@ public class TypeChecker {
         var typedPositionalArgs = new ArrayList<TypedExpressionNode>();
 
         for (var argIndex = 0; argIndex < signature.positionalParams().size(); argIndex++) {
+            var paramType = signature.positionalParams().get(argIndex);
             var untypedArgNode = node.positionalArgs().get(argIndex);
-            var typedArgNode = typeCheckExpression(untypedArgNode, context);
+            var typedArgNode = typeCheckExpression(untypedArgNode, paramType, context);
 
             typedPositionalArgs.add(typedArgNode);
-
-            var paramType = signature.positionalParams().get(argIndex);
-            var argType = typedArgNode.type();
-            if (!context.isSubType(argType, paramType)) {
-                throw new UnexpectedTypeError(paramType, argType, untypedArgNode.source());
-            }
         }
         return typedPositionalArgs;
     }
@@ -197,6 +192,21 @@ public class TypeChecker {
             right,
             node.source()
         );
+    }
+
+    public static TypedExpressionNode typeCheckExpression(
+        UntypedExpressionNode node,
+        Type expected,
+        TypeCheckerContext context
+    ) {
+        var typed = typeCheckExpression(node, context);
+
+        var argType = typed.type();
+        if (!context.isSubType(argType, expected)) {
+            throw new UnexpectedTypeError(expected, argType, node.source());
+        }
+
+        return typed;
     }
 
     public static TypedExpressionNode typeCheckExpression(
@@ -899,16 +909,12 @@ public class TypeChecker {
     }
 
     private static TypeCheckFunctionStatementResult<TypedFunctionStatementNode> typeCheckReturn(UntypedReturnNode node, TypeCheckerContext context) {
-        var expression = typeCheckExpression(node.expression(), context);
-
         if (context.returnType().isEmpty()) {
             throw new CannotReturnHereError(node.source());
         }
-        var returnType = context.returnType().get();
 
-        if (!context.isSubType(expression.type(), returnType)) {
-            throw new UnexpectedTypeError(returnType, expression.type(), node.expression().source());
-        }
+        var returnType = context.returnType().get();
+        var expression = typeCheckExpression(node.expression(), returnType, context);
 
         var typedNode = new TypedReturnNode(expression, node.source());
 

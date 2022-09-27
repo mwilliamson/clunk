@@ -90,6 +90,13 @@ public class Java {
         return new JavaMemberAccessNode(receiver, memberName);
     }
 
+    public static JavaMethodReferenceStaticNode methodReferenceStatic(
+        JavaTypeExpressionNode receiver,
+        String methodName
+    ) {
+        return new JavaMethodReferenceStaticNode(receiver, methodName);
+    }
+
     public static JavaStringLiteralNode string(String value) {
         return new JavaStringLiteralNode(value);
     }

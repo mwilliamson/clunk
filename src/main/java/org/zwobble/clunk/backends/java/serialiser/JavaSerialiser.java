@@ -237,6 +237,12 @@ public class JavaSerialiser {
             }
 
             @Override
+            public Void visit(JavaMethodReferenceStaticNode node) {
+                serialiseMethodReferenceStatic(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(JavaReferenceNode node) {
                 serialiseReference(node, builder);
                 return null;
@@ -472,6 +478,15 @@ public class JavaSerialiser {
         builder.append(")");
         serialiseBlock(node.body(), builder);
         builder.newLine();
+    }
+
+    private static void serialiseMethodReferenceStatic(
+        JavaMethodReferenceStaticNode node,
+        CodeBuilder builder
+    ) {
+        serialiseTypeExpression(node.receiver(), builder);
+        builder.append("::");
+        builder.append(node.methodName());
     }
 
     public static void serialiseOrdinaryCompilationUnit(JavaOrdinaryCompilationUnitNode node, CodeBuilder builder) {

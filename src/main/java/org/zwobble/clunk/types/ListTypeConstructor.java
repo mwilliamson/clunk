@@ -11,7 +11,7 @@ public class ListTypeConstructor implements TypeConstructor {
     @Override
     public Type call(List<Type> args) {
         // TODO: check args
-        return new ConstructedType(this, List.of(args.get(0)));
+        return new ConstructedType(this, args);
     }
 
     @Override

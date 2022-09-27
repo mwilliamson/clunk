@@ -21,7 +21,7 @@ public class Types {
     }
 
     public static Type option(Type elementType) {
-        return new OptionType(elementType);
+        return OptionTypeConstructor.INSTANCE.call(List.of(elementType));
     }
 
     public static TypeLevelValueType metaType(Type type) {

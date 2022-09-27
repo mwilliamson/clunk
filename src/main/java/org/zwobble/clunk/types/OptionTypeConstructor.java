@@ -11,7 +11,7 @@ public class OptionTypeConstructor implements TypeConstructor {
     @Override
     public Type call(List<Type> args) {
         // TODO: check args
-        return new OptionType(args.get(0));
+        return new ConstructedType(this, args);
     }
 
     @Override

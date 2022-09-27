@@ -60,6 +60,10 @@ public class Types {
         return type instanceof InterfaceType;
     }
 
+    public static Type construct(TypeConstructor constructor, List<Type> args) {
+        return new ConstructedType(constructor, args);
+    }
+
     public static Type unify(Type left, Type right) {
         return TypeUnifier.unify(left, right);
     }

@@ -41,12 +41,29 @@ public class SubtypeRelations {
         }
 
         if (
-            subtype instanceof ConstructedType subtypeList &&
-            subtypeList.constructor().equals(ListTypeConstructor.INSTANCE) &&
-            supertype instanceof ConstructedType supertypeList &&
-            supertypeList.constructor().equals(ListTypeConstructor.INSTANCE)
+            subtype instanceof ConstructedType subtypeConstructed &&
+            supertype instanceof ConstructedType supertypeConstructed &&
+            subtypeConstructed.constructor().equals(supertypeConstructed.constructor())
         ) {
-            return isSubType(subtypeList.args().get(0), supertypeList.args().get(0));
+            for (var i = 0; i < subtypeConstructed.constructor().params().size(); i++) {
+                var param = subtypeConstructed.constructor().params().get(i);
+                var argSubtype = subtypeConstructed.args().get(0);
+                var argSupertype = supertypeConstructed.args().get(0);
+
+                switch (param.variance()) {
+                    case COVARIANT -> {
+                        if (!isSubType(argSubtype, argSupertype)) {
+                            return false;
+                        }
+                    }
+                    case INVARIANT -> {
+                        if (!argSubtype.equals(argSupertype)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
         }
 
         return false;

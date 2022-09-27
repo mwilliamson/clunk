@@ -9,6 +9,11 @@ public class OptionTypeConstructor implements TypeConstructor {
     }
 
     @Override
+    public List<TypeParameter> params() {
+        return List.of(TypeParameter.covariant("T"));
+    }
+
+    @Override
     public Type call(List<Type> args) {
         // TODO: check args
         return new ConstructedType(this, args);

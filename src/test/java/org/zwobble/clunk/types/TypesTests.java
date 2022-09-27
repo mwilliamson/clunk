@@ -2,10 +2,63 @@ package org.zwobble.clunk.types;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 public class TypesTests {
+    private static final TypeConstructor TYPE_CONSTRUCTOR_COVARIANT = new TypeConstructor() {
+        @Override
+        public List<TypeParameter> params() {
+            return List.of(TypeParameter.covariant("T"));
+        }
+
+        @Override
+        public Type call(List<Type> args) {
+            return new ConstructedType(this, args);
+        }
+
+        @Override
+        public String describe() {
+            return "TypeConstructorCovariant";
+        }
+    };
+
+    private static final TypeConstructor TYPE_CONSTRUCTOR_COVARIANT_OTHER = new TypeConstructor() {
+        @Override
+        public List<TypeParameter> params() {
+            return List.of(TypeParameter.covariant("T"));
+        }
+
+        @Override
+        public Type call(List<Type> args) {
+            return new ConstructedType(this, args);
+        }
+
+        @Override
+        public String describe() {
+            return "TypeConstructorCovariantOther";
+        }
+    };
+
+    private static final TypeConstructor TYPE_CONSTRUCTOR_INVARIANT = new TypeConstructor() {
+        @Override
+        public List<TypeParameter> params() {
+            return List.of(TypeParameter.invariant("T"));
+        }
+
+        @Override
+        public Type call(List<Type> args) {
+            return new ConstructedType(this, args);
+        }
+
+        @Override
+        public String describe() {
+            return "TypeConstructorCovariant";
+        }
+    };
+
     @Test
     public void typesAreSubTypesOfThemselves() {
         var subtypeRelations = SubtypeRelations.EMPTY;
@@ -59,37 +112,109 @@ public class TypesTests {
     }
 
     @Test
-    public void listOfXIsSubtypeOfListOfX() {
+    public void constructedTypesWithUnrelatedConstructorsAreNotSubtypes() {
         var subtypeRelations = SubtypeRelations.EMPTY;
 
-        var result = subtypeRelations.isSubType(Types.list(Types.STRING), Types.list(Types.STRING));
-
-        assertThat(result, equalTo(true));
-    }
-
-    @Test
-    public void listOfXIsNotSubtypeOfListOfUnrelatedY() {
-        var subtypeRelations = SubtypeRelations.EMPTY;
-
-        var result = subtypeRelations.isSubType(Types.list(Types.STRING), Types.list(Types.INT));
+        var result = subtypeRelations.isSubType(
+            Types.construct(TYPE_CONSTRUCTOR_COVARIANT, List.of(Types.STRING)),
+            Types.construct(TYPE_CONSTRUCTOR_COVARIANT_OTHER, List.of(Types.STRING))
+        );
 
         assertThat(result, equalTo(false));
     }
 
     @Test
-    public void whenXIsSubtypeOfYThenListOfXIsSubtypeOfListOfY() {
+    public void givenTypeParamIsInvariantWhenTypeArgsAreTheSameThenConstructedTypesAreSubtypes() {
         var subtypeRelations = SubtypeRelations.EMPTY;
 
-        var result = subtypeRelations.isSubType(Types.list(Types.STRING), Types.list(Types.OBJECT));
+        var result = subtypeRelations.isSubType(
+            Types.construct(TYPE_CONSTRUCTOR_INVARIANT, List.of(Types.STRING)),
+            Types.construct(TYPE_CONSTRUCTOR_INVARIANT, List.of(Types.STRING))
+        );
 
         assertThat(result, equalTo(true));
     }
 
     @Test
-    public void whenXIsSupertypeOfYThenListOfXIsNotSubtypeOfListOfY() {
+    public void givenTypeParamIsInvariantWhenTypeArgsAreUnrelatedThenConstructedTypesAreNotSubtypes() {
         var subtypeRelations = SubtypeRelations.EMPTY;
 
-        var result = subtypeRelations.isSubType(Types.list(Types.OBJECT), Types.list(Types.STRING));
+        var result = subtypeRelations.isSubType(
+            Types.construct(TYPE_CONSTRUCTOR_INVARIANT, List.of(Types.STRING)),
+            Types.construct(TYPE_CONSTRUCTOR_INVARIANT, List.of(Types.INT))
+        );
+
+        assertThat(result, equalTo(false));
+    }
+
+    @Test
+    public void givenTypeParamIsInvariantWhenTypeArgsAreSubtypesThenConstructedTypesAreNotSubtypes() {
+        var subtypeRelations = SubtypeRelations.EMPTY;
+
+        var result = subtypeRelations.isSubType(
+            Types.construct(TYPE_CONSTRUCTOR_INVARIANT, List.of(Types.STRING)),
+            Types.construct(TYPE_CONSTRUCTOR_INVARIANT, List.of(Types.OBJECT))
+        );
+
+        assertThat(result, equalTo(false));
+    }
+
+    @Test
+    public void givenTypeParamIsInvariantWhenTypeArgsAreSupertypesThenConstructedTypesAreNotSubtypes() {
+        var subtypeRelations = SubtypeRelations.EMPTY;
+
+        var result = subtypeRelations.isSubType(
+            Types.construct(TYPE_CONSTRUCTOR_INVARIANT, List.of(Types.OBJECT)),
+            Types.construct(TYPE_CONSTRUCTOR_INVARIANT, List.of(Types.STRING))
+        );
+
+        assertThat(result, equalTo(false));
+    }
+
+    @Test
+    public void givenTypeParamIsCovariantWhenTypeArgsAreTheSameThenConstructedTypesAreSubtypes() {
+        var subtypeRelations = SubtypeRelations.EMPTY;
+
+        var result = subtypeRelations.isSubType(
+            Types.construct(TYPE_CONSTRUCTOR_COVARIANT, List.of(Types.STRING)),
+            Types.construct(TYPE_CONSTRUCTOR_COVARIANT, List.of(Types.STRING))
+        );
+
+        assertThat(result, equalTo(true));
+    }
+
+    @Test
+    public void givenTypeParamIsCovariantWhenTypeArgsAreUnrelatedThenConstructedTypesAreNotSubtypes() {
+        var subtypeRelations = SubtypeRelations.EMPTY;
+
+        var result = subtypeRelations.isSubType(
+            Types.construct(TYPE_CONSTRUCTOR_COVARIANT, List.of(Types.STRING)),
+            Types.construct(TYPE_CONSTRUCTOR_COVARIANT, List.of(Types.INT))
+        );
+
+        assertThat(result, equalTo(false));
+    }
+
+    @Test
+    public void givenTypeParamIsCovariantWhenTypeArgsAreSubtypesThenConstructedTypesAreSubtypes() {
+        var subtypeRelations = SubtypeRelations.EMPTY;
+
+        var result = subtypeRelations.isSubType(
+            Types.construct(TYPE_CONSTRUCTOR_COVARIANT, List.of(Types.STRING)),
+            Types.construct(TYPE_CONSTRUCTOR_COVARIANT, List.of(Types.OBJECT))
+        );
+
+        assertThat(result, equalTo(true));
+    }
+
+    @Test
+    public void givenTypeParamIsCovariantWhenTypeArgsAreSupertypesThenConstructedTypesAreNotSubtypes() {
+        var subtypeRelations = SubtypeRelations.EMPTY;
+
+        var result = subtypeRelations.isSubType(
+            Types.construct(TYPE_CONSTRUCTOR_COVARIANT, List.of(Types.OBJECT)),
+            Types.construct(TYPE_CONSTRUCTOR_COVARIANT, List.of(Types.STRING))
+        );
 
         assertThat(result, equalTo(false));
     }

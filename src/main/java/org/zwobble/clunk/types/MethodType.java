@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 public record MethodType(
     List<Type> positionalParams,
     Type returnType
-) implements FunctionType {
+) implements Type {
     @Override
     public String describe() {
         var paramsString = positionalParams.stream()

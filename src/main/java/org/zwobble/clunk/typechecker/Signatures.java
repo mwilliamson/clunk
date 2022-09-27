@@ -10,8 +10,8 @@ public class Signatures {
         // TODO: handle not callable
         if (type instanceof StaticFunctionType staticFunctionType) {
             return new SignatureStaticFunction(staticFunctionType);
-        } else if (type instanceof FunctionType functionType) {
-            return new SignatureMethod(functionType);
+        } else if (type instanceof MethodType methodType) {
+            return new SignatureMethod(methodType);
         } else if (type instanceof TypeLevelValueType typeLevelValueType && typeLevelValueType.value() instanceof RecordType recordType) {
             var positionalParams = context.fieldsOf(recordType).stream()
                 .map(field -> (Type)field.type().value())

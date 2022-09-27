@@ -28,7 +28,7 @@ record SignatureConstructorStringBuilder() implements Signature {
     }
 }
 
-record SignatureMethod(FunctionType type) implements Signature {
+record SignatureMethod(MethodType type) implements Signature {
     @Override
     public List<Type> positionalParams() {
         return type.positionalParams();

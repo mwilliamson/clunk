@@ -8,6 +8,7 @@ import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.types.ListTypeConstructor;
 import org.zwobble.clunk.types.TypeConstructorTypeSet;
 import org.zwobble.clunk.types.Types;
+import org.zwobble.clunk.types.Variance;
 
 import java.util.List;
 
@@ -62,7 +63,7 @@ public class TypeCheckConstructedTypeTests {
         var result = (TypedConstructedTypeNode) TypeChecker.typeCheckTypeLevelExpressionNode(untypedNode, context);
 
         assertThat(result.args(), contains(
-            isArg(isTypedTypeLevelReferenceNode("Int", Types.INT), TypedConstructedTypeNode.Variance.COVARIANT)
+            isArg(isTypedTypeLevelReferenceNode("Int", Types.INT), Variance.COVARIANT)
         ));
     }
 
@@ -77,11 +78,11 @@ public class TypeCheckConstructedTypeTests {
         var result = (TypedConstructedTypeNode) TypeChecker.typeCheckTypeLevelExpressionNode(untypedNode, context);
 
         assertThat(result.args(), contains(
-            isArg(isTypedTypeLevelReferenceNode("Int", Types.INT), TypedConstructedTypeNode.Variance.COVARIANT)
+            isArg(isTypedTypeLevelReferenceNode("Int", Types.INT), Variance.COVARIANT)
         ));
     }
 
-    private static Matcher<TypedConstructedTypeNode.Arg> isArg(Matcher<TypedTypeLevelExpressionNode> type, TypedConstructedTypeNode.Variance variance) {
+    private static Matcher<TypedConstructedTypeNode.Arg> isArg(Matcher<TypedTypeLevelExpressionNode> type, Variance variance) {
         return allOf(has("type", type), has("variance", equalTo(variance)));
     }
 

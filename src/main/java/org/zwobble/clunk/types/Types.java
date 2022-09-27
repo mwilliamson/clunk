@@ -51,6 +51,10 @@ public class Types {
         return new EnumType(namespaceName, name, members);
     }
 
+    public static FunctionType functionType(List<Type> positionalParams, Type returnType) {
+        return new FunctionType(positionalParams, returnType);
+    }
+
     public static InterfaceType interfaceType(NamespaceName namespaceName, String name) {
         return new InterfaceType(namespaceName, name);
     }

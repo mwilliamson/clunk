@@ -1,6 +1,5 @@
 package org.zwobble.clunk.types;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,7 +19,7 @@ public record StaticFunctionType(
     }
 
     @Override
-    public Type replace(HashMap<TypeParameter, Type> typeMap) {
+    public Type replace(TypeMap typeMap) {
         // TODO: implement properly
         return this;
     }

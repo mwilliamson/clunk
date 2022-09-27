@@ -1,7 +1,5 @@
 package org.zwobble.clunk.types;
 
-import java.util.HashMap;
-
 public class StringBuilderType implements Type {
     public static final StringBuilderType INSTANCE = new StringBuilderType();
 
@@ -15,7 +13,7 @@ public class StringBuilderType implements Type {
     }
 
     @Override
-    public Type replace(HashMap<TypeParameter, Type> typeMap) {
+    public Type replace(TypeMap typeMap) {
         return this;
     }
 }

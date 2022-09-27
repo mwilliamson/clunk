@@ -1,7 +1,5 @@
 package org.zwobble.clunk.types;
 
-import java.util.HashMap;
-
 public record RecordType(NamespaceName namespaceName, String name) implements Type {
     @Override
     public String describe() {
@@ -9,7 +7,7 @@ public record RecordType(NamespaceName namespaceName, String name) implements Ty
     }
 
     @Override
-    public Type replace(HashMap<TypeParameter, Type> typeMap) {
+    public Type replace(TypeMap typeMap) {
         return this;
     }
 }

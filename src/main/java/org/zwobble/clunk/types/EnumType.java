@@ -1,6 +1,5 @@
 package org.zwobble.clunk.types;
 
-import java.util.HashMap;
 import java.util.List;
 
 public record EnumType(
@@ -14,7 +13,7 @@ public record EnumType(
     }
 
     @Override
-    public Type replace(HashMap<TypeParameter, Type> typeMap) {
+    public Type replace(TypeMap typeMap) {
         return this;
     }
 }

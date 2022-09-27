@@ -1,7 +1,5 @@
 package org.zwobble.clunk.types;
 
-import java.util.HashMap;
-
 public class BoolType implements Type {
     public static final BoolType INSTANCE = new BoolType();
 
@@ -15,7 +13,7 @@ public class BoolType implements Type {
     }
 
     @Override
-    public Type replace(HashMap<TypeParameter, Type> typeMap) {
+    public Type replace(TypeMap typeMap) {
         return this;
     }
 }

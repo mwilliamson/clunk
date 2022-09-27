@@ -1,7 +1,6 @@
 package org.zwobble.clunk.types;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -13,7 +12,7 @@ public record NamespaceType(NamespaceName name, Map<String, Type> fields) implem
     }
 
     @Override
-    public Type replace(HashMap<TypeParameter, Type> typeMap) {
+    public Type replace(TypeMap typeMap) {
         return this;
     }
 

@@ -1,7 +1,5 @@
 package org.zwobble.clunk.types;
 
-import java.util.HashMap;
-
 public record TypeParameter(
     NamespaceName namespaceName,
     String typeName,
@@ -22,7 +20,7 @@ public record TypeParameter(
     }
 
     @Override
-    public Type replace(HashMap<TypeParameter, Type> typeMap) {
-        return typeMap.getOrDefault(this, this);
+    public Type replace(TypeMap typeMap) {
+        return typeMap.get(this);
     }
 }

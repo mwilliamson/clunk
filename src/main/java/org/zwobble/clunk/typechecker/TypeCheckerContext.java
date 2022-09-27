@@ -173,7 +173,7 @@ public record TypeCheckerContext(
                     typeMap.put(param, arg);
                 }
 
-                return memberType.replace(typeMap);
+                return memberType.replace(new TypeMap(typeMap));
             });
         }
 

@@ -47,6 +47,17 @@ public class Builtins {
             ))
         )))
         .withBuiltins(Builtins.ENVIRONMENT)
+        .addMemberTypes(Types.LIST_CONSTRUCTOR.genericType(), Map.ofEntries(
+            Map.entry("flatMap", Types.methodType(
+                List.of(
+                    Types.functionType(
+                        List.of(Types.LIST_CONSTRUCTOR.params().get(0)),
+                        Types.list(Types.LIST_CONSTRUCTOR.params().get(0))
+                    )
+                ),
+                Types.list(Types.LIST_CONSTRUCTOR.params().get(0))
+            ))
+        ))
         .addMemberTypes(Types.STRING_BUILDER, Map.ofEntries(
             Map.entry("append", Types.methodType(List.of(Types.STRING), Types.UNIT)),
             Map.entry("build", Types.methodType(List.of(), Types.STRING))

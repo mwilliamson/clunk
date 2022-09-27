@@ -2,9 +2,7 @@ package org.zwobble.clunk.backends.python.codegenerator;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
-import org.zwobble.clunk.ast.typed.TypedMemberAccessNode;
 import org.zwobble.clunk.backends.python.serialiser.PythonSerialiserTesting;
-import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.NamespaceType;
 import org.zwobble.clunk.types.RecordType;
@@ -20,11 +18,10 @@ public class PythonCodeGeneratorMemberAccessTests {
     @Test
     public void memberAccessIsCompiledToAttributeAccess() {
         var recordType = new RecordType(NamespaceName.fromParts("example"), "Id");
-        var node = new TypedMemberAccessNode(
+        var node = Typed.memberAccess(
             Typed.localReference("id", recordType),
             "value",
-            Types.INT,
-            NullSource.INSTANCE
+            Types.INT
         );
 
         var result = PythonCodeGenerator.compileExpression(node, PythonCodeGeneratorContext.stub());
@@ -36,11 +33,10 @@ public class PythonCodeGeneratorMemberAccessTests {
     @Test
     public void memberNameInLowerCamelCaseIsConvertedToSnakeCase() {
         var recordType = new RecordType(NamespaceName.fromParts("example"), "User");
-        var node = new TypedMemberAccessNode(
+        var node = Typed.memberAccess(
             Typed.localReference("user", recordType),
             "fullName",
-            Types.STRING,
-            NullSource.INSTANCE
+            Types.STRING
         );
 
         var result = PythonCodeGenerator.compileExpression(node, PythonCodeGeneratorContext.stub());
@@ -52,11 +48,10 @@ public class PythonCodeGeneratorMemberAccessTests {
     @Test
     public void memberNameInUpperCamelCaseIsUnchanged() {
         var namespaceType = new NamespaceType(NamespaceName.fromParts("example"), Map.of());
-        var node = new TypedMemberAccessNode(
+        var node = Typed.memberAccess(
             Typed.localReference("example", namespaceType),
             "FullName",
-            Types.recordType(NamespaceName.fromParts("example"), "FullName"),
-            NullSource.INSTANCE
+            Types.recordType(NamespaceName.fromParts("example"), "FullName")
         );
 
         var result = PythonCodeGenerator.compileExpression(node, PythonCodeGeneratorContext.stub());

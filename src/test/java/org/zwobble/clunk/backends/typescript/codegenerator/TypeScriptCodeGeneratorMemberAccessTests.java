@@ -17,11 +17,10 @@ public class TypeScriptCodeGeneratorMemberAccessTests {
     @Test
     public void memberAccessIsCompiledToPropertyAccess() {
         var recordType = new RecordType(NamespaceName.fromParts("example"), "Id");
-        var node = new TypedMemberAccessNode(
+        var node = Typed.memberAccess(
             Typed.localReference("id", recordType),
             "value",
-            Types.INT,
-            NullSource.INSTANCE
+            Types.INT
         );
 
         var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());

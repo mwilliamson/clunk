@@ -2,9 +2,7 @@ package org.zwobble.clunk.backends.java.codegenerator;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
-import org.zwobble.clunk.ast.typed.TypedMemberAccessNode;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiserTesting;
-import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.NamespaceType;
 import org.zwobble.clunk.types.RecordType;
@@ -20,11 +18,10 @@ public class JavaCodeGeneratorMemberAccessTests {
     @Test
     public void memberAccessOnRecordIsCompiledToMethodCall() {
         var recordType = new RecordType(NamespaceName.fromParts("example"), "Id");
-        var node = new TypedMemberAccessNode(
+        var node = Typed.memberAccess(
             Typed.localReference("id", recordType),
             "value",
-            Types.INT,
-            NullSource.INSTANCE
+            Types.INT
         );
 
         var result = JavaCodeGenerator.compileExpression(node, JavaCodeGeneratorContext.stub());
@@ -36,11 +33,10 @@ public class JavaCodeGeneratorMemberAccessTests {
     @Test
     public void memberAccessOnNamespaceIsCompiledToMemberAccess() {
         var namespaceType = new NamespaceType(NamespaceName.fromParts("example"), Map.of());
-        var node = new TypedMemberAccessNode(
+        var node = Typed.memberAccess(
             Typed.localReference("example", namespaceType),
             "value",
-            Types.INT,
-            NullSource.INSTANCE
+            Types.INT
         );
 
         var result = JavaCodeGenerator.compileExpression(node, JavaCodeGeneratorContext.stub());

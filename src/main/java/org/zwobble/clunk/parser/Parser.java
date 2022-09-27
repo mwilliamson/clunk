@@ -25,7 +25,11 @@ public class Parser {
         }
 
         @Override
-        public UntypedExpressionNode parse(UntypedExpressionNode left, TokenIterator<TokenType> tokens) {
+        public UntypedExpressionNode parse(
+            UntypedExpressionNode left,
+            TokenIterator<TokenType> tokens,
+            Source operatorSource
+        ) {
             var right = parseSubexpression(tokens, this);
             return new UntypedAddNode(left, right, left.source());
         }
@@ -59,7 +63,11 @@ public class Parser {
         }
 
         @Override
-        public UntypedExpressionNode parse(UntypedExpressionNode left, TokenIterator<TokenType> tokens) {
+        public UntypedExpressionNode parse(
+            UntypedExpressionNode left,
+            TokenIterator<TokenType> tokens,
+            Source operatorSource
+        ) {
             var positionalArgs = parseMany(
                 () -> tokens.isNext(TokenType.SYMBOL_PAREN_CLOSE),
                 () -> parseTopLevelExpression(tokens),
@@ -96,7 +104,11 @@ public class Parser {
         }
 
         @Override
-        public UntypedExpressionNode parse(UntypedExpressionNode left, TokenIterator<TokenType> tokens) {
+        public UntypedExpressionNode parse(
+            UntypedExpressionNode left,
+            TokenIterator<TokenType> tokens,
+            Source operatorSource
+        ) {
             var right = parseSubexpression(tokens, this);
             return new UntypedEqualsNode(left, right, left.source());
         }
@@ -132,8 +144,9 @@ public class Parser {
             if (operator.isEmpty() || operator.get().precedence().ordinal() <= parentPrecedenceOrdinal) {
                 return expression;
             }
+            var operatorSource = source(tokens);
             tokens.skip(operator.get().tokenType());
-            expression = operator.get().parse(expression, tokens);
+            expression = operator.get().parse(expression, tokens, operatorSource);
         }
     }
 
@@ -191,7 +204,11 @@ public class Parser {
         }
 
         @Override
-        public UntypedExpressionNode parse(UntypedExpressionNode left, TokenIterator<TokenType> tokens) {
+        public UntypedExpressionNode parse(
+            UntypedExpressionNode left,
+            TokenIterator<TokenType> tokens,
+            Source operatorSource
+        ) {
             var index = parseTopLevelExpression(tokens);
             tokens.skip(TokenType.SYMBOL_SQUARE_CLOSE);
             return new UntypedIndexNode(left, index, left.source());
@@ -268,7 +285,11 @@ public class Parser {
         }
 
         @Override
-        public UntypedExpressionNode parse(UntypedExpressionNode left, TokenIterator<TokenType> tokens) {
+        public UntypedExpressionNode parse(
+            UntypedExpressionNode left,
+            TokenIterator<TokenType> tokens,
+            Source operatorSource
+        ) {
             var right = parseSubexpression(tokens, this);
             return new UntypedLogicalAndNode(left, right, left.source());
         }
@@ -293,7 +314,11 @@ public class Parser {
         }
 
         @Override
-        public UntypedExpressionNode parse(UntypedExpressionNode left, TokenIterator<TokenType> tokens) {
+        public UntypedExpressionNode parse(
+            UntypedExpressionNode left,
+            TokenIterator<TokenType> tokens,
+            Source operatorSource
+        ) {
             var right = parseSubexpression(tokens, this);
             return new UntypedLogicalOrNode(left, right, left.source());
         }
@@ -311,9 +336,13 @@ public class Parser {
         }
 
         @Override
-        public UntypedExpressionNode parse(UntypedExpressionNode left, TokenIterator<TokenType> tokens) {
+        public UntypedExpressionNode parse(
+            UntypedExpressionNode left,
+            TokenIterator<TokenType> tokens,
+            Source operatorSource
+        ) {
             var fieldName = tokens.nextValue(TokenType.IDENTIFIER);
-            return new UntypedMemberAccessNode(left, fieldName, left.source());
+            return new UntypedMemberAccessNode(left, fieldName, operatorSource, left.source());
         }
 
         @Override

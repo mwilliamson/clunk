@@ -87,7 +87,7 @@ public class Untyped {
     }
 
     public static UntypedExpressionNode memberAccess(UntypedExpressionNode receiver, String memberAccess) {
-        return new UntypedMemberAccessNode(receiver, memberAccess, NullSource.INSTANCE);
+        return new UntypedMemberAccessNode(receiver, memberAccess, NullSource.INSTANCE, NullSource.INSTANCE);
     }
 
     public static UntypedListLiteralNode listLiteral(List<UntypedExpressionNode> elements) {

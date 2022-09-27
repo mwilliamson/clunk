@@ -112,7 +112,13 @@ public class Typed {
         String memberName,
         Type type
     ) {
-        return new TypedMemberAccessNode(receiver, memberName, type, NullSource.INSTANCE);
+        return new TypedMemberAccessNode(
+            receiver,
+            memberName,
+            type,
+            NullSource.INSTANCE,
+            NullSource.INSTANCE
+        );
     }
 
     public static TypedMemberReferenceNode memberReference(String name, Type type) {

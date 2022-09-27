@@ -623,6 +623,7 @@ public class TypeChecker {
             typedReceiverNode,
             node.memberName(),
             memberType.get(),
+            node.operatorSource(),
             node.source()
         );
     }

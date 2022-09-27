@@ -7,6 +7,7 @@ public record TypedMemberAccessNode(
     TypedExpressionNode receiver,
     String memberName,
     Type type,
+    Source operatorSource,
     Source source
 ) implements TypedExpressionNode {
     @Override

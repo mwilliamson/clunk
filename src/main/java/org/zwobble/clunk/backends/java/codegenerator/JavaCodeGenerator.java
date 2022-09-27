@@ -163,6 +163,11 @@ public class JavaCodeGenerator {
             }
 
             @Override
+            public JavaExpressionNode visit(TypedStaticMethodToFunctionNode node) {
+                return compileExpression(node.method(), context);
+            }
+
+            @Override
             public JavaExpressionNode visit(TypedStringEqualsNode node) {
                 return compileStringEquals(node, context);
             }

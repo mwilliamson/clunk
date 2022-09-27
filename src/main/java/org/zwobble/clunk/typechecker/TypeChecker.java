@@ -201,6 +201,14 @@ public class TypeChecker {
     ) {
         var typed = typeCheckExpression(node, context);
 
+        if (expected instanceof FunctionType && typed.type() instanceof StaticFunctionType staticFunctionType) {
+            var functionType = new FunctionType(
+                staticFunctionType.positionalParams(),
+                staticFunctionType.returnType()
+            );
+            typed = new TypedStaticMethodToFunctionNode(typed, functionType);
+        }
+
         var argType = typed.type();
         if (!context.isSubType(argType, expected)) {
             throw new UnexpectedTypeError(expected, argType, node.source());

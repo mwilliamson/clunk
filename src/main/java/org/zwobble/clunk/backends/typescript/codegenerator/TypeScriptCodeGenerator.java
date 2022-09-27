@@ -159,6 +159,11 @@ public class TypeScriptCodeGenerator {
             }
 
             @Override
+            public TypeScriptExpressionNode visit(TypedStaticMethodToFunctionNode node) {
+                return compileExpression(node.method(), context);
+            }
+
+            @Override
             public TypeScriptExpressionNode visit(TypedStringEqualsNode node) {
                 return compileStringEquals(node, context);
             }

@@ -186,6 +186,11 @@ public class PythonCodeGenerator {
             }
 
             @Override
+            public PythonExpressionNode visit(TypedStaticMethodToFunctionNode node) {
+                return compileExpression(node.method(), context);
+            }
+
+            @Override
             public PythonExpressionNode visit(TypedStringEqualsNode node) {
                 return compileStringEquals(node, context);
             }

@@ -515,12 +515,12 @@ public class TypeChecker {
         var typedIndexNode = typeCheckExpression(node.index(), context);
 
         var receiverType = typedReceiverNode.type();
-        if (receiverType instanceof ListType listType) {
+        if (receiverType instanceof ConstructedType listType && listType.constructor().equals(ListTypeConstructor.INSTANCE)) {
             expectExpressionType(typedIndexNode, Types.INT);
             return new TypedIndexNode(
                 typedReceiverNode,
                 typedIndexNode,
-                listType.elementType(),
+                listType.args().get(0),
                 node.source()
             );
         } else {

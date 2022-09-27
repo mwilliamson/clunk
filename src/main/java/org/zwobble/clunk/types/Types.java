@@ -17,7 +17,7 @@ public class Types {
 
 
     public static Type list(Type elementType) {
-        return new ListType(elementType);
+        return ListTypeConstructor.INSTANCE.call(List.of(elementType));
     }
 
     public static Type option(Type elementType) {

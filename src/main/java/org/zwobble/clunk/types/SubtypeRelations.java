@@ -40,8 +40,13 @@ public class SubtypeRelations {
             return true;
         }
 
-        if (subtype instanceof ListType subtypeList && supertype instanceof ListType supertypeList) {
-            return isSubType(subtypeList.elementType(), supertypeList.elementType());
+        if (
+            subtype instanceof ConstructedType subtypeList &&
+            subtypeList.constructor().equals(ListTypeConstructor.INSTANCE) &&
+            supertype instanceof ConstructedType supertypeList &&
+            supertypeList.constructor().equals(ListTypeConstructor.INSTANCE)
+        ) {
+            return isSubType(subtypeList.args().get(0), supertypeList.args().get(0));
         }
 
         return false;

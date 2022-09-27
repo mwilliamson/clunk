@@ -46,14 +46,19 @@ public class TypeChecker {
                 node.source()
             );
         }
-        var typedPositionalArgs = node.positionalArgs().stream().map(arg -> typeCheckExpression(arg, context)).toList();
+
+        var typedPositionalArgs = new ArrayList<TypedExpressionNode>();
 
         for (var argIndex = 0; argIndex < signature.positionalParams().size(); argIndex++) {
+            var untypedArgNode = node.positionalArgs().get(argIndex);
+            var typedArgNode = typeCheckExpression(untypedArgNode, context);
+
+            typedPositionalArgs.add(typedArgNode);
+
             var paramType = signature.positionalParams().get(argIndex);
-            var argNode = typedPositionalArgs.get(argIndex);
-            var argType = argNode.type();
+            var argType = typedArgNode.type();
             if (!context.isSubType(argType, paramType)) {
-                throw new UnexpectedTypeError(paramType, argType, argNode.source());
+                throw new UnexpectedTypeError(paramType, argType, untypedArgNode.source());
             }
         }
         return typedPositionalArgs;

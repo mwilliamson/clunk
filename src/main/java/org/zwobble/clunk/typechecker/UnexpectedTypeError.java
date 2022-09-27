@@ -10,7 +10,7 @@ public class UnexpectedTypeError extends SourceError {
     private final Type actual;
 
     public UnexpectedTypeError(TypeSet expected, Type actual, Source source) {
-        super("Expected type: " + expected.toString() + "\nbut was: " + actual.toString(), source);
+        super("Expected type: " + expected.describe() + "\nbut was: " + actual.describe(), source);
         this.expected = expected;
         this.actual = actual;
     }

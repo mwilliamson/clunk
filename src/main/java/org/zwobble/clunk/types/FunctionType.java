@@ -13,7 +13,7 @@ public record FunctionType(
             .map(param -> param.describe())
             .collect(Collectors.joining(", "));
 
-        return "(" + paramsString + ") -> " + returnType.describe();
+        return "fn (" + paramsString + ") -> " + returnType.describe();
     }
 
     @Override

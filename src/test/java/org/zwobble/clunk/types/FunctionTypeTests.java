@@ -18,7 +18,7 @@ public class FunctionTypeTests {
 
         var result = type.describe();
 
-        assertThat(result, equalTo("(Bool, String) -> Int"));
+        assertThat(result, equalTo("fn (Bool, String) -> Int"));
     }
 
     @Test

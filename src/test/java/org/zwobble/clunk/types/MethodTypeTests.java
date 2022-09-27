@@ -18,7 +18,7 @@ public class MethodTypeTests {
 
         var result = type.describe();
 
-        assertThat(result, equalTo("(Bool, String) -> Int"));
+        assertThat(result, equalTo("method (Bool, String) -> Int"));
     }
 
     @Test

@@ -13,7 +13,7 @@ public record MethodType(
             .map(param -> param.describe())
             .collect(Collectors.joining(", "));
 
-        return "(" + paramsString + ") -> " + returnType.describe();
+        return "method (" + paramsString + ") -> " + returnType.describe();
     }
 
     @Override

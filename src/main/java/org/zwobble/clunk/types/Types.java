@@ -84,9 +84,9 @@ public class Types {
         return TypeUnifier.unify(left, right);
     }
 
-    public static Type unify(List<Type> types) {
+    public static Type unify(List<Type> types, Type defaultType) {
         return types.stream()
             .reduce((x, y) -> unify(x, y))
-            .orElse(Types.OBJECT);
+            .orElse(defaultType);
     }
 }

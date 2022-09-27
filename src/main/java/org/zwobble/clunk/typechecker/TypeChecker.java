@@ -588,7 +588,7 @@ public class TypeChecker {
             .distinct()
             .toList();
 
-        var elementType = Types.unify(elementTypes);
+        var elementType = Types.unify(elementTypes, Types.NOTHING);
 
         return new TypedListLiteralNode(
             elements,

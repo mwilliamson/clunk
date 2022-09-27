@@ -15,7 +15,7 @@ import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 
 public class TypeCheckListLiteralTests {
     @Test
-    public void emptyListHasObjectElementType() {
+    public void emptyListHasNothingElementType() {
         var untypedNode = Untyped.listLiteral(List.of());
         var context = TypeCheckerContext.stub();
 
@@ -24,7 +24,7 @@ public class TypeCheckListLiteralTests {
         assertThat(result, cast(
             TypedListLiteralNode.class,
             has("elements", empty()),
-            has("elementType", equalTo(Types.OBJECT))
+            has("elementType", equalTo(Types.NOTHING))
         ));
     }
 

@@ -18,7 +18,11 @@ public record MethodType(
 
     @Override
     public Type replace(TypeMap typeMap) {
-        // TODO: implement properly
-        return this;
+        return new MethodType(
+            positionalParams.stream()
+                .map(param -> param.replace(typeMap))
+                .toList(),
+            returnType.replace(typeMap)
+        );
     }
 }

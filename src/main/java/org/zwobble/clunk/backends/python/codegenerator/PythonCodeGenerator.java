@@ -336,7 +336,7 @@ public class PythonCodeGenerator {
     }
 
     private static PythonExpressionNode compileLocalReference(TypedLocalReferenceNode node) {
-        return new PythonReferenceNode(node.name());
+        return new PythonReferenceNode(pythonizeName(node.name()));
     }
 
     private static PythonExpressionNode compileLogicalAnd(TypedLogicalAndNode node, PythonCodeGeneratorContext context) {
@@ -373,7 +373,7 @@ public class PythonCodeGenerator {
     ) {
         return new PythonAttrAccessNode(
             new PythonReferenceNode("self"),
-            node.name()
+            pythonizeName(node.name())
         );
     }
 
@@ -646,7 +646,7 @@ public class PythonCodeGenerator {
 
     private static PythonStatementNode compileVar(TypedVarNode node, PythonCodeGeneratorContext context) {
         return new PythonAssignmentNode(
-            node.name(),
+            pythonizeName(node.name()),
             Optional.empty(),
             Optional.of(compileExpression(node.expression(), context))
         );

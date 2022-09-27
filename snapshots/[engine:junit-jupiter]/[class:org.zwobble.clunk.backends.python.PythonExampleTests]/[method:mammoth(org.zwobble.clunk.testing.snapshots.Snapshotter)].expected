@@ -393,11 +393,11 @@ class HtmlTag:
     separator: str
     @property
     def default_tag_name(self):
-        return self.tagNames[0]
+        return self.tag_names[0]
 
     @property
     def is_void(self):
-        return self.defaultTagName == "br" or self.defaultTagName == "hr" or self.defaultTagName == "img"
+        return self.default_tag_name == "br" or self.default_tag_name == "hr" or self.default_tag_name == "img"
 
 def text(value):
     return HtmlText(value)

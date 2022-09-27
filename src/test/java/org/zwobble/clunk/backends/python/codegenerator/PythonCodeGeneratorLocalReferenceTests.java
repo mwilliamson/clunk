@@ -19,4 +19,14 @@ public class PythonCodeGeneratorLocalReferenceTests {
         var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("value"));
     }
+
+    @Test
+    public void namesArePythonized() {
+        var node = Typed.localReference("isValid", BoolType.INSTANCE);
+
+        var result = PythonCodeGenerator.compileExpression(node, PythonCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("is_valid"));
+    }
 }

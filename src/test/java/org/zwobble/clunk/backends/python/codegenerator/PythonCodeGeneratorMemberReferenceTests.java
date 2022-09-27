@@ -19,4 +19,14 @@ public class PythonCodeGeneratorMemberReferenceTests {
         var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("self.value"));
     }
+
+    @Test
+    public void namesArePythonized() {
+        var node = Typed.memberReference("isValid", BoolType.INSTANCE);
+
+        var result = PythonCodeGenerator.compileExpression(node, PythonCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("self.is_valid"));
+    }
 }

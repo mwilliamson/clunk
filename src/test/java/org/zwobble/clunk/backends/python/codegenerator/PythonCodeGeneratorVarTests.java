@@ -18,4 +18,14 @@ public class PythonCodeGeneratorVarTests {
         var string = serialiseToString(result, PythonSerialiser::serialiseStatements);
         assertThat(string, equalTo("x = False\n"));
     }
+
+    @Test
+    public void namesArePythonized() {
+        var node = Typed.var("isValid", Typed.boolFalse());
+
+        var result = PythonCodeGenerator.compileFunctionStatement(node, PythonCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, PythonSerialiser::serialiseStatements);
+        assertThat(string, equalTo("is_valid = False\n"));
+    }
 }

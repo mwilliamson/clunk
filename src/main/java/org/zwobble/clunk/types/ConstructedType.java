@@ -15,7 +15,11 @@ public record ConstructedType(TypeConstructor constructor, List<Type> args) impl
 
     @Override
     public Type replace(TypeMap typeMap) {
-        // TODO: implement properly
-        return this;
+        return new ConstructedType(
+            constructor,
+            args.stream()
+                .map(arg -> arg.replace(typeMap))
+                .toList()
+        );
     }
 }

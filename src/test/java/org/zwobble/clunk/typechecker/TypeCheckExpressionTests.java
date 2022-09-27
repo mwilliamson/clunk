@@ -30,7 +30,7 @@ public class TypeCheckExpressionTests {
             .addLocal("f", methodType, NullSource.INSTANCE);
         var expectedType = Types.functionType(
             List.of(Types.STRING),
-            Types.INT
+            Types.OBJECT
         );
 
         var result = TypeChecker.typeCheckExpression(untypedNode, expectedType, context);

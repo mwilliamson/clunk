@@ -79,6 +79,72 @@ public class TypesTests {
     }
 
     @Test
+    public void functionIsNotSubtypeOfFunctionWithMoreParams() {
+        var supertype = Types.functionType(List.of(Types.OBJECT), Types.OBJECT);
+        var subtype = Types.functionType(List.of(), Types.OBJECT);
+        var subtypeRelations = SubtypeRelations.EMPTY;
+
+        var result = subtypeRelations.isSubType(subtype, supertype);
+
+        assertThat(result, equalTo(false));
+    }
+
+    @Test
+    public void functionIsNotSubtypeOfFunctionWithFewerParams() {
+        var supertype = Types.functionType(List.of(), Types.OBJECT);
+        var subtype = Types.functionType(List.of(Types.OBJECT), Types.OBJECT);
+        var subtypeRelations = SubtypeRelations.EMPTY;
+
+        var result = subtypeRelations.isSubType(subtype, supertype);
+
+        assertThat(result, equalTo(false));
+    }
+
+    @Test
+    public void functionParamTypesAreContravariant() {
+        var supertype = Types.functionType(List.of(Types.STRING), Types.OBJECT);
+        var subtype = Types.functionType(List.of(Types.OBJECT), Types.OBJECT);
+        var subtypeRelations = SubtypeRelations.EMPTY;
+
+        var result = subtypeRelations.isSubType(subtype, supertype);
+
+        assertThat(result, equalTo(true));
+    }
+
+    @Test
+    public void functionParamTypesAreNotCovariant() {
+        var supertype = Types.functionType(List.of(Types.OBJECT), Types.OBJECT);
+        var subtype = Types.functionType(List.of(Types.STRING), Types.OBJECT);
+        var subtypeRelations = SubtypeRelations.EMPTY;
+
+        var result = subtypeRelations.isSubType(subtype, supertype);
+
+        assertThat(result, equalTo(false));
+    }
+
+    @Test
+    public void functionReturnTypesAreCovariant() {
+        var supertype = Types.functionType(List.of(), Types.OBJECT);
+        var subtype = Types.functionType(List.of(), Types.INT);
+        var subtypeRelations = SubtypeRelations.EMPTY;
+
+        var result = subtypeRelations.isSubType(subtype, supertype);
+
+        assertThat(result, equalTo(true));
+    }
+
+    @Test
+    public void functionReturnTypesAreNotContravariant() {
+        var supertype = Types.functionType(List.of(), Types.OBJECT);
+        var subtype = Types.functionType(List.of(), Types.INT);
+        var subtypeRelations = SubtypeRelations.EMPTY;
+
+        var result = subtypeRelations.isSubType(supertype, subtype);
+
+        assertThat(result, equalTo(false));
+    }
+
+    @Test
     public void constructedTypesWithUnrelatedConstructorsAreNotSubtypes() {
         var subtypeRelations = SubtypeRelations.EMPTY;
 

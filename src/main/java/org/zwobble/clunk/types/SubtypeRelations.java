@@ -41,6 +41,29 @@ public class SubtypeRelations {
         }
 
         if (
+            subtype instanceof FunctionType subtypeFunction &&
+            supertype instanceof FunctionType supertypeFunction
+        ) {
+            if (subtypeFunction.positionalParams().size() != supertypeFunction.positionalParams().size()) {
+                return false;
+            }
+
+            for (var i = 0; i < subtypeFunction.positionalParams().size(); i++) {
+                var subtypeParam = subtypeFunction.positionalParams().get(i);
+                var supertypeParam = supertypeFunction.positionalParams().get(i);
+                if (!isSubType(supertypeParam, subtypeParam)) {
+                    return false;
+                }
+            }
+
+            if (!isSubType(subtypeFunction.returnType(), supertypeFunction.returnType())) {
+                return false;
+            }
+
+            return true;
+        }
+
+        if (
             subtype instanceof ConstructedType subtypeConstructed &&
             supertype instanceof ConstructedType supertypeConstructed &&
             subtypeConstructed.constructor().equals(supertypeConstructed.constructor())

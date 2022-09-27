@@ -54,6 +54,15 @@ public class TypesTests {
     }
 
     @Test
+    public void allTypesAreSupertypeOfNothing() {
+        var subtypeRelations = SubtypeRelations.EMPTY;
+
+        var result = subtypeRelations.isSubType(Types.NOTHING, Types.BOOL);
+
+        assertThat(result, equalTo(true));
+    }
+
+    @Test
     public void whenRecordIsExplicitSubtypeOfInterfaceThenRecordIsSubtypeOfInterface() {
         var interfaceType = Types.interfaceType(NamespaceName.fromParts(), "Node");
         var recordType = Types.recordType(NamespaceName.fromParts(), "Add");

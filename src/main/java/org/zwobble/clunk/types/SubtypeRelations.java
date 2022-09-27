@@ -31,6 +31,10 @@ public class SubtypeRelations {
             return true;
         }
 
+        if (subtype.equals(Types.NOTHING)) {
+            return true;
+        }
+
         if (subtype.equals(supertype)) {
             return true;
         }

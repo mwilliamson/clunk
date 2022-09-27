@@ -616,7 +616,7 @@ public class TypeChecker {
         var memberType = context.memberType(recordType, node.memberName());
 
         if (memberType.isEmpty()) {
-            throw new UnknownMemberError(recordType, node.memberName(), node.source());
+            throw new UnknownMemberError(recordType, node.memberName(), node.operatorSource());
         }
 
         return new TypedMemberAccessNode(

@@ -147,7 +147,7 @@ public class TypeChecker {
                 .toList();
             // TODO: handle non-type args
             var args = typedArgNodes.stream().map(arg -> (Type) arg.type().value()).toList();
-            var constructedType = typeConstructor.call(args);
+            var constructedType = Types.construct(typeConstructor, args);
 
             return new TypedConstructedTypeNode(typedReceiverNode, typedArgNodes, constructedType, node.source());
         }

@@ -4,5 +4,4 @@ import java.util.List;
 
 public interface TypeConstructor extends TypeLevelValue {
     List<TypeParameter> params();
-    Type call(List<Type> args);
 }

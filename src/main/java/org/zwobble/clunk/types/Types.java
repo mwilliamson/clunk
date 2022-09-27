@@ -17,11 +17,11 @@ public class Types {
 
 
     public static Type list(Type elementType) {
-        return ListTypeConstructor.INSTANCE.call(List.of(elementType));
+        return construct(ListTypeConstructor.INSTANCE, List.of(elementType));
     }
 
     public static Type option(Type elementType) {
-        return OptionTypeConstructor.INSTANCE.call(List.of(elementType));
+        return construct(OptionTypeConstructor.INSTANCE, List.of(elementType));
     }
 
     public static TypeLevelValueType metaType(Type type) {
@@ -61,6 +61,7 @@ public class Types {
     }
 
     public static Type construct(TypeConstructor constructor, List<Type> args) {
+        // TODO: check args
         return new ConstructedType(constructor, args);
     }
 

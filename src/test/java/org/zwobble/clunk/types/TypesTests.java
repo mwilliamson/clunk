@@ -15,11 +15,6 @@ public class TypesTests {
         }
 
         @Override
-        public Type call(List<Type> args) {
-            return new ConstructedType(this, args);
-        }
-
-        @Override
         public String describe() {
             return "TypeConstructorCovariant";
         }
@@ -32,11 +27,6 @@ public class TypesTests {
         }
 
         @Override
-        public Type call(List<Type> args) {
-            return new ConstructedType(this, args);
-        }
-
-        @Override
         public String describe() {
             return "TypeConstructorCovariantOther";
         }
@@ -46,11 +36,6 @@ public class TypesTests {
         @Override
         public List<TypeParameter> params() {
             return List.of(TypeParameter.invariant("T"));
-        }
-
-        @Override
-        public Type call(List<Type> args) {
-            return new ConstructedType(this, args);
         }
 
         @Override

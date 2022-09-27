@@ -515,7 +515,7 @@ public class TypeChecker {
         var typedIndexNode = typeCheckExpression(node.index(), context);
 
         var receiverType = typedReceiverNode.type();
-        if (receiverType instanceof ConstructedType listType && listType.constructor().equals(ListTypeConstructor.INSTANCE)) {
+        if (receiverType instanceof ConstructedType listType && listType.constructor().equals(Types.LIST_CONSTRUCTOR)) {
             expectExpressionType(typedIndexNode, Types.INT);
             return new TypedIndexNode(
                 typedReceiverNode,

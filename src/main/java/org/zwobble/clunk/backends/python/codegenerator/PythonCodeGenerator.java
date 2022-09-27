@@ -618,13 +618,13 @@ public class PythonCodeGenerator {
                     return new PythonReferenceNode("bool");
                 } else if (typeLevelValue == IntType.INSTANCE) {
                     return new PythonReferenceNode("int");
-                } else if (typeLevelValue == ListTypeConstructor.INSTANCE) {
+                } else if (typeLevelValue == Types.LIST_CONSTRUCTOR) {
                     context.addImport(List.of("typing"));
                     return new PythonAttrAccessNode(
                         new PythonReferenceNode("typing"),
                         "List"
                     );
-                } else if (typeLevelValue == OptionTypeConstructor.INSTANCE) {
+                } else if (typeLevelValue == Types.OPTION_CONSTRUCTOR) {
                     context.addImport(List.of("typing"));
                     return new PythonAttrAccessNode(
                         new PythonReferenceNode("typing"),

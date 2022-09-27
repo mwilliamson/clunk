@@ -59,7 +59,7 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
     @Test
     public void listTypeIsCompiledToListType() {
         var node = Typed.constructedTypeInvariant(
-            Typed.typeLevelReference("List", ListTypeConstructor.INSTANCE),
+            Typed.typeLevelReference("List", Types.LIST_CONSTRUCTOR),
             List.of(Typed.typeLevelReference("String", Types.STRING)),
             Types.list(Types.STRING)
         );
@@ -74,7 +74,7 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
     @Test
     public void optionTypeIsCompiledToOptionalType() {
         var node = Typed.constructedTypeInvariant(
-            Typed.typeLevelReference("Option", OptionTypeConstructor.INSTANCE),
+            Typed.typeLevelReference("Option", Types.OPTION_CONSTRUCTOR),
             List.of(Typed.typeLevelReference("STRING", Types.STRING)),
             Types.option(Types.STRING)
         );
@@ -112,7 +112,7 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
     public void whenArgHasNoSubtypesAndIsCovariantThenArgIsWildcardExtends() {
         var argType = Types.interfaceType(NamespaceName.fromParts(), "Node");
         var node = Typed.constructedType(
-            Typed.typeLevelReference("List", ListTypeConstructor.INSTANCE),
+            Typed.typeLevelReference("List", Types.LIST_CONSTRUCTOR),
             List.of(Typed.covariant(Typed.typeLevelReference("Node", argType))),
             Types.list(argType)
         );
@@ -128,7 +128,7 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
     public void whenArgHasSubtypesAndIsCovariantThenArgIsWildcardExtends() {
         var argType = Types.interfaceType(NamespaceName.fromParts(), "Node");
         var node = Typed.constructedType(
-            Typed.typeLevelReference("List", ListTypeConstructor.INSTANCE),
+            Typed.typeLevelReference("List", Types.LIST_CONSTRUCTOR),
             List.of(Typed.covariant(Typed.typeLevelReference("Node", argType))),
             Types.list(argType)
         );

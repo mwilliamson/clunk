@@ -55,7 +55,7 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
     @Test
     public void listTypeIsCompiledToArrayType() {
         var node = Typed.constructedTypeInvariant(
-            Typed.typeLevelReference("List", ListTypeConstructor.INSTANCE),
+            Typed.typeLevelReference("List", Types.LIST_CONSTRUCTOR),
             List.of(Typed.typeLevelReference("Int", Types.INT)),
             Types.list(Types.INT)
         );
@@ -69,7 +69,7 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
     @Test
     public void optionTypeIsCompiledToUnionWithNull() {
         var node = Typed.constructedTypeInvariant(
-            Typed.typeLevelReference("Option", OptionTypeConstructor.INSTANCE),
+            Typed.typeLevelReference("Option", Types.OPTION_CONSTRUCTOR),
             List.of(Typed.typeLevelReference("Int", Types.INT)),
             Types.option(Types.INT)
         );

@@ -14,8 +14,8 @@ public class Builtins {
     private static final Map<String, Type> ENVIRONMENT_TYPES = Map.ofEntries(
         Map.entry("Bool", metaType(Types.BOOL)),
         Map.entry("Int", metaType(Types.INT)),
-        Map.entry("List", Types.typeConstructorType(ListTypeConstructor.INSTANCE)),
-        Map.entry("Option", Types.typeConstructorType(OptionTypeConstructor.INSTANCE)),
+        Map.entry("List", Types.typeConstructorType(Types.LIST_CONSTRUCTOR)),
+        Map.entry("Option", Types.typeConstructorType(Types.OPTION_CONSTRUCTOR)),
         Map.entry("String", metaType(Types.STRING)),
         Map.entry("StringBuilder", Types.metaType(Types.STRING_BUILDER)),
         Map.entry("Unit", metaType(Types.UNIT))

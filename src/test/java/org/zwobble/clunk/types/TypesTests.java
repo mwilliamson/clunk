@@ -8,41 +8,20 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 public class TypesTests {
-    private static final TypeConstructor TYPE_CONSTRUCTOR_COVARIANT = new TypeConstructor() {
-        @Override
-        public List<TypeParameter> params() {
-            return List.of(TypeParameter.covariant("T"));
-        }
+    private static final TypeConstructor TYPE_CONSTRUCTOR_COVARIANT = new TypeConstructor(
+        "TypeConstructorCovariant",
+        List.of(TypeParameter.covariant("T"))
+    );
 
-        @Override
-        public String describe() {
-            return "TypeConstructorCovariant";
-        }
-    };
+    private static final TypeConstructor TYPE_CONSTRUCTOR_COVARIANT_OTHER = new TypeConstructor(
+        "TypeConstructorCovariantOther",
+        List.of(TypeParameter.covariant("T"))
+    );
 
-    private static final TypeConstructor TYPE_CONSTRUCTOR_COVARIANT_OTHER = new TypeConstructor() {
-        @Override
-        public List<TypeParameter> params() {
-            return List.of(TypeParameter.covariant("T"));
-        }
-
-        @Override
-        public String describe() {
-            return "TypeConstructorCovariantOther";
-        }
-    };
-
-    private static final TypeConstructor TYPE_CONSTRUCTOR_INVARIANT = new TypeConstructor() {
-        @Override
-        public List<TypeParameter> params() {
-            return List.of(TypeParameter.invariant("T"));
-        }
-
-        @Override
-        public String describe() {
-            return "TypeConstructorCovariant";
-        }
-    };
+    private static final TypeConstructor TYPE_CONSTRUCTOR_INVARIANT = new TypeConstructor(
+        "TypeConstructorInvariant",
+        List.of(TypeParameter.invariant("T"))
+    );
 
     @Test
     public void typesAreSubTypesOfThemselves() {

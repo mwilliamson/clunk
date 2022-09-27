@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.TypedConstructedTypeNode;
 import org.zwobble.clunk.ast.typed.TypedTypeLevelExpressionNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
-import org.zwobble.clunk.types.ListTypeConstructor;
 import org.zwobble.clunk.types.TypeConstructorTypeSet;
 import org.zwobble.clunk.types.Types;
 import org.zwobble.clunk.types.Variance;
@@ -45,7 +44,7 @@ public class TypeCheckConstructedTypeTests {
 
         var result = (TypedConstructedTypeNode) TypeChecker.typeCheckTypeLevelExpressionNode(untypedNode, context);
 
-        assertThat(result.receiver(), isTypedTypeLevelReferenceNode("List", ListTypeConstructor.INSTANCE));
+        assertThat(result.receiver(), isTypedTypeLevelReferenceNode("List", Types.LIST_CONSTRUCTOR));
         assertThat(result.args(), contains(
             isArg(isTypedTypeLevelReferenceNode("Int", Types.INT))
         ));

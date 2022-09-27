@@ -573,7 +573,7 @@ public class TypeScriptCodeGenerator {
         return node.accept(new TypedTypeLevelExpressionNode.Visitor<TypeScriptExpressionNode>() {
             @Override
             public TypeScriptExpressionNode visit(TypedConstructedTypeNode node) {
-                if (node.receiver().value() == OptionTypeConstructor.INSTANCE) {
+                if (node.receiver().value() == Types.OPTION_CONSTRUCTOR) {
                     return new TypeScriptUnionNode(List.of(
                         compileTypeLevelExpression(node.args().get(0).type()),
                         new TypeScriptReferenceNode("null")
@@ -595,7 +595,7 @@ public class TypeScriptCodeGenerator {
                     return new TypeScriptReferenceNode("boolean");
                 } else if (value == IntType.INSTANCE) {
                     return new TypeScriptReferenceNode("number");
-                } else if (value == ListTypeConstructor.INSTANCE) {
+                } else if (value == Types.LIST_CONSTRUCTOR) {
                     return new TypeScriptReferenceNode("Array");
                 } else if (value == StringType.INSTANCE) {
                     return new TypeScriptReferenceNode("string");

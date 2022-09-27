@@ -59,7 +59,7 @@ public class PythonCodeGeneratorTypeLevelExpressionTests {
     @Test
     public void listTypeIsCompiledToListType() {
         var node = Typed.constructedTypeInvariant(
-            Typed.typeLevelReference("List", ListTypeConstructor.INSTANCE),
+            Typed.typeLevelReference("List", Types.LIST_CONSTRUCTOR),
             List.of(Typed.typeLevelReference("Int", Types.INT)),
             Types.list(Types.INT)
         );
@@ -74,7 +74,7 @@ public class PythonCodeGeneratorTypeLevelExpressionTests {
     @Test
     public void optionTypeIsCompiledToOptionalType() {
         var node = Typed.constructedTypeInvariant(
-            Typed.typeLevelReference("Option", OptionTypeConstructor.INSTANCE),
+            Typed.typeLevelReference("Option", Types.OPTION_CONSTRUCTOR),
             List.of(Typed.typeLevelReference("Int", Types.INT)),
             Types.option(Types.INT)
         );

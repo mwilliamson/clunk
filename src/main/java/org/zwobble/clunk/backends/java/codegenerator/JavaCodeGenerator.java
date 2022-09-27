@@ -752,9 +752,9 @@ public class JavaCodeGenerator {
             return Optional.of(new JavaTypeVariableReferenceNode(isGeneric ? "Integer" : "int"));
         } else if (value == StringType.INSTANCE) {
             return Optional.of(new JavaTypeVariableReferenceNode("String"));
-        } else if (value == ListTypeConstructor.INSTANCE) {
+        } else if (value == Types.LIST_CONSTRUCTOR) {
             return Optional.of(new JavaFullyQualifiedTypeReferenceNode("java.util", "List"));
-        } else if (value == OptionTypeConstructor.INSTANCE) {
+        } else if (value == Types.OPTION_CONSTRUCTOR) {
             return Optional.of(new JavaFullyQualifiedTypeReferenceNode("java.util", "Optional"));
         } else {
             return Optional.empty();

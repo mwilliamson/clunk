@@ -15,13 +15,22 @@ public class Types {
     public static final Type STRING_BUILDER = StringBuilderType.INSTANCE;
     public static final Type UNIT = UnitType.INSTANCE;
 
+    public static final TypeConstructor LIST_CONSTRUCTOR = new TypeConstructor(
+        "List",
+        List.of(TypeParameter.covariant("T"))
+    );
+
+    public static final TypeConstructor OPTION_CONSTRUCTOR = new TypeConstructor(
+        "Option",
+        List.of(TypeParameter.covariant("T"))
+    );
 
     public static Type list(Type elementType) {
-        return construct(ListTypeConstructor.INSTANCE, List.of(elementType));
+        return construct(LIST_CONSTRUCTOR, List.of(elementType));
     }
 
     public static Type option(Type elementType) {
-        return construct(OptionTypeConstructor.INSTANCE, List.of(elementType));
+        return construct(OPTION_CONSTRUCTOR, List.of(elementType));
     }
 
     public static TypeLevelValueType metaType(Type type) {

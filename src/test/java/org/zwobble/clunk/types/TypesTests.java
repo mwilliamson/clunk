@@ -10,19 +10,19 @@ import static org.hamcrest.Matchers.equalTo;
 public class TypesTests {
     private static final TypeConstructor TYPE_CONSTRUCTOR_COVARIANT = new TypeConstructor(
         "TypeConstructorCovariant",
-        List.of(TypeParameter.covariant("T")),
+        List.of(TypeParameter.covariant(NamespaceName.fromParts(), "TypeConstructorCovariant", "T")),
         Types.recordType(NamespaceName.fromParts(), "TypeConstructorCovariant")
     );
 
     private static final TypeConstructor TYPE_CONSTRUCTOR_COVARIANT_OTHER = new TypeConstructor(
         "TypeConstructorCovariantOther",
-        List.of(TypeParameter.covariant("T")),
+        List.of(TypeParameter.covariant(NamespaceName.fromParts(), "TypeConstructorCovariantOther", "T")),
         Types.recordType(NamespaceName.fromParts(), "TypeConstructorCovariantOther")
     );
 
     private static final TypeConstructor TYPE_CONSTRUCTOR_INVARIANT = new TypeConstructor(
         "TypeConstructorInvariant",
-        List.of(TypeParameter.invariant("T")),
+        List.of(TypeParameter.invariant(NamespaceName.fromParts(), "TypeConstructorInvariant", "T")),
         Types.recordType(NamespaceName.fromParts(), "TypeConstructorInvariant")
     );
 

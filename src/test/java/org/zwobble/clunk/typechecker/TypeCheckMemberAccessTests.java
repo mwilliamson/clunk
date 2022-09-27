@@ -51,7 +51,7 @@ public class TypeCheckMemberAccessTests {
     public void whenReceiverIsConstructedTypeThenCanTypeCheckMemberAccess() {
         var untypedNode = Untyped.memberAccess(Untyped.reference("values"), "first");
         var genericType = new RecordType(NamespaceName.fromParts("example"), "List");
-        var typeParameter = TypeParameter.covariant("T");
+        var typeParameter = TypeParameter.covariant(NamespaceName.fromParts("example"), "List", "T");
         var typeConstructor = new TypeConstructor(
             "List",
             List.of(typeParameter),

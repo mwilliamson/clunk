@@ -1,5 +1,7 @@
 package org.zwobble.clunk.types;
 
+import java.util.HashMap;
+
 public class NothingType implements Type {
     public static final NothingType INSTANCE = new NothingType();
 
@@ -10,5 +12,10 @@ public class NothingType implements Type {
     @Override
     public String describe() {
         return "Nothing";
+    }
+
+    @Override
+    public Type replace(HashMap<TypeParameter, Type> typeMap) {
+        return this;
     }
 }

@@ -1,5 +1,6 @@
 package org.zwobble.clunk.types;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,5 +15,11 @@ public record MethodType(
             .collect(Collectors.joining(", "));
 
         return "(" + paramsString + ") -> " + returnType.describe();
+    }
+
+    @Override
+    public Type replace(HashMap<TypeParameter, Type> typeMap) {
+        // TODO: implement properly
+        return this;
     }
 }

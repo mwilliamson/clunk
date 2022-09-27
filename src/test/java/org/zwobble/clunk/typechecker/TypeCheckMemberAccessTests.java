@@ -4,9 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.sources.NullSource;
-import org.zwobble.clunk.types.NamespaceName;
-import org.zwobble.clunk.types.RecordType;
-import org.zwobble.clunk.types.Types;
+import org.zwobble.clunk.types.*;
 
 import java.util.List;
 import java.util.Map;
@@ -47,5 +45,29 @@ public class TypeCheckMemberAccessTests {
 
         assertThat(result.getType(), equalTo(recordType));
         assertThat(result.getMemberName(), equalTo("x"));
+    }
+
+    @Test
+    public void whenReceiverIsConstructedTypeThenCanTypeCheckMemberAccess() {
+        var untypedNode = Untyped.memberAccess(Untyped.reference("values"), "first");
+        var genericType = new RecordType(NamespaceName.fromParts("example"), "List");
+        var typeParameter = TypeParameter.covariant("T");
+        var typeConstructor = new TypeConstructor(
+            "List",
+            List.of(typeParameter),
+            genericType
+        );
+        var constructedType = Types.construct(typeConstructor, List.of(Types.INT));
+        var context = TypeCheckerContext.stub()
+            .addLocal("values", constructedType, NullSource.INSTANCE)
+            .addMemberTypes(genericType, Map.ofEntries(Map.entry("first", typeParameter)));
+
+        var result = TypeChecker.typeCheckExpression(untypedNode, context);
+
+        assertThat(result, isTypedMemberAccessNode()
+            .withReceiver(isTypedReferenceNode().withName("values").withType(constructedType))
+            .withMemberName(equalTo("first"))
+            .withType(Types.INT)
+        );
     }
 }

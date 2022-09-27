@@ -36,6 +36,25 @@ public class PythonCodeGeneratorCallMethodTests {
     }
 
     @Test
+    public void methodNamesArePythonized() {
+        var node = new TypedCallMethodNode(
+            Typed.localReference(
+                "x",
+                new RecordType(NamespaceName.fromParts("example"), "X")
+            ),
+            "isValid",
+            List.of(),
+            Types.BOOL,
+            NullSource.INSTANCE
+        );
+
+        var result = PythonCodeGenerator.compileExpression(node, PythonCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("x.is_valid()"));
+    }
+
+    @Test
     public void stringBuilderAppendIsCompiledToListAppend() {
         var node = new TypedCallMethodNode(
             Typed.localReference(

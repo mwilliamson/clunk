@@ -58,7 +58,7 @@ public class PythonCodeGenerator {
         return new PythonCallNode(
             new PythonAttrAccessNode(
                 compileExpression(node.receiver(), context),
-                node.methodName()
+                pythonizeName(node.methodName())
             ),
             compileArgs(node.positionalArgs(), context),
             List.of()

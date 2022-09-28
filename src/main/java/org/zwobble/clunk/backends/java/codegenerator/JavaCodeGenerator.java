@@ -749,11 +749,10 @@ public class JavaCodeGenerator {
         }
     }
 
-    private static Optional<JavaTypeExpressionNode> builtinReference(TypeLevelValue value, boolean isGeneric) {
+    public static Optional<JavaTypeExpressionNode> builtinReference(TypeLevelValue value, boolean isGeneric) {
         if (value == BoolType.INSTANCE) {
-            return Optional.of(new JavaTypeVariableReferenceNode("boolean"));
+            return Optional.of(new JavaTypeVariableReferenceNode(isGeneric ? "Boolean": "boolean"));
         } else if (value == IntType.INSTANCE) {
-            // TODO: test isGeneric behaviour
             return Optional.of(new JavaTypeVariableReferenceNode(isGeneric ? "Integer" : "int"));
         } else if (value == StringType.INSTANCE) {
             return Optional.of(new JavaTypeVariableReferenceNode("String"));

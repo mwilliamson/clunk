@@ -176,7 +176,8 @@ fun stripEmpty(nodes: List[HtmlNode]) -> List[HtmlNode] {
 fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
     switch (node) {
         case HtmlElement element {
-            if (element.children.length() == 0) {
+            var children = stripEmpty(element.children);
+            if (children.length() == 0) {
                 return [];
             } else {
                 return [element];
@@ -231,6 +232,14 @@ test "elements with non-empty children are not stripped" {
 
 test "elements with no children are stripped" {
     var nodes = [html.element("p", [], [])];
+
+    var result = html.stripEmpty(nodes);
+
+    assertThat(result, equalTo([]));
+}
+
+test "elements with only empty children are stripped" {
+    var nodes = [html.element("p", [], [html.text("")])];
 
     var result = html.stripEmpty(nodes);
 
@@ -572,7 +581,8 @@ function stripEmptyNode(node: HtmlNode): Array<HtmlNode> {
     switch (node.type) {
         case "HtmlElement":
             let element = node;
-            if (element.children.length === 0) {
+            let children = stripEmpty(element.children);
+            if (children.length === 0) {
                 return [];
             } else {
                 return [element];
@@ -631,6 +641,14 @@ test("elements with no children are stripped", function () {
     assertThat(result, deepEqualTo([]));
 });
 
+test("elements with only empty children are stripped", function () {
+    let nodes = [html.element("p", [], [html.text("")])];
+
+    let result = html.stripEmpty(nodes);
+
+    assertThat(result, deepEqualTo([]));
+});
+
 
 ==============
 
@@ -640,5 +658,6 @@ test("elements with no children are stripped", function () {
   ✔ empty text nodes are stripped
   ✔ elements with non-empty children are not stripped
   ✔ elements with no children are stripped
+  ✔ elements with only empty children are stripped
 
-  4 passing (TIME)
+  5 passing (TIME)

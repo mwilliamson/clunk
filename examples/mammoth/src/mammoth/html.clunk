@@ -50,7 +50,8 @@ fun stripEmpty(nodes: List[HtmlNode]) -> List[HtmlNode] {
 fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
     switch (node) {
         case HtmlElement element {
-            if (element.children.length() == 0) {
+            var children = stripEmpty(element.children);
+            if (children.length() == 0) {
                 return [];
             } else {
                 return [element];

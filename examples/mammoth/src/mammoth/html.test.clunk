@@ -33,3 +33,11 @@ test "elements with no children are stripped" {
 
     assertThat(result, equalTo([]));
 }
+
+test "elements with only empty children are stripped" {
+    var nodes = [html.element("p", [], [html.text("")])];
+
+    var result = html.stripEmpty(nodes);
+
+    assertThat(result, equalTo([]));
+}

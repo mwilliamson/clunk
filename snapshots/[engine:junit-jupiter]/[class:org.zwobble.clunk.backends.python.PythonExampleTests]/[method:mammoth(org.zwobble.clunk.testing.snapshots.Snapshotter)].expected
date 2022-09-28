@@ -176,7 +176,8 @@ fun stripEmpty(nodes: List[HtmlNode]) -> List[HtmlNode] {
 fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
     switch (node) {
         case HtmlElement element {
-            if (element.children.length() == 0) {
+            var children = stripEmpty(element.children);
+            if (children.length() == 0) {
                 return [];
             } else {
                 return [element];
@@ -231,6 +232,14 @@ test "elements with non-empty children are not stripped" {
 
 test "elements with no children are stripped" {
     var nodes = [html.element("p", [], [])];
+
+    var result = html.stripEmpty(nodes);
+
+    assertThat(result, equalTo([]));
+}
+
+test "elements with only empty children are stripped" {
+    var nodes = [html.element("p", [], [html.text("")])];
 
     var result = html.stripEmpty(nodes);
 
@@ -470,7 +479,8 @@ def strip_empty(nodes):
 def strip_empty_node(node):
     class Visitor:
         def visit_html_element(self, element):
-            if len(element.children) == 0:
+            children = strip_empty(element.children)
+            if len(children) == 0:
                 return []
             else:
                 return [element]
@@ -521,13 +531,20 @@ def test_elements_with_no_children_are_stripped():
 
     assert_that(result, equal_to([]))
 
+def test_elements_with_only_empty_children_are_stripped():
+    nodes = [html.element("p", [], [html.text("")])]
+
+    result = html.strip_empty(nodes)
+
+    assert_that(result, equal_to([]))
+
 
 ==============
 
 ============================= test session starts ==============================
 rootdir: ROOTDIR, configfile: tox.ini
-collected 4 items
+collected 5 items
 
-mammoth/html_test.py ....                                                [100%]
+mammoth/html_test.py .....                                               [100%]
 
-============================== 4 passed in TIME ===============================
+============================== 5 passed in TIME ===============================

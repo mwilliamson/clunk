@@ -176,7 +176,8 @@ fun stripEmpty(nodes: List[HtmlNode]) -> List[HtmlNode] {
 fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
     switch (node) {
         case HtmlElement element {
-            if (element.children.length() == 0) {
+            var children = stripEmpty(element.children);
+            if (children.length() == 0) {
                 return [];
             } else {
                 return [element];
@@ -231,6 +232,14 @@ test "elements with non-empty children are not stripped" {
 
 test "elements with no children are stripped" {
     var nodes = [html.element("p", [], [])];
+
+    var result = html.stripEmpty(nodes);
+
+    assertThat(result, equalTo([]));
+}
+
+test "elements with only empty children are stripped" {
+    var nodes = [html.element("p", [], [html.text("")])];
 
     var result = html.stripEmpty(nodes);
 
@@ -610,7 +619,8 @@ public class Html {
         return node.accept(new HtmlNode.Visitor<>() {
             @Override
             public java.util.List<org.zwobble.mammoth.internal.mammoth.html.HtmlNode> visit(HtmlElement element) {
-                if (element.children().size() == 0) {
+                var children = stripEmpty(element.children());
+                if (children.size() == 0) {
                     return java.util.List.of();
                 } else {
                     return java.util.List.of(element);
@@ -678,6 +688,15 @@ public class HtmlTests {
 
         assertThat(result, equalTo(java.util.List.of()));
     }
+    @org.junit.jupiter.api.Test
+    @org.junit.jupiter.api.DisplayName("elements with only empty children are stripped")
+    public void elementsWithOnlyEmptyChildrenAreStripped() {
+        var nodes = java.util.List.of(Html.element("p", java.util.List.of(), java.util.List.of(Html.text(""))));
+
+        var result = Html.stripEmpty(nodes);
+
+        assertThat(result, equalTo(java.util.List.of()));
+    }
 }
 
 ==============
@@ -688,7 +707,8 @@ public class HtmlTests {
 │     ├─ text nodes with text are not stripped ✔
 │     ├─ elements with no children are stripped ✔
 │     ├─ empty text nodes are stripped ✔
-│     └─ elements with non-empty children are not stripped ✔
+│     ├─ elements with non-empty children are not stripped ✔
+│     └─ elements with only empty children are stripped ✔
 └─ JUnit Vintage ✔
 
 Test run finished after TIME ms
@@ -698,9 +718,9 @@ Test run finished after TIME ms
 [         0 containers aborted    ]
 [         3 containers successful ]
 [         0 containers failed     ]
-[         4 tests found           ]
+[         5 tests found           ]
 [         0 tests skipped         ]
-[         4 tests started         ]
+[         5 tests started         ]
 [         0 tests aborted         ]
-[         4 tests successful      ]
+[         5 tests successful      ]
 [         0 tests failed          ]

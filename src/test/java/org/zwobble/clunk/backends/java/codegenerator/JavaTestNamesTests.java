@@ -37,6 +37,13 @@ public class JavaTestNamesTests {
     }
 
     @Test
+    public void hyphenIsTreatedAsSpace() {
+        var result = JavaTestNames.generateName("non-empty");
+
+        assertThat(result, equalTo("nonEmpty"));
+    }
+
+    @Test
     public void whenNameIsNotValidIdentifierThenErrorIsThrown() {
         var result = assertThrows(
             InternalCompilerError.class,

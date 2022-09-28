@@ -9,7 +9,7 @@ public class JavaTestNames {
     private static final Pattern VALID_IDENTIFIER = Pattern.compile("^[a-z][A-Za-z0-9]*$");
 
     public static String generateName(String name) {
-        var identifier = Pattern.compile(" (\\S)")
+        var identifier = Pattern.compile("[ -](\\S)")
             .matcher(name.replace(" == ", " equals "))
             .replaceAll(result -> result.group(1).toUpperCase(Locale.ROOT));
 

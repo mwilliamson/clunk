@@ -56,6 +56,11 @@ public class Builtins {
                     )
                 ),
                 Types.list(Types.LIST_CONSTRUCTOR.params().get(0))
+            )),
+            // TODO: should be a property?
+            Map.entry("length", Types.methodType(
+                List.of(),
+                Types.INT
             ))
         ))
         .addMemberTypes(Types.STRING_BUILDER, Map.ofEntries(

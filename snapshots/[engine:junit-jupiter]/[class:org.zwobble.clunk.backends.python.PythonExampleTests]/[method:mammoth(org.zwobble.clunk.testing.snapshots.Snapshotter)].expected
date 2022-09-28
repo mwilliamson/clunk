@@ -158,10 +158,34 @@ fun text(value: String) -> HtmlText {
     return HtmlText(value);
 }
 
-record HtmlText(value: String) <: HtmlNode
+record HtmlText(value: String) <: HtmlNode {
+    property isEmpty: Bool {
+        return value == "";
+    }
+}
 
 fun stripEmpty(nodes: List[HtmlNode]) -> List[HtmlNode] {
-    return nodes;
+    return nodes.flatMap(stripEmptyNode);
+}
+
+fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
+    switch (node) {
+        case HtmlElement element {
+            return [element];
+        }
+
+        case HtmlForceWrite forceWrite {
+            return [forceWrite];
+        }
+
+        case HtmlText text {
+            if (text.isEmpty) {
+                return [];
+            } else {
+                return [text];
+            }
+        }
+    }
 }
 
 
@@ -405,11 +429,27 @@ def text(value):
 @dataclasses.dataclass(frozen=True)
 class HtmlText:
     value: str
+    @property
+    def is_empty(self):
+        return self.value == ""
     def accept(self, visitor):
         return visitor.visit_html_text(self)
 
 def strip_empty(nodes):
-    return nodes
+    return [_result for _element in nodes for _result in strip_empty_node(_element)]
+
+def strip_empty_node(node):
+    class Visitor:
+        def visit_html_element(self, element):
+            return [element]
+        def visit_html_force_write(self, force_write):
+            return [force_write]
+        def visit_html_text(self, text):
+            if text.is_empty:
+                return []
+            else:
+                return [text]
+    return node.accept(Visitor())
 
 
 ==============
@@ -442,19 +482,6 @@ def test_empty_text_nodes_are_stripped():
 rootdir: ROOTDIR, configfile: tox.ini
 collected 2 items
 
-mammoth/html_test.py .F                                                  [100%]
+mammoth/html_test.py ..                                                  [100%]
 
-=================================== FAILURES ===================================
-______________________ test_empty_text_nodes_are_stripped ______________________
-mammoth/html_test.py:19: in test_empty_text_nodes_are_stripped
-    assert_that(result, equal_to([]))
-SITE-PACKAGES/precisely/__init__.py:50: in assert_that
-    raise AssertionError("\nExpected:{0}\nbut:{1}".format(
-E   AssertionError: 
-E   Expected:
-E     []
-E   but:
-E     was [HtmlText(value='')]
-=========================== short test summary info ============================
-FAILED mammoth/html_test.py::test_empty_text_nodes_are_stripped - AssertionEr...
-========================= 1 failed, 1 passed in TIME ==========================
+============================== 2 passed in TIME ===============================

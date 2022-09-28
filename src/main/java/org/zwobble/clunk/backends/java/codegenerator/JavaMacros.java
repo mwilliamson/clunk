@@ -1,10 +1,7 @@
 package org.zwobble.clunk.backends.java.codegenerator;
 
 import org.zwobble.clunk.backends.java.ast.*;
-import org.zwobble.clunk.types.NamespaceName;
-import org.zwobble.clunk.types.StaticFunctionType;
-import org.zwobble.clunk.types.Type;
-import org.zwobble.clunk.types.Types;
+import org.zwobble.clunk.types.*;
 
 import java.util.List;
 import java.util.Map;
@@ -41,6 +38,46 @@ public class JavaMacros {
     );
 
     private static final Map<Type, JavaClassMacro> CLASS_MACROS = Stream.of(
+        new JavaClassMacro() {
+            @Override
+            public Type receiverType() {
+                return Types.LIST_CONSTRUCTOR.genericType();
+            }
+
+            @Override
+            public JavaExpressionNode compileConstructorCall(List<JavaExpressionNode> positionalArgs) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public JavaExpressionNode compileMethodCall(JavaExpressionNode receiver, String methodName, List<JavaExpressionNode> positionalArgs) {
+                switch (methodName) {
+                    case "flatMap":
+                        var func = positionalArgs.get(0);
+                        var stream = new JavaCallNode(
+                            new JavaMemberAccessNode(receiver, "stream"),
+                            List.of()
+                        );
+                        var map = new JavaCallNode(
+                            new JavaMemberAccessNode(stream, "map"),
+                            List.of(func)
+                        );
+                        var flatMap = new JavaCallNode(
+                            new JavaMemberAccessNode(map, "flatMap"),
+                            List.of(new JavaMethodReferenceStaticNode(
+                                new JavaFullyQualifiedTypeReferenceNode("java.util", "List"),
+                                "stream"
+                            ))
+                        );
+                        return new JavaCallNode(
+                            new JavaMemberAccessNode(flatMap, "toList"),
+                            List.of()
+                        );
+                    default:
+                        throw new UnsupportedOperationException("unexpected method: " + methodName);
+                }
+            }
+        },
         new JavaClassMacro() {
             @Override
             public Type receiverType() {
@@ -84,6 +121,9 @@ public class JavaMacros {
     }
 
     public static Optional<JavaClassMacro> lookupClassMacro(Type type) {
+        if (type instanceof ConstructedType constructedType) {
+            type = constructedType.constructor().genericType();
+        }
         return Optional.ofNullable(CLASS_MACROS.get(type));
     }
 }

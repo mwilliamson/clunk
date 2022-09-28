@@ -158,10 +158,34 @@ fun text(value: String) -> HtmlText {
     return HtmlText(value);
 }
 
-record HtmlText(value: String) <: HtmlNode
+record HtmlText(value: String) <: HtmlNode {
+    property isEmpty: Bool {
+        return value == "";
+    }
+}
 
 fun stripEmpty(nodes: List[HtmlNode]) -> List[HtmlNode] {
-    return nodes;
+    return nodes.flatMap(stripEmptyNode);
+}
+
+fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
+    switch (node) {
+        case HtmlElement element {
+            return [element];
+        }
+
+        case HtmlForceWrite forceWrite {
+            return [forceWrite];
+        }
+
+        case HtmlText text {
+            if (text.isEmpty) {
+                return [];
+            } else {
+                return [text];
+            }
+        }
+    }
 }
 
 
@@ -505,12 +529,33 @@ class HtmlText {
     constructor(value: string) {
         this.value = value;
     }
+    get isEmpty(): boolean {
+        return this.value == "";
+    }
 }
 
 function stripEmpty(nodes: Array<HtmlNode>): Array<HtmlNode> {
-    return nodes;
+    return nodes.flatMap(stripEmptyNode);
 }
-export {HtmlAttribute, HtmlElement, HtmlForceWrite, HtmlNode, HtmlTag, HtmlText, stripEmpty, text};
+
+function stripEmptyNode(node: HtmlNode): Array<HtmlNode> {
+    switch (node.type) {
+        case "HtmlElement":
+            let element = node;
+            return [element];
+        case "HtmlForceWrite":
+            let forceWrite = node;
+            return [forceWrite];
+        case "HtmlText":
+            let text = node;
+            if (text.isEmpty) {
+                return [];
+            } else {
+                return [text];
+            }
+    }
+}
+export {HtmlAttribute, HtmlElement, HtmlForceWrite, HtmlNode, HtmlTag, HtmlText, stripEmpty, stripEmptyNode, text};
 
 
 ==============
@@ -542,19 +587,6 @@ test("empty text nodes are stripped", function () {
 
 
   ✔ text nodes with text are not stripped
-  1) empty text nodes are stripped
+  ✔ empty text nodes are stripped
 
-  1 passing (TIME)
-  1 failing
-
-  1) empty text nodes are stripped:
-     AssertionError: 
-Expected:
-  []
-but:
-  was [ HtmlText { type: 'HtmlText', value: '' } ]
-      at assertThat (node_modules/@mwilliamson/precisely/lib/assertThat.js:14:15)
-      at Context.<anonymous> (src/mammoth/html.test.ts:18:15)
-      at processImmediate (node:internal/timers:466:21)
-
-
+  2 passing (TIME)

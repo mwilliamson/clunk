@@ -158,10 +158,34 @@ fun text(value: String) -> HtmlText {
     return HtmlText(value);
 }
 
-record HtmlText(value: String) <: HtmlNode
+record HtmlText(value: String) <: HtmlNode {
+    property isEmpty: Bool {
+        return value == "";
+    }
+}
 
 fun stripEmpty(nodes: List[HtmlNode]) -> List[HtmlNode] {
-    return nodes;
+    return nodes.flatMap(stripEmptyNode);
+}
+
+fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
+    switch (node) {
+        case HtmlElement element {
+            return [element];
+        }
+
+        case HtmlForceWrite forceWrite {
+            return [forceWrite];
+        }
+
+        case HtmlText text {
+            if (text.isEmpty) {
+                return [];
+            } else {
+                return [text];
+            }
+        }
+    }
 }
 
 
@@ -527,6 +551,9 @@ Output path: org/zwobble/mammoth/internal/mammoth/html/HtmlText.java
 package org.zwobble.mammoth.internal.mammoth.html;
 
 public record HtmlText(String value) implements HtmlNode {
+    public boolean isEmpty() {
+        return value().equals("");
+    }
     public <T> T accept(HtmlNode.Visitor<T> visitor) {
         return visitor.visit(this);
     }
@@ -538,13 +565,36 @@ Output path: org/zwobble/mammoth/internal/mammoth/html/Html.java
 package org.zwobble.mammoth.internal.mammoth.html;
 
 import org.zwobble.mammoth.internal.mammoth.html.HtmlText;
+import org.zwobble.mammoth.internal.mammoth.html.HtmlNode;
+import org.zwobble.mammoth.internal.mammoth.html.HtmlElement;
+import org.zwobble.mammoth.internal.mammoth.html.HtmlForceWrite;
 
 public class Html {
     public static HtmlText text(String value) {
         return new HtmlText(value);
     }
     public static java.util.List<? extends HtmlNode> stripEmpty(java.util.List<? extends HtmlNode> nodes) {
-        return nodes;
+        return nodes.stream().map(org.zwobble.mammoth.internal.mammoth.html.Html::stripEmptyNode).flatMap(java.util.List::stream).toList();
+    }
+    public static java.util.List<? extends HtmlNode> stripEmptyNode(HtmlNode node) {
+        return node.accept(new HtmlNode.Visitor<>() {
+            @Override
+            public java.util.List<org.zwobble.mammoth.internal.mammoth.html.HtmlNode> visit(HtmlElement element) {
+                return java.util.List.of(element);
+            }
+            @Override
+            public java.util.List<org.zwobble.mammoth.internal.mammoth.html.HtmlNode> visit(HtmlForceWrite forceWrite) {
+                return java.util.List.of(forceWrite);
+            }
+            @Override
+            public java.util.List<org.zwobble.mammoth.internal.mammoth.html.HtmlNode> visit(HtmlText text) {
+                if (text.isEmpty()) {
+                    return java.util.List.of();
+                } else {
+                    return java.util.List.of(text);
+                }
+            }
+        });
     }
 }
 
@@ -584,28 +634,8 @@ public class HtmlTests {
 ├─ JUnit Jupiter ✔
 │  └─ HtmlTests ✔
 │     ├─ text nodes with text are not stripped ✔
-│     └─ empty text nodes are stripped ✘ 
-│              Expected: <[]>
-│                   but: was <[HtmlText[value=]]>
+│     └─ empty text nodes are stripped ✔
 └─ JUnit Vintage ✔
-
-Failures (1):
-  JUnit Jupiter:HtmlTests:empty text nodes are stripped
-    MethodSource [className = 'org.zwobble.mammoth.internal.mammoth.html.HtmlTests', methodName = 'emptyTextNodesAreStripped', methodParameterTypes = '']
-    => java.lang.AssertionError: 
-Expected: <[]>
-     but: was <[HtmlText[value=]]>
-       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:20)
-       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:8)
-       org.zwobble.mammoth.internal.mammoth.html.HtmlTests.emptyTextNodesAreStripped(Unknown Source)
-       java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-       java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
-       java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-       java.base/java.lang.reflect.Method.invoke(Method.java:568)
-       org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:725)
-       org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
-       org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
-       [...]
 
 Test run finished after TIME ms
 [         3 containers found      ]
@@ -618,5 +648,5 @@ Test run finished after TIME ms
 [         0 tests skipped         ]
 [         2 tests started         ]
 [         0 tests aborted         ]
-[         1 tests successful      ]
-[         1 tests failed          ]
+[         2 tests successful      ]
+[         0 tests failed          ]

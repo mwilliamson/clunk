@@ -164,7 +164,7 @@ public class JavaCodeGenerator {
 
             @Override
             public JavaExpressionNode visit(TypedStaticMethodToFunctionNode node) {
-                return compileExpression(node.method(), context);
+                return compileStaticMethodToFunction(node, context);
             }
 
             @Override
@@ -582,6 +582,22 @@ public class JavaCodeGenerator {
 
     private static JavaSingleLineCommentNode compileSingleLineComment(TypedSingleLineCommentNode node) {
         return new JavaSingleLineCommentNode(node.value());
+    }
+
+    private static JavaExpressionNode compileStaticMethodToFunction(
+        TypedStaticMethodToFunctionNode node,
+        JavaCodeGeneratorContext context
+    ) {
+        // TODO: test this
+        var staticFunctionType = (StaticFunctionType) node.method().type();
+        var packageName = namespaceToPackage(staticFunctionType.namespaceName(), context);
+        // TODO: sourceType will not always be SOURCE
+        var className = namespaceNameToClassName(staticFunctionType.namespaceName(), SourceType.SOURCE);
+
+        return new JavaMethodReferenceStaticNode(
+            new JavaFullyQualifiedTypeReferenceNode(packageName, className),
+            staticFunctionType.functionName()
+        );
     }
 
     private static JavaExpressionNode compileStringEquals(TypedStringEqualsNode node, JavaCodeGeneratorContext context) {

@@ -65,4 +65,30 @@ public class PythonCodeGeneratorSwitchTests {
             node.accept(Visitor())
             """));
     }
+
+    @Test
+    public void visitArgsHavePythonizedNames() {
+        var interfaceType = Types.sealedInterfaceType(NamespaceName.fromParts("example"), "Node");
+        var recordType = Types.recordType(NamespaceName.fromParts("example"), "IntLiteral");
+
+        var node = TypedSwitchNode.builder(Typed.localReference("node", interfaceType))
+            .addCase(Typed.switchCase(
+                Typed.typeLevelReference("IntLiteral", recordType),
+                "intLiteral",
+                List.of(Typed.returnStatement(Typed.localReference("intLiteral", recordType)))
+            ))
+            .returnType(recordType)
+            .build();
+
+        var result = PythonCodeGenerator.compileFunctionStatement(node, PythonCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, PythonSerialiser::serialiseStatements);
+        assertThat(string, equalTo(
+            """
+            class Visitor:
+                def visit_int_literal(self, int_literal):
+                    return int_literal
+            return node.accept(Visitor())
+            """));
+    }
 }

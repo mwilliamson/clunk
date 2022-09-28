@@ -564,7 +564,7 @@ public class PythonCodeGenerator {
                 .map(switchCase -> new PythonFunctionNode(
                     generateVisitMethodName((RecordType) switchCase.type().value()),
                     List.of(),
-                    List.of("self", switchCase.variableName()),
+                    List.of("self", pythonizeName(switchCase.variableName())),
                     compileFunctionStatements(switchCase.body(), context)
                 ))
                 .toList()

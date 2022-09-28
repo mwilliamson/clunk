@@ -138,6 +138,10 @@ record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
     property defaultTagName: String {
         return tag.defaultTagName;
     }
+
+    property isVoid: Bool {
+        return tag.isVoid;
+    }
 }
 
 record HtmlForceWrite() <: HtmlNode
@@ -177,7 +181,7 @@ fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
     switch (node) {
         case HtmlElement element {
             var children = stripEmpty(element.children);
-            if (children.length() == 0) {
+            if (!element.isVoid && children.length() == 0) {
                 return [];
             } else {
                 return [HtmlElement(element.tag, children)];
@@ -261,6 +265,14 @@ test "empty children are removed" {
             html.element("li", [], [html.text("H")]),
         ]),
     ]));
+}
+
+test "self-closing elements are never empty" {
+    var nodes = [html.element("br", [], [])];
+
+    var result = html.stripEmpty(nodes);
+
+    assertThat(result, equalTo([html.element("br", [], [])]));
 }
 
 
@@ -565,6 +577,10 @@ public record HtmlElement(HtmlTag tag, java.util.List<? extends HtmlNode> childr
     public String defaultTagName() {
         return tag().defaultTagName();
     }
+
+    public boolean isVoid() {
+        return tag().isVoid();
+    }
     public <T> T accept(HtmlNode.Visitor<T> visitor) {
         return visitor.visit(this);
     }
@@ -637,7 +653,7 @@ public class Html {
             @Override
             public java.util.List<org.zwobble.mammoth.internal.mammoth.html.HtmlNode> visit(HtmlElement element) {
                 var children = stripEmpty(element.children());
-                if (children.size() == 0) {
+                if (!element.isVoid() && children.size() == 0) {
                     return java.util.List.of();
                 } else {
                     return java.util.List.of(new HtmlElement(element.tag(), children));
@@ -723,6 +739,15 @@ public class HtmlTests {
 
         assertThat(result, equalTo(java.util.List.of(Html.element("ul", java.util.List.of(), java.util.List.of(Html.element("li", java.util.List.of(), java.util.List.of(Html.text("H"))))))));
     }
+    @org.junit.jupiter.api.Test
+    @org.junit.jupiter.api.DisplayName("self-closing elements are never empty")
+    public void selfClosingElementsAreNeverEmpty() {
+        var nodes = java.util.List.of(Html.element("br", java.util.List.of(), java.util.List.of()));
+
+        var result = Html.stripEmpty(nodes);
+
+        assertThat(result, equalTo(java.util.List.of(Html.element("br", java.util.List.of(), java.util.List.of()))));
+    }
 }
 
 ==============
@@ -733,6 +758,7 @@ public class HtmlTests {
 │     ├─ text nodes with text are not stripped ✔
 │     ├─ elements with no children are stripped ✔
 │     ├─ empty text nodes are stripped ✔
+│     ├─ self-closing elements are never empty ✔
 │     ├─ empty children are removed ✔
 │     ├─ elements with non-empty children are not stripped ✔
 │     └─ elements with only empty children are stripped ✔
@@ -745,9 +771,9 @@ Test run finished after TIME ms
 [         0 containers aborted    ]
 [         3 containers successful ]
 [         0 containers failed     ]
-[         6 tests found           ]
+[         7 tests found           ]
 [         0 tests skipped         ]
-[         6 tests started         ]
+[         7 tests started         ]
 [         0 tests aborted         ]
-[         6 tests successful      ]
+[         7 tests successful      ]
 [         0 tests failed          ]

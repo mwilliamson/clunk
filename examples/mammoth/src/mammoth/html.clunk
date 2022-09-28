@@ -12,6 +12,10 @@ record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
     property defaultTagName: String {
         return tag.defaultTagName;
     }
+
+    property isVoid: Bool {
+        return tag.isVoid;
+    }
 }
 
 record HtmlForceWrite() <: HtmlNode
@@ -51,7 +55,7 @@ fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
     switch (node) {
         case HtmlElement element {
             var children = stripEmpty(element.children);
-            if (children.length() == 0) {
+            if (!element.isVoid && children.length() == 0) {
                 return [];
             } else {
                 return [HtmlElement(element.tag, children)];

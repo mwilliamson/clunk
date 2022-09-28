@@ -138,6 +138,10 @@ record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
     property defaultTagName: String {
         return tag.defaultTagName;
     }
+
+    property isVoid: Bool {
+        return tag.isVoid;
+    }
 }
 
 record HtmlForceWrite() <: HtmlNode
@@ -177,7 +181,7 @@ fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
     switch (node) {
         case HtmlElement element {
             var children = stripEmpty(element.children);
-            if (children.length() == 0) {
+            if (!element.isVoid && children.length() == 0) {
                 return [];
             } else {
                 return [HtmlElement(element.tag, children)];
@@ -261,6 +265,14 @@ test "empty children are removed" {
             html.element("li", [], [html.text("H")]),
         ]),
     ]));
+}
+
+test "self-closing elements are never empty" {
+    var nodes = [html.element("br", [], [])];
+
+    var result = html.stripEmpty(nodes);
+
+    assertThat(result, equalTo([html.element("br", [], [])]));
 }
 
 
@@ -547,6 +559,10 @@ class HtmlElement {
     get defaultTagName(): string {
         return this.tag.defaultTagName;
     }
+
+    get isVoid(): boolean {
+        return this.tag.isVoid;
+    }
 }
 
 class HtmlForceWrite {
@@ -599,7 +615,7 @@ function stripEmptyNode(node: HtmlNode): Array<HtmlNode> {
         case "HtmlElement":
             let element = node;
             let children = stripEmpty(element.children);
-            if (children.length === 0) {
+            if (!element.isVoid && children.length === 0) {
                 return [];
             } else {
                 return [new HtmlElement(element.tag, children)];
@@ -674,6 +690,14 @@ test("empty children are removed", function () {
     assertThat(result, deepEqualTo([html.element("ul", [], [html.element("li", [], [html.text("H")])])]));
 });
 
+test("self-closing elements are never empty", function () {
+    let nodes = [html.element("br", [], [])];
+
+    let result = html.stripEmpty(nodes);
+
+    assertThat(result, deepEqualTo([html.element("br", [], [])]));
+});
+
 
 ==============
 
@@ -685,5 +709,6 @@ test("empty children are removed", function () {
   ✔ elements with no children are stripped
   ✔ elements with only empty children are stripped
   ✔ empty children are removed
+  ✔ self-closing elements are never empty
 
-  6 passing (TIME)
+  7 passing (TIME)

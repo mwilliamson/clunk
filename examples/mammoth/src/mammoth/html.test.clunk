@@ -58,3 +58,11 @@ test "empty children are removed" {
         ]),
     ]));
 }
+
+test "self-closing elements are never empty" {
+    var nodes = [html.element("br", [], [])];
+
+    var result = html.stripEmpty(nodes);
+
+    assertThat(result, equalTo([html.element("br", [], [])]));
+}

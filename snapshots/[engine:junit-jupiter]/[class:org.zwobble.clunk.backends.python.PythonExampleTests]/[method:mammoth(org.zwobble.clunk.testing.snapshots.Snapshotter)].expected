@@ -138,6 +138,10 @@ record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
     property defaultTagName: String {
         return tag.defaultTagName;
     }
+
+    property isVoid: Bool {
+        return tag.isVoid;
+    }
 }
 
 record HtmlForceWrite() <: HtmlNode
@@ -177,7 +181,7 @@ fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
     switch (node) {
         case HtmlElement element {
             var children = stripEmpty(element.children);
-            if (children.length() == 0) {
+            if (!element.isVoid && children.length() == 0) {
                 return [];
             } else {
                 return [HtmlElement(element.tag, children)];
@@ -261,6 +265,14 @@ test "empty children are removed" {
             html.element("li", [], [html.text("H")]),
         ]),
     ]));
+}
+
+test "self-closing elements are never empty" {
+    var nodes = [html.element("br", [], [])];
+
+    var result = html.stripEmpty(nodes);
+
+    assertThat(result, equalTo([html.element("br", [], [])]));
 }
 
 
@@ -456,6 +468,10 @@ class HtmlElement:
     @property
     def default_tag_name(self):
         return self.tag.default_tag_name
+
+    @property
+    def is_void(self):
+        return self.tag.is_void
     def accept(self, visitor):
         return visitor.visit_html_element(self)
 
@@ -497,7 +513,7 @@ def strip_empty_node(node):
     class Visitor:
         def visit_html_element(self, element):
             children = strip_empty(element.children)
-            if len(children) == 0:
+            if not element.is_void and len(children) == 0:
                 return []
             else:
                 return [HtmlElement(element.tag, children)]
@@ -562,13 +578,20 @@ def test_empty_children_are_removed():
 
     assert_that(result, equal_to([html.element("ul", [], [html.element("li", [], [html.text("H")])])]))
 
+def test_self_closing_elements_are_never_empty():
+    nodes = [html.element("br", [], [])]
+
+    result = html.strip_empty(nodes)
+
+    assert_that(result, equal_to([html.element("br", [], [])]))
+
 
 ==============
 
 ============================= test session starts ==============================
 rootdir: ROOTDIR, configfile: tox.ini
-collected 6 items
+collected 7 items
 
-mammoth/html_test.py ......                                              [100%]
+mammoth/html_test.py .......                                             [100%]
 
-============================== 6 passed in TIME ===============================
+============================== 7 passed in TIME ===============================

@@ -11,7 +11,8 @@ public class PythonTestNames {
     public static String generateName(String name) {
         var identifier = name.toLowerCase(Locale.ROOT)
             .replace(" == ", " equals ")
-            .replace(" ", "_");
+            .replace(" ", "_")
+            .replace("-", "_");
 
         if (!VALID_IDENTIFIER.matcher(identifier).matches()) {
             throw new InternalCompilerError("Could not convert test name to Python identifier: " + name);

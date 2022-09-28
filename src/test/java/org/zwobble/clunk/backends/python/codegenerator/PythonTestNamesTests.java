@@ -30,6 +30,13 @@ public class PythonTestNamesTests {
     }
 
     @Test
+    public void hyphenIsTreatedAsSpace() {
+        var result = PythonTestNames.generateName("non-empty");
+
+        assertThat(result, equalTo("test_non_empty"));
+    }
+
+    @Test
     public void whenNameIsNotValidIdentifierThenErrorIsThrown() {
         var result = assertThrows(
             InternalCompilerError.class,

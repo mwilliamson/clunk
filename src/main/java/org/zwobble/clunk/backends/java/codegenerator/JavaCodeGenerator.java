@@ -744,6 +744,13 @@ public class JavaCodeGenerator {
                 namespaceToPackage(recordType.namespaceName(), context),
                 recordType.name()
             );
+        } else if (value instanceof ConstructedType constructedType) {
+            return new JavaParameterizedType(
+                typeLevelValueToTypeExpression(constructedType.constructor(), isGeneric, context),
+                constructedType.args().stream()
+                    .map(arg -> typeLevelValueToTypeExpression(arg, true, context))
+                    .toList()
+            );
         } else {
             throw new UnsupportedOperationException("TODO: " + value);
         }

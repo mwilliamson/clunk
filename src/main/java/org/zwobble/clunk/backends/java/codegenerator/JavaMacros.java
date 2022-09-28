@@ -73,6 +73,11 @@ public class JavaMacros {
                             new JavaMemberAccessNode(flatMap, "toList"),
                             List.of()
                         );
+                    case "length":
+                        return new JavaCallNode(
+                            new JavaMemberAccessNode(receiver, "size"),
+                            List.of()
+                        );
                     default:
                         throw new UnsupportedOperationException("unexpected method: " + methodName);
                 }

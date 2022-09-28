@@ -1,10 +1,7 @@
 package org.zwobble.clunk.backends.typescript.codegenerator;
 
 import org.zwobble.clunk.backends.typescript.ast.*;
-import org.zwobble.clunk.types.NamespaceName;
-import org.zwobble.clunk.types.StaticFunctionType;
-import org.zwobble.clunk.types.Type;
-import org.zwobble.clunk.types.Types;
+import org.zwobble.clunk.types.*;
 
 import java.util.List;
 import java.util.Map;
@@ -17,6 +14,40 @@ public class TypeScriptMacros {
     }
 
     private static final Map<Type, TypeScriptClassMacro> CLASS_MACROS = Stream.of(
+
+        new TypeScriptClassMacro() {
+            @Override
+            public Type receiverType() {
+                return Types.LIST_CONSTRUCTOR.genericType();
+            }
+
+            @Override
+            public TypeScriptExpressionNode compileConstructorCall(List<TypeScriptExpressionNode> positionalArgs) {
+                return new TypeScriptArrayNode(List.of());
+            }
+
+            @Override
+            public TypeScriptExpressionNode compileMethodCall(
+                TypeScriptExpressionNode receiver,
+                String methodName,
+                List<TypeScriptExpressionNode> positionalArgs
+            ) {
+                switch (methodName) {
+                    case "flatMap":
+                        return new TypeScriptCallNode(
+                            new TypeScriptPropertyAccessNode(receiver, "flatMap"),
+                            positionalArgs
+                        );
+                    case "length":
+                        return new TypeScriptPropertyAccessNode(
+                            receiver,
+                            "length"
+                        );
+                    default:
+                        throw new UnsupportedOperationException("unexpected method: " + methodName);
+                }
+            }
+        },
         new TypeScriptClassMacro() {
             @Override
             public Type receiverType() {
@@ -56,6 +87,10 @@ public class TypeScriptMacros {
     ).collect(Collectors.toMap(x -> x.receiverType(), x -> x));
 
     public static Optional<TypeScriptClassMacro> lookupClassMacro(Type type) {
+        if (type instanceof ConstructedType constructedType) {
+            type = constructedType.constructor().genericType();
+        }
+
         return Optional.ofNullable(CLASS_MACROS.get(type));
     }
 

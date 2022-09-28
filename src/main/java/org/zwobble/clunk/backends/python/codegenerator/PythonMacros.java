@@ -55,6 +55,12 @@ public class PythonMacros {
                                 )
                             )
                         );
+                    case "length":
+                        return new PythonCallNode(
+                            new PythonReferenceNode("len"),
+                            List.of(receiver),
+                            List.of()
+                        );
                     default:
                         throw new UnsupportedOperationException("unexpected method: " + methodName);
                 }

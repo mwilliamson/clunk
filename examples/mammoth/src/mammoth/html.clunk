@@ -50,7 +50,11 @@ fun stripEmpty(nodes: List[HtmlNode]) -> List[HtmlNode] {
 fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
     switch (node) {
         case HtmlElement element {
-            return [element];
+            if (element.children.length() == 0) {
+                return [];
+            } else {
+                return [element];
+            }
         }
 
         case HtmlForceWrite forceWrite {

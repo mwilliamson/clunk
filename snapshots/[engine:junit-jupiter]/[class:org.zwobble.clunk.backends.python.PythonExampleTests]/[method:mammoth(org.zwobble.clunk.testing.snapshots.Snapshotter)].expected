@@ -176,7 +176,11 @@ fun stripEmpty(nodes: List[HtmlNode]) -> List[HtmlNode] {
 fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
     switch (node) {
         case HtmlElement element {
-            return [element];
+            if (element.children.length() == 0) {
+                return [];
+            } else {
+                return [element];
+            }
         }
 
         case HtmlForceWrite forceWrite {
@@ -223,6 +227,14 @@ test "elements with non-empty children are not stripped" {
     var result = html.stripEmpty(nodes);
 
     assertThat(result, equalTo([html.element("p", [], [html.text("H")])]));
+}
+
+test "elements with no children are stripped" {
+    var nodes = [html.element("p", [], [])];
+
+    var result = html.stripEmpty(nodes);
+
+    assertThat(result, equalTo([]));
 }
 
 
@@ -458,7 +470,10 @@ def strip_empty(nodes):
 def strip_empty_node(node):
     class Visitor:
         def visit_html_element(self, element):
-            return [element]
+            if len(element.children) == 0:
+                return []
+            else:
+                return [element]
         def visit_html_force_write(self, force_write):
             return [force_write]
         def visit_html_text(self, text):
@@ -499,13 +514,20 @@ def test_elements_with_non_empty_children_are_not_stripped():
 
     assert_that(result, equal_to([html.element("p", [], [html.text("H")])]))
 
+def test_elements_with_no_children_are_stripped():
+    nodes = [html.element("p", [], [])]
+
+    result = html.strip_empty(nodes)
+
+    assert_that(result, equal_to([]))
+
 
 ==============
 
 ============================= test session starts ==============================
 rootdir: ROOTDIR, configfile: tox.ini
-collected 3 items
+collected 4 items
 
-mammoth/html_test.py ...                                                 [100%]
+mammoth/html_test.py ....                                                [100%]
 
-============================== 3 passed in TIME ===============================
+============================== 4 passed in TIME ===============================

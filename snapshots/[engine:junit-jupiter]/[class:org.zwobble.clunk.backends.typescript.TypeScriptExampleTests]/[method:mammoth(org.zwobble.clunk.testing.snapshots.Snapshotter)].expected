@@ -129,6 +129,11 @@ sealed interface HtmlNode {
 
 record HtmlAttribute(name: String, value: String)
 
+fun element(tagName: String, attributes: List[HtmlAttribute], children: List[HtmlNode]) -> HtmlElement {
+    var tag = HtmlTag([tagName], attributes, false, "");
+    return HtmlElement(tag, children);
+}
+
 record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
     property defaultTagName: String {
         return tag.defaultTagName;
@@ -210,6 +215,14 @@ test "empty text nodes are stripped" {
     var result = html.stripEmpty(nodes);
 
     assertThat(result, equalTo([]));
+}
+
+test "elements with non-empty children are not stripped" {
+    var nodes = [html.element("p", [], [html.text("H")])];
+
+    var result = html.stripEmpty(nodes);
+
+    assertThat(result, equalTo([html.element("p", [], [html.text("H")])]));
 }
 
 
@@ -479,6 +492,11 @@ class HtmlAttribute {
     }
 }
 
+function element(tagName: string, attributes: Array<HtmlAttribute>, children: Array<HtmlNode>): HtmlElement {
+    let tag = new HtmlTag([tagName], attributes, false, "");
+    return new HtmlElement(tag, children);
+}
+
 class HtmlElement {
     readonly type: "HtmlElement" = "HtmlElement";
     readonly tag: HtmlTag;
@@ -555,7 +573,7 @@ function stripEmptyNode(node: HtmlNode): Array<HtmlNode> {
             }
     }
 }
-export {HtmlAttribute, HtmlElement, HtmlForceWrite, HtmlNode, HtmlTag, HtmlText, stripEmpty, stripEmptyNode, text};
+export {HtmlAttribute, HtmlElement, HtmlForceWrite, HtmlNode, HtmlTag, HtmlText, element, stripEmpty, stripEmptyNode, text};
 
 
 ==============
@@ -581,6 +599,14 @@ test("empty text nodes are stripped", function () {
     assertThat(result, deepEqualTo([]));
 });
 
+test("elements with non-empty children are not stripped", function () {
+    let nodes = [html.element("p", [], [html.text("H")])];
+
+    let result = html.stripEmpty(nodes);
+
+    assertThat(result, deepEqualTo([html.element("p", [], [html.text("H")])]));
+});
+
 
 ==============
 
@@ -588,5 +614,6 @@ test("empty text nodes are stripped", function () {
 
   ✔ text nodes with text are not stripped
   ✔ empty text nodes are stripped
+  ✔ elements with non-empty children are not stripped
 
-  2 passing (TIME)
+  3 passing (TIME)

@@ -129,6 +129,11 @@ sealed interface HtmlNode {
 
 record HtmlAttribute(name: String, value: String)
 
+fun element(tagName: String, attributes: List[HtmlAttribute], children: List[HtmlNode]) -> HtmlElement {
+    var tag = HtmlTag([tagName], attributes, false, "");
+    return HtmlElement(tag, children);
+}
+
 record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
     property defaultTagName: String {
         return tag.defaultTagName;
@@ -210,6 +215,14 @@ test "empty text nodes are stripped" {
     var result = html.stripEmpty(nodes);
 
     assertThat(result, equalTo([]));
+}
+
+test "elements with non-empty children are not stripped" {
+    var nodes = [html.element("p", [], [html.text("H")])];
+
+    var result = html.stripEmpty(nodes);
+
+    assertThat(result, equalTo([html.element("p", [], [html.text("H")])]));
 }
 
 
@@ -394,6 +407,10 @@ class HtmlAttribute:
     name: str
     value: str
 
+def element(tag_name, attributes, children):
+    tag = HtmlTag([tag_name], attributes, False, "")
+    return HtmlElement(tag, children)
+
 @dataclasses.dataclass(frozen=True)
 class HtmlElement:
     tag: HtmlTag
@@ -475,13 +492,20 @@ def test_empty_text_nodes_are_stripped():
 
     assert_that(result, equal_to([]))
 
+def test_elements_with_non_empty_children_are_not_stripped():
+    nodes = [html.element("p", [], [html.text("H")])]
+
+    result = html.strip_empty(nodes)
+
+    assert_that(result, equal_to([html.element("p", [], [html.text("H")])]))
+
 
 ==============
 
 ============================= test session starts ==============================
 rootdir: ROOTDIR, configfile: tox.ini
-collected 2 items
+collected 3 items
 
-mammoth/html_test.py ..                                                  [100%]
+mammoth/html_test.py ...                                                 [100%]
 
-============================== 2 passed in TIME ===============================
+============================== 3 passed in TIME ===============================

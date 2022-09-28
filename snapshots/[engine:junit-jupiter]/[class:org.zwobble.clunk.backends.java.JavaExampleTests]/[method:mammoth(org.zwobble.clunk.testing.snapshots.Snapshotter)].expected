@@ -129,6 +129,11 @@ sealed interface HtmlNode {
 
 record HtmlAttribute(name: String, value: String)
 
+fun element(tagName: String, attributes: List[HtmlAttribute], children: List[HtmlNode]) -> HtmlElement {
+    var tag = HtmlTag([tagName], attributes, false, "");
+    return HtmlElement(tag, children);
+}
+
 record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
     property defaultTagName: String {
         return tag.defaultTagName;
@@ -210,6 +215,14 @@ test "empty text nodes are stripped" {
     var result = html.stripEmpty(nodes);
 
     assertThat(result, equalTo([]));
+}
+
+test "elements with non-empty children are not stripped" {
+    var nodes = [html.element("p", [], [html.text("H")])];
+
+    var result = html.stripEmpty(nodes);
+
+    assertThat(result, equalTo([html.element("p", [], [html.text("H")])]));
 }
 
 
@@ -564,12 +577,17 @@ public record HtmlText(String value) implements HtmlNode {
 Output path: org/zwobble/mammoth/internal/mammoth/html/Html.java
 package org.zwobble.mammoth.internal.mammoth.html;
 
+import org.zwobble.mammoth.internal.mammoth.html.HtmlTag;
+import org.zwobble.mammoth.internal.mammoth.html.HtmlElement;
 import org.zwobble.mammoth.internal.mammoth.html.HtmlText;
 import org.zwobble.mammoth.internal.mammoth.html.HtmlNode;
-import org.zwobble.mammoth.internal.mammoth.html.HtmlElement;
 import org.zwobble.mammoth.internal.mammoth.html.HtmlForceWrite;
 
 public class Html {
+    public static HtmlElement element(String tagName, java.util.List<HtmlAttribute> attributes, java.util.List<? extends HtmlNode> children) {
+        var tag = new HtmlTag(java.util.List.of(tagName), attributes, false, "");
+        return new HtmlElement(tag, children);
+    }
     public static HtmlText text(String value) {
         return new HtmlText(value);
     }
@@ -626,6 +644,15 @@ public class HtmlTests {
 
         assertThat(result, equalTo(java.util.List.of()));
     }
+    @org.junit.jupiter.api.Test
+    @org.junit.jupiter.api.DisplayName("elements with non-empty children are not stripped")
+    public void elementsWithNonEmptyChildrenAreNotStripped() {
+        var nodes = java.util.List.of(Html.element("p", java.util.List.of(), java.util.List.of(Html.text("H"))));
+
+        var result = Html.stripEmpty(nodes);
+
+        assertThat(result, equalTo(java.util.List.of(Html.element("p", java.util.List.of(), java.util.List.of(Html.text("H"))))));
+    }
 }
 
 ==============
@@ -634,7 +661,8 @@ public class HtmlTests {
 ├─ JUnit Jupiter ✔
 │  └─ HtmlTests ✔
 │     ├─ text nodes with text are not stripped ✔
-│     └─ empty text nodes are stripped ✔
+│     ├─ empty text nodes are stripped ✔
+│     └─ elements with non-empty children are not stripped ✔
 └─ JUnit Vintage ✔
 
 Test run finished after TIME ms
@@ -644,9 +672,9 @@ Test run finished after TIME ms
 [         0 containers aborted    ]
 [         3 containers successful ]
 [         0 containers failed     ]
-[         2 tests found           ]
+[         3 tests found           ]
 [         0 tests skipped         ]
-[         2 tests started         ]
+[         3 tests started         ]
 [         0 tests aborted         ]
-[         2 tests successful      ]
+[         3 tests successful      ]
 [         0 tests failed          ]

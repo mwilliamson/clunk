@@ -3,6 +3,11 @@ sealed interface HtmlNode {
 
 record HtmlAttribute(name: String, value: String)
 
+fun element(tagName: String, attributes: List[HtmlAttribute], children: List[HtmlNode]) -> HtmlElement {
+    var tag = HtmlTag([tagName], attributes, false, "");
+    return HtmlElement(tag, children);
+}
+
 record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
     property defaultTagName: String {
         return tag.defaultTagName;

@@ -180,7 +180,7 @@ fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
             if (children.length() == 0) {
                 return [];
             } else {
-                return [element];
+                return [HtmlElement(element.tag, children)];
             }
         }
 
@@ -244,6 +244,23 @@ test "elements with only empty children are stripped" {
     var result = html.stripEmpty(nodes);
 
     assertThat(result, equalTo([]));
+}
+
+test "empty children are removed" {
+    var nodes = [
+        html.element("ul", [], [
+            html.element("li", [], [html.text("")]),
+            html.element("li", [], [html.text("H")]),
+        ]),
+    ];
+
+    var result = html.stripEmpty(nodes);
+
+    assertThat(result, equalTo([
+        html.element("ul", [], [
+            html.element("li", [], [html.text("H")]),
+        ]),
+    ]));
 }
 
 
@@ -483,7 +500,7 @@ def strip_empty_node(node):
             if len(children) == 0:
                 return []
             else:
-                return [element]
+                return [HtmlElement(element.tag, children)]
         def visit_html_force_write(self, force_write):
             return [force_write]
         def visit_html_text(self, text):
@@ -538,13 +555,20 @@ def test_elements_with_only_empty_children_are_stripped():
 
     assert_that(result, equal_to([]))
 
+def test_empty_children_are_removed():
+    nodes = [html.element("ul", [], [html.element("li", [], [html.text("")]), html.element("li", [], [html.text("H")])])]
+
+    result = html.strip_empty(nodes)
+
+    assert_that(result, equal_to([html.element("ul", [], [html.element("li", [], [html.text("H")])])]))
+
 
 ==============
 
 ============================= test session starts ==============================
 rootdir: ROOTDIR, configfile: tox.ini
-collected 5 items
+collected 6 items
 
-mammoth/html_test.py .....                                               [100%]
+mammoth/html_test.py ......                                              [100%]
 
-============================== 5 passed in TIME ===============================
+============================== 6 passed in TIME ===============================

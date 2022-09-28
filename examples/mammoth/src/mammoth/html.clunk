@@ -54,7 +54,7 @@ fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
             if (children.length() == 0) {
                 return [];
             } else {
-                return [element];
+                return [HtmlElement(element.tag, children)];
             }
         }
 

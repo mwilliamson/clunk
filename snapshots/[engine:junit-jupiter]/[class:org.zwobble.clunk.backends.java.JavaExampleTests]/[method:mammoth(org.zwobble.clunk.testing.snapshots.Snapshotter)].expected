@@ -180,7 +180,7 @@ fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
             if (children.length() == 0) {
                 return [];
             } else {
-                return [element];
+                return [HtmlElement(element.tag, children)];
             }
         }
 
@@ -244,6 +244,23 @@ test "elements with only empty children are stripped" {
     var result = html.stripEmpty(nodes);
 
     assertThat(result, equalTo([]));
+}
+
+test "empty children are removed" {
+    var nodes = [
+        html.element("ul", [], [
+            html.element("li", [], [html.text("")]),
+            html.element("li", [], [html.text("H")]),
+        ]),
+    ];
+
+    var result = html.stripEmpty(nodes);
+
+    assertThat(result, equalTo([
+        html.element("ul", [], [
+            html.element("li", [], [html.text("H")]),
+        ]),
+    ]));
 }
 
 
@@ -623,7 +640,7 @@ public class Html {
                 if (children.size() == 0) {
                     return java.util.List.of();
                 } else {
-                    return java.util.List.of(element);
+                    return java.util.List.of(new HtmlElement(element.tag(), children));
                 }
             }
             @Override
@@ -697,6 +714,15 @@ public class HtmlTests {
 
         assertThat(result, equalTo(java.util.List.of()));
     }
+    @org.junit.jupiter.api.Test
+    @org.junit.jupiter.api.DisplayName("empty children are removed")
+    public void emptyChildrenAreRemoved() {
+        var nodes = java.util.List.of(Html.element("ul", java.util.List.of(), java.util.List.of(Html.element("li", java.util.List.of(), java.util.List.of(Html.text(""))), Html.element("li", java.util.List.of(), java.util.List.of(Html.text("H"))))));
+
+        var result = Html.stripEmpty(nodes);
+
+        assertThat(result, equalTo(java.util.List.of(Html.element("ul", java.util.List.of(), java.util.List.of(Html.element("li", java.util.List.of(), java.util.List.of(Html.text("H"))))))));
+    }
 }
 
 ==============
@@ -707,6 +733,7 @@ public class HtmlTests {
 │     ├─ text nodes with text are not stripped ✔
 │     ├─ elements with no children are stripped ✔
 │     ├─ empty text nodes are stripped ✔
+│     ├─ empty children are removed ✔
 │     ├─ elements with non-empty children are not stripped ✔
 │     └─ elements with only empty children are stripped ✔
 └─ JUnit Vintage ✔
@@ -718,9 +745,9 @@ Test run finished after TIME ms
 [         0 containers aborted    ]
 [         3 containers successful ]
 [         0 containers failed     ]
-[         5 tests found           ]
+[         6 tests found           ]
 [         0 tests skipped         ]
-[         5 tests started         ]
+[         6 tests started         ]
 [         0 tests aborted         ]
-[         5 tests successful      ]
+[         6 tests successful      ]
 [         0 tests failed          ]

@@ -41,3 +41,20 @@ test "elements with only empty children are stripped" {
 
     assertThat(result, equalTo([]));
 }
+
+test "empty children are removed" {
+    var nodes = [
+        html.element("ul", [], [
+            html.element("li", [], [html.text("")]),
+            html.element("li", [], [html.text("H")]),
+        ]),
+    ];
+
+    var result = html.stripEmpty(nodes);
+
+    assertThat(result, equalTo([
+        html.element("ul", [], [
+            html.element("li", [], [html.text("H")]),
+        ]),
+    ]));
+}

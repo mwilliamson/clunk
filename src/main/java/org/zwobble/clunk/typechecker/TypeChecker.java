@@ -184,6 +184,12 @@ public class TypeChecker {
         var left = typeCheckExpression(node.left(), context);
         var right = typeCheckExpression(node.right(), context);
 
+        if (left.type().equals(Types.INT)) {
+            expectExpressionType(right, Types.INT);
+            return new TypedIntEqualsNode(left, right, node.source());
+        }
+
+        // TODO: don't assume strings if not ints
         expectExpressionType(left, Types.STRING);
         expectExpressionType(right, Types.STRING);
 

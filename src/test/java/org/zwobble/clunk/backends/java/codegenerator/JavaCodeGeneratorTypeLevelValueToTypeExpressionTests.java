@@ -2,6 +2,7 @@ package org.zwobble.clunk.backends.java.codegenerator;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
+import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.Types;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -18,5 +19,27 @@ public class JavaCodeGeneratorTypeLevelValueToTypeExpressionTests {
 
         var string = serialiseToString(result, JavaSerialiser::serialiseTypeExpression);
         assertThat(string, equalTo("boolean"));
+    }
+
+    @Test
+    public void interfaceTypesAreCompiledToFullyQualifiedReferences() {
+        var value = Types.interfaceType(NamespaceName.fromParts("example", "project"), "Interface");
+        var context = JavaCodeGeneratorContext.stub();
+
+        var result = JavaCodeGenerator.typeLevelValueToTypeExpression(value, false, context);
+
+        var string = serialiseToString(result, JavaSerialiser::serialiseTypeExpression);
+        assertThat(string, equalTo("example.project.Interface"));
+    }
+
+    @Test
+    public void recordTypesAreCompiledToFullyQualifiedReferences() {
+        var value = Types.recordType(NamespaceName.fromParts("example", "project"), "Record");
+        var context = JavaCodeGeneratorContext.stub();
+
+        var result = JavaCodeGenerator.typeLevelValueToTypeExpression(value, false, context);
+
+        var string = serialiseToString(result, JavaSerialiser::serialiseTypeExpression);
+        assertThat(string, equalTo("example.project.Record"));
     }
 }

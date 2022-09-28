@@ -18,6 +18,11 @@ record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
     }
 }
 
+fun forceWrite() -> HtmlForceWrite {
+    // TODO: support top-level variables
+    return HtmlForceWrite();
+}
+
 record HtmlForceWrite() <: HtmlNode
 
 record HtmlTag(

@@ -144,6 +144,11 @@ record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
     }
 }
 
+fun forceWrite() -> HtmlForceWrite {
+    // TODO: support top-level variables
+    return HtmlForceWrite();
+}
+
 record HtmlForceWrite() <: HtmlNode
 
 record HtmlTag(
@@ -273,6 +278,14 @@ test "self-closing elements are never empty" {
     var result = html.stripEmpty(nodes);
 
     assertThat(result, equalTo([html.element("br", [], [])]));
+}
+
+test "force writes are never empty" {
+    var nodes = [html.forceWrite()];
+
+    var result = html.stripEmpty(nodes);
+
+    assertThat(result, equalTo([html.forceWrite()]));
 }
 
 
@@ -633,14 +646,18 @@ package org.zwobble.mammoth.internal.mammoth.html;
 
 import org.zwobble.mammoth.internal.mammoth.html.HtmlTag;
 import org.zwobble.mammoth.internal.mammoth.html.HtmlElement;
+import org.zwobble.mammoth.internal.mammoth.html.HtmlForceWrite;
 import org.zwobble.mammoth.internal.mammoth.html.HtmlText;
 import org.zwobble.mammoth.internal.mammoth.html.HtmlNode;
-import org.zwobble.mammoth.internal.mammoth.html.HtmlForceWrite;
 
 public class Html {
     public static HtmlElement element(String tagName, java.util.List<HtmlAttribute> attributes, java.util.List<? extends HtmlNode> children) {
         var tag = new HtmlTag(java.util.List.of(tagName), attributes, false, "");
         return new HtmlElement(tag, children);
+    }
+    public static HtmlForceWrite forceWrite() {
+        // TODO: support top-level variables
+        return new HtmlForceWrite();
     }
     public static HtmlText text(String value) {
         return new HtmlText(value);
@@ -748,6 +765,15 @@ public class HtmlTests {
 
         assertThat(result, equalTo(java.util.List.of(Html.element("br", java.util.List.of(), java.util.List.of()))));
     }
+    @org.junit.jupiter.api.Test
+    @org.junit.jupiter.api.DisplayName("force writes are never empty")
+    public void forceWritesAreNeverEmpty() {
+        var nodes = java.util.List.of(Html.forceWrite());
+
+        var result = Html.stripEmpty(nodes);
+
+        assertThat(result, equalTo(java.util.List.of(Html.forceWrite())));
+    }
 }
 
 ==============
@@ -756,6 +782,7 @@ public class HtmlTests {
 ├─ JUnit Jupiter ✔
 │  └─ HtmlTests ✔
 │     ├─ text nodes with text are not stripped ✔
+│     ├─ force writes are never empty ✔
 │     ├─ elements with no children are stripped ✔
 │     ├─ empty text nodes are stripped ✔
 │     ├─ self-closing elements are never empty ✔
@@ -771,9 +798,9 @@ Test run finished after TIME ms
 [         0 containers aborted    ]
 [         3 containers successful ]
 [         0 containers failed     ]
-[         7 tests found           ]
+[         8 tests found           ]
 [         0 tests skipped         ]
-[         7 tests started         ]
+[         8 tests started         ]
 [         0 tests aborted         ]
-[         7 tests successful      ]
+[         8 tests successful      ]
 [         0 tests failed          ]

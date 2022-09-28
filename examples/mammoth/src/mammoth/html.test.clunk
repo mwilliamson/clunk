@@ -66,3 +66,11 @@ test "self-closing elements are never empty" {
 
     assertThat(result, equalTo([html.element("br", [], [])]));
 }
+
+test "force writes are never empty" {
+    var nodes = [html.forceWrite()];
+
+    var result = html.stripEmpty(nodes);
+
+    assertThat(result, equalTo([html.forceWrite()]));
+}

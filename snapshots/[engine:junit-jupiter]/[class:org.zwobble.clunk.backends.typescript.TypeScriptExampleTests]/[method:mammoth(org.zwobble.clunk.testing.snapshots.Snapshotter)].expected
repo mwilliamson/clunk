@@ -144,6 +144,11 @@ record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
     }
 }
 
+fun forceWrite() -> HtmlForceWrite {
+    // TODO: support top-level variables
+    return HtmlForceWrite();
+}
+
 record HtmlForceWrite() <: HtmlNode
 
 record HtmlTag(
@@ -273,6 +278,14 @@ test "self-closing elements are never empty" {
     var result = html.stripEmpty(nodes);
 
     assertThat(result, equalTo([html.element("br", [], [])]));
+}
+
+test "force writes are never empty" {
+    var nodes = [html.forceWrite()];
+
+    var result = html.stripEmpty(nodes);
+
+    assertThat(result, equalTo([html.forceWrite()]));
 }
 
 
@@ -565,6 +578,11 @@ class HtmlElement {
     }
 }
 
+function forceWrite(): HtmlForceWrite {
+    // TODO: support top-level variables
+    return new HtmlForceWrite();
+}
+
 class HtmlForceWrite {
     readonly type: "HtmlForceWrite" = "HtmlForceWrite";
 }
@@ -632,7 +650,7 @@ function stripEmptyNode(node: HtmlNode): Array<HtmlNode> {
             }
     }
 }
-export {HtmlAttribute, HtmlElement, HtmlForceWrite, HtmlNode, HtmlTag, HtmlText, element, stripEmpty, stripEmptyNode, text};
+export {HtmlAttribute, HtmlElement, HtmlForceWrite, HtmlNode, HtmlTag, HtmlText, element, forceWrite, stripEmpty, stripEmptyNode, text};
 
 
 ==============
@@ -698,6 +716,14 @@ test("self-closing elements are never empty", function () {
     assertThat(result, deepEqualTo([html.element("br", [], [])]));
 });
 
+test("force writes are never empty", function () {
+    let nodes = [html.forceWrite()];
+
+    let result = html.stripEmpty(nodes);
+
+    assertThat(result, deepEqualTo([html.forceWrite()]));
+});
+
 
 ==============
 
@@ -710,5 +736,6 @@ test("self-closing elements are never empty", function () {
   ✔ elements with only empty children are stripped
   ✔ empty children are removed
   ✔ self-closing elements are never empty
+  ✔ force writes are never empty
 
-  7 passing (TIME)
+  8 passing (TIME)

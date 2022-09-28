@@ -144,6 +144,11 @@ record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
     }
 }
 
+fun forceWrite() -> HtmlForceWrite {
+    // TODO: support top-level variables
+    return HtmlForceWrite();
+}
+
 record HtmlForceWrite() <: HtmlNode
 
 record HtmlTag(
@@ -273,6 +278,14 @@ test "self-closing elements are never empty" {
     var result = html.stripEmpty(nodes);
 
     assertThat(result, equalTo([html.element("br", [], [])]));
+}
+
+test "force writes are never empty" {
+    var nodes = [html.forceWrite()];
+
+    var result = html.stripEmpty(nodes);
+
+    assertThat(result, equalTo([html.forceWrite()]));
 }
 
 
@@ -475,6 +488,10 @@ class HtmlElement:
     def accept(self, visitor):
         return visitor.visit_html_element(self)
 
+def force_write():
+    # TODO: support top-level variables
+    return HtmlForceWrite()
+
 @dataclasses.dataclass(frozen=True)
 class HtmlForceWrite:
     def accept(self, visitor):
@@ -585,13 +602,20 @@ def test_self_closing_elements_are_never_empty():
 
     assert_that(result, equal_to([html.element("br", [], [])]))
 
+def test_force_writes_are_never_empty():
+    nodes = [html.force_write()]
+
+    result = html.strip_empty(nodes)
+
+    assert_that(result, equal_to([html.force_write()]))
+
 
 ==============
 
 ============================= test session starts ==============================
 rootdir: ROOTDIR, configfile: tox.ini
-collected 7 items
+collected 8 items
 
-mammoth/html_test.py .......                                             [100%]
+mammoth/html_test.py ........                                            [100%]
 
-============================== 7 passed in TIME ===============================
+============================== 8 passed in TIME ===============================

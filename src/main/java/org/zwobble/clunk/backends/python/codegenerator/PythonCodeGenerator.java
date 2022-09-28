@@ -146,6 +146,11 @@ public class PythonCodeGenerator {
             }
 
             @Override
+            public PythonExpressionNode visit(TypedIntEqualsNode node) {
+                return compileIntEquals(node, context);
+            }
+
+            @Override
             public PythonExpressionNode visit(TypedIntLiteralNode node) {
                 return compileIntLiteral(node);
             }
@@ -315,6 +320,13 @@ public class PythonCodeGenerator {
 
     private static PythonExpressionNode compileIntAdd(TypedIntAddNode node, PythonCodeGeneratorContext context) {
         return new PythonAddNode(
+            compileExpression(node.left(), context),
+            compileExpression(node.right(), context)
+        );
+    }
+
+    private static PythonExpressionNode compileIntEquals(TypedIntEqualsNode node, PythonCodeGeneratorContext context) {
+        return new PythonEqualsNode(
             compileExpression(node.left(), context),
             compileExpression(node.right(), context)
         );

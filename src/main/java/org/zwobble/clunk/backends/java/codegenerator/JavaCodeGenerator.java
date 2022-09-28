@@ -123,6 +123,11 @@ public class JavaCodeGenerator {
             }
 
             @Override
+            public JavaExpressionNode visit(TypedIntEqualsNode node) {
+                return compileIntEquals(node, context);
+            }
+
+            @Override
             public JavaExpressionNode visit(TypedIntLiteralNode node) {
                 return compileIntLiteral(node);
             }
@@ -325,6 +330,13 @@ public class JavaCodeGenerator {
 
     private static JavaExpressionNode compileIntAdd(TypedIntAddNode node, JavaCodeGeneratorContext context) {
         return new JavaAddNode(
+            compileExpression(node.left(), context),
+            compileExpression(node.right(), context)
+        );
+    }
+
+    private static JavaExpressionNode compileIntEquals(TypedIntEqualsNode node, JavaCodeGeneratorContext context) {
+        return new JavaEqualsNode(
             compileExpression(node.left(), context),
             compileExpression(node.right(), context)
         );

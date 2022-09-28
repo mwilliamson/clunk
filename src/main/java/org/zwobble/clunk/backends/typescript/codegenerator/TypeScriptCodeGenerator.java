@@ -119,6 +119,11 @@ public class TypeScriptCodeGenerator {
             }
 
             @Override
+            public TypeScriptExpressionNode visit(TypedIntEqualsNode node) {
+                return compileIntEquals(node, context);
+            }
+
+            @Override
             public TypeScriptExpressionNode visit(TypedIntLiteralNode node) {
                 return compileIntLiteral(node);
             }
@@ -319,6 +324,13 @@ public class TypeScriptCodeGenerator {
 
     private static TypeScriptExpressionNode compileIntAdd(TypedIntAddNode node, TypeScriptCodeGeneratorContext context) {
         return new TypeScriptAddNode(
+            compileExpression(node.left(), context),
+            compileExpression(node.right(), context)
+        );
+    }
+
+    private static TypeScriptExpressionNode compileIntEquals(TypedIntEqualsNode node, TypeScriptCodeGeneratorContext context) {
+        return new TypeScriptEqualsNode(
             compileExpression(node.left(), context),
             compileExpression(node.right(), context)
         );

@@ -83,6 +83,10 @@ public class Typed {
         return new TypedIntAddNode(left, right, NullSource.INSTANCE);
     }
 
+    public static TypedIntEqualsNode intEquals(TypedExpressionNode left, TypedExpressionNode right) {
+        return new TypedIntEqualsNode(left, right, NullSource.INSTANCE);
+    }
+
     public static TypedExpressionNode intLiteral(int value) {
         return new TypedIntLiteralNode(value, NullSource.INSTANCE);
     }

@@ -330,7 +330,7 @@ public class TypeScriptCodeGenerator {
     }
 
     private static TypeScriptExpressionNode compileIntEquals(TypedIntEqualsNode node, TypeScriptCodeGeneratorContext context) {
-        return new TypeScriptEqualsNode(
+        return new TypeScriptStrictEqualsNode(
             compileExpression(node.left(), context),
             compileExpression(node.right(), context)
         );
@@ -533,7 +533,7 @@ public class TypeScriptCodeGenerator {
     }
 
     private static TypeScriptExpressionNode compileStringEquals(TypedStringEqualsNode node, TypeScriptCodeGeneratorContext context) {
-        return new TypeScriptEqualsNode(
+        return new TypeScriptStrictEqualsNode(
             compileExpression(node.left(), context),
             compileExpression(node.right(), context)
         );

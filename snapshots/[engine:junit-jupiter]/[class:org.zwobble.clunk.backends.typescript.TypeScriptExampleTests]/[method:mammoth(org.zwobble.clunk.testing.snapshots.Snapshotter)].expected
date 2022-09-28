@@ -532,7 +532,7 @@ class HtmlTag {
     }
 
     get isVoid(): boolean {
-        return this.defaultTagName == "br" || this.defaultTagName == "hr" || this.defaultTagName == "img";
+        return this.defaultTagName === "br" || this.defaultTagName === "hr" || this.defaultTagName === "img";
     }
 }
 
@@ -548,7 +548,7 @@ class HtmlText {
         this.value = value;
     }
     get isEmpty(): boolean {
-        return this.value == "";
+        return this.value === "";
     }
 }
 

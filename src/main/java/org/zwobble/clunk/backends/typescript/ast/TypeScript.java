@@ -142,6 +142,13 @@ public class TypeScript {
         return new TypeScriptSingleLineCommentNode(value);
     }
 
+    public static TypeScriptStrictEqualsNode strictEquals(
+        TypeScriptExpressionNode left,
+        TypeScriptExpressionNode right
+    ) {
+        return new TypeScriptStrictEqualsNode(left, right);
+    }
+
     public static TypeScriptStringLiteralNode string(String value) {
         return new TypeScriptStringLiteralNode(value);
     }

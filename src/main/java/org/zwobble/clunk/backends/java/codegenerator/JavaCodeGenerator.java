@@ -725,7 +725,7 @@ public class JavaCodeGenerator {
         return context.packagePrefix() + String.join(".", namespaceName.parts());
     }
 
-    private static JavaTypeExpressionNode typeLevelValueToTypeExpression(
+    public static JavaTypeExpressionNode typeLevelValueToTypeExpression(
         TypeLevelValue value,
         boolean isGeneric,
         JavaCodeGeneratorContext context

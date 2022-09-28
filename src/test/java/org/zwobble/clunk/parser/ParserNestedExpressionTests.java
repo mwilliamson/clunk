@@ -2,6 +2,7 @@ package org.zwobble.clunk.parser;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.untyped.UntypedAddNode;
+import org.zwobble.clunk.ast.untyped.UntypedLogicalAndNode;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
@@ -12,7 +13,7 @@ import static org.zwobble.clunk.parser.Parsing.parseString;
 
 public class ParserNestedExpressionTests {
     @Test
-    public void precedenceIsCorrectlyHandled() {
+    public void precedenceOfBinaryOperatorsIsCorrectlyHandled() {
         var source = "1 + f()";
 
         var result = parseString(source, Parser::parseTopLevelExpression);
@@ -24,6 +25,19 @@ public class ParserNestedExpressionTests {
                 .withReceiver(isUntypedReferenceNode("f"))
                 .withPositionalArgs(empty())
             )
+        ));
+    }
+
+    @Test
+    public void precedenceOfUnaryOperatorsIsCorrectlyHandled() {
+        var source = "!x && y";
+
+        var result = parseString(source, Parser::parseTopLevelExpression);
+
+        assertThat(result, cast(
+            UntypedLogicalAndNode.class,
+            has("left", isUntypedLogicalNotNode(isUntypedReferenceNode("x"))),
+            has("right", isUntypedReferenceNode("y"))
         ));
     }
 

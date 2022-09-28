@@ -132,11 +132,10 @@ public class Parser {
     }
 
     private UntypedExpressionNode parseExpression(TokenIterator<TokenType> tokens, Optional<OperatorPrecedence> parentPrecedence) {
-        if (tokens.isNext(TokenType.SYMBOL_BANG)) {
-            return parseLogicalNot(tokens);
-        }
+        var expression = tokens.isNext(TokenType.SYMBOL_BANG)
+            ? parseLogicalNot(tokens)
+            : parsePrimaryExpression(tokens);
 
-        var expression = parsePrimaryExpression(tokens);
         var parentPrecedenceOrdinal = parentPrecedence.map(p -> p.ordinal()).orElse(-1);
 
         while (true) {

@@ -76,6 +76,10 @@ public class UntypedNodeMatchers {
         return cast(UntypedIntLiteralNode.class, has("value", equalTo(value)));
     }
 
+    public static Matcher<UntypedExpressionNode> isUntypedLogicalNotNode(Matcher<UntypedExpressionNode> operand) {
+        return cast(UntypedLogicalNotNode.class, has("operand", operand));
+    }
+
     public static Matcher<UntypedExpressionNode> isUntypedMemberAccessNode(
         Matcher<UntypedExpressionNode> receiver,
         Matcher<String> memberName

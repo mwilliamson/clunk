@@ -1,10 +1,7 @@
 package org.zwobble.clunk.backends.python.codegenerator;
 
 import org.zwobble.clunk.backends.python.ast.*;
-import org.zwobble.clunk.types.NamespaceName;
-import org.zwobble.clunk.types.StaticFunctionType;
-import org.zwobble.clunk.types.Type;
-import org.zwobble.clunk.types.Types;
+import org.zwobble.clunk.types.*;
 
 import java.util.List;
 import java.util.Map;
@@ -17,6 +14,52 @@ public class PythonMacros {
     }
 
     private static final Map<Type, PythonClassMacro> CLASS_MACROS = Stream.of(
+        new PythonClassMacro() {
+            @Override
+            public Type receiverType() {
+                return Types.LIST_CONSTRUCTOR.genericType();
+            }
+
+            @Override
+            public PythonExpressionNode compileConstructorCall(List<PythonExpressionNode> positionalArgs) {
+                return new PythonListNode(List.of());
+            }
+
+            @Override
+            public PythonExpressionNode compileMethodCall(PythonExpressionNode receiver, String methodName, List<PythonExpressionNode> positionalArgs) {
+                switch (methodName) {
+                    case "flatMap":
+                        // TODO: Need to guarantee this doesn't collide -- we don't
+                        // allow variables to start with an underscore, so this should
+                        // be safe, but a little more rigour would probably be wise
+                        // e.g. keeping track of variables in scope.
+                        // Also, this probably doesn't work well with nested flatMaps.
+                        var inputElementName = "_element";
+                        var outputElementName = "_result";
+                        var func = positionalArgs.get(0);
+
+                        return new PythonListComprehensionNode(
+                            new PythonReferenceNode(outputElementName),
+                            List.of(
+                                new PythonComprehensionForClauseNode(
+                                    inputElementName,
+                                    receiver
+                                ),
+                                new PythonComprehensionForClauseNode(
+                                    outputElementName,
+                                    new PythonCallNode(
+                                        func,
+                                        List.of(new PythonReferenceNode(inputElementName)),
+                                        List.of()
+                                    )
+                                )
+                            )
+                        );
+                    default:
+                        throw new UnsupportedOperationException("unexpected method: " + methodName);
+                }
+            }
+        },
         new PythonClassMacro() {
             @Override
             public Type receiverType() {
@@ -54,6 +97,10 @@ public class PythonMacros {
     ).collect(Collectors.toMap(x -> x.receiverType(), x -> x));
 
     public static Optional<PythonClassMacro> lookupClassMacro(Type type) {
+        if (type instanceof ConstructedType constructedType) {
+            type = constructedType.constructor().genericType();
+        }
+
         return Optional.ofNullable(CLASS_MACROS.get(type));
     }
 

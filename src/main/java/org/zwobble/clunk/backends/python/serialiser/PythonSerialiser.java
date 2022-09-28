@@ -125,6 +125,16 @@ public class PythonSerialiser {
         serialiseBlock(node.statements(), builder);
     }
 
+    private static void serialiseComprehensionForClause(
+        PythonComprehensionForClauseNode forClause,
+        CodeBuilder builder
+    ) {
+        builder.append("for ");
+        builder.append(forClause.target());
+        builder.append(" in ");
+        serialiseExpressionTopLevel(forClause.iterable(), builder);
+    }
+
     private static void serialiseDecorators(List<? extends PythonExpressionNode> decorators, CodeBuilder builder) {
         for (var decorator : decorators) {
             builder.append("@");
@@ -135,6 +145,10 @@ public class PythonSerialiser {
 
     private static void serialiseEquals(PythonEqualsNode node, CodeBuilder builder) {
         serialiseBinaryOperation("==", node, builder);
+    }
+
+    private static void serialiseExpressionTopLevel(PythonExpressionNode node, CodeBuilder builder) {
+        serialiseExpression(node, builder, Optional.empty());
     }
 
     public static void serialiseExpression(PythonExpressionNode node, CodeBuilder builder, Optional<PythonExpressionNode> parent) {
@@ -201,6 +215,12 @@ public class PythonSerialiser {
             @Override
             public Void visit(PythonListNode node) {
                 serialiseList(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(PythonListComprehensionNode node) {
+                serialiseListComprehension(node, builder);
                 return null;
             }
 
@@ -304,6 +324,21 @@ public class PythonSerialiser {
             element -> serialiseExpression(element, builder, Optional.empty()),
             () -> builder.append(", ")
         );
+        builder.append("]");
+    }
+
+    private static void serialiseListComprehension(
+        PythonListComprehensionNode node,
+        CodeBuilder builder
+    ) {
+        builder.append("[");
+        serialiseExpressionTopLevel(node.element(), builder);
+
+        for (var forClause : node.forClauses()) {
+            builder.append(" ");
+            serialiseComprehensionForClause(forClause, builder);
+        }
+
         builder.append("]");
     }
 

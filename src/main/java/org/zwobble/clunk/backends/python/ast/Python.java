@@ -48,6 +48,13 @@ public class Python {
         return new PythonCallNode(receiver, List.of(), kwargs);
     }
 
+    public static PythonComprehensionForClauseNode comprehensionForClause(
+        String target,
+        PythonExpressionNode iterable
+    ) {
+        return new PythonComprehensionForClauseNode(target, iterable);
+    }
+
     public static PythonConditionalBranchNode conditionalBranch(
         PythonExpressionNode condition,
         List<PythonStatementNode> body
@@ -80,6 +87,13 @@ public class Python {
 
     public static PythonListNode list(List<PythonExpressionNode> elements) {
         return new PythonListNode(elements);
+    }
+
+    public static PythonListComprehensionNode listComprehension(
+        PythonExpressionNode element,
+        List<PythonComprehensionForClauseNode> forClauses
+    ) {
+        return new PythonListComprehensionNode(element, forClauses);
     }
 
     public static PythonStringLiteralNode string(String value) {

@@ -43,6 +43,10 @@ public class Java {
         return new JavaConditionalBranchNode(condition, body);
     }
 
+    public static JavaEqualsNode equals(JavaReferenceNode left, JavaReferenceNode right) {
+        return new JavaEqualsNode(left, right);
+    }
+
     public static JavaExpressionStatementNode expressionStatement(JavaExpressionNode expression) {
         return new JavaExpressionStatementNode(expression);
     }

@@ -169,6 +169,12 @@ public class JavaSerialiser {
         builder.append("}");
     }
 
+    private static void serialiseEquals(JavaEqualsNode node, CodeBuilder builder) {
+        serialiseExpression(node.left(), builder, Optional.of(node));
+        builder.append(" == ");
+        serialiseExpression(node.right(), builder, Optional.of(node));
+    }
+
     public static void serialiseExpression(JavaExpressionNode node, CodeBuilder builder, Optional<JavaExpressionNode> parent) {
         var parenthesize = parent.isPresent() && node.precedence().ordinal() < parent.get().precedence().ordinal();
         if (parenthesize) {
@@ -203,6 +209,12 @@ public class JavaSerialiser {
             @Override
             public Void visit(JavaCallStaticNode node) {
                 serialiseCallStatic(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(JavaEqualsNode node) {
+                serialiseEquals(node, builder);
                 return null;
             }
 

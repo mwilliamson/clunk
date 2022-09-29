@@ -1,0 +1,112 @@
+Source path: src/testSuites.test.clunk
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+
+testSuite "bools" {
+    testSuite "passing" {
+        test "assert False" {
+            assertThat(false, equalTo(false));
+        }
+
+        test "assert True" {
+            assertThat(true, equalTo(true));
+        }
+    }
+
+    testSuite "failing" {
+        test "assert False" {
+            assertThat(false, equalTo(true));
+        }
+
+        test "assert True" {
+            assertThat(true, equalTo(false));
+        }
+    }
+}
+
+testSuite "ints" {
+    test "assert 42 == 47" {
+        assertThat(42, equalTo(47));
+    }
+
+    test "assert 42 == 42" {
+        assertThat(42, equalTo(42));
+    }
+}
+
+
+==============
+
+Output path: testSuites_test.py
+from __future__ import annotations
+
+from precisely import assert_that
+from precisely import equal_to
+
+class BoolsTests:
+    class PassingTests:
+        def test_assert_false(self):
+            assert_that(False, equal_to(False))
+
+        def test_assert_true(self):
+            assert_that(True, equal_to(True))
+
+    class FailingTests:
+        def test_assert_false(self):
+            assert_that(False, equal_to(True))
+
+        def test_assert_true(self):
+            assert_that(True, equal_to(False))
+
+class IntsTests:
+    def test_assert_42_equals_47(self):
+        assert_that(42, equal_to(47))
+
+    def test_assert_42_equals_42(self):
+        assert_that(42, equal_to(42))
+
+
+==============
+
+============================= test session starts ==============================
+rootdir: ROOTDIR, configfile: tox.ini
+collected 6 items
+
+testSuites_test.py ..FFF.                                                [100%]
+
+=================================== FAILURES ===================================
+__________________ BoolsTests.FailingTests.test_assert_false ___________________
+testSuites_test.py:16: in test_assert_false
+    assert_that(False, equal_to(True))
+SITE-PACKAGES/precisely/__init__.py:50: in assert_that
+    raise AssertionError("\nExpected:{0}\nbut:{1}".format(
+E   AssertionError: 
+E   Expected:
+E     True
+E   but:
+E     was False
+___________________ BoolsTests.FailingTests.test_assert_true ___________________
+testSuites_test.py:19: in test_assert_true
+    assert_that(True, equal_to(False))
+SITE-PACKAGES/precisely/__init__.py:50: in assert_that
+    raise AssertionError("\nExpected:{0}\nbut:{1}".format(
+E   AssertionError: 
+E   Expected:
+E     False
+E   but:
+E     was True
+______________________ IntsTests.test_assert_42_equals_47 ______________________
+testSuites_test.py:23: in test_assert_42_equals_47
+    assert_that(42, equal_to(47))
+SITE-PACKAGES/precisely/__init__.py:50: in assert_that
+    raise AssertionError("\nExpected:{0}\nbut:{1}".format(
+E   AssertionError: 
+E   Expected:
+E     47
+E   but:
+E     was 42
+=========================== short test summary info ============================
+FAILED testSuites_test.py::BoolsTests::FailingTests::test_assert_false - Asse...
+FAILED testSuites_test.py::BoolsTests::FailingTests::test_assert_true - Asser...
+FAILED testSuites_test.py::IntsTests::test_assert_42_equals_47 - AssertionErr...
+========================= 3 failed, 3 passed in TIME ==========================

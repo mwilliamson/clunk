@@ -9,14 +9,24 @@ import java.util.List;
 import java.util.Set;
 
 public class PythonCodeGeneratorContext {
+    public static PythonCodeGeneratorContext initial() {
+        return new PythonCodeGeneratorContext(new LinkedHashSet<>(), false);
+    }
+
     public static PythonCodeGeneratorContext stub() {
-        return new PythonCodeGeneratorContext();
+        return new PythonCodeGeneratorContext(new LinkedHashSet<>(), false);
     }
 
     private final Set<List<String>> imports;
+    private final boolean isInClass;
 
-    public PythonCodeGeneratorContext() {
-        this.imports = new LinkedHashSet<>();
+    public PythonCodeGeneratorContext(Set<List<String>> imports, boolean isInClass) {
+        this.imports = imports;
+        this.isInClass = isInClass;
+    }
+
+    public boolean isInClass() {
+        return isInClass;
     }
 
     public void addImport(List<String> import_) {
@@ -38,5 +48,9 @@ public class PythonCodeGeneratorContext {
                 List.of(import_.get(import_.size() - 1))
             );
         }
+    }
+
+    public PythonCodeGeneratorContext enterClass() {
+        return new PythonCodeGeneratorContext(imports, true);
     }
 }

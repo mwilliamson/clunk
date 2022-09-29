@@ -1,12 +1,14 @@
 package org.zwobble.clunk.backends.python.codegenerator;
 
 import org.zwobble.clunk.ast.typed.*;
+import org.zwobble.clunk.backends.java.codegenerator.JavaTestNames;
 import org.zwobble.clunk.backends.python.ast.*;
 import org.zwobble.clunk.types.*;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -390,7 +392,7 @@ public class PythonCodeGenerator {
     }
 
     public static PythonModuleNode compileNamespace(TypedNamespaceNode node) {
-        var context = new PythonCodeGeneratorContext();
+        var context = PythonCodeGeneratorContext.initial();
         var moduleName = namespaceNameToModuleName(node.name());
 
         var statements = new ArrayList<PythonStatementNode>();
@@ -450,7 +452,7 @@ public class PythonCodeGenerator {
 
             @Override
             public PythonStatementNode visit(TypedTestSuiteNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileTestSuite(node, context);
             }
         });
     }
@@ -612,8 +614,28 @@ public class PythonCodeGenerator {
         return new PythonFunctionNode(
             PythonTestNames.generateName(node.name()),
             List.of(),
-            List.of(),
+            context.isInClass() ? List.of("self") : List.of(),
             compileFunctionStatements(node.body(), context)
+        );
+    }
+
+    private static PythonStatementNode compileTestSuite(
+        TypedTestSuiteNode node,
+        PythonCodeGeneratorContext context
+    ) {
+        // TODO: extract out test name generation properly
+        var className = JavaTestNames.generateName(node.name()) + "Tests";
+        className = className.substring(0, 1).toUpperCase(Locale.ROOT) + className.substring(1);
+
+        var bodyContext = context.enterClass();
+
+        return new PythonClassDeclarationNode(
+            className,
+            List.of(),
+            List.of(),
+            node.body().stream()
+                .map(statement -> compileNamespaceStatement(statement, bodyContext))
+                .toList()
         );
     }
 

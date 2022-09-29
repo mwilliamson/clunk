@@ -5,6 +5,7 @@ public interface JavaClassBodyDeclarationNode extends JavaNode {
 
     interface Visitor<T> {
         T visit(JavaBlankLineNode node);
+        T visit(JavaClassDeclarationNode node);
         T visit(JavaMethodDeclarationNode node);
         T visit(JavaSingleLineCommentNode node);
     }

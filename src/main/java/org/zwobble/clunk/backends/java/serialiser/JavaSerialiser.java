@@ -138,6 +138,12 @@ public class JavaSerialiser {
             }
 
             @Override
+            public Void visit(JavaClassDeclarationNode node) {
+                serialiseClassDeclaration(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(JavaMethodDeclarationNode node) {
                 serialiseMethodDeclaration(node, builder);
                 return null;

@@ -9,6 +9,7 @@ public interface TypedNamespaceStatementNode extends TypedNode {
         T visit(TypedRecordNode node);
         T visit(TypedSingleLineCommentNode node);
         T visit(TypedTestNode node);
+        T visit(TypedTestSuiteNode node);
     }
 
     <T> T accept(Visitor<T> visitor);

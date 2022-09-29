@@ -456,6 +456,11 @@ public class TypeScriptCodeGenerator {
             public TypeScriptStatementNode visit(TypedTestNode node) {
                 return compileTest(node, context);
             }
+
+            @Override
+            public TypeScriptStatementNode visit(TypedTestSuiteNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
         });
     }
 

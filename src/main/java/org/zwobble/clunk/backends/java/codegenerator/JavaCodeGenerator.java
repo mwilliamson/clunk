@@ -464,6 +464,11 @@ public class JavaCodeGenerator {
                     functions.add(compileTest(testNode, context));
                     return null;
                 }
+
+                @Override
+                public Void visit(TypedTestSuiteNode node) {
+                    throw new UnsupportedOperationException("TODO");
+                }
             });
         }
 

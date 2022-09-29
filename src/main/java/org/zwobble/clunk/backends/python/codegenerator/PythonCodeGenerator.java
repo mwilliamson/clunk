@@ -447,6 +447,11 @@ public class PythonCodeGenerator {
             public PythonStatementNode visit(TypedTestNode node) {
                 return compileTest(node, context);
             }
+
+            @Override
+            public PythonStatementNode visit(TypedTestSuiteNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
         });
     }
 

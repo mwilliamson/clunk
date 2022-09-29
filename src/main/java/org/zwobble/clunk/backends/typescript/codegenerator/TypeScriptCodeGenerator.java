@@ -459,7 +459,7 @@ public class TypeScriptCodeGenerator {
 
             @Override
             public TypeScriptStatementNode visit(TypedTestSuiteNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileTestSuite(node, context);
             }
         });
     }
@@ -587,6 +587,24 @@ public class TypeScriptCodeGenerator {
                 TypeScriptFunctionExpressionNode.builder()
                     .addBodyStatements(node.body().stream().map(statement -> compileFunctionStatement(statement, context)).toList())
                     .build()
+            )
+        ));
+    }
+
+    private static TypeScriptStatementNode compileTestSuite(
+        TypedTestSuiteNode node,
+        TypeScriptCodeGeneratorContext context
+    ) {
+        return new TypeScriptExpressionStatementNode(new TypeScriptCallNode(
+            new TypeScriptReferenceNode("suite"),
+            List.of(
+                new TypeScriptStringLiteralNode(node.name()),
+                new TypeScriptFunctionExpressionNode(
+                    List.of(),
+                    node.body().stream()
+                        .map(statement -> compileNamespaceStatement(statement, context))
+                        .toList()
+                )
             )
         ));
     }

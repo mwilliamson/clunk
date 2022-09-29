@@ -1,0 +1,102 @@
+Source path: src/testSuites.test.clunk
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+
+testSuite "bools" {
+    test "assert False" {
+        assertThat(false, equalTo(true));
+    }
+
+    test "assert True" {
+        assertThat(true, equalTo(false));
+    }
+}
+
+testSuite "ints" {
+    test "assert 42 == 47" {
+        assertThat(42, equalTo(47));
+    }
+
+    test "assert 42 == 42" {
+        assertThat(42, equalTo(42));
+    }
+}
+
+
+==============
+
+Output path: testSuites.test.ts
+import {assertThat} from "@mwilliamson/precisely";
+import {deepEqualTo} from "@mwilliamson/precisely";
+
+suite("bools", function () {
+    test("assert False", function () {
+        assertThat(false, deepEqualTo(true));
+    });
+
+    test("assert True", function () {
+        assertThat(true, deepEqualTo(false));
+    });
+});
+
+suite("ints", function () {
+    test("assert 42 == 47", function () {
+        assertThat(42, deepEqualTo(47));
+    });
+
+    test("assert 42 == 42", function () {
+        assertThat(42, deepEqualTo(42));
+    });
+});
+
+
+==============
+
+
+
+  bools
+    1) assert False
+    2) assert True
+
+  ints
+    3) assert 42 == 47
+    ✔ assert 42 == 42
+
+
+  1 passing (TIME)
+  3 failing
+
+  1) bools
+       assert False:
+     AssertionError: 
+Expected:
+  true
+but:
+  was false
+      at assertThat (node_modules/@mwilliamson/precisely/lib/assertThat.js:14:15)
+      at Context.<anonymous> (src/testSuites.test.ts:6:19)
+      at processImmediate (node:internal/timers:466:21)
+
+  2) bools
+       assert True:
+     AssertionError: 
+Expected:
+  false
+but:
+  was true
+      at assertThat (node_modules/@mwilliamson/precisely/lib/assertThat.js:14:15)
+      at Context.<anonymous> (src/testSuites.test.ts:10:19)
+      at processImmediate (node:internal/timers:466:21)
+
+  3) ints
+       assert 42 == 47:
+     AssertionError: 
+Expected:
+  47
+but:
+  was 42
+      at assertThat (node_modules/@mwilliamson/precisely/lib/assertThat.js:14:15)
+      at Context.<anonymous> (src/testSuites.test.ts:16:19)
+      at processImmediate (node:internal/timers:466:21)
+
+

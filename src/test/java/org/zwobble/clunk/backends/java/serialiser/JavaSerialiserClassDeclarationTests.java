@@ -23,6 +23,24 @@ public class JavaSerialiserClassDeclarationTests {
     }
 
     @Test
+    public void canSerialiseClassWithAnnotations() {
+        var node = JavaClassDeclarationNode.builder()
+            .name("TestSuite")
+            .addAnnotation(Java.annotation(Java.typeVariableReference("Test")))
+            .addAnnotation(Java.annotation(Java.typeVariableReference("Skip")))
+            .build();
+
+        var result = serialiseToString(node, JavaSerialiser::serialiseTypeDeclaration);
+
+        assertThat(result, equalTo("""
+            @Test
+            @Skip
+            public class TestSuite {
+            }"""
+        ));
+    }
+
+    @Test
     public void canSerialiseClassWithMethods() {
         var node = JavaClassDeclarationNode.builder()
             .name("Util")

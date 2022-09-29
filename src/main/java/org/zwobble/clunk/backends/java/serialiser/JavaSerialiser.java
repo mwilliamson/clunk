@@ -117,6 +117,11 @@ public class JavaSerialiser {
     }
 
     private static void serialiseClassDeclaration(JavaClassDeclarationNode node, CodeBuilder builder) {
+        for (var annotation : node.annotations()) {
+            serialiseAnnotation(annotation, builder);
+            builder.newLine();
+        }
+
         builder.append("public class ");
         builder.append(node.name());
         builder.append(" {");

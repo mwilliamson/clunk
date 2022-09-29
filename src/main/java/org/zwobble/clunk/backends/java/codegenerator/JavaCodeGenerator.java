@@ -480,7 +480,7 @@ public class JavaCodeGenerator {
             compilationUnits.add(new JavaOrdinaryCompilationUnitNode(
                 namespaceToPackage(node.name(), context),
                 imports,
-                new JavaClassDeclarationNode(className, functions)
+                new JavaClassDeclarationNode(List.of(), className, functions)
             ));
         }
 

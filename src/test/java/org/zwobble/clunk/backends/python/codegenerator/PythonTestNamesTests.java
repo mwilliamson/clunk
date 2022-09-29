@@ -10,28 +10,28 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class PythonTestNamesTests {
     @Test
     public void spacesAreConvertedToUnderscores() {
-        var result = PythonTestNames.generateName("one two three");
+        var result = PythonTestNames.generateTestFunctionName("one two three");
 
         assertThat(result, equalTo("test_one_two_three"));
     }
 
     @Test
     public void nameIsConvertedToLowercase() {
-        var result = PythonTestNames.generateName("One TWO thrEE");
+        var result = PythonTestNames.generateTestFunctionName("One TWO thrEE");
 
         assertThat(result, equalTo("test_one_two_three"));
     }
 
     @Test
     public void doubleEqualsAreConvertedToEquals() {
-        var result = PythonTestNames.generateName("one == two");
+        var result = PythonTestNames.generateTestFunctionName("one == two");
 
         assertThat(result, equalTo("test_one_equals_two"));
     }
 
     @Test
     public void hyphenIsTreatedAsSpace() {
-        var result = PythonTestNames.generateName("non-empty");
+        var result = PythonTestNames.generateTestFunctionName("non-empty");
 
         assertThat(result, equalTo("test_non_empty"));
     }
@@ -40,7 +40,7 @@ public class PythonTestNamesTests {
     public void whenNameIsNotValidIdentifierThenErrorIsThrown() {
         var result = assertThrows(
             InternalCompilerError.class,
-            () -> PythonTestNames.generateName("☃")
+            () -> PythonTestNames.generateTestFunctionName("☃")
         );
 
         assertThat(result.getMessage(), equalTo("Could not convert test name to Python identifier: ☃"));

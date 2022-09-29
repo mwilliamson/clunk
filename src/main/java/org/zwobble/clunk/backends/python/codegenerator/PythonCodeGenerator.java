@@ -1,14 +1,12 @@
 package org.zwobble.clunk.backends.python.codegenerator;
 
 import org.zwobble.clunk.ast.typed.*;
-import org.zwobble.clunk.backends.java.codegenerator.JavaTestNames;
 import org.zwobble.clunk.backends.python.ast.*;
 import org.zwobble.clunk.types.*;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -612,7 +610,7 @@ public class PythonCodeGenerator {
 
     private static PythonStatementNode compileTest(TypedTestNode node, PythonCodeGeneratorContext context) {
         return new PythonFunctionNode(
-            PythonTestNames.generateName(node.name()),
+            PythonTestNames.generateTestFunctionName(node.name()),
             List.of(),
             context.isInClass() ? List.of("self") : List.of(),
             compileFunctionStatements(node.body(), context)
@@ -623,9 +621,7 @@ public class PythonCodeGenerator {
         TypedTestSuiteNode node,
         PythonCodeGeneratorContext context
     ) {
-        // TODO: extract out test name generation properly
-        var className = JavaTestNames.generateName(node.name()) + "Tests";
-        className = className.substring(0, 1).toUpperCase(Locale.ROOT) + className.substring(1);
+        var className = PythonTestNames.generateTestClassName(node.name());
 
         var bodyContext = context.enterClass();
 

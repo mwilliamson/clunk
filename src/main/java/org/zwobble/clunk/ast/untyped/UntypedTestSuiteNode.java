@@ -6,7 +6,7 @@ import java.util.List;
 
 public record UntypedTestSuiteNode(
     String name,
-    List<UntypedTestNode> tests,
+    List<UntypedNamespaceStatementNode> body,
     Source source
 ) implements UntypedNamespaceStatementNode {
     @Override

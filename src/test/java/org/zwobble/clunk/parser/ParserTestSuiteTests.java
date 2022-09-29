@@ -17,7 +17,7 @@ public class ParserTestSuiteTests {
 
         assertThat(node, isUntypedTestSuiteNode()
             .withName("suite")
-            .withTests(empty())
+            .withBody(empty())
         );
     }
 
@@ -34,7 +34,7 @@ public class ParserTestSuiteTests {
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
-        assertThat(node, isUntypedTestSuiteNode().withTests(contains(
+        assertThat(node, isUntypedTestSuiteNode().withBody(contains(
             isUntypedTestNode().withName("testOne"),
             isUntypedTestNode().withName("testTwo")
         )));

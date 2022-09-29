@@ -659,13 +659,13 @@ public class Parser {
         var name = parseStringLiteral(tokens).value();
 
         tokens.skip(TokenType.SYMBOL_BRACE_OPEN);
-        var tests = parseRepeated(
+        var body = parseRepeated(
             () -> tokens.isNext(TokenType.SYMBOL_BRACE_CLOSE),
-            () -> parseTest(tokens)
+            () -> parseNamespaceStatement(tokens)
         );
         tokens.skip(TokenType.SYMBOL_BRACE_CLOSE);
 
-        return new UntypedTestSuiteNode(name, tests, source);
+        return new UntypedTestSuiteNode(name, body, source);
     }
 
     public UntypedTypeLevelExpressionNode parseTypeLevelExpression(TokenIterator<TokenType> tokens) {

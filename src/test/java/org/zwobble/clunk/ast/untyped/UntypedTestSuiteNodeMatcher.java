@@ -22,8 +22,8 @@ public class UntypedTestSuiteNodeMatcher extends CastMatcher<Object, UntypedTest
         return addMatcher(has("name", equalTo(name)));
     }
 
-    public UntypedTestSuiteNodeMatcher withTests(Matcher<? extends Iterable<? extends UntypedTestNode>> body) {
-        return addMatcher(has("tests", body));
+    public UntypedTestSuiteNodeMatcher withBody(Matcher<? extends Iterable<? extends UntypedNamespaceStatementNode>> body) {
+        return addMatcher(has("body", body));
     }
 
     private UntypedTestSuiteNodeMatcher addMatcher(Matcher<UntypedTestSuiteNode> matcher) {

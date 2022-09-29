@@ -11,6 +11,7 @@ public interface UntypedNamespaceStatementNode extends UntypedNode {
         T visit(UntypedRecordNode node);
         T visit(UntypedSingleLineCommentNode node);
         T visit(UntypedTestNode node);
+        T visit(UntypedTestSuiteNode node);
     }
 
     <T> T accept(Visitor<T> visitor);

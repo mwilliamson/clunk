@@ -508,6 +508,8 @@ public class Parser {
             return parseSingleLineComment(tokens);
         } else if (tokens.isNext(TokenType.KEYWORD_TEST)) {
             return parseTest(tokens);
+        } else if (tokens.isNext(TokenType.KEYWORD_TEST_SUITE)) {
+            return parseTestSuite(tokens);
         } else {
             throw new UnexpectedTokenException("namespace statement", tokens.peek().describe(), source(tokens));
         }
@@ -639,7 +641,7 @@ public class Parser {
         return new UntypedSwitchCaseNode(type, variableName, body, source);
     }
 
-    private UntypedNamespaceStatementNode parseTest(TokenIterator<TokenType> tokens) {
+    private UntypedTestNode parseTest(TokenIterator<TokenType> tokens) {
         var source = source(tokens);
 
         tokens.skip(TokenType.KEYWORD_TEST);
@@ -647,6 +649,23 @@ public class Parser {
         var body = parseBlock(tokens);
 
         return new UntypedTestNode(name, body, source);
+    }
+
+    private UntypedTestSuiteNode parseTestSuite(TokenIterator<TokenType> tokens) {
+        var source = source(tokens);
+
+        tokens.skip(TokenType.KEYWORD_TEST_SUITE);
+
+        var name = parseStringLiteral(tokens).value();
+
+        tokens.skip(TokenType.SYMBOL_BRACE_OPEN);
+        var tests = parseRepeated(
+            () -> tokens.isNext(TokenType.SYMBOL_BRACE_CLOSE),
+            () -> parseTest(tokens)
+        );
+        tokens.skip(TokenType.SYMBOL_BRACE_CLOSE);
+
+        return new UntypedTestSuiteNode(name, tests, source);
     }
 
     public UntypedTypeLevelExpressionNode parseTypeLevelExpression(TokenIterator<TokenType> tokens) {

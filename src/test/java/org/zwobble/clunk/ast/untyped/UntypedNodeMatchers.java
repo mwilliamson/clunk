@@ -122,6 +122,10 @@ public class UntypedNodeMatchers {
         return new UntypedTestNodeMatcher(List.of());
     }
 
+    public static UntypedTestSuiteNodeMatcher isUntypedTestSuiteNode() {
+        return new UntypedTestSuiteNodeMatcher(List.of());
+    }
+
     public static Matcher<UntypedTypeLevelExpressionNode> isUntypedTypeLevelReferenceNode(String value) {
         return cast(UntypedTypeLevelExpressionNode.class, has("name", equalTo(value)));
     }

@@ -748,6 +748,11 @@ public class TypeChecker {
             public TypeCheckNamespaceStatementResult visit(UntypedTestNode node) {
                 return typeCheckTest(node);
             }
+
+            @Override
+            public TypeCheckNamespaceStatementResult visit(UntypedTestSuiteNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
         });
     }
 

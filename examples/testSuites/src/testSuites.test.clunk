@@ -2,12 +2,24 @@ import stdlib/assertions.assertThat;
 import stdlib/matchers.equalTo;
 
 testSuite "bools" {
-    test "assert False" {
-        assertThat(false, equalTo(true));
+    testSuite "passing" {
+        test "assert False" {
+            assertThat(false, equalTo(false));
+        }
+
+        test "assert True" {
+            assertThat(true, equalTo(true));
+        }
     }
 
-    test "assert True" {
-        assertThat(true, equalTo(false));
+    testSuite "failing" {
+        test "assert False" {
+            assertThat(false, equalTo(true));
+        }
+
+        test "assert True" {
+            assertThat(true, equalTo(false));
+        }
     }
 }
 

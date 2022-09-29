@@ -3,12 +3,24 @@ import stdlib/assertions.assertThat;
 import stdlib/matchers.equalTo;
 
 testSuite "bools" {
-    test "assert False" {
-        assertThat(false, equalTo(true));
+    testSuite "passing" {
+        test "assert False" {
+            assertThat(false, equalTo(false));
+        }
+
+        test "assert True" {
+            assertThat(true, equalTo(true));
+        }
     }
 
-    test "assert True" {
-        assertThat(true, equalTo(false));
+    testSuite "failing" {
+        test "assert False" {
+            assertThat(false, equalTo(true));
+        }
+
+        test "assert True" {
+            assertThat(true, equalTo(false));
+        }
     }
 }
 
@@ -30,12 +42,24 @@ import {assertThat} from "@mwilliamson/precisely";
 import {deepEqualTo} from "@mwilliamson/precisely";
 
 suite("bools", function () {
-    test("assert False", function () {
-        assertThat(false, deepEqualTo(true));
+    suite("passing", function () {
+        test("assert False", function () {
+            assertThat(false, deepEqualTo(false));
+        });
+
+        test("assert True", function () {
+            assertThat(true, deepEqualTo(true));
+        });
     });
 
-    test("assert True", function () {
-        assertThat(true, deepEqualTo(false));
+    suite("failing", function () {
+        test("assert False", function () {
+            assertThat(false, deepEqualTo(true));
+        });
+
+        test("assert True", function () {
+            assertThat(true, deepEqualTo(false));
+        });
     });
 });
 
@@ -55,37 +79,43 @@ suite("ints", function () {
 
 
   bools
-    1) assert False
-    2) assert True
+    passing
+      ✔ assert False
+      ✔ assert True
+    failing
+      1) assert False
+      2) assert True
 
   ints
     3) assert 42 == 47
     ✔ assert 42 == 42
 
 
-  1 passing (TIME)
+  3 passing (TIME)
   3 failing
 
   1) bools
-       assert False:
+       failing
+         assert False:
      AssertionError: 
 Expected:
   true
 but:
   was false
       at assertThat (node_modules/@mwilliamson/precisely/lib/assertThat.js:14:15)
-      at Context.<anonymous> (src/testSuites.test.ts:6:19)
+      at Context.<anonymous> (src/testSuites.test.ts:17:23)
       at processImmediate (node:internal/timers:466:21)
 
   2) bools
-       assert True:
+       failing
+         assert True:
      AssertionError: 
 Expected:
   false
 but:
   was true
       at assertThat (node_modules/@mwilliamson/precisely/lib/assertThat.js:14:15)
-      at Context.<anonymous> (src/testSuites.test.ts:10:19)
+      at Context.<anonymous> (src/testSuites.test.ts:21:23)
       at processImmediate (node:internal/timers:466:21)
 
   3) ints
@@ -96,7 +126,7 @@ Expected:
 but:
   was 42
       at assertThat (node_modules/@mwilliamson/precisely/lib/assertThat.js:14:15)
-      at Context.<anonymous> (src/testSuites.test.ts:16:19)
+      at Context.<anonymous> (src/testSuites.test.ts:28:19)
       at processImmediate (node:internal/timers:466:21)
 
 

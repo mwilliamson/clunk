@@ -215,77 +215,79 @@ import stdlib/assertions.assertThat;
 import stdlib/matchers.equalTo;
 import mammoth/html;
 
-test "text nodes with text are not stripped" {
-    var nodes = [html.text("H")];
+testSuite "stripEmpty" {
+    test "text nodes with text are not stripped" {
+        var nodes = [html.text("H")];
 
-    var result = html.stripEmpty(nodes);
+        var result = html.stripEmpty(nodes);
 
-    assertThat(result, equalTo([html.text("H")]));
-}
+        assertThat(result, equalTo([html.text("H")]));
+    }
 
-test "empty text nodes are stripped" {
-    var nodes = [html.text("")];
+    test "empty text nodes are stripped" {
+        var nodes = [html.text("")];
 
-    var result = html.stripEmpty(nodes);
+        var result = html.stripEmpty(nodes);
 
-    assertThat(result, equalTo([]));
-}
+        assertThat(result, equalTo([]));
+    }
 
-test "elements with non-empty children are not stripped" {
-    var nodes = [html.element("p", [], [html.text("H")])];
+    test "elements with non-empty children are not stripped" {
+        var nodes = [html.element("p", [], [html.text("H")])];
 
-    var result = html.stripEmpty(nodes);
+        var result = html.stripEmpty(nodes);
 
-    assertThat(result, equalTo([html.element("p", [], [html.text("H")])]));
-}
+        assertThat(result, equalTo([html.element("p", [], [html.text("H")])]));
+    }
 
-test "elements with no children are stripped" {
-    var nodes = [html.element("p", [], [])];
+    test "elements with no children are stripped" {
+        var nodes = [html.element("p", [], [])];
 
-    var result = html.stripEmpty(nodes);
+        var result = html.stripEmpty(nodes);
 
-    assertThat(result, equalTo([]));
-}
+        assertThat(result, equalTo([]));
+    }
 
-test "elements with only empty children are stripped" {
-    var nodes = [html.element("p", [], [html.text("")])];
+    test "elements with only empty children are stripped" {
+        var nodes = [html.element("p", [], [html.text("")])];
 
-    var result = html.stripEmpty(nodes);
+        var result = html.stripEmpty(nodes);
 
-    assertThat(result, equalTo([]));
-}
+        assertThat(result, equalTo([]));
+    }
 
-test "empty children are removed" {
-    var nodes = [
-        html.element("ul", [], [
-            html.element("li", [], [html.text("")]),
-            html.element("li", [], [html.text("H")]),
-        ]),
-    ];
+    test "empty children are removed" {
+        var nodes = [
+            html.element("ul", [], [
+                html.element("li", [], [html.text("")]),
+                html.element("li", [], [html.text("H")]),
+            ]),
+        ];
 
-    var result = html.stripEmpty(nodes);
+        var result = html.stripEmpty(nodes);
 
-    assertThat(result, equalTo([
-        html.element("ul", [], [
-            html.element("li", [], [html.text("H")]),
-        ]),
-    ]));
-}
+        assertThat(result, equalTo([
+            html.element("ul", [], [
+                html.element("li", [], [html.text("H")]),
+            ]),
+        ]));
+    }
 
-test "self-closing elements are never empty" {
-    var nodes = [html.element("br", [], [])];
+    test "self-closing elements are never empty" {
+        var nodes = [html.element("br", [], [])];
 
-    var result = html.stripEmpty(nodes);
+        var result = html.stripEmpty(nodes);
 
-    assertThat(result, equalTo([html.element("br", [], [])]));
-}
+        assertThat(result, equalTo([html.element("br", [], [])]));
+    }
 
-test "force writes are never empty" {
-    var nodes = [html.forceWrite()];
+    test "force writes are never empty" {
+        var nodes = [html.forceWrite()];
 
-    var result = html.stripEmpty(nodes);
+        var result = html.stripEmpty(nodes);
 
-    assertThat(result, equalTo([html.forceWrite()]));
+        assertThat(result, equalTo([html.forceWrite()]));
+    }
 }
 
 
@@ -553,61 +555,62 @@ from precisely import assert_that
 from precisely import equal_to
 from mammoth import html
 
-def test_text_nodes_with_text_are_not_stripped():
-    nodes = [html.text("H")]
+class StripEmptyTests:
+    def test_text_nodes_with_text_are_not_stripped(self):
+        nodes = [html.text("H")]
 
-    result = html.strip_empty(nodes)
+        result = html.strip_empty(nodes)
 
-    assert_that(result, equal_to([html.text("H")]))
+        assert_that(result, equal_to([html.text("H")]))
 
-def test_empty_text_nodes_are_stripped():
-    nodes = [html.text("")]
+    def test_empty_text_nodes_are_stripped(self):
+        nodes = [html.text("")]
 
-    result = html.strip_empty(nodes)
+        result = html.strip_empty(nodes)
 
-    assert_that(result, equal_to([]))
+        assert_that(result, equal_to([]))
 
-def test_elements_with_non_empty_children_are_not_stripped():
-    nodes = [html.element("p", [], [html.text("H")])]
+    def test_elements_with_non_empty_children_are_not_stripped(self):
+        nodes = [html.element("p", [], [html.text("H")])]
 
-    result = html.strip_empty(nodes)
+        result = html.strip_empty(nodes)
 
-    assert_that(result, equal_to([html.element("p", [], [html.text("H")])]))
+        assert_that(result, equal_to([html.element("p", [], [html.text("H")])]))
 
-def test_elements_with_no_children_are_stripped():
-    nodes = [html.element("p", [], [])]
+    def test_elements_with_no_children_are_stripped(self):
+        nodes = [html.element("p", [], [])]
 
-    result = html.strip_empty(nodes)
+        result = html.strip_empty(nodes)
 
-    assert_that(result, equal_to([]))
+        assert_that(result, equal_to([]))
 
-def test_elements_with_only_empty_children_are_stripped():
-    nodes = [html.element("p", [], [html.text("")])]
+    def test_elements_with_only_empty_children_are_stripped(self):
+        nodes = [html.element("p", [], [html.text("")])]
 
-    result = html.strip_empty(nodes)
+        result = html.strip_empty(nodes)
 
-    assert_that(result, equal_to([]))
+        assert_that(result, equal_to([]))
 
-def test_empty_children_are_removed():
-    nodes = [html.element("ul", [], [html.element("li", [], [html.text("")]), html.element("li", [], [html.text("H")])])]
+    def test_empty_children_are_removed(self):
+        nodes = [html.element("ul", [], [html.element("li", [], [html.text("")]), html.element("li", [], [html.text("H")])])]
 
-    result = html.strip_empty(nodes)
+        result = html.strip_empty(nodes)
 
-    assert_that(result, equal_to([html.element("ul", [], [html.element("li", [], [html.text("H")])])]))
+        assert_that(result, equal_to([html.element("ul", [], [html.element("li", [], [html.text("H")])])]))
 
-def test_self_closing_elements_are_never_empty():
-    nodes = [html.element("br", [], [])]
+    def test_self_closing_elements_are_never_empty(self):
+        nodes = [html.element("br", [], [])]
 
-    result = html.strip_empty(nodes)
+        result = html.strip_empty(nodes)
 
-    assert_that(result, equal_to([html.element("br", [], [])]))
+        assert_that(result, equal_to([html.element("br", [], [])]))
 
-def test_force_writes_are_never_empty():
-    nodes = [html.force_write()]
+    def test_force_writes_are_never_empty(self):
+        nodes = [html.force_write()]
 
-    result = html.strip_empty(nodes)
+        result = html.strip_empty(nodes)
 
-    assert_that(result, equal_to([html.force_write()]))
+        assert_that(result, equal_to([html.force_write()]))
 
 
 ==============

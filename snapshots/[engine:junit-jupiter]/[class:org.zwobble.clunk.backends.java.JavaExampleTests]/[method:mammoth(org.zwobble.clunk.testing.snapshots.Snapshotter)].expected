@@ -215,77 +215,79 @@ import stdlib/assertions.assertThat;
 import stdlib/matchers.equalTo;
 import mammoth/html;
 
-test "text nodes with text are not stripped" {
-    var nodes = [html.text("H")];
+testSuite "stripEmpty" {
+    test "text nodes with text are not stripped" {
+        var nodes = [html.text("H")];
 
-    var result = html.stripEmpty(nodes);
+        var result = html.stripEmpty(nodes);
 
-    assertThat(result, equalTo([html.text("H")]));
-}
+        assertThat(result, equalTo([html.text("H")]));
+    }
 
-test "empty text nodes are stripped" {
-    var nodes = [html.text("")];
+    test "empty text nodes are stripped" {
+        var nodes = [html.text("")];
 
-    var result = html.stripEmpty(nodes);
+        var result = html.stripEmpty(nodes);
 
-    assertThat(result, equalTo([]));
-}
+        assertThat(result, equalTo([]));
+    }
 
-test "elements with non-empty children are not stripped" {
-    var nodes = [html.element("p", [], [html.text("H")])];
+    test "elements with non-empty children are not stripped" {
+        var nodes = [html.element("p", [], [html.text("H")])];
 
-    var result = html.stripEmpty(nodes);
+        var result = html.stripEmpty(nodes);
 
-    assertThat(result, equalTo([html.element("p", [], [html.text("H")])]));
-}
+        assertThat(result, equalTo([html.element("p", [], [html.text("H")])]));
+    }
 
-test "elements with no children are stripped" {
-    var nodes = [html.element("p", [], [])];
+    test "elements with no children are stripped" {
+        var nodes = [html.element("p", [], [])];
 
-    var result = html.stripEmpty(nodes);
+        var result = html.stripEmpty(nodes);
 
-    assertThat(result, equalTo([]));
-}
+        assertThat(result, equalTo([]));
+    }
 
-test "elements with only empty children are stripped" {
-    var nodes = [html.element("p", [], [html.text("")])];
+    test "elements with only empty children are stripped" {
+        var nodes = [html.element("p", [], [html.text("")])];
 
-    var result = html.stripEmpty(nodes);
+        var result = html.stripEmpty(nodes);
 
-    assertThat(result, equalTo([]));
-}
+        assertThat(result, equalTo([]));
+    }
 
-test "empty children are removed" {
-    var nodes = [
-        html.element("ul", [], [
-            html.element("li", [], [html.text("")]),
-            html.element("li", [], [html.text("H")]),
-        ]),
-    ];
+    test "empty children are removed" {
+        var nodes = [
+            html.element("ul", [], [
+                html.element("li", [], [html.text("")]),
+                html.element("li", [], [html.text("H")]),
+            ]),
+        ];
 
-    var result = html.stripEmpty(nodes);
+        var result = html.stripEmpty(nodes);
 
-    assertThat(result, equalTo([
-        html.element("ul", [], [
-            html.element("li", [], [html.text("H")]),
-        ]),
-    ]));
-}
+        assertThat(result, equalTo([
+            html.element("ul", [], [
+                html.element("li", [], [html.text("H")]),
+            ]),
+        ]));
+    }
 
-test "self-closing elements are never empty" {
-    var nodes = [html.element("br", [], [])];
+    test "self-closing elements are never empty" {
+        var nodes = [html.element("br", [], [])];
 
-    var result = html.stripEmpty(nodes);
+        var result = html.stripEmpty(nodes);
 
-    assertThat(result, equalTo([html.element("br", [], [])]));
-}
+        assertThat(result, equalTo([html.element("br", [], [])]));
+    }
 
-test "force writes are never empty" {
-    var nodes = [html.forceWrite()];
+    test "force writes are never empty" {
+        var nodes = [html.forceWrite()];
 
-    var result = html.stripEmpty(nodes);
+        var result = html.stripEmpty(nodes);
 
-    assertThat(result, equalTo([html.forceWrite()]));
+        assertThat(result, equalTo([html.forceWrite()]));
+    }
 }
 
 
@@ -702,101 +704,111 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 public class HtmlTests {
-    @org.junit.jupiter.api.Test
-    @org.junit.jupiter.api.DisplayName("text nodes with text are not stripped")
-    public void textNodesWithTextAreNotStripped() {
-        var nodes = java.util.List.of(Html.text("H"));
+    @org.junit.jupiter.api.Nested
+    public class StripEmpty {
+        @org.junit.jupiter.api.Test
+        @org.junit.jupiter.api.DisplayName("text nodes with text are not stripped")
+        public void textNodesWithTextAreNotStripped() {
+            var nodes = java.util.List.of(Html.text("H"));
 
-        var result = Html.stripEmpty(nodes);
+            var result = Html.stripEmpty(nodes);
 
-        assertThat(result, equalTo(java.util.List.of(Html.text("H"))));
-    }
-    @org.junit.jupiter.api.Test
-    @org.junit.jupiter.api.DisplayName("empty text nodes are stripped")
-    public void emptyTextNodesAreStripped() {
-        var nodes = java.util.List.of(Html.text(""));
+            assertThat(result, equalTo(java.util.List.of(Html.text("H"))));
+        }
 
-        var result = Html.stripEmpty(nodes);
+        @org.junit.jupiter.api.Test
+        @org.junit.jupiter.api.DisplayName("empty text nodes are stripped")
+        public void emptyTextNodesAreStripped() {
+            var nodes = java.util.List.of(Html.text(""));
 
-        assertThat(result, equalTo(java.util.List.of()));
-    }
-    @org.junit.jupiter.api.Test
-    @org.junit.jupiter.api.DisplayName("elements with non-empty children are not stripped")
-    public void elementsWithNonEmptyChildrenAreNotStripped() {
-        var nodes = java.util.List.of(Html.element("p", java.util.List.of(), java.util.List.of(Html.text("H"))));
+            var result = Html.stripEmpty(nodes);
 
-        var result = Html.stripEmpty(nodes);
+            assertThat(result, equalTo(java.util.List.of()));
+        }
 
-        assertThat(result, equalTo(java.util.List.of(Html.element("p", java.util.List.of(), java.util.List.of(Html.text("H"))))));
-    }
-    @org.junit.jupiter.api.Test
-    @org.junit.jupiter.api.DisplayName("elements with no children are stripped")
-    public void elementsWithNoChildrenAreStripped() {
-        var nodes = java.util.List.of(Html.element("p", java.util.List.of(), java.util.List.of()));
+        @org.junit.jupiter.api.Test
+        @org.junit.jupiter.api.DisplayName("elements with non-empty children are not stripped")
+        public void elementsWithNonEmptyChildrenAreNotStripped() {
+            var nodes = java.util.List.of(Html.element("p", java.util.List.of(), java.util.List.of(Html.text("H"))));
 
-        var result = Html.stripEmpty(nodes);
+            var result = Html.stripEmpty(nodes);
 
-        assertThat(result, equalTo(java.util.List.of()));
-    }
-    @org.junit.jupiter.api.Test
-    @org.junit.jupiter.api.DisplayName("elements with only empty children are stripped")
-    public void elementsWithOnlyEmptyChildrenAreStripped() {
-        var nodes = java.util.List.of(Html.element("p", java.util.List.of(), java.util.List.of(Html.text(""))));
+            assertThat(result, equalTo(java.util.List.of(Html.element("p", java.util.List.of(), java.util.List.of(Html.text("H"))))));
+        }
 
-        var result = Html.stripEmpty(nodes);
+        @org.junit.jupiter.api.Test
+        @org.junit.jupiter.api.DisplayName("elements with no children are stripped")
+        public void elementsWithNoChildrenAreStripped() {
+            var nodes = java.util.List.of(Html.element("p", java.util.List.of(), java.util.List.of()));
 
-        assertThat(result, equalTo(java.util.List.of()));
-    }
-    @org.junit.jupiter.api.Test
-    @org.junit.jupiter.api.DisplayName("empty children are removed")
-    public void emptyChildrenAreRemoved() {
-        var nodes = java.util.List.of(Html.element("ul", java.util.List.of(), java.util.List.of(Html.element("li", java.util.List.of(), java.util.List.of(Html.text(""))), Html.element("li", java.util.List.of(), java.util.List.of(Html.text("H"))))));
+            var result = Html.stripEmpty(nodes);
 
-        var result = Html.stripEmpty(nodes);
+            assertThat(result, equalTo(java.util.List.of()));
+        }
 
-        assertThat(result, equalTo(java.util.List.of(Html.element("ul", java.util.List.of(), java.util.List.of(Html.element("li", java.util.List.of(), java.util.List.of(Html.text("H"))))))));
-    }
-    @org.junit.jupiter.api.Test
-    @org.junit.jupiter.api.DisplayName("self-closing elements are never empty")
-    public void selfClosingElementsAreNeverEmpty() {
-        var nodes = java.util.List.of(Html.element("br", java.util.List.of(), java.util.List.of()));
+        @org.junit.jupiter.api.Test
+        @org.junit.jupiter.api.DisplayName("elements with only empty children are stripped")
+        public void elementsWithOnlyEmptyChildrenAreStripped() {
+            var nodes = java.util.List.of(Html.element("p", java.util.List.of(), java.util.List.of(Html.text(""))));
 
-        var result = Html.stripEmpty(nodes);
+            var result = Html.stripEmpty(nodes);
 
-        assertThat(result, equalTo(java.util.List.of(Html.element("br", java.util.List.of(), java.util.List.of()))));
-    }
-    @org.junit.jupiter.api.Test
-    @org.junit.jupiter.api.DisplayName("force writes are never empty")
-    public void forceWritesAreNeverEmpty() {
-        var nodes = java.util.List.of(Html.forceWrite());
+            assertThat(result, equalTo(java.util.List.of()));
+        }
 
-        var result = Html.stripEmpty(nodes);
+        @org.junit.jupiter.api.Test
+        @org.junit.jupiter.api.DisplayName("empty children are removed")
+        public void emptyChildrenAreRemoved() {
+            var nodes = java.util.List.of(Html.element("ul", java.util.List.of(), java.util.List.of(Html.element("li", java.util.List.of(), java.util.List.of(Html.text(""))), Html.element("li", java.util.List.of(), java.util.List.of(Html.text("H"))))));
 
-        assertThat(result, equalTo(java.util.List.of(Html.forceWrite())));
-    }
-}
+            var result = Html.stripEmpty(nodes);
+
+            assertThat(result, equalTo(java.util.List.of(Html.element("ul", java.util.List.of(), java.util.List.of(Html.element("li", java.util.List.of(), java.util.List.of(Html.text("H"))))))));
+        }
+
+        @org.junit.jupiter.api.Test
+        @org.junit.jupiter.api.DisplayName("self-closing elements are never empty")
+        public void selfClosingElementsAreNeverEmpty() {
+            var nodes = java.util.List.of(Html.element("br", java.util.List.of(), java.util.List.of()));
+
+            var result = Html.stripEmpty(nodes);
+
+            assertThat(result, equalTo(java.util.List.of(Html.element("br", java.util.List.of(), java.util.List.of()))));
+        }
+
+        @org.junit.jupiter.api.Test
+        @org.junit.jupiter.api.DisplayName("force writes are never empty")
+        public void forceWritesAreNeverEmpty() {
+            var nodes = java.util.List.of(Html.forceWrite());
+
+            var result = Html.stripEmpty(nodes);
+
+            assertThat(result, equalTo(java.util.List.of(Html.forceWrite())));
+        }
+    }}
 
 ==============
 
 ╷
 ├─ JUnit Jupiter ✔
 │  └─ HtmlTests ✔
-│     ├─ text nodes with text are not stripped ✔
-│     ├─ force writes are never empty ✔
-│     ├─ elements with no children are stripped ✔
-│     ├─ empty text nodes are stripped ✔
-│     ├─ self-closing elements are never empty ✔
-│     ├─ empty children are removed ✔
-│     ├─ elements with non-empty children are not stripped ✔
-│     └─ elements with only empty children are stripped ✔
+│     └─ StripEmpty ✔
+│        ├─ text nodes with text are not stripped ✔
+│        ├─ force writes are never empty ✔
+│        ├─ elements with no children are stripped ✔
+│        ├─ empty text nodes are stripped ✔
+│        ├─ self-closing elements are never empty ✔
+│        ├─ empty children are removed ✔
+│        ├─ elements with non-empty children are not stripped ✔
+│        └─ elements with only empty children are stripped ✔
 └─ JUnit Vintage ✔
 
 Test run finished after TIME ms
-[         3 containers found      ]
+[         4 containers found      ]
 [         0 containers skipped    ]
-[         3 containers started    ]
+[         4 containers started    ]
 [         0 containers aborted    ]
-[         3 containers successful ]
+[         4 containers successful ]
 [         0 containers failed     ]
 [         8 tests found           ]
 [         0 tests skipped         ]

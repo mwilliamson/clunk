@@ -4,6 +4,7 @@ import org.pcollections.PMap;
 import org.pcollections.PStack;
 import org.zwobble.clunk.ast.typed.TypedRecordFieldNode;
 import org.zwobble.clunk.builtins.Builtins;
+import org.zwobble.clunk.errors.CompilerError;
 import org.zwobble.clunk.errors.SourceError;
 import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.types.*;
@@ -59,6 +60,10 @@ public record TypeCheckerContext(
 
     public TypeCheckerContext enterTest() {
         return enter(StackFrame.test());
+    }
+
+    public TypeCheckerContext enterTestSuite() {
+        return enter(StackFrame.testSuite());
     }
 
     private TypeCheckerContext enter(StackFrame stackFrame) {
@@ -191,5 +196,16 @@ public record TypeCheckerContext(
 
     public boolean isSubType(Type subtype, Type supertype) {
         return subtypeRelations.isSubType(subtype, supertype);
+    }
+
+    public NamespaceName namespaceName() {
+        for (var frame : stack) {
+            var namespaceName = frame.namespaceName();
+            if (namespaceName.isPresent()) {
+                return namespaceName.get();
+            }
+        }
+        // TODO: throw a better exception
+        throw new CompilerError("not in a namespace");
     }
 }

@@ -169,7 +169,7 @@ public class TypeChecker {
                 new PendingTypeCheck(
                     TypeCheckerPhase.DEFINE_TYPES,
                     context -> {
-                        var type = new EnumType(context.currentFrame().namespaceName().get(), node.name(), node.members());
+                        var type = new EnumType(context.namespaceName(), node.name(), node.members());
                         typeBox.set(type);
                         return context.addLocal(node.name(), Types.metaType(type), node.source());
                     }
@@ -327,7 +327,7 @@ public class TypeChecker {
                         var returnType = (Type) typedReturnTypeNode.value();
 
                         var type = new StaticFunctionType(
-                            context.currentFrame().namespaceName().get(),
+                            context.namespaceName(),
                             node.name(),
                             paramTypes,
                             returnType
@@ -565,8 +565,7 @@ public class TypeChecker {
                 new PendingTypeCheck(
                     TypeCheckerPhase.DEFINE_TYPES,
                     context -> {
-                        // TODO: handle missing namespace name
-                        var interfaceType = new InterfaceType(context.currentFrame().namespaceName().get(), node.name());
+                        var interfaceType = new InterfaceType(context.namespaceName(), node.name());
                         interfaceTypeBox.set(interfaceType);
                         return context.addLocal(node.name(), metaType(interfaceType), node.source());
                     }
@@ -670,8 +669,36 @@ public class TypeChecker {
             typedImports.add(typeCheckImportResult.node);
         }
 
+        var typeCheckBodyResult = typeCheckNamespaceStatements(node.statements(), context);
+        context = typeCheckBodyResult.context;
+
+        var namespaceType = new NamespaceType(node.name(), typeCheckBodyResult.fieldTypes);
+
+        var typedNode = new TypedNamespaceNode(
+            node.name(),
+            typedImports,
+            typeCheckBodyResult.typedBody,
+            namespaceType,
+            node.sourceType(),
+            node.source()
+        );
+
+        return new TypeCheckResult<>(typedNode, context.updateNamespaceType(namespaceType).leave());
+    }
+
+    private record TypeCheckNamespaceStatementsResult(
+        List<TypedNamespaceStatementNode> typedBody,
+        Map<String, Type> fieldTypes,
+        TypeCheckerContext context
+    ) {
+    }
+
+    private static TypeCheckNamespaceStatementsResult typeCheckNamespaceStatements(
+        List<UntypedNamespaceStatementNode> statements,
+        TypeCheckerContext context
+    ) {
         var typeCheckResults = new ArrayList<TypeCheckNamespaceStatementResult>();
-        for (var statement : node.statements()) {
+        for (var statement : statements) {
             var result = typeCheckNamespaceStatement(statement);
             typeCheckResults.add(result);
         }
@@ -696,18 +723,7 @@ public class TypeChecker {
             }
         }
 
-        var namespaceType = new NamespaceType(node.name(), fieldTypes);
-
-        var typedNode = new TypedNamespaceNode(
-            node.name(),
-            typedImports,
-            typedBody,
-            namespaceType,
-            node.sourceType(),
-            node.source()
-        );
-
-        return new TypeCheckResult<>(typedNode, context.updateNamespaceType(namespaceType).leave());
+        return new TypeCheckNamespaceStatementsResult(typedBody, fieldTypes, context);
     }
 
     public static TypeCheckNamespaceStatementResult typeCheckNamespaceStatement(
@@ -751,7 +767,7 @@ public class TypeChecker {
 
             @Override
             public TypeCheckNamespaceStatementResult visit(UntypedTestSuiteNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return typeCheckTestSuite(node);
             }
         });
     }
@@ -797,8 +813,7 @@ public class TypeChecker {
                 new PendingTypeCheck(
                     TypeCheckerPhase.DEFINE_TYPES,
                     context -> {
-                        // TODO: handle missing namespace name
-                        var recordType = new RecordType(context.currentFrame().namespaceName().get(), node.name());
+                        var recordType = new RecordType(context.namespaceName(), node.name());
                         recordTypeBox.set(recordType);
                         return context.addLocal(node.name(), metaType(recordType), node.source());
                     }
@@ -1044,6 +1059,32 @@ public class TypeChecker {
                     node.source()
                 );
             },
+            () -> Optional.empty()
+        );
+    }
+
+    private static TypeCheckNamespaceStatementResult typeCheckTestSuite(UntypedTestSuiteNode node) {
+        var typeCheckBodyResultBox = new Box<TypeCheckNamespaceStatementsResult>();
+
+        return new TypeCheckNamespaceStatementResult(
+            List.of(
+                new PendingTypeCheck(
+                    TypeCheckerPhase.TYPE_CHECK_BODIES,
+                    context -> {
+                        var bodyContext = context.enterTestSuite();
+
+                        var typeCheckBodyResult = typeCheckNamespaceStatements(node.body(), bodyContext);
+                        typeCheckBodyResultBox.set(typeCheckBodyResult);
+
+                        return typeCheckBodyResult.context.leave();
+                    }
+                )
+            ),
+            context -> new TypedTestSuiteNode(
+                node.name(),
+                typeCheckBodyResultBox.get().typedBody,
+                node.source()
+            ),
             () -> Optional.empty()
         );
     }

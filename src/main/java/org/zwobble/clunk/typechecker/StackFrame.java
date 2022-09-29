@@ -6,7 +6,6 @@ import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.Type;
 import org.zwobble.clunk.util.P;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -56,6 +55,14 @@ public record StackFrame(
             Optional.empty(),
             Optional.empty(),
             P.copyOf(Map.of())
+        );
+    }
+
+    public static StackFrame testSuite() {
+        return new StackFrame(
+            Optional.empty(),
+            Optional.empty(),
+            P.map()
         );
     }
 

@@ -91,6 +91,10 @@ public class TypedNodeMatchers {
         return new TypedTestNodeMatcher(List.of());
     }
 
+    public static TypedTestSuiteNodeMatcher isTypedTestSuiteNode() {
+        return new TypedTestSuiteNodeMatcher(List.of());
+    }
+
     public static Matcher<TypedTypeLevelExpressionNode> isTypedTypeLevelExpressionNode(TypeLevelValue value) {
         return has("value", equalTo(value));
     }

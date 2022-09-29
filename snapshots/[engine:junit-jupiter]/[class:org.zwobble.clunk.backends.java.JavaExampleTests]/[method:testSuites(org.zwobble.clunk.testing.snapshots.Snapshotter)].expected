@@ -1,0 +1,176 @@
+Source path: src/testSuites.test.clunk
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+
+testSuite "bools" {
+    testSuite "passing" {
+        test "assert False" {
+            assertThat(false, equalTo(false));
+        }
+
+        test "assert True" {
+            assertThat(true, equalTo(true));
+        }
+    }
+
+    testSuite "failing" {
+        test "assert False" {
+            assertThat(false, equalTo(true));
+        }
+
+        test "assert True" {
+            assertThat(true, equalTo(false));
+        }
+    }
+}
+
+testSuite "ints" {
+    test "assert 42 == 47" {
+        assertThat(42, equalTo(47));
+    }
+
+    test "assert 42 == 42" {
+        assertThat(42, equalTo(42));
+    }
+}
+
+
+==============
+
+Output path: testSuites/TestSuitesTests.java
+package testSuites;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+
+public class TestSuitesTests {
+    @org.junit.jupiter.api.Nested
+    public class Bools {
+        @org.junit.jupiter.api.Nested
+        public class Passing {
+            @org.junit.jupiter.api.Test
+            @org.junit.jupiter.api.DisplayName("assert False")
+            public void assertFalse() {
+                assertThat(false, equalTo(false));
+            }
+
+            @org.junit.jupiter.api.Test
+            @org.junit.jupiter.api.DisplayName("assert True")
+            public void assertTrue() {
+                assertThat(true, equalTo(true));
+            }
+        }
+        @org.junit.jupiter.api.Nested
+        public class Failing {
+            @org.junit.jupiter.api.Test
+            @org.junit.jupiter.api.DisplayName("assert False")
+            public void assertFalse() {
+                assertThat(false, equalTo(true));
+            }
+
+            @org.junit.jupiter.api.Test
+            @org.junit.jupiter.api.DisplayName("assert True")
+            public void assertTrue() {
+                assertThat(true, equalTo(false));
+            }
+        }}@org.junit.jupiter.api.Nested
+    public class Ints {
+        @org.junit.jupiter.api.Test
+        @org.junit.jupiter.api.DisplayName("assert 42 == 47")
+        public void assert42Equals47() {
+            assertThat(42, equalTo(47));
+        }
+
+        @org.junit.jupiter.api.Test
+        @org.junit.jupiter.api.DisplayName("assert 42 == 42")
+        public void assert42Equals42() {
+            assertThat(42, equalTo(42));
+        }
+    }}
+
+==============
+
+╷
+├─ JUnit Jupiter ✔
+│  └─ TestSuitesTests ✔
+│     ├─ Ints ✔
+│     │  ├─ assert 42 == 42 ✔
+│     │  └─ assert 42 == 47 ✘ 
+│     │           Expected: <47>
+│     │                but: was <42>
+│     └─ Bools ✔
+│        ├─ Failing ✔
+│        │  ├─ assert False ✘ 
+│        │  │        Expected: <true>
+│        │  │             but: was <false>
+│        │  └─ assert True ✘ 
+│        │           Expected: <false>
+│        │                but: was <true>
+│        └─ Passing ✔
+│           ├─ assert False ✔
+│           └─ assert True ✔
+└─ JUnit Vintage ✔
+
+Failures (3):
+  JUnit Jupiter:TestSuitesTests:Ints:assert 42 == 47
+    MethodSource [className = 'testSuites.TestSuitesTests$Ints', methodName = 'assert42Equals47', methodParameterTypes = '']
+    => java.lang.AssertionError: 
+Expected: <47>
+     but: was <42>
+       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:20)
+       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:8)
+       testSuites.TestSuitesTests$Ints.assert42Equals47(Unknown Source)
+       java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+       java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+       java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+       java.base/java.lang.reflect.Method.invoke(Method.java:568)
+       org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:725)
+       org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+       org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+       [...]
+  JUnit Jupiter:TestSuitesTests:Bools:Failing:assert False
+    MethodSource [className = 'testSuites.TestSuitesTests$Bools$Failing', methodName = 'assertFalse', methodParameterTypes = '']
+    => java.lang.AssertionError: 
+Expected: <true>
+     but: was <false>
+       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:20)
+       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:8)
+       testSuites.TestSuitesTests$Bools$Failing.assertFalse(Unknown Source)
+       java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+       java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+       java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+       java.base/java.lang.reflect.Method.invoke(Method.java:568)
+       org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:725)
+       org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+       org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+       [...]
+  JUnit Jupiter:TestSuitesTests:Bools:Failing:assert True
+    MethodSource [className = 'testSuites.TestSuitesTests$Bools$Failing', methodName = 'assertTrue', methodParameterTypes = '']
+    => java.lang.AssertionError: 
+Expected: <false>
+     but: was <true>
+       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:20)
+       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:8)
+       testSuites.TestSuitesTests$Bools$Failing.assertTrue(Unknown Source)
+       java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+       java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+       java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+       java.base/java.lang.reflect.Method.invoke(Method.java:568)
+       org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:725)
+       org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+       org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+       [...]
+
+Test run finished after TIME ms
+[         7 containers found      ]
+[         0 containers skipped    ]
+[         7 containers started    ]
+[         0 containers aborted    ]
+[         7 containers successful ]
+[         0 containers failed     ]
+[         6 tests found           ]
+[         0 tests skipped         ]
+[         6 tests started         ]
+[         0 tests aborted         ]
+[         3 tests successful      ]
+[         3 tests failed          ]

@@ -410,7 +410,7 @@ public class JavaCodeGenerator {
     ) {
         var context = new JavaCodeGeneratorContext(config, subtypeRelations);
         var compilationUnits = new ArrayList<JavaOrdinaryCompilationUnitNode>();
-        var functions = new ArrayList<JavaClassBodyDeclarationNode>();
+        var classBody = new ArrayList<JavaClassBodyDeclarationNode>();
         var imports = new ArrayList<JavaImportNode>();
 
         for (var import_ : node.imports()) {
@@ -437,7 +437,7 @@ public class JavaCodeGenerator {
 
                 @Override
                 public Void visit(TypedFunctionNode functionNode) {
-                    functions.add(compileFunction(functionNode, context));
+                    classBody.add(compileFunction(functionNode, context));
                     return null;
                 }
 
@@ -461,26 +461,27 @@ public class JavaCodeGenerator {
 
                 @Override
                 public Void visit(TypedTestNode testNode) {
-                    functions.add(compileTest(testNode, context));
+                    classBody.add(compileTest(testNode, context));
                     return null;
                 }
 
                 @Override
                 public Void visit(TypedTestSuiteNode node) {
-                    throw new UnsupportedOperationException("TODO");
+                    classBody.add(compileTestSuite(node, context));
+                    return null;
                 }
             });
         }
 
         imports.addAll(context.imports());
 
-        if (!functions.isEmpty()) {
+        if (!classBody.isEmpty()) {
             var className = namespaceNameToClassName(node.name(), node.sourceType());
 
             compilationUnits.add(new JavaOrdinaryCompilationUnitNode(
                 namespaceToPackage(node.name(), context),
                 imports,
-                new JavaClassDeclarationNode(List.of(), className, functions)
+                new JavaClassDeclarationNode(List.of(), className, classBody)
             ));
         }
 
@@ -705,13 +706,39 @@ public class JavaCodeGenerator {
                 Java.string(node.name())
             ))
             .isStatic(false)
-            .name(JavaTestNames.generateName(node.name()));
+            .name(JavaTestNames.generateTestName(node.name()));
 
         for (var statement : node.body()) {
             method = method.addBodyStatement(compileFunctionStatement(statement, context));
         }
 
         return method.build();
+    }
+
+    public static JavaClassBodyDeclarationNode compileTestSuite(
+        TypedTestSuiteNode node,
+        JavaCodeGeneratorContext context
+    ) {
+        return new JavaClassDeclarationNode(
+            List.of(
+                Java.annotation(Java.fullyQualifiedTypeReference("org.junit.jupiter.api", "Nested"))
+            ),
+            JavaTestNames.generateTestSuiteName(node.name()),
+            node.body().stream()
+                // TODO: handle statements that aren't tests nor test suites
+                .map(statement -> {
+                    if (statement instanceof TypedBlankLineNode blankLineNode) {
+                        return compileBlankLine(blankLineNode, context);
+                    } else if (statement instanceof TypedTestNode testNode) {
+                        return compileTest(testNode, context);
+                    } else if (statement instanceof TypedTestSuiteNode testSuiteNode) {
+                        return compileTestSuite(testSuiteNode, context);
+                    } else {
+                        throw new UnsupportedOperationException("TODO");
+                    }
+                })
+                .toList()
+        );
     }
 
     public static JavaTypeExpressionNode compileTypeLevelExpression(

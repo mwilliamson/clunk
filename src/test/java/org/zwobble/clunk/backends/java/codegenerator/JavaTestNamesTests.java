@@ -10,35 +10,35 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class JavaTestNamesTests {
     @Test
     public void spaceFollowedByLowerCaseLetterIsConvertedToCamelCase() {
-        var result = JavaTestNames.generateName("can assign bool");
+        var result = JavaTestNames.generateTestName("can assign bool");
 
         assertThat(result, equalTo("canAssignBool"));
     }
 
     @Test
     public void spaceFollowedByUpperCaseLetterIsConvertedToCamelCase() {
-        var result = JavaTestNames.generateName("can Assign Bool");
+        var result = JavaTestNames.generateTestName("can Assign Bool");
 
         assertThat(result, equalTo("canAssignBool"));
     }
 
     @Test
     public void spaceFollowedByNumberIsConvertedToCamelCase() {
-        var result = JavaTestNames.generateName("increment 42");
+        var result = JavaTestNames.generateTestName("increment 42");
 
         assertThat(result, equalTo("increment42"));
     }
 
     @Test
     public void doubleEqualsAreConvertedToEquals() {
-        var result = JavaTestNames.generateName("one == two");
+        var result = JavaTestNames.generateTestName("one == two");
 
         assertThat(result, equalTo("oneEqualsTwo"));
     }
 
     @Test
     public void hyphenIsTreatedAsSpace() {
-        var result = JavaTestNames.generateName("non-empty");
+        var result = JavaTestNames.generateTestName("non-empty");
 
         assertThat(result, equalTo("nonEmpty"));
     }
@@ -47,7 +47,7 @@ public class JavaTestNamesTests {
     public void whenNameIsNotValidIdentifierThenErrorIsThrown() {
         var result = assertThrows(
             InternalCompilerError.class,
-            () -> JavaTestNames.generateName("☃")
+            () -> JavaTestNames.generateTestName("☃")
         );
 
         assertThat(result.getMessage(), equalTo("Could not convert test name to Java identifier: ☃"));

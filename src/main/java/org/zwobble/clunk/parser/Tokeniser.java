@@ -28,6 +28,7 @@ public class Tokeniser {
             RegexTokeniser.rule(TokenType.KEYWORD_RETURN, "return"),
             RegexTokeniser.rule(TokenType.KEYWORD_SEALED, "sealed"),
             RegexTokeniser.rule(TokenType.KEYWORD_SWITCH, "switch"),
+            RegexTokeniser.rule(TokenType.KEYWORD_TEST_SUITE, "testSuite"),
             RegexTokeniser.rule(TokenType.KEYWORD_TEST, "test"),
             RegexTokeniser.rule(TokenType.KEYWORD_TRUE, "true"),
             RegexTokeniser.rule(TokenType.KEYWORD_VAR, "var"),

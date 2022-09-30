@@ -38,4 +38,27 @@ public class TypeCheckForEachTests {
             ))
         ));
     }
+
+    @Test
+    public void targetVariableIsAvailableInBody() {
+        var untypedNode = Untyped.forEach(
+            "x",
+            Untyped.reference("xs"),
+            List.of(
+                Untyped.expressionStatement(Untyped.reference("x"))
+            )
+        );
+        var context = TypeCheckerContext.stub()
+            .addLocal("xs", Types.list(Types.INT), NullSource.INSTANCE);
+
+        var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
+
+        assertThat(result.value(), allOf(
+            isA(TypedForEachNode.class),
+            has("body", contains(
+                isTypedExpressionStatementNode(isTypedReferenceNode().withName("x").withType(Types.INT))
+            ))
+        ));
+        assertThat(context.currentFrame().environment().containsKey("x"), equalTo(false));
+    }
 }

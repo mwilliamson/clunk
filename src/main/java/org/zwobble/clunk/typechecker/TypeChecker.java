@@ -311,7 +311,8 @@ public class TypeChecker {
         var typedIterable = typeCheckExpression(node.iterable(), context);
         var iterableType = (ConstructedType) typedIterable.type();
         var targetType = iterableType.args().get(0);
-        var typeCheckBodyResult = typeCheckFunctionStatements(node.body(), context);
+        var bodyContext = context.addLocal(node.targetName(), targetType, node.source());
+        var typeCheckBodyResult = typeCheckFunctionStatements(node.body(), bodyContext);
 
         var typedNode = new TypedForEachNode(
             node.targetName(),

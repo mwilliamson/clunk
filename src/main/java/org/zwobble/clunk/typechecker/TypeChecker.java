@@ -309,8 +309,17 @@ public class TypeChecker {
         TypeCheckerContext context
     ) {
         var typedIterable = typeCheckExpression(node.iterable(), context);
-        var iterableType = (ConstructedType) typedIterable.type();
-        var targetType = iterableType.args().get(0);
+        var iterableType = typedIterable.type();
+
+        if (!(iterableType instanceof ConstructedType iterableTypeList)) {
+            throw new UnexpectedTypeError(
+                Types.LIST_CONSTRUCTOR.genericType(),
+                iterableType,
+                node.source()
+            );
+        }
+
+        var targetType = iterableTypeList.args().get(0);
         var bodyContext = context.addLocal(node.targetName(), targetType, node.source());
         var typeCheckBodyResult = typeCheckFunctionStatements(node.body(), bodyContext);
 

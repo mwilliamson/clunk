@@ -10,6 +10,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
 import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 
@@ -60,5 +61,26 @@ public class TypeCheckForEachTests {
             ))
         ));
         assertThat(context.currentFrame().environment().containsKey("x"), equalTo(false));
+    }
+
+    @Test
+    public void whenIterableIsNotListThenErrorIsThrown() {
+        var untypedNode = Untyped.forEach(
+            "x",
+            Untyped.reference("xs"),
+            List.of(
+                Untyped.expressionStatement(Untyped.string("hello"))
+            )
+        );
+        var context = TypeCheckerContext.stub()
+            .addLocal("xs", Types.INT, NullSource.INSTANCE);
+
+        var result = assertThrows(
+            UnexpectedTypeError.class,
+            () -> TypeChecker.typeCheckFunctionStatement(untypedNode, context)
+        );
+
+        assertThat(result.getActual(), equalTo(Types.INT));
+        assertThat(result.getExpected(), equalTo(Types.LIST_CONSTRUCTOR.genericType()));
     }
 }

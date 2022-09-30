@@ -214,6 +214,17 @@ public class PythonCodeGenerator {
         return new PythonExpressionStatementNode(compileExpression(node.expression(), context));
     }
 
+    private static PythonStatementNode compileForEach(
+        TypedForEachNode node,
+        PythonCodeGeneratorContext context
+    ) {
+        return new PythonForEachNode(
+            node.targetName(),
+            compileExpression(node.iterable(), context),
+            compileFunctionStatements(node.body(), context)
+        );
+    }
+
     private static PythonStatementNode compileFunction(TypedFunctionNode node, PythonCodeGeneratorContext context) {
         return new PythonFunctionNode(
             pythonizeName(node.name()),
@@ -241,7 +252,7 @@ public class PythonCodeGenerator {
 
             @Override
             public List<PythonStatementNode> visit(TypedForEachNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return List.of(compileForEach(node, context));
             }
 
             @Override

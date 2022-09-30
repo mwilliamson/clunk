@@ -52,6 +52,14 @@ public class Untyped {
         return new UntypedExpressionStatementNode(expression, NullSource.INSTANCE);
     }
 
+    public static UntypedForEachNode forEach(
+        String targetName,
+        UntypedExpressionNode iterable,
+        List<UntypedFunctionStatementNode> body
+    ) {
+        return new UntypedForEachNode(targetName, iterable, body, NullSource.INSTANCE);
+    }
+
     public static UntypedIfStatementNode ifStatement(
         List<UntypedConditionalBranchNode> conditionalBranches,
         List<UntypedFunctionStatementNode> elseBody

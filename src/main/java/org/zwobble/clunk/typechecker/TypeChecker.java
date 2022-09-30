@@ -304,6 +304,26 @@ public class TypeChecker {
         return TypeCheckFunctionStatementResult.neverReturns(typedStatement, context);
     }
 
+    private static TypeCheckFunctionStatementResult<TypedFunctionStatementNode> typeCheckForEach(
+        UntypedForEachNode node,
+        TypeCheckerContext context
+    ) {
+        var typedIterable = typeCheckExpression(node.iterable(), context);
+        var iterableType = (ConstructedType) typedIterable.type();
+        var targetType = iterableType.args().get(0);
+        var typeCheckBodyResult = typeCheckFunctionStatements(node.body(), context);
+
+        var typedNode = new TypedForEachNode(
+            node.targetName(),
+            targetType,
+            typedIterable,
+            typeCheckBodyResult.value(),
+            node.source()
+        );
+
+        return TypeCheckFunctionStatementResult.neverReturns(typedNode, context);
+    }
+
     private static TypeCheckNamespaceStatementResult typeCheckFunction(
         UntypedFunctionNode node
     ) {
@@ -417,7 +437,7 @@ public class TypeChecker {
 
             @Override
             public TypeCheckFunctionStatementResult<TypedFunctionStatementNode> visit(UntypedForEachNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return typeCheckForEach(node, context);
             }
 
             @Override

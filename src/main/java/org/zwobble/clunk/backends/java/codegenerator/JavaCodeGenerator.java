@@ -213,6 +213,11 @@ public class JavaCodeGenerator {
             }
 
             @Override
+            public JavaStatementNode visit(TypedForEachNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public JavaStatementNode visit(TypedIfStatementNode node) {
                 return compileIfStatement(node, context);
             }

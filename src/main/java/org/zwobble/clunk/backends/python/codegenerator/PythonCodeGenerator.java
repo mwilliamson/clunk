@@ -240,6 +240,11 @@ public class PythonCodeGenerator {
             }
 
             @Override
+            public List<PythonStatementNode> visit(TypedForEachNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public List<PythonStatementNode> visit(TypedIfStatementNode node) {
                 return List.of(compileIfStatement(node, context));
             }

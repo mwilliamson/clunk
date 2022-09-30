@@ -2,37 +2,41 @@ package org.zwobble.clunk.parser;
 
 import org.zwobble.clunk.sources.FileFragmentSource;
 import org.zwobble.clunk.tokeniser.RegexTokeniser;
+import org.zwobble.clunk.tokeniser.Token;
 import org.zwobble.clunk.tokeniser.TokenIterator;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.zwobble.clunk.tokeniser.Token.token;
 
 public class Tokeniser {
+    private static final Map<String, TokenType> KEYWORDS = Map.ofEntries(
+        Map.entry("case", TokenType.KEYWORD_CASE),
+        Map.entry("else", TokenType.KEYWORD_ELSE),
+        Map.entry("enum", TokenType.KEYWORD_ENUM),
+        Map.entry("false", TokenType.KEYWORD_FALSE),
+        Map.entry("fun", TokenType.KEYWORD_FUN),
+        Map.entry("if", TokenType.KEYWORD_IF),
+        Map.entry("import", TokenType.KEYWORD_IMPORT),
+        Map.entry("interface", TokenType.KEYWORD_INTERFACE),
+        Map.entry("property", TokenType.KEYWORD_PROPERTY),
+        Map.entry("record", TokenType.KEYWORD_RECORD),
+        Map.entry("return", TokenType.KEYWORD_RETURN),
+        Map.entry("sealed", TokenType.KEYWORD_SEALED),
+        Map.entry("switch", TokenType.KEYWORD_SWITCH),
+        Map.entry("testSuite", TokenType.KEYWORD_TEST_SUITE),
+        Map.entry("test", TokenType.KEYWORD_TEST),
+        Map.entry("true", TokenType.KEYWORD_TRUE),
+        Map.entry("var", TokenType.KEYWORD_VAR),
+        Map.entry("yield", TokenType.KEYWORD_YIELD)
+    );
+
     private static final RegexTokeniser<TokenType> tokeniser = new RegexTokeniser<>(
         TokenType.UNKNOWN,
         List.of(
             RegexTokeniser.rule(TokenType.COMMENT_SINGLE_LINE, "//.*"),
-
-            RegexTokeniser.rule(TokenType.KEYWORD_CASE, "case"),
-            RegexTokeniser.rule(TokenType.KEYWORD_ELSE, "else"),
-            RegexTokeniser.rule(TokenType.KEYWORD_ENUM, "enum"),
-            RegexTokeniser.rule(TokenType.KEYWORD_FALSE, "false"),
-            RegexTokeniser.rule(TokenType.KEYWORD_FUN, "fun"),
-            RegexTokeniser.rule(TokenType.KEYWORD_IF, "if"),
-            RegexTokeniser.rule(TokenType.KEYWORD_IMPORT, "import"),
-            RegexTokeniser.rule(TokenType.KEYWORD_INTERFACE, "interface"),
-            RegexTokeniser.rule(TokenType.KEYWORD_PROPERTY, "property"),
-            RegexTokeniser.rule(TokenType.KEYWORD_RECORD, "record"),
-            RegexTokeniser.rule(TokenType.KEYWORD_RETURN, "return"),
-            RegexTokeniser.rule(TokenType.KEYWORD_SEALED, "sealed"),
-            RegexTokeniser.rule(TokenType.KEYWORD_SWITCH, "switch"),
-            RegexTokeniser.rule(TokenType.KEYWORD_TEST_SUITE, "testSuite"),
-            RegexTokeniser.rule(TokenType.KEYWORD_TEST, "test"),
-            RegexTokeniser.rule(TokenType.KEYWORD_TRUE, "true"),
-            RegexTokeniser.rule(TokenType.KEYWORD_VAR, "var"),
-            RegexTokeniser.rule(TokenType.KEYWORD_YIELD, "yield"),
 
             RegexTokeniser.rule(TokenType.SYMBOL_AMPERSAND_AMPERSAND, "&&"),
             RegexTokeniser.rule(TokenType.SYMBOL_ARROW, "->"),
@@ -66,6 +70,11 @@ public class Tokeniser {
     public static TokenIterator<TokenType> tokenise(FileFragmentSource source) {
         var tokens = tokeniser.tokenise(source).stream()
             .filter(token -> token.tokenType() != TokenType.WHITESPACE)
+            .map(token ->
+                token.tokenType() == TokenType.IDENTIFIER
+                    ? new Token<>(token.source(), KEYWORDS.getOrDefault(token.value(), token.tokenType()), token.value())
+                    : token
+            )
             .collect(Collectors.toList());
 
         return new TokenIterator<>(tokens, token(source.end(), TokenType.END, ""));

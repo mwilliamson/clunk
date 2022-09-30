@@ -207,6 +207,10 @@ fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
     }
 }
 
+fun collapse(nodes: List[HtmlNode]) -> List[HtmlNode] {
+    return nodes;
+}
+
 
 ==============
 
@@ -287,6 +291,16 @@ testSuite "stripEmpty" {
         var result = html.stripEmpty(nodes);
 
         assertThat(result, equalTo([html.forceWrite()]));
+    }
+}
+
+testSuite "collapse" {
+    test "collapsing does nothing to single text node" {
+        var nodes = [html.text("Bluebells")];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([html.text("Bluebells")]));
     }
 }
 
@@ -545,6 +559,9 @@ def strip_empty_node(node):
                 return [text]
     return node.accept(Visitor())
 
+def collapse(nodes):
+    return nodes
+
 
 ==============
 
@@ -612,13 +629,21 @@ class StripEmptyTests:
 
         assert_that(result, equal_to([html.force_write()]))
 
+class CollapseTests:
+    def test_collapsing_does_nothing_to_single_text_node(self):
+        nodes = [html.text("Bluebells")]
+
+        result = html.collapse(nodes)
+
+        assert_that(result, equal_to([html.text("Bluebells")]))
+
 
 ==============
 
 ============================= test session starts ==============================
 rootdir: ROOTDIR, configfile: tox.ini
-collected 8 items
+collected 9 items
 
-mammoth/html_test.py ........                                            [100%]
+mammoth/html_test.py .........                                           [100%]
 
-============================== 8 passed in TIME ===============================
+============================== 9 passed in TIME ===============================

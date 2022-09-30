@@ -76,3 +76,13 @@ testSuite "stripEmpty" {
         assertThat(result, equalTo([html.forceWrite()]));
     }
 }
+
+testSuite "collapse" {
+    test "collapsing does nothing to single text node" {
+        var nodes = [html.text("Bluebells")];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([html.text("Bluebells")]));
+    }
+}

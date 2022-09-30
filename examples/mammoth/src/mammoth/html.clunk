@@ -80,3 +80,7 @@ fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
         }
     }
 }
+
+fun collapse(nodes: List[HtmlNode]) -> List[HtmlNode] {
+    return nodes;
+}

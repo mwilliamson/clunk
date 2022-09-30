@@ -207,6 +207,10 @@ fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
     }
 }
 
+fun collapse(nodes: List[HtmlNode]) -> List[HtmlNode] {
+    return nodes;
+}
+
 
 ==============
 
@@ -287,6 +291,16 @@ testSuite "stripEmpty" {
         var result = html.stripEmpty(nodes);
 
         assertThat(result, equalTo([html.forceWrite()]));
+    }
+}
+
+testSuite "collapse" {
+    test "collapsing does nothing to single text node" {
+        var nodes = [html.text("Bluebells")];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([html.text("Bluebells")]));
     }
 }
 
@@ -652,7 +666,11 @@ function stripEmptyNode(node: HtmlNode): Array<HtmlNode> {
             }
     }
 }
-export {HtmlAttribute, HtmlElement, HtmlForceWrite, HtmlNode, HtmlTag, HtmlText, element, forceWrite, stripEmpty, stripEmptyNode, text};
+
+function collapse(nodes: Array<HtmlNode>): Array<HtmlNode> {
+    return nodes;
+}
+export {HtmlAttribute, HtmlElement, HtmlForceWrite, HtmlNode, HtmlTag, HtmlText, collapse, element, forceWrite, stripEmpty, stripEmptyNode, text};
 
 
 ==============
@@ -728,6 +746,16 @@ suite("stripEmpty", function () {
     });
 });
 
+suite("collapse", function () {
+    test("collapsing does nothing to single text node", function () {
+        let nodes = [html.text("Bluebells")];
+
+        let result = html.collapse(nodes);
+
+        assertThat(result, deepEqualTo([html.text("Bluebells")]));
+    });
+});
+
 
 ==============
 
@@ -743,5 +771,8 @@ suite("stripEmpty", function () {
     ✔ self-closing elements are never empty
     ✔ force writes are never empty
 
+  collapse
+    ✔ collapsing does nothing to single text node
 
-  8 passing (TIME)
+
+  9 passing (TIME)

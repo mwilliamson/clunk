@@ -207,6 +207,10 @@ fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
     }
 }
 
+fun collapse(nodes: List[HtmlNode]) -> List[HtmlNode] {
+    return nodes;
+}
+
 
 ==============
 
@@ -287,6 +291,16 @@ testSuite "stripEmpty" {
         var result = html.stripEmpty(nodes);
 
         assertThat(result, equalTo([html.forceWrite()]));
+    }
+}
+
+testSuite "collapse" {
+    test "collapsing does nothing to single text node" {
+        var nodes = [html.text("Bluebells")];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([html.text("Bluebells")]));
     }
 }
 
@@ -692,6 +706,9 @@ public class Html {
             }
         });
     }
+    public static java.util.List<? extends HtmlNode> collapse(java.util.List<? extends HtmlNode> nodes) {
+        return nodes;
+    }
 }
 
 ==============
@@ -785,6 +802,17 @@ public class HtmlTests {
 
             assertThat(result, equalTo(java.util.List.of(Html.forceWrite())));
         }
+    }@org.junit.jupiter.api.Nested
+    public class Collapse {
+        @org.junit.jupiter.api.Test
+        @org.junit.jupiter.api.DisplayName("collapsing does nothing to single text node")
+        public void collapsingDoesNothingToSingleTextNode() {
+            var nodes = java.util.List.of(Html.text("Bluebells"));
+
+            var result = Html.collapse(nodes);
+
+            assertThat(result, equalTo(java.util.List.of(Html.text("Bluebells"))));
+        }
     }}
 
 ==============
@@ -792,6 +820,8 @@ public class HtmlTests {
 ╷
 ├─ JUnit Jupiter ✔
 │  └─ HtmlTests ✔
+│     ├─ Collapse ✔
+│     │  └─ collapsing does nothing to single text node ✔
 │     └─ StripEmpty ✔
 │        ├─ text nodes with text are not stripped ✔
 │        ├─ force writes are never empty ✔
@@ -804,15 +834,15 @@ public class HtmlTests {
 └─ JUnit Vintage ✔
 
 Test run finished after TIME ms
-[         4 containers found      ]
+[         5 containers found      ]
 [         0 containers skipped    ]
-[         4 containers started    ]
+[         5 containers started    ]
 [         0 containers aborted    ]
-[         4 containers successful ]
+[         5 containers successful ]
 [         0 containers failed     ]
-[         8 tests found           ]
+[         9 tests found           ]
 [         0 tests skipped         ]
-[         8 tests started         ]
+[         9 tests started         ]
 [         0 tests aborted         ]
-[         8 tests successful      ]
+[         9 tests successful      ]
 [         0 tests failed          ]

@@ -70,6 +70,14 @@ public class Python {
         return new PythonExpressionStatementNode(expression);
     }
 
+    public static PythonForEachNode forEach(
+        String targetName,
+        PythonExpressionNode iterable,
+        List<PythonStatementNode> body
+    ) {
+        return new PythonForEachNode(targetName, iterable, body);
+    }
+
     public static PythonKeywordArgumentNode kwarg(String name, PythonExpressionNode expression) {
         return new PythonKeywordArgumentNode(name, expression);
     }

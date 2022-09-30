@@ -9,6 +9,7 @@ public interface PythonStatementNode extends PythonNode {
         T visit(PythonBlankLineNode node);
         T visit(PythonClassDeclarationNode node);
         T visit(PythonExpressionStatementNode node);
+        T visit(PythonForEachNode node);
         T visit(PythonFunctionNode node);
         T visit(PythonIfStatementNode node);
         T visit(PythonImportNode node);

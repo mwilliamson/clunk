@@ -256,6 +256,16 @@ public class PythonSerialiser {
         builder.newLine();
     }
 
+    private static void serialiseForEach(PythonForEachNode node, CodeBuilder builder) {
+        builder.append("for ");
+        builder.append(node.targetName());
+        builder.append(" in ");
+        serialiseExpressionTopLevel(node.iterable(), builder);
+        builder.append(":");
+        builder.newLine();
+        serialiseBlock(node.body(), builder);
+    }
+
     private static void serialiseFunction(PythonFunctionNode node, CodeBuilder builder) {
         serialiseDecorators(node.decorators(), builder);
         builder.append("def ");
@@ -393,6 +403,12 @@ public class PythonSerialiser {
             @Override
             public Void visit(PythonExpressionStatementNode node) {
                 serialiseExpressionStatement(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(PythonForEachNode node) {
+                serialiseForEach(node, builder);
                 return null;
             }
 

@@ -5,6 +5,7 @@ public enum TokenType {
     KEYWORD_ELSE,
     KEYWORD_ENUM,
     KEYWORD_FALSE,
+    KEYWORD_FOR,
     KEYWORD_FUN,
     KEYWORD_IF,
     KEYWORD_IMPORT,

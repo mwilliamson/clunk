@@ -17,6 +17,7 @@ public class Tokeniser {
         Map.entry("else", TokenType.KEYWORD_ELSE),
         Map.entry("enum", TokenType.KEYWORD_ENUM),
         Map.entry("false", TokenType.KEYWORD_FALSE),
+        Map.entry("for", TokenType.KEYWORD_FOR),
         Map.entry("fun", TokenType.KEYWORD_FUN),
         Map.entry("if", TokenType.KEYWORD_IF),
         Map.entry("import", TokenType.KEYWORD_IMPORT),

@@ -55,6 +55,14 @@ public class Java {
         return new JavaExtendsTypeNode(arg, extends_);
     }
 
+    public static JavaForEachNode forEach(
+        String targetName,
+        JavaExpressionNode iterable,
+        List<JavaStatementNode> body
+    ) {
+        return new JavaForEachNode(targetName, iterable, body);
+    }
+
     public static JavaTypeExpressionNode fullyQualifiedTypeReference(String packageName, String typeName) {
         return new JavaFullyQualifiedTypeReferenceNode(packageName, typeName);
     }

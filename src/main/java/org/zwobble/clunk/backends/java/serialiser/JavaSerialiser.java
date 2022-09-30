@@ -298,6 +298,17 @@ public class JavaSerialiser {
         serialiseTypeExpression(node.extends_(), builder);
     }
 
+    private static void serialiseForEach(JavaForEachNode node, CodeBuilder builder) {
+        builder.append("for (var ");
+        builder.append(node.targetName());
+        builder.append(" : ");
+        serialiseExpression(node.iterable(), builder, Optional.empty());
+        builder.append(")");
+        serialiseBlock(node.body(), builder);
+        builder.newLine();
+    }
+
+
     private static void serialiseFullyQualifiedTypeReference(
         JavaFullyQualifiedTypeReferenceNode node,
         CodeBuilder builder
@@ -614,6 +625,12 @@ public class JavaSerialiser {
             @Override
             public Void visit(JavaExpressionStatementNode node) {
                 serialiseExpressionStatement(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(JavaForEachNode node) {
+                serialiseForEach(node, builder);
                 return null;
             }
 

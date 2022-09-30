@@ -188,6 +188,19 @@ public class JavaCodeGenerator {
         return new JavaExpressionStatementNode(compileExpression(node.expression(), context));
     }
 
+    private static JavaStatementNode compileForEach(
+        TypedForEachNode node,
+        JavaCodeGeneratorContext context
+    ) {
+        return new JavaForEachNode(
+            node.targetName(),
+            compileExpression(node.iterable(), context),
+            node.body().stream()
+                .map(statement -> compileFunctionStatement(statement, context))
+                .toList()
+        );
+    }
+
     public static JavaClassBodyDeclarationNode compileFunction(TypedFunctionNode node, JavaCodeGeneratorContext context) {
         return new JavaMethodDeclarationNode(
             List.of(),
@@ -214,7 +227,7 @@ public class JavaCodeGenerator {
 
             @Override
             public JavaStatementNode visit(TypedForEachNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileForEach(node, context);
             }
 
             @Override

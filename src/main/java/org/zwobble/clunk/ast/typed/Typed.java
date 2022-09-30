@@ -60,6 +60,15 @@ public class Typed {
         return new TypedExpressionStatementNode(expression, NullSource.INSTANCE);
     }
 
+    public static TypedForEachNode forEach(
+        String targetName,
+        Type targetType,
+        TypedExpressionNode iterable,
+        List<TypedFunctionStatementNode> body
+    ) {
+        return new TypedForEachNode(targetName, targetType, iterable, body, NullSource.INSTANCE);
+    }
+
     public static TypedIfStatementNode ifStatement(
         List<TypedConditionalBranchNode> conditionalBranches,
         List<TypedFunctionStatementNode> elseBody

@@ -344,6 +344,16 @@ public class TypeScriptSerialiser {
         builder.newLine();
     }
 
+    private static void serialiseForOf(TypeScriptForOfNode node, CodeBuilder builder) {
+        builder.append("for (let ");
+        builder.append(node.targetName());
+        builder.append(" of ");
+        serialiseExpression(node.iterable(), builder, Optional.empty());
+        builder.append(")");
+        serialiseBlock(node.body(), builder);
+        builder.newLine();
+    }
+
     private static void serialiseFunctionDeclaration(TypeScriptFunctionDeclarationNode node, CodeBuilder builder) {
         builder.append("function ");
         builder.append(node.name());
@@ -557,6 +567,12 @@ public class TypeScriptSerialiser {
             @Override
             public Void visit(TypeScriptExpressionStatementNode node) {
                 serialiseExpressionStatement(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(TypeScriptForOfNode node) {
+                serialiseForOf(node, builder);
                 return null;
             }
 

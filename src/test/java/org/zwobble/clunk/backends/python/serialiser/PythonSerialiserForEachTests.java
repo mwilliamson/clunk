@@ -11,7 +11,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class PythonSerialiserForEachTests {
     @Test
-    public void singleConditionalBranch() {
+    public void canSerialiseForEach() {
         var node = Python.forEach(
             "x",
             Python.reference("xs"),

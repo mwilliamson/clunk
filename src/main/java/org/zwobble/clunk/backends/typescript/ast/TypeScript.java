@@ -72,6 +72,14 @@ public class TypeScript {
         return new TypeScriptExpressionStatementNode(expression);
     }
 
+    public static TypeScriptForOfNode forOf(
+        String targetName,
+        TypeScriptExpressionNode iterable,
+        List<TypeScriptStatementNode> body
+    ) {
+        return new TypeScriptForOfNode(targetName, iterable, body);
+    }
+
     public static TypeScriptIfStatementNode ifStatement(
         List<TypeScriptConditionalBranchNode> conditionalBranches,
         List<TypeScriptStatementNode> elseBody

@@ -187,6 +187,19 @@ public class TypeScriptCodeGenerator {
         return new TypeScriptExpressionStatementNode(compileExpression(node.expression(), context));
     }
 
+    private static TypeScriptStatementNode compileForEach(
+        TypedForEachNode node,
+        TypeScriptCodeGeneratorContext context
+    ) {
+        return new TypeScriptForOfNode(
+            node.targetName(),
+            compileExpression(node.iterable(), context),
+            node.body().stream()
+                .map(statement -> compileFunctionStatement(statement, context))
+                .toList()
+        );
+    }
+
     private static TypeScriptStatementNode compileFunction(TypedFunctionNode node, TypeScriptCodeGeneratorContext context) {
         return new TypeScriptFunctionDeclarationNode(
             node.name(),
@@ -213,7 +226,7 @@ public class TypeScriptCodeGenerator {
 
             @Override
             public TypeScriptStatementNode visit(TypedForEachNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileForEach(node, context);
             }
 
             @Override

@@ -83,4 +83,39 @@ public class TypeCheckForEachTests {
         assertThat(result.getActual(), equalTo(Types.INT));
         assertThat(result.getExpected(), equalTo(Types.LIST_CONSTRUCTOR.genericType()));
     }
+
+    @Test
+    public void whenBodyHasNoReturnsThenForLoopNeverReturns() {
+        var untypedNode = Untyped.forEach(
+            "x",
+            Untyped.reference("xs"),
+            List.of(
+                Untyped.expressionStatement(Untyped.string("hello"))
+            )
+        );
+        var context = TypeCheckerContext.stub()
+            .addLocal("xs", Types.list(Types.INT), NullSource.INSTANCE);
+
+        var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
+
+        assertThat(result.returnBehaviour(), equalTo(ReturnBehaviour.NEVER));
+    }
+
+    @Test
+    public void whenBodyHasReturnThenForLoopSometimesReturns() {
+        var untypedNode = Untyped.forEach(
+            "x",
+            Untyped.reference("xs"),
+            List.of(
+                Untyped.returnStatement(Untyped.string("hello"))
+            )
+        );
+        var context = TypeCheckerContext.stub()
+            .enterFunction(Types.STRING)
+            .addLocal("xs", Types.list(Types.INT), NullSource.INSTANCE);
+
+        var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
+
+        assertThat(result.returnBehaviour(), equalTo(ReturnBehaviour.SOMETIMES));
+    }
 }

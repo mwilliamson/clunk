@@ -331,7 +331,12 @@ public class TypeChecker {
             node.source()
         );
 
-        return TypeCheckFunctionStatementResult.neverReturns(typedNode, context);
+        return new TypeCheckFunctionStatementResult<>(
+            typedNode,
+            typeCheckBodyResult.returnBehaviour() == ReturnBehaviour.NEVER ? ReturnBehaviour.NEVER : ReturnBehaviour.SOMETIMES,
+            typeCheckBodyResult.returnType(),
+            context
+        );
     }
 
     private static TypeCheckNamespaceStatementResult typeCheckFunction(

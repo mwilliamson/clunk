@@ -46,7 +46,7 @@ public class UntypedNodeMatchers {
         );
     }
 
-    public static Matcher<UntypedFunctionStatementNode> isUntypedExpressionStatementNode(Matcher<UntypedExpressionNode> expression) {
+    public static Matcher<UntypedFunctionStatementNode> isUntypedExpressionStatementNode(Matcher<? super UntypedExpressionNode> expression) {
         return cast(UntypedExpressionStatementNode.class, has("expression", expression));
     }
 

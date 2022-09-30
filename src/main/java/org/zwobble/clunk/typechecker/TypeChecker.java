@@ -416,6 +416,11 @@ public class TypeChecker {
             }
 
             @Override
+            public TypeCheckFunctionStatementResult<TypedFunctionStatementNode> visit(UntypedForEachNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public TypeCheckFunctionStatementResult<TypedFunctionStatementNode> visit(UntypedIfStatementNode node) {
                 return typeCheckIfStatement(node, context);
             }

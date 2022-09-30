@@ -196,6 +196,21 @@ public class Parser {
         return new UntypedExpressionStatementNode(expression, source);
     }
 
+    private UntypedForEachNode parseForEach(TokenIterator<TokenType> tokens) {
+        var source = source(tokens);
+
+        tokens.skip(TokenType.KEYWORD_FOR);
+        tokens.skip(TokenType.SYMBOL_PAREN_OPEN);
+        tokens.skip(TokenType.KEYWORD_VAR);
+        var targetName = tokens.nextValue(TokenType.IDENTIFIER);
+        tokens.skip(TokenType.KEYWORD_IN);
+        var iterable = parseTopLevelExpression(tokens);
+        tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
+        var body = parseBlock(tokens);
+
+        return new UntypedForEachNode(targetName, iterable, body, source);
+    }
+
     private class ParseIndex implements OperatorParselet {
         @Override
         public OperatorPrecedence precedence() {
@@ -420,6 +435,8 @@ public class Parser {
             return parseBlankLine(tokens);
         } else if (tokens.isNext(TokenType.KEYWORD_IF)) {
             return parseIfStatement(tokens);
+        } else if (tokens.isNext(TokenType.KEYWORD_FOR)) {
+            return parseForEach(tokens);
         } else if (tokens.isNext(TokenType.KEYWORD_RETURN)) {
             return parseReturn(tokens);
         } else if (tokens.isNext(TokenType.COMMENT_SINGLE_LINE)) {

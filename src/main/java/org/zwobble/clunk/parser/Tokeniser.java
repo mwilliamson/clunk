@@ -21,6 +21,7 @@ public class Tokeniser {
         Map.entry("fun", TokenType.KEYWORD_FUN),
         Map.entry("if", TokenType.KEYWORD_IF),
         Map.entry("import", TokenType.KEYWORD_IMPORT),
+        Map.entry("in", TokenType.KEYWORD_IN),
         Map.entry("interface", TokenType.KEYWORD_INTERFACE),
         Map.entry("property", TokenType.KEYWORD_PROPERTY),
         Map.entry("record", TokenType.KEYWORD_RECORD),

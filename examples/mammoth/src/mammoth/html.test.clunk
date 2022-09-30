@@ -85,4 +85,18 @@ testSuite "collapse" {
 
         assertThat(result, equalTo([html.text("Bluebells")]));
     }
+
+    test "consecutive fresh elements are not collapsed" {
+        var nodes = [
+            html.freshElement("p", [], []),
+            html.freshElement("p", [], []),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.freshElement("p", [], []),
+            html.freshElement("p", [], []),
+        ]));
+    }
 }

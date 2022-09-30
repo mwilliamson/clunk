@@ -130,6 +130,10 @@ sealed interface HtmlNode {
 record HtmlAttribute(name: String, value: String)
 
 fun element(tagName: String, attributes: List[HtmlAttribute], children: List[HtmlNode]) -> HtmlElement {
+    return freshElement(tagName, attributes, children);
+}
+
+fun freshElement(tagName: String, attributes: List[HtmlAttribute], children: List[HtmlNode]) -> HtmlElement {
     var tag = HtmlTag([tagName], attributes, false, "");
     return HtmlElement(tag, children);
 }
@@ -301,6 +305,20 @@ testSuite "collapse" {
         var result = html.collapse(nodes);
 
         assertThat(result, equalTo([html.text("Bluebells")]));
+    }
+
+    test "consecutive fresh elements are not collapsed" {
+        var nodes = [
+            html.freshElement("p", [], []),
+            html.freshElement("p", [], []),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.freshElement("p", [], []),
+            html.freshElement("p", [], []),
+        ]));
     }
 }
 
@@ -668,6 +686,9 @@ import org.zwobble.mammoth.internal.mammoth.html.HtmlNode;
 
 public class Html {
     public static HtmlElement element(String tagName, java.util.List<HtmlAttribute> attributes, java.util.List<? extends HtmlNode> children) {
+        return freshElement(tagName, attributes, children);
+    }
+    public static HtmlElement freshElement(String tagName, java.util.List<HtmlAttribute> attributes, java.util.List<? extends HtmlNode> children) {
         var tag = new HtmlTag(java.util.List.of(tagName), attributes, false, "");
         return new HtmlElement(tag, children);
     }
@@ -813,6 +834,16 @@ public class HtmlTests {
 
             assertThat(result, equalTo(java.util.List.of(Html.text("Bluebells"))));
         }
+
+        @org.junit.jupiter.api.Test
+        @org.junit.jupiter.api.DisplayName("consecutive fresh elements are not collapsed")
+        public void consecutiveFreshElementsAreNotCollapsed() {
+            var nodes = java.util.List.of(Html.freshElement("p", java.util.List.of(), java.util.List.of()), Html.freshElement("p", java.util.List.of(), java.util.List.of()));
+
+            var result = Html.collapse(nodes);
+
+            assertThat(result, equalTo(java.util.List.of(Html.freshElement("p", java.util.List.of(), java.util.List.of()), Html.freshElement("p", java.util.List.of(), java.util.List.of()))));
+        }
     }}
 
 ==============
@@ -821,7 +852,8 @@ public class HtmlTests {
 ├─ JUnit Jupiter ✔
 │  └─ HtmlTests ✔
 │     ├─ Collapse ✔
-│     │  └─ collapsing does nothing to single text node ✔
+│     │  ├─ collapsing does nothing to single text node ✔
+│     │  └─ consecutive fresh elements are not collapsed ✔
 │     └─ StripEmpty ✔
 │        ├─ text nodes with text are not stripped ✔
 │        ├─ force writes are never empty ✔
@@ -840,9 +872,9 @@ Test run finished after TIME ms
 [         0 containers aborted    ]
 [         5 containers successful ]
 [         0 containers failed     ]
-[         9 tests found           ]
+[        10 tests found           ]
 [         0 tests skipped         ]
-[         9 tests started         ]
+[        10 tests started         ]
 [         0 tests aborted         ]
-[         9 tests successful      ]
+[        10 tests successful      ]
 [         0 tests failed          ]

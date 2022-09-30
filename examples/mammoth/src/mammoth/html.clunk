@@ -4,6 +4,10 @@ sealed interface HtmlNode {
 record HtmlAttribute(name: String, value: String)
 
 fun element(tagName: String, attributes: List[HtmlAttribute], children: List[HtmlNode]) -> HtmlElement {
+    return freshElement(tagName, attributes, children);
+}
+
+fun freshElement(tagName: String, attributes: List[HtmlAttribute], children: List[HtmlNode]) -> HtmlElement {
     var tag = HtmlTag([tagName], attributes, false, "");
     return HtmlElement(tag, children);
 }

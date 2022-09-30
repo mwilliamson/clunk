@@ -130,6 +130,10 @@ sealed interface HtmlNode {
 record HtmlAttribute(name: String, value: String)
 
 fun element(tagName: String, attributes: List[HtmlAttribute], children: List[HtmlNode]) -> HtmlElement {
+    return freshElement(tagName, attributes, children);
+}
+
+fun freshElement(tagName: String, attributes: List[HtmlAttribute], children: List[HtmlNode]) -> HtmlElement {
     var tag = HtmlTag([tagName], attributes, false, "");
     return HtmlElement(tag, children);
 }
@@ -301,6 +305,20 @@ testSuite "collapse" {
         var result = html.collapse(nodes);
 
         assertThat(result, equalTo([html.text("Bluebells")]));
+    }
+
+    test "consecutive fresh elements are not collapsed" {
+        var nodes = [
+            html.freshElement("p", [], []),
+            html.freshElement("p", [], []),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.freshElement("p", [], []),
+            html.freshElement("p", [], []),
+        ]));
     }
 }
 
@@ -572,6 +590,10 @@ class HtmlAttribute {
 }
 
 function element(tagName: string, attributes: Array<HtmlAttribute>, children: Array<HtmlNode>): HtmlElement {
+    return freshElement(tagName, attributes, children);
+}
+
+function freshElement(tagName: string, attributes: Array<HtmlAttribute>, children: Array<HtmlNode>): HtmlElement {
     let tag = new HtmlTag([tagName], attributes, false, "");
     return new HtmlElement(tag, children);
 }
@@ -670,7 +692,7 @@ function stripEmptyNode(node: HtmlNode): Array<HtmlNode> {
 function collapse(nodes: Array<HtmlNode>): Array<HtmlNode> {
     return nodes;
 }
-export {HtmlAttribute, HtmlElement, HtmlForceWrite, HtmlNode, HtmlTag, HtmlText, collapse, element, forceWrite, stripEmpty, stripEmptyNode, text};
+export {HtmlAttribute, HtmlElement, HtmlForceWrite, HtmlNode, HtmlTag, HtmlText, collapse, element, forceWrite, freshElement, stripEmpty, stripEmptyNode, text};
 
 
 ==============
@@ -754,6 +776,14 @@ suite("collapse", function () {
 
         assertThat(result, deepEqualTo([html.text("Bluebells")]));
     });
+
+    test("consecutive fresh elements are not collapsed", function () {
+        let nodes = [html.freshElement("p", [], []), html.freshElement("p", [], [])];
+
+        let result = html.collapse(nodes);
+
+        assertThat(result, deepEqualTo([html.freshElement("p", [], []), html.freshElement("p", [], [])]));
+    });
 });
 
 
@@ -773,6 +803,7 @@ suite("collapse", function () {
 
   collapse
     ✔ collapsing does nothing to single text node
+    ✔ consecutive fresh elements are not collapsed
 
 
-  9 passing (TIME)
+  10 passing (TIME)

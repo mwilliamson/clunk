@@ -130,6 +130,10 @@ sealed interface HtmlNode {
 record HtmlAttribute(name: String, value: String)
 
 fun element(tagName: String, attributes: List[HtmlAttribute], children: List[HtmlNode]) -> HtmlElement {
+    return freshElement(tagName, attributes, children);
+}
+
+fun freshElement(tagName: String, attributes: List[HtmlAttribute], children: List[HtmlNode]) -> HtmlElement {
     var tag = HtmlTag([tagName], attributes, false, "");
     return HtmlElement(tag, children);
 }
@@ -301,6 +305,20 @@ testSuite "collapse" {
         var result = html.collapse(nodes);
 
         assertThat(result, equalTo([html.text("Bluebells")]));
+    }
+
+    test "consecutive fresh elements are not collapsed" {
+        var nodes = [
+            html.freshElement("p", [], []),
+            html.freshElement("p", [], []),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.freshElement("p", [], []),
+            html.freshElement("p", [], []),
+        ]));
     }
 }
 
@@ -487,6 +505,9 @@ class HtmlAttribute:
     value: str
 
 def element(tag_name, attributes, children):
+    return fresh_element(tag_name, attributes, children)
+
+def fresh_element(tag_name, attributes, children):
     tag = HtmlTag([tag_name], attributes, False, "")
     return HtmlElement(tag, children)
 
@@ -637,13 +658,20 @@ class CollapseTests:
 
         assert_that(result, equal_to([html.text("Bluebells")]))
 
+    def test_consecutive_fresh_elements_are_not_collapsed(self):
+        nodes = [html.fresh_element("p", [], []), html.fresh_element("p", [], [])]
+
+        result = html.collapse(nodes)
+
+        assert_that(result, equal_to([html.fresh_element("p", [], []), html.fresh_element("p", [], [])]))
+
 
 ==============
 
 ============================= test session starts ==============================
 rootdir: ROOTDIR, configfile: tox.ini
-collected 9 items
+collected 10 items
 
-mammoth/html_test.py .........                                           [100%]
+mammoth/html_test.py ..........                                          [100%]
 
-============================== 9 passed in TIME ===============================
+============================== 10 passed in TIME ==============================

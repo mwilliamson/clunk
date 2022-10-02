@@ -36,6 +36,13 @@ public class Java {
         return new JavaCallStaticNode(receiver, args);
     }
 
+    public static JavaCastNode cast(
+        JavaTypeExpressionNode typeVariableReference,
+        JavaExpressionNode expression
+    ) {
+        return new JavaCastNode(typeVariableReference, expression);
+    }
+
     public static JavaConditionalBranchNode conditionalBranch(
         JavaExpressionNode condition,
         List<JavaStatementNode> body

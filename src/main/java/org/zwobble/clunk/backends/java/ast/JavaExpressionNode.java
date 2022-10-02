@@ -11,6 +11,7 @@ public interface JavaExpressionNode extends JavaNode {
         T visit(JavaCallNode node);
         T visit(JavaCallNewNode node);
         T visit(JavaCallStaticNode node);
+        T visit(JavaCastNode node);
         T visit(JavaEqualsNode node);
         T visit(JavaIntLiteralNode node);
         T visit(JavaLogicalAndNode node);

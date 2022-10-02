@@ -11,6 +11,7 @@ public interface TypedExpressionNode extends TypedNode {
         T visit(TypedCallConstructorNode node);
         T visit(TypedCallMethodNode node);
         T visit(TypedCallStaticFunctionNode node);
+        T visit(TypedCastUnsafeNode node);
         T visit(TypedIndexNode node);
         T visit(TypedIntAddNode node);
         T visit(TypedIntEqualsNode node);

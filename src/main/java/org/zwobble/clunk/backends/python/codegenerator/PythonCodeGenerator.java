@@ -86,6 +86,13 @@ public class PythonCodeGenerator {
         }
     }
 
+    private static PythonExpressionNode compileCastUnsafe(
+        TypedCastUnsafeNode node,
+        PythonCodeGeneratorContext context
+    ) {
+        return compileExpression(node.expression(), context);
+    }
+
     private static PythonStatementNode compileEnum(
         TypedEnumNode node,
         PythonCodeGeneratorContext context
@@ -133,6 +140,11 @@ public class PythonCodeGenerator {
             @Override
             public PythonExpressionNode visit(TypedCallStaticFunctionNode node) {
                 return compileCallStaticFunction(node, context);
+            }
+
+            @Override
+            public PythonExpressionNode visit(TypedCastUnsafeNode node) {
+                return compileCastUnsafe(node, context);
             }
 
             @Override

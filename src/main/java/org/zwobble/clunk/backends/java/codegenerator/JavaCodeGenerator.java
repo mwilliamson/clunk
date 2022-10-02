@@ -80,6 +80,16 @@ public class JavaCodeGenerator {
         }
     }
 
+    private static JavaExpressionNode compileCastUnsafe(
+        TypedCastUnsafeNode node,
+        JavaCodeGeneratorContext context
+    ) {
+        return new JavaCastNode(
+            compileTypeLevelExpression(node.typeExpression(), context),
+            compileExpression(node.expression(), context)
+        );
+    }
+
     public static JavaOrdinaryCompilationUnitNode compileEnum(TypedEnumNode node, JavaCodeGeneratorContext context) {
         var packageDeclaration = namespaceToPackage(node.type().namespaceName(), context);
         var typeDeclaration = new JavaEnumDeclarationNode(
@@ -110,6 +120,11 @@ public class JavaCodeGenerator {
             @Override
             public JavaExpressionNode visit(TypedCallStaticFunctionNode node) {
                 return compileCallStaticFunction(node, context);
+            }
+
+            @Override
+            public JavaExpressionNode visit(TypedCastUnsafeNode node) {
+                return compileCastUnsafe(node, context);
             }
 
             @Override

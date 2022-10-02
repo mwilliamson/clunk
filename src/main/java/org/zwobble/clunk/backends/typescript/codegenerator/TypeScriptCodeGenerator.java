@@ -79,6 +79,16 @@ public class TypeScriptCodeGenerator {
         }
     }
 
+    private static TypeScriptExpressionNode compileCastUnsafe(
+        TypedCastUnsafeNode node,
+        TypeScriptCodeGeneratorContext context
+    ) {
+        return new TypeScriptCastNode(
+            compileExpression(node.expression(), context),
+            compileTypeLevelExpression(node.typeExpression())
+        );
+    }
+
     private static TypeScriptStatementNode compileEnum(TypedEnumNode node, TypeScriptCodeGeneratorContext context) {
         return new TypeScriptEnumDeclarationNode(
             node.type().name(),
@@ -106,6 +116,11 @@ public class TypeScriptCodeGenerator {
             @Override
             public TypeScriptExpressionNode visit(TypedCallStaticFunctionNode node) {
                 return compileCallStaticFunction(node, context);
+            }
+
+            @Override
+            public TypeScriptExpressionNode visit(TypedCastUnsafeNode node) {
+                return compileCastUnsafe(node, context);
             }
 
             @Override

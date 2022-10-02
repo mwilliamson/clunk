@@ -20,6 +20,14 @@ public class Typed {
         return new TypedCallStaticFunctionNode(receiver, args, staticFunctionType, NullSource.INSTANCE);
     }
 
+    public static TypedCastUnsafeNode castUnsafe(
+        TypedExpressionNode expression,
+        TypedTypeLevelExpressionNode typeExpression,
+        Type type
+    ) {
+        return new TypedCastUnsafeNode(expression, typeExpression, type, NullSource.INSTANCE);
+    }
+
     public static TypedConditionalBranchNode conditionalBranch(
         TypedExpressionNode condition,
         List<TypedFunctionStatementNode> body

@@ -13,6 +13,7 @@ import static org.zwobble.clunk.tokeniser.Token.token;
 
 public class Tokeniser {
     private static final Map<String, TokenType> KEYWORDS = Map.ofEntries(
+        Map.entry("as", TokenType.KEYWORD_AS),
         Map.entry("case", TokenType.KEYWORD_CASE),
         Map.entry("else", TokenType.KEYWORD_ELSE),
         Map.entry("enum", TokenType.KEYWORD_ENUM),

@@ -83,6 +83,29 @@ public class Parser {
         }
     }
 
+    private class ParseCast implements OperatorParselet {
+        @Override
+        public OperatorPrecedence precedence() {
+            return OperatorPrecedence.CAST;
+        }
+
+        @Override
+        public UntypedExpressionNode parse(
+            UntypedExpressionNode left,
+            TokenIterator<TokenType> tokens,
+            Source operatorSource
+        ) {
+            var typeExpression = parseTypeLevelExpression(tokens);
+
+            return new UntypedCastUnsafeNode(left, typeExpression, left.source());
+        }
+
+        @Override
+        public TokenType tokenType() {
+            return TokenType.KEYWORD_AS;
+        }
+    }
+
     private UntypedNamespaceStatementNode parseEnum(TokenIterator<TokenType> tokens) {
         var source = source(tokens);
         tokens.skip(TokenType.KEYWORD_ENUM);
@@ -152,6 +175,7 @@ public class Parser {
     private final Map<TokenType, OperatorParselet> operatorParselets = Stream.of(
         new ParseAdd(),
         new ParseCall(),
+        new ParseCast(),
         new ParseEquals(),
         new ParseIndex(),
         new ParseLogicalAnd(),

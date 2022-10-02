@@ -5,6 +5,7 @@ public enum OperatorPrecedence {
     LOGICAL_AND,
     EQUALITY,
     ADDITION,
+    CAST,
     PREFIX,
     CALL
 }

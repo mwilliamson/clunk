@@ -74,6 +74,14 @@ public class TypeScriptSerialiser {
         builder.append(")");
     }
 
+    private static void serialiseCast(TypeScriptCastNode node, CodeBuilder builder) {
+        builder.append("((");
+        serialiseExpression(node.expression(), builder, Optional.empty());
+        builder.append(") as ");
+        serialiseExpression(node.type(), builder, Optional.empty());
+        builder.append(")");
+    }
+
     private static void serialiseClassDeclaration(TypeScriptClassDeclarationNode node, CodeBuilder builder) {
         builder.append("class ");
         builder.append(node.name());
@@ -251,6 +259,12 @@ public class TypeScriptSerialiser {
             @Override
             public Void visit(TypeScriptCallNewNode node) {
                 serialiseCallNew(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(TypeScriptCastNode node) {
+                serialiseCast(node, builder);
                 return null;
             }
 

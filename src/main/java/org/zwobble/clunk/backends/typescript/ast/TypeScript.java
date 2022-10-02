@@ -38,6 +38,13 @@ public class TypeScript {
         return new TypeScriptCallNewNode(receiver, args);
     }
 
+    public static TypeScriptCastNode cast(
+        TypeScriptExpressionNode expression,
+        TypeScriptExpressionNode type
+    ) {
+        return new TypeScriptCastNode(expression, type);
+    }
+
     public static TypeScriptClassFieldNode classField(String name, TypeScriptExpressionNode type) {
         return new TypeScriptClassFieldNode(name, type, Optional.empty());
     }

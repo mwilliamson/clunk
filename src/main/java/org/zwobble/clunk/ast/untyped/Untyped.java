@@ -26,6 +26,13 @@ public class Untyped {
         return new UntypedCallNode(receiver, positionalArgs, NullSource.INSTANCE);
     }
 
+    public static UntypedCastUnsafeNode castUnsafe(
+        UntypedExpressionNode expression,
+        UntypedTypeLevelExpressionNode typeExpression
+    ) {
+        return new UntypedCastUnsafeNode(expression, typeExpression, NullSource.INSTANCE);
+    }
+
     public static UntypedConditionalBranchNode conditionalBranch(
         UntypedExpressionNode condition,
         List<UntypedFunctionStatementNode> body

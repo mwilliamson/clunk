@@ -117,6 +117,23 @@ public class TypeChecker {
         };
     }
 
+    private static TypedExpressionNode typeCheckCastUnsafe(
+        UntypedCastUnsafeNode node,
+        TypeCheckerContext context
+    ) {
+        var typedExpression = typeCheckExpression(node.expression(), context);
+        var typedTypeExpression = typeCheckTypeLevelExpressionNode(node.typeExpression(), context);
+        // TODO: handle not a type
+        var type = (Type) typedTypeExpression.value();
+
+        return new TypedCastUnsafeNode(
+            typedExpression,
+            typedTypeExpression,
+            type,
+            node.source()
+        );
+    }
+
     private static TypeCheckFunctionStatementResult<TypedConditionalBranchNode> typeCheckConditionalBranch(
         UntypedConditionalBranchNode node,
         TypeCheckerContext context
@@ -241,6 +258,11 @@ public class TypeChecker {
             @Override
             public TypedExpressionNode visit(UntypedCallNode node) {
                 return typeCheckCall(node, context);
+            }
+
+            @Override
+            public TypedExpressionNode visit(UntypedCastUnsafeNode node) {
+                return typeCheckCastUnsafe(node, context);
             }
 
             @Override

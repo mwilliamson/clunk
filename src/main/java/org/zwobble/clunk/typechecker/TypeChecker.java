@@ -276,6 +276,11 @@ public class TypeChecker {
             }
 
             @Override
+            public TypedExpressionNode visit(UntypedInstanceOfNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public TypedExpressionNode visit(UntypedIntLiteralNode node) {
                 return typeCheckIntLiteral(node);
             }

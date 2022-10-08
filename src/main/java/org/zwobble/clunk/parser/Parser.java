@@ -178,6 +178,7 @@ public class Parser {
         new ParseCast(),
         new ParseEquals(),
         new ParseIndex(),
+        new ParseInstanceOf(),
         new ParseLogicalAnd(),
         new ParseLogicalOr(),
         new ParseMemberAccess()
@@ -255,6 +256,28 @@ public class Parser {
         @Override
         public TokenType tokenType() {
             return TokenType.SYMBOL_SQUARE_OPEN;
+        }
+    }
+
+    private class ParseInstanceOf implements OperatorParselet {
+        @Override
+        public OperatorPrecedence precedence() {
+            return OperatorPrecedence.RELATIONAL;
+        }
+
+        @Override
+        public UntypedExpressionNode parse(
+            UntypedExpressionNode left,
+            TokenIterator<TokenType> tokens,
+            Source operatorSource
+        ) {
+            var type = parseTypeLevelExpression(tokens);
+            return new UntypedInstanceOfNode(left, type, left.source());
+        }
+
+        @Override
+        public TokenType tokenType() {
+            return TokenType.KEYWORD_INSTANCEOF;
         }
     }
 

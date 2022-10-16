@@ -92,6 +92,13 @@ public class Typed {
         return new TypedImportNode(name, Optional.of(fieldName), type, NullSource.INSTANCE);
     }
 
+    public static TypedExpressionNode instanceOf(
+        TypedExpressionNode expression,
+        TypedTypeLevelExpressionNode typeExpression
+    ) {
+        return new TypedInstanceOfNode(expression, typeExpression, NullSource.INSTANCE);
+    }
+
     public static TypedInterfaceNode interface_(String name, InterfaceType type) {
         return new TypedInterfaceNode(name, type, NullSource.INSTANCE);
     }

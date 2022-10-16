@@ -154,7 +154,7 @@ public class PythonCodeGenerator {
 
             @Override
             public PythonExpressionNode visit(TypedInstanceOfNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileInstanceOf(node, context);
             }
 
             @Override
@@ -344,6 +344,20 @@ public class PythonCodeGenerator {
         return new PythonSubscriptionNode(
             compileExpression(node.receiver(), context),
             List.of(compileExpression(node.index(), context))
+        );
+    }
+
+    private static PythonExpressionNode compileInstanceOf(
+        TypedInstanceOfNode node,
+        PythonCodeGeneratorContext context
+    ) {
+        return new PythonCallNode(
+            new PythonReferenceNode("isinstance"),
+            List.of(
+                compileExpression(node.expression(), context),
+                compileTypeLevelExpression(node.typeExpression(), context)
+            ),
+            List.of()
         );
     }
 

@@ -130,7 +130,7 @@ public class TypeScriptCodeGenerator {
 
             @Override
             public TypeScriptExpressionNode visit(TypedInstanceOfNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileInstanceOf(node, context);
             }
 
             @Override
@@ -343,6 +343,18 @@ public class TypeScriptCodeGenerator {
         return new TypeScriptIndexNode(
             compileExpression(node.receiver(), context),
             compileExpression(node.index(), context)
+        );
+    }
+
+    private static TypeScriptExpressionNode compileInstanceOf(
+        TypedInstanceOfNode node,
+        TypeScriptCodeGeneratorContext context
+    ) {
+        var typeExpressionType = (RecordType) node.typeExpression().value();
+
+        return new TypeScriptStrictEqualsNode(
+            new TypeScriptPropertyAccessNode(compileExpression(node.expression(), context), "type"),
+            new TypeScriptStringLiteralNode(typeExpressionType.name())
         );
     }
 

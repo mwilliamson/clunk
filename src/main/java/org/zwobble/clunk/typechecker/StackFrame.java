@@ -73,4 +73,8 @@ public record StackFrame(
 
         return new StackFrame(namespaceName, returnType, environment.plus(name, variable));
     }
+
+    public StackFrame updateVariable(String name, Variable variable, Source source) {
+        return new StackFrame(namespaceName, returnType, environment.plus(name, variable));
+    }
 }

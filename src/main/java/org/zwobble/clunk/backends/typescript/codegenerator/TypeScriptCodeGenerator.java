@@ -594,10 +594,6 @@ public class TypeScriptCodeGenerator {
                     var caseType = (RecordType) typedCaseNode.type().value();
 
                     var body = new ArrayList<TypeScriptStatementNode>();
-                    body.add(new TypeScriptLetNode(
-                        typedCaseNode.variableName(),
-                        switchExpression
-                    ));
 
                     for (var statement : typedCaseNode.body()) {
                         body.add(compileFunctionStatement(statement, context));

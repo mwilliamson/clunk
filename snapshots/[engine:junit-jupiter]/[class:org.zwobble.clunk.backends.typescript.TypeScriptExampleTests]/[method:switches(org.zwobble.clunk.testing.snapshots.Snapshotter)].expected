@@ -19,11 +19,11 @@ test "sum" {
 
 fun evaluate(node: Node) -> Int {
     switch (node) {
-        case Add add {
-            return evaluate(add.left) + evaluate(add.right);
+        case Add {
+            return evaluate(node.left) + evaluate(node.right);
         }
-        case Literal literal {
-            return literal.value;
+        case Literal {
+            return node.value;
         }
     }
 }
@@ -68,11 +68,9 @@ test("sum", function () {
 function evaluate(node: Node): number {
     switch (node.type) {
         case "Add":
-            let add = node;
-            return evaluate(add.left) + evaluate(add.right);
+            return evaluate(node.left) + evaluate(node.right);
         case "Literal":
-            let literal = node;
-            return literal.value;
+            return node.value;
     }
 }
 export {Add, Literal, Node, evaluate};

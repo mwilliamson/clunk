@@ -699,10 +699,9 @@ public class Parser {
 
         tokens.skip(TokenType.KEYWORD_CASE);
         var type = parseTypeLevelExpression(tokens);
-        var variableName = tokens.nextValue(TokenType.IDENTIFIER);
         var body = parseBlock(tokens);
 
-        return new UntypedSwitchCaseNode(type, variableName, body, source);
+        return new UntypedSwitchCaseNode(type, body, source);
     }
 
     private UntypedTestNode parseTest(TokenIterator<TokenType> tokens) {

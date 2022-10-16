@@ -713,7 +713,7 @@ public class JavaCodeGenerator {
                                     javaCaseReturnType,
                                     "visit",
                                     List.of(
-                                        new JavaParamNode(new JavaTypeVariableReferenceNode(caseType.name()), switchCase.variableName())
+                                        new JavaParamNode(new JavaTypeVariableReferenceNode(caseType.name()), node.expression().name())
                                     ),
                                     body
                                 );

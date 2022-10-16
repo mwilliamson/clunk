@@ -609,7 +609,7 @@ public class PythonCodeGenerator {
                 .map(switchCase -> new PythonFunctionNode(
                     generateVisitMethodName((RecordType) switchCase.type().value()),
                     List.of(),
-                    List.of("self", pythonizeName(switchCase.variableName())),
+                    List.of("self", pythonizeName(node.expression().name())),
                     compileFunctionStatements(switchCase.body(), context)
                 ))
                 .toList()

@@ -6,7 +6,6 @@ import java.util.List;
 
 public record TypedSwitchCaseNode(
     TypedTypeLevelExpressionNode type,
-    String variableName,
     List<TypedFunctionStatementNode> body,
     Source source
 ) implements TypedNode {

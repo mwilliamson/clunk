@@ -6,7 +6,6 @@ import org.zwobble.clunk.ast.untyped.UntypedSwitchNode;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.*;
 import static org.zwobble.clunk.matchers.CastMatcher.cast;
 import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
@@ -17,10 +16,10 @@ public class ParserSwitchTests {
     public void canParseSwitchStatement() {
         var source = """
             switch (x) {
-                case A a {
+                case A {
                     return 1;
                 }
-                case B b {
+                case B {
                     return 2;
                 }
             }
@@ -35,7 +34,6 @@ public class ParserSwitchTests {
                 cast(
                     UntypedSwitchCaseNode.class,
                     has("type", isUntypedTypeLevelReferenceNode("A")),
-                    has("variableName", equalTo("a")),
                     has("body", contains(
                         isUntypedReturnNode().withExpression(isUntypedIntLiteralNode(1))
                     ))
@@ -43,7 +41,6 @@ public class ParserSwitchTests {
                 cast(
                     UntypedSwitchCaseNode.class,
                     has("type", isUntypedTypeLevelReferenceNode("B")),
-                    has("variableName", equalTo("b")),
                     has("body", contains(
                         isUntypedReturnNode().withExpression(isUntypedIntLiteralNode(2))
                     ))
@@ -57,11 +54,11 @@ public class ParserSwitchTests {
         var source = """
             switch (x) {
 
-                case A a {
+                case A {
                     return 1;
                 }
 
-                case B b {
+                case B {
                     return 2;
                 }
 

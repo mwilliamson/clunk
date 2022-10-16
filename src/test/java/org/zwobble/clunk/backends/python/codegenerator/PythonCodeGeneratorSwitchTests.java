@@ -22,8 +22,7 @@ public class PythonCodeGeneratorSwitchTests {
         var node = TypedSwitchNode.builder(Typed.localReference("node", interfaceType))
             .addCase(Typed.switchCase(
                 Typed.typeLevelReference("Add", recordType),
-                "add",
-                List.of(Typed.returnStatement(Typed.localReference("add", recordType)))
+                List.of(Typed.returnStatement(Typed.localReference("node", recordType)))
             ))
             .returnType(recordType)
             .build();
@@ -34,8 +33,8 @@ public class PythonCodeGeneratorSwitchTests {
         assertThat(string, equalTo(
             """
             class Visitor:
-                def visit_add(self, add):
-                    return add
+                def visit_add(self, node):
+                    return node
             return node.accept(Visitor())
             """));
     }
@@ -48,8 +47,7 @@ public class PythonCodeGeneratorSwitchTests {
         var node = TypedSwitchNode.builder(Typed.localReference("node", interfaceType))
             .addCase(Typed.switchCase(
                 Typed.typeLevelReference("Add", recordType),
-                "add",
-                List.of(Typed.expressionStatement(Typed.localReference("add", recordType)))
+                List.of(Typed.expressionStatement(Typed.localReference("node", recordType)))
             ))
             .neverReturns()
             .build();
@@ -60,8 +58,8 @@ public class PythonCodeGeneratorSwitchTests {
         assertThat(string, equalTo(
             """
             class Visitor:
-                def visit_add(self, add):
-                    add
+                def visit_add(self, node):
+                    node
             node.accept(Visitor())
             """));
     }
@@ -71,11 +69,10 @@ public class PythonCodeGeneratorSwitchTests {
         var interfaceType = Types.sealedInterfaceType(NamespaceName.fromParts("example"), "Node");
         var recordType = Types.recordType(NamespaceName.fromParts("example"), "IntLiteral");
 
-        var node = TypedSwitchNode.builder(Typed.localReference("node", interfaceType))
+        var node = TypedSwitchNode.builder(Typed.localReference("firstNode", interfaceType))
             .addCase(Typed.switchCase(
                 Typed.typeLevelReference("IntLiteral", recordType),
-                "intLiteral",
-                List.of(Typed.returnStatement(Typed.localReference("intLiteral", recordType)))
+                List.of(Typed.returnStatement(Typed.localReference("firstNode", recordType)))
             ))
             .returnType(recordType)
             .build();
@@ -86,9 +83,9 @@ public class PythonCodeGeneratorSwitchTests {
         assertThat(string, equalTo(
             """
             class Visitor:
-                def visit_int_literal(self, int_literal):
-                    return int_literal
-            return node.accept(Visitor())
+                def visit_int_literal(self, first_node):
+                    return first_node
+            return first_node.accept(Visitor())
             """));
     }
 }

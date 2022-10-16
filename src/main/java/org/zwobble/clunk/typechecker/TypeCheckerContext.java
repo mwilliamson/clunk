@@ -116,9 +116,23 @@ public record TypeCheckerContext(
         return addVariable(name, Variable.local(type), source);
     }
 
+    public TypeCheckerContext updateLocal(String name, Type type, Source source) {
+        return updateVariable(name, Variable.local(type), source);
+    }
+
     private TypeCheckerContext addVariable(String name, Variable variable, Source source) {
         return new TypeCheckerContext(
             P.stackUpdateTop(stack, frame -> frame.addVariable(name, variable, source)),
+            namespaceTypes,
+            typeToFields,
+            memberTypes,
+            subtypeRelations
+        );
+    }
+
+    private TypeCheckerContext updateVariable(String name, Variable variable, Source source) {
+        return new TypeCheckerContext(
+            P.stackUpdateTop(stack, frame -> frame.updateVariable(name, variable, source)),
             namespaceTypes,
             typeToFields,
             memberTypes,

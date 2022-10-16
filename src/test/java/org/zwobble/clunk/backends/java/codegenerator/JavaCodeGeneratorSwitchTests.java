@@ -22,8 +22,7 @@ public class JavaCodeGeneratorSwitchTests {
         var node = TypedSwitchNode.builder(Typed.localReference("node", interfaceType))
             .addCase(Typed.switchCase(
                 Typed.typeLevelReference("Add", recordType),
-                "add",
-                List.of(Typed.returnStatement(Typed.localReference("add", recordType)))
+                List.of(Typed.returnStatement(Typed.localReference("node", recordType)))
             ))
             .returnType(recordType)
             .build();
@@ -35,8 +34,8 @@ public class JavaCodeGeneratorSwitchTests {
             """
             return node.accept(new Node.Visitor<>() {
                 @Override
-                public example.Add visit(Add add) {
-                    return add;
+                public example.Add visit(Add node) {
+                    return node;
                 }
             });
             """));
@@ -50,8 +49,7 @@ public class JavaCodeGeneratorSwitchTests {
         var node = TypedSwitchNode.builder(Typed.localReference("node", interfaceType))
             .addCase(Typed.switchCase(
                 Typed.typeLevelReference("Add", recordType),
-                "add",
-                List.of(Typed.expressionStatement(Typed.localReference("add", recordType)))
+                List.of(Typed.expressionStatement(Typed.localReference("node", recordType)))
             ))
             .neverReturns()
             .build();
@@ -63,8 +61,8 @@ public class JavaCodeGeneratorSwitchTests {
             """
             node.accept(new Node.Visitor<>() {
                 @Override
-                public Void visit(Add add) {
-                    add;
+                public Void visit(Add node) {
+                    node;
                     return null;
                 }
             });

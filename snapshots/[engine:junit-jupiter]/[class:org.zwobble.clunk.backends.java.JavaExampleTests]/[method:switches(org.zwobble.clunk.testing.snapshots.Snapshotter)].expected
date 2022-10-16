@@ -19,11 +19,11 @@ test "sum" {
 
 fun evaluate(node: Node) -> Int {
     switch (node) {
-        case Add add {
-            return evaluate(add.left) + evaluate(add.right);
+        case Add {
+            return evaluate(node.left) + evaluate(node.right);
         }
-        case Literal literal {
-            return literal.value;
+        case Literal {
+            return node.value;
         }
     }
 }
@@ -89,12 +89,12 @@ public class SwitchesTests {
     public static int evaluate(Node node) {
         return node.accept(new Node.Visitor<>() {
             @Override
-            public Integer visit(Add add) {
-                return evaluate(add.left()) + evaluate(add.right());
+            public Integer visit(Add node) {
+                return evaluate(node.left()) + evaluate(node.right());
             }
             @Override
-            public Integer visit(Literal literal) {
-                return literal.value();
+            public Integer visit(Literal node) {
+                return node.value();
             }
         });
     }

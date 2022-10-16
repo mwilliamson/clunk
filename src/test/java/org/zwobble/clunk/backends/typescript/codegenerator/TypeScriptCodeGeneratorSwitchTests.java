@@ -23,8 +23,7 @@ public class TypeScriptCodeGeneratorSwitchTests {
             List.of(
                 Typed.switchCase(
                     Typed.typeLevelReference("Add", recordType),
-                    "add",
-                    List.of(Typed.returnStatement(Typed.localReference("add", recordType)))
+                    List.of(Typed.returnStatement(Typed.localReference("node", recordType)))
                 )
             )
         );
@@ -36,8 +35,7 @@ public class TypeScriptCodeGeneratorSwitchTests {
             """
             switch (node.type) {
                 case "Add":
-                    let add = node;
-                    return add;
+                    return node;
             }
             """));
     }

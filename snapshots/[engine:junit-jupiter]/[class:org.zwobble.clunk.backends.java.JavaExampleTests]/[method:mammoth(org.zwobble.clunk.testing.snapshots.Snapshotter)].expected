@@ -188,24 +188,24 @@ fun stripEmpty(nodes: List[HtmlNode]) -> List[HtmlNode] {
 
 fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
     switch (node) {
-        case HtmlElement element {
-            var children = stripEmpty(element.children);
-            if (!element.isVoid && children.length() == 0) {
+        case HtmlElement {
+            var children = stripEmpty(node.children);
+            if (!node.isVoid && children.length() == 0) {
                 return [];
             } else {
-                return [HtmlElement(element.tag, children)];
+                return [HtmlElement(node.tag, children)];
             }
         }
 
-        case HtmlForceWrite forceWrite {
-            return [forceWrite];
+        case HtmlForceWrite {
+            return [node];
         }
 
-        case HtmlText text {
-            if (text.isEmpty) {
+        case HtmlText {
+            if (node.isEmpty) {
                 return [];
             } else {
-                return [text];
+                return [node];
             }
         }
     }
@@ -705,24 +705,24 @@ public class Html {
     public static java.util.List<? extends HtmlNode> stripEmptyNode(HtmlNode node) {
         return node.accept(new HtmlNode.Visitor<>() {
             @Override
-            public java.util.List<org.zwobble.mammoth.internal.mammoth.html.HtmlNode> visit(HtmlElement element) {
-                var children = stripEmpty(element.children());
-                if (!element.isVoid() && children.size() == 0) {
+            public java.util.List<org.zwobble.mammoth.internal.mammoth.html.HtmlNode> visit(HtmlElement node) {
+                var children = stripEmpty(node.children());
+                if (!node.isVoid() && children.size() == 0) {
                     return java.util.List.of();
                 } else {
-                    return java.util.List.of(new HtmlElement(element.tag(), children));
+                    return java.util.List.of(new HtmlElement(node.tag(), children));
                 }
             }
             @Override
-            public java.util.List<org.zwobble.mammoth.internal.mammoth.html.HtmlNode> visit(HtmlForceWrite forceWrite) {
-                return java.util.List.of(forceWrite);
+            public java.util.List<org.zwobble.mammoth.internal.mammoth.html.HtmlNode> visit(HtmlForceWrite node) {
+                return java.util.List.of(node);
             }
             @Override
-            public java.util.List<org.zwobble.mammoth.internal.mammoth.html.HtmlNode> visit(HtmlText text) {
-                if (text.isEmpty()) {
+            public java.util.List<org.zwobble.mammoth.internal.mammoth.html.HtmlNode> visit(HtmlText node) {
+                if (node.isEmpty()) {
                     return java.util.List.of();
                 } else {
-                    return java.util.List.of(text);
+                    return java.util.List.of(node);
                 }
             }
         });

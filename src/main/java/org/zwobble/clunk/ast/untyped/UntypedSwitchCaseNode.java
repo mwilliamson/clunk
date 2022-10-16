@@ -6,7 +6,6 @@ import java.util.List;
 
 public record UntypedSwitchCaseNode(
     UntypedTypeLevelExpressionNode type,
-    String variableName,
     List<UntypedFunctionStatementNode> body,
     Source source
 ) implements UntypedNode {

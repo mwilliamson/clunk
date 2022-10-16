@@ -163,10 +163,9 @@ public class Untyped {
 
     public static UntypedSwitchCaseNode switchCase(
         UntypedTypeLevelExpressionNode type,
-        String variableName,
         List<UntypedFunctionStatementNode> body
     ) {
-        return new UntypedSwitchCaseNode(type, variableName, body, NullSource.INSTANCE);
+        return new UntypedSwitchCaseNode(type, body, NullSource.INSTANCE);
     }
 
     public static UntypedSwitchNode switchStatement(

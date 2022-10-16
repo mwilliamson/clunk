@@ -29,12 +29,10 @@ public class TypeCheckSwitchTests {
             List.of(
                 Untyped.switchCase(
                     Untyped.typeLevelReference("A"),
-                    "a",
                     List.of()
                 ),
                 Untyped.switchCase(
                     Untyped.typeLevelReference("B"),
-                    "b",
                     List.of()
                 )
             )
@@ -54,13 +52,11 @@ public class TypeCheckSwitchTests {
             has("cases", contains(
                 cast(
                     TypedSwitchCaseNode.class,
-                    has("type", isTypedTypeLevelReferenceNode("A", recordType1)),
-                    has("variableName", equalTo("a"))
+                    has("type", isTypedTypeLevelReferenceNode("A", recordType1))
                 ),
                 cast(
                     TypedSwitchCaseNode.class,
-                    has("type", isTypedTypeLevelReferenceNode("B", recordType2)),
-                    has("variableName", equalTo("b"))
+                    has("type", isTypedTypeLevelReferenceNode("B", recordType2))
                 )
             ))
         ));
@@ -73,7 +69,6 @@ public class TypeCheckSwitchTests {
             List.of(
                 Untyped.switchCase(
                     Untyped.typeLevelReference("A"),
-                    "a",
                     List.of()
                 )
             )
@@ -99,7 +94,6 @@ public class TypeCheckSwitchTests {
             List.of(
                 Untyped.switchCase(
                     Untyped.typeLevelReference("A"),
-                    "a",
                     List.of()
                 )
             )
@@ -125,12 +119,10 @@ public class TypeCheckSwitchTests {
             List.of(
                 Untyped.switchCase(
                     Untyped.typeLevelReference("A"),
-                    "a",
                     List.of()
                 ),
                 Untyped.switchCase(
                     Untyped.typeLevelReference("B"),
-                    "b",
                     List.of()
                 )
             )
@@ -157,12 +149,10 @@ public class TypeCheckSwitchTests {
             List.of(
                 Untyped.switchCase(
                     Untyped.typeLevelReference("A"),
-                    "a",
                     List.of(Untyped.returnStatement(Untyped.boolFalse()))
                 ),
                 Untyped.switchCase(
                     Untyped.typeLevelReference("B"),
-                    "b",
                     List.of(Untyped.returnStatement(Untyped.boolTrue()))
                 )
             )
@@ -181,22 +171,20 @@ public class TypeCheckSwitchTests {
     }
 
     @Test
-    public void caseVariableCanBeAccessedInCaseBody() {
+    public void typeOfSwitchExpressionIsNarrowedInCaseBody() {
         var untypedNode = Untyped.switchStatement(
             Untyped.reference("x"),
             List.of(
                 Untyped.switchCase(
                     Untyped.typeLevelReference("A"),
-                    "a",
                     List.of(
-                        Untyped.expressionStatement(Untyped.reference("a"))
+                        Untyped.expressionStatement(Untyped.reference("x"))
                     )
                 ),
                 Untyped.switchCase(
                     Untyped.typeLevelReference("B"),
-                    "b",
                     List.of(
-                        Untyped.expressionStatement(Untyped.reference("b"))
+                        Untyped.expressionStatement(Untyped.reference("x"))
                     )
                 )
             )
@@ -216,13 +204,13 @@ public class TypeCheckSwitchTests {
                 cast(
                     TypedSwitchCaseNode.class,
                     has("body", contains(
-                        isTypedExpressionStatementNode(isTypedReferenceNode().withName("a").withType(recordType1))
+                        isTypedExpressionStatementNode(isTypedReferenceNode().withName("x").withType(recordType1))
                     ))
                 ),
                 cast(
                     TypedSwitchCaseNode.class,
                     has("body", contains(
-                        isTypedExpressionStatementNode(isTypedReferenceNode().withName("b").withType(recordType2))
+                        isTypedExpressionStatementNode(isTypedReferenceNode().withName("x").withType(recordType2))
                     ))
                 )
             ))
@@ -236,14 +224,12 @@ public class TypeCheckSwitchTests {
             List.of(
                 Untyped.switchCase(
                     Untyped.typeLevelReference("A"),
-                    "a",
                     List.of(
                         Untyped.returnStatement(Untyped.intLiteral())
                     )
                 ),
                 Untyped.switchCase(
                     Untyped.typeLevelReference("B"),
-                    "b",
                     List.of(
                         Untyped.returnStatement(Untyped.intLiteral())
                     )
@@ -273,14 +259,12 @@ public class TypeCheckSwitchTests {
             List.of(
                 Untyped.switchCase(
                     Untyped.typeLevelReference("A"),
-                    "a",
                     List.of(
                         Untyped.expressionStatement(Untyped.intLiteral())
                     )
                 ),
                 Untyped.switchCase(
                     Untyped.typeLevelReference("B"),
-                    "b",
                     List.of()
                 )
             )
@@ -308,12 +292,10 @@ public class TypeCheckSwitchTests {
             List.of(
                 Untyped.switchCase(
                     Untyped.typeLevelReference("A"),
-                    "a",
                     List.of()
                 ),
                 Untyped.switchCase(
                     Untyped.typeLevelReference("B"),
-                    "b",
                     List.of(Untyped.returnStatement(Untyped.boolTrue()))
                 )
             )

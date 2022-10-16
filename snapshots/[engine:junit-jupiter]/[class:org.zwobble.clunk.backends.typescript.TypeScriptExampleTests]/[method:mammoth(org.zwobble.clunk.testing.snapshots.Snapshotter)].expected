@@ -188,24 +188,24 @@ fun stripEmpty(nodes: List[HtmlNode]) -> List[HtmlNode] {
 
 fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
     switch (node) {
-        case HtmlElement element {
-            var children = stripEmpty(element.children);
-            if (!element.isVoid && children.length() == 0) {
+        case HtmlElement {
+            var children = stripEmpty(node.children);
+            if (!node.isVoid && children.length() == 0) {
                 return [];
             } else {
-                return [HtmlElement(element.tag, children)];
+                return [HtmlElement(node.tag, children)];
             }
         }
 
-        case HtmlForceWrite forceWrite {
-            return [forceWrite];
+        case HtmlForceWrite {
+            return [node];
         }
 
-        case HtmlText text {
-            if (text.isEmpty) {
+        case HtmlText {
+            if (node.isEmpty) {
                 return [];
             } else {
-                return [text];
+                return [node];
             }
         }
     }
@@ -669,22 +669,19 @@ function stripEmpty(nodes: Array<HtmlNode>): Array<HtmlNode> {
 function stripEmptyNode(node: HtmlNode): Array<HtmlNode> {
     switch (node.type) {
         case "HtmlElement":
-            let element = node;
-            let children = stripEmpty(element.children);
-            if (!element.isVoid && children.length === 0) {
+            let children = stripEmpty(node.children);
+            if (!node.isVoid && children.length === 0) {
                 return [];
             } else {
-                return [new HtmlElement(element.tag, children)];
+                return [new HtmlElement(node.tag, children)];
             }
         case "HtmlForceWrite":
-            let forceWrite = node;
-            return [forceWrite];
+            return [node];
         case "HtmlText":
-            let text = node;
-            if (text.isEmpty) {
+            if (node.isEmpty) {
                 return [];
             } else {
-                return [text];
+                return [node];
             }
     }
 }

@@ -1070,9 +1070,9 @@ public class TypeChecker {
             var typedType = typeCheckTypeLevelExpressionNode(switchCase.type(), context);
             // TODO: handle not a type
             var caseType = (Type) typedType.value();
-            var bodyContext = context.addLocal(switchCase.variableName(), caseType, switchCase.source());
+            var bodyContext = context.updateLocal(node.expression().name(), caseType, switchCase.source());
             var typedBody = typeCheckFunctionStatements(switchCase.body(), bodyContext);
-            var typedCaseNode = new TypedSwitchCaseNode(typedType, switchCase.variableName(), typedBody.value(), node.source());
+            var typedCaseNode = new TypedSwitchCaseNode(typedType, typedBody.value(), node.source());
             typedCaseNodes.add(typedCaseNode);
 
             returnBehaviours.add(typedBody.returnBehaviour());

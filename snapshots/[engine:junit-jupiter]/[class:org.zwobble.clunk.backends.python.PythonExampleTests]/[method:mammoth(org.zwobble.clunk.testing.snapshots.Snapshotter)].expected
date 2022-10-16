@@ -188,24 +188,24 @@ fun stripEmpty(nodes: List[HtmlNode]) -> List[HtmlNode] {
 
 fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
     switch (node) {
-        case HtmlElement element {
-            var children = stripEmpty(element.children);
-            if (!element.isVoid && children.length() == 0) {
+        case HtmlElement {
+            var children = stripEmpty(node.children);
+            if (!node.isVoid && children.length() == 0) {
                 return [];
             } else {
-                return [HtmlElement(element.tag, children)];
+                return [HtmlElement(node.tag, children)];
             }
         }
 
-        case HtmlForceWrite forceWrite {
-            return [forceWrite];
+        case HtmlForceWrite {
+            return [node];
         }
 
-        case HtmlText text {
-            if (text.isEmpty) {
+        case HtmlText {
+            if (node.isEmpty) {
                 return [];
             } else {
-                return [text];
+                return [node];
             }
         }
     }
@@ -565,19 +565,19 @@ def strip_empty(nodes):
 
 def strip_empty_node(node):
     class Visitor:
-        def visit_html_element(self, element):
-            children = strip_empty(element.children)
-            if not element.is_void and len(children) == 0:
+        def visit_html_element(self, node):
+            children = strip_empty(node.children)
+            if not node.is_void and len(children) == 0:
                 return []
             else:
-                return [HtmlElement(element.tag, children)]
-        def visit_html_force_write(self, force_write):
-            return [force_write]
-        def visit_html_text(self, text):
-            if text.is_empty:
+                return [HtmlElement(node.tag, children)]
+        def visit_html_force_write(self, node):
+            return [node]
+        def visit_html_text(self, node):
+            if node.is_empty:
                 return []
             else:
-                return [text]
+                return [node]
     return node.accept(Visitor())
 
 def collapse(nodes):

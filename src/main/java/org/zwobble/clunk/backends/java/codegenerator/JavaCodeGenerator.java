@@ -134,7 +134,7 @@ public class JavaCodeGenerator {
 
             @Override
             public JavaExpressionNode visit(TypedInstanceOfNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileInstanceOf(node, context);
             }
 
             @Override
@@ -306,6 +306,16 @@ public class JavaCodeGenerator {
                 "get"
             ),
             List.of(compileExpression(node.index(), context))
+        );
+    }
+
+    private static JavaExpressionNode compileInstanceOf(
+        TypedInstanceOfNode node,
+        JavaCodeGeneratorContext context
+    ) {
+        return new JavaInstanceOfNode(
+            compileExpression(node.expression(), context),
+            compileTypeLevelExpression(node.typeExpression(), context)
         );
     }
 

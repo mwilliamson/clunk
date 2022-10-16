@@ -89,6 +89,13 @@ public class Java {
         return new JavaImportTypeNode(typeName);
     }
 
+    public static JavaInstanceOfNode instanceOf(
+        JavaExpressionNode expression,
+        JavaTypeExpressionNode typeExpression
+    ) {
+        return new JavaInstanceOfNode(expression, typeExpression);
+    }
+
     public static JavaExpressionNode intLiteral(int value) {
         return new JavaIntLiteralNode(value);
     }

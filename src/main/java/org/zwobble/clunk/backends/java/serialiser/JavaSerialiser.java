@@ -243,6 +243,12 @@ public class JavaSerialiser {
             }
 
             @Override
+            public Void visit(JavaInstanceOfNode node) {
+                serialiseInstanceOf(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(JavaIntLiteralNode node) {
                 serialiseIntLiteral(node, builder);
                 return null;
@@ -383,6 +389,12 @@ public class JavaSerialiser {
         builder.append(node.typeName());
         builder.append(";");
         builder.newLine();
+    }
+
+    private static void serialiseInstanceOf(JavaInstanceOfNode node, CodeBuilder builder) {
+        serialiseExpression(node.expression(), builder, Optional.of(node));
+        builder.append(" instanceof ");
+        serialiseTypeExpression(node.typeExpressionNode(), builder);
     }
 
     private static void serialiseInterfaceDeclaration(JavaInterfaceDeclarationNode node, CodeBuilder builder) {

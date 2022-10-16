@@ -123,8 +123,7 @@ public class TypeChecker {
     ) {
         var typedExpression = typeCheckExpression(node.expression(), context);
         var typedTypeExpression = typeCheckTypeLevelExpressionNode(node.typeExpression(), context);
-        // TODO: handle not a type
-        var type = (Type) typedTypeExpression.value();
+        var type = typedTypeLevelExpressionToType(typedTypeExpression);
 
         return new TypedCastUnsafeNode(
             typedExpression,
@@ -162,8 +161,9 @@ public class TypeChecker {
             var typedArgNodes = node.args().stream()
                 .map(arg -> TypedConstructedTypeNode.Arg.covariant(typeCheckTypeLevelExpressionNode(arg, context)))
                 .toList();
-            // TODO: handle non-type args
-            var args = typedArgNodes.stream().map(arg -> (Type) arg.type().value()).toList();
+            var args = typedArgNodes.stream()
+                .map(arg -> typedTypeLevelExpressionToType(arg.type()))
+                .toList();
             var constructedType = Types.construct(typeConstructor, args);
 
             return new TypedConstructedTypeNode(typedReceiverNode, typedArgNodes, constructedType, node.source());
@@ -277,7 +277,7 @@ public class TypeChecker {
 
             @Override
             public TypedExpressionNode visit(UntypedInstanceOfNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return typeCheckInstanceOf(node, context);
             }
 
             @Override
@@ -381,12 +381,12 @@ public class TypeChecker {
                     context -> {
                         var typedParamNodes = node.params().stream().map(param -> typeCheckParam(param, context)).toList();
                         typedParamNodesBox.set(typedParamNodes);
-                        // TODO: handle not a type
-                        var paramTypes = typedParamNodes.stream().map(param -> (Type) param.type().value()).toList();
+                        var paramTypes = typedParamNodes.stream()
+                            .map(param -> typedTypeLevelExpressionToType(param.type()))
+                            .toList();
                         var typedReturnTypeNode = typeCheckTypeLevelExpressionNode(node.returnType(), context);
                         typedReturnTypeNodeBox.set(typedReturnTypeNode);
-                        // TODO: handle not a type
-                        var returnType = (Type) typedReturnTypeNode.value();
+                        var returnType = typedTypeLevelExpressionToType(typedReturnTypeNode);
 
                         var type = new StaticFunctionType(
                             context.namespaceName(),
@@ -407,7 +407,11 @@ public class TypeChecker {
 
                         var bodyContext = context.enterFunction(functionType.returnType());
                         for (var typedParamNode : typedParamNodes) {
-                            bodyContext = bodyContext.addLocal(typedParamNode.name(), (Type) typedParamNode.type().value(), typedParamNode.source());
+                            bodyContext = bodyContext.addLocal(
+                                typedParamNode.name(),
+                                typedTypeLevelExpressionToType(typedParamNode.type()),
+                                typedParamNode.source()
+                            );
                         }
 
                         var typeCheckStatementsResult = typeCheckFunctionBody(
@@ -428,7 +432,11 @@ public class TypeChecker {
 
                 var bodyContext = context.enterFunction(functionType.returnType());
                 for (var typedParamNode : typedParamNodes) {
-                    bodyContext = bodyContext.addLocal(typedParamNode.name(), (Type) typedParamNode.type().value(), typedParamNode.source());
+                    bodyContext = bodyContext.addLocal(
+                        typedParamNode.name(),
+                        typedTypeLevelExpressionToType(typedParamNode.type()),
+                        typedParamNode.source()
+                    );
                 }
 
                 return new TypedFunctionNode(
@@ -622,6 +630,32 @@ public class TypeChecker {
         } else {
             throw new UnexpectedTypeError(IndexableTypeSet.INSTANCE, typedReceiverNode.type(), node.source());
         }
+    }
+
+    private static TypedExpressionNode typeCheckInstanceOf(
+        UntypedInstanceOfNode node,
+        TypeCheckerContext context
+    ) {
+        var typedExpression = typeCheckExpression(node.expression(), context);
+        verifyIsSealedInterfaceType(typedExpression);
+
+        var typedTypeExpression = typeCheckTypeLevelExpressionNode(node.typeExpression(), context);
+        var typeExpressionType = typedTypeLevelExpressionToType(typedTypeExpression);
+
+        var subtypes = context.subtypesOf(typedExpression.type());
+        if (!subtypes.contains(typeExpressionType)) {
+            throw new InvalidCaseTypeError(
+                typedExpression.type(),
+                typeExpressionType,
+                typedTypeExpression.source()
+            );
+        }
+
+        return new TypedInstanceOfNode(
+            typedExpression,
+            typedTypeExpression,
+            node.source()
+        );
     }
 
     private static TypeCheckNamespaceStatementResult typeCheckInterface(UntypedInterfaceNode node) {
@@ -844,7 +878,7 @@ public class TypeChecker {
         TypeCheckerContext initialContext
     ) {
         var typedTypeNode = typeCheckTypeLevelExpressionNode(node.type(), initialContext);
-        var type = (Type) typedTypeNode.value();
+        var type = typedTypeLevelExpressionToType(typedTypeNode);
         return new TypeCheckRecordBodyDeclarationResult(
             Map.of(node.name(), type),
             bodyContext -> {
@@ -918,7 +952,11 @@ public class TypeChecker {
 
                         var memberTypesBuilder = new MemberTypesBuilder();
                         for (var typedFieldNode : typedRecordFieldNodes) {
-                            memberTypesBuilder.add(typedFieldNode.name(), (Type) typedFieldNode.type().value(), typedFieldNode.source());
+                            memberTypesBuilder.add(
+                                typedFieldNode.name(),
+                                typedTypeLevelExpressionToType(typedFieldNode.type()),
+                                typedFieldNode.source()
+                            );
                         }
                         for (var typeCheckDeclarationResult : typeCheckBodyDeclarationResults) {
                             memberTypesBuilder.addAll(typeCheckDeclarationResult.memberTypes(), typeCheckDeclarationResult.source());
@@ -1052,13 +1090,7 @@ public class TypeChecker {
         TypeCheckerContext context
     ) {
         var typedExpressionNode = typeCheckReference(node.expression(), context);
-        if (!(typedExpressionNode.type() instanceof InterfaceType)) {
-            throw new UnexpectedTypeError(
-                SealedInterfaceTypeSet.INSTANCE,
-                typedExpressionNode.type(),
-                typedExpressionNode.source()
-            );
-        }
+        verifyIsSealedInterfaceType(typedExpressionNode);
 
         var returnBehaviours = new ArrayList<ReturnBehaviour>();
         var returnType = Types.NOTHING;
@@ -1068,8 +1100,7 @@ public class TypeChecker {
         var typedCaseNodes = new ArrayList<TypedSwitchCaseNode>();
         for (var switchCase : node.cases()) {
             var typedType = typeCheckTypeLevelExpressionNode(switchCase.type(), context);
-            // TODO: handle not a type
-            var caseType = (Type) typedType.value();
+            var caseType = typedTypeLevelExpressionToType(typedType);
             var bodyContext = context.updateLocal(node.expression().name(), caseType, switchCase.source());
             var typedBody = typeCheckFunctionStatements(switchCase.body(), bodyContext);
             var typedCaseNode = new TypedSwitchCaseNode(typedType, typedBody.value(), node.source());
@@ -1207,6 +1238,28 @@ public class TypeChecker {
     private static void expectExpressionType(TypedExpressionNode node, Type type) {
         if (!node.type().equals(type)) {
             throw new UnexpectedTypeError(type, node.type(), node.source());
+        }
+    }
+
+    private static Type typedTypeLevelExpressionToType(TypedTypeLevelExpressionNode typedTypeExpression) {
+        if (typedTypeExpression.value() instanceof Type type) {
+            return type;
+        } else {
+            throw new UnexpectedTypeError(
+                MetaTypeTypeSet.INSTANCE,
+                Types.typeLevelValueType(typedTypeExpression.value()),
+                typedTypeExpression.source()
+            );
+        }
+    }
+
+    private static void verifyIsSealedInterfaceType(TypedExpressionNode typedExpressionNode) {
+        if (!(typedExpressionNode.type() instanceof InterfaceType)) {
+            throw new UnexpectedTypeError(
+                SealedInterfaceTypeSet.INSTANCE,
+                typedExpressionNode.type(),
+                typedExpressionNode.source()
+            );
         }
     }
 }

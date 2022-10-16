@@ -19,7 +19,7 @@ public class ParserInstanceOfTests {
         assertThat(result, cast(
             UntypedInstanceOfNode.class,
             has("expression", isUntypedReferenceNode("x")),
-            has("type", isUntypedTypeLevelReferenceNode("Y"))
+            has("typeExpression", isUntypedTypeLevelReferenceNode("Y"))
         ));
     }
 }

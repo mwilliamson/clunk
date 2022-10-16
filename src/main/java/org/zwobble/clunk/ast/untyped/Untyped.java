@@ -89,6 +89,13 @@ public class Untyped {
         return new UntypedIndexNode(receiver, index, NullSource.INSTANCE);
     }
 
+    public static UntypedInstanceOfNode instanceOf(
+        UntypedExpressionNode expression,
+        UntypedTypeLevelExpressionNode typeExpression
+    ) {
+        return new UntypedInstanceOfNode(expression, typeExpression, NullSource.INSTANCE);
+    }
+
     public static UntypedInterfaceNode interface_(String name) {
         return new UntypedInterfaceNode(name, NullSource.INSTANCE);
     }

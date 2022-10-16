@@ -13,6 +13,7 @@ public interface TypedExpressionNode extends TypedNode {
         T visit(TypedCallStaticFunctionNode node);
         T visit(TypedCastUnsafeNode node);
         T visit(TypedIndexNode node);
+        T visit(TypedInstanceOfNode node);
         T visit(TypedIntAddNode node);
         T visit(TypedIntEqualsNode node);
         T visit(TypedIntLiteralNode node);

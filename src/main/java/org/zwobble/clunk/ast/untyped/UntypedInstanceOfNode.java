@@ -4,7 +4,7 @@ import org.zwobble.clunk.sources.Source;
 
 public record UntypedInstanceOfNode(
     UntypedExpressionNode expression,
-    UntypedTypeLevelExpressionNode type,
+    UntypedTypeLevelExpressionNode typeExpression,
     Source source
 ) implements UntypedExpressionNode {
     @Override

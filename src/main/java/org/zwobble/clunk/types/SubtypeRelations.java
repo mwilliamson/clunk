@@ -96,7 +96,7 @@ public class SubtypeRelations {
         return false;
     }
 
-    public SubtypeRelations add(RecordType subtype, InterfaceType supertype) {
+    public SubtypeRelations add(StructuredType subtype, StructuredType supertype) {
         var subtypesToSupertypes = this.subtypesToSupertypes.plus(
             subtype,
             supertypesOf(subtype).plus(supertype)

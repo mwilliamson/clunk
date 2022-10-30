@@ -323,11 +323,11 @@ public class JavaCodeGenerator {
         TypedInterfaceNode node,
         JavaCodeGeneratorContext context
     ) {
-        var permits = context.subtypesOf(node.type()).stream()
+        var permits = context.sealedInterfaceCases(node.type()).stream()
             .map(subtype -> new JavaTypeVariableReferenceNode(subtype.identifier()))
             .toList();
 
-        var visitorMethods = context.subtypesOf(node.type()).stream()
+        var visitorMethods = context.sealedInterfaceCases(node.type()).stream()
             .map(subtype -> new JavaInterfaceMethodDeclarationNode(
                 List.of(),
                 new JavaTypeVariableReferenceNode("T"),
@@ -801,11 +801,11 @@ public class JavaCodeGenerator {
                     compileTypeLevelExpression(node.receiver(), context),
                     node.args().stream()
                         .map(arg -> {
-                            var argType = compileTypeLevelExpression(arg.type(), context);
-                            if (arg.isCovariant() && context.hasSubtypes((Type) arg.type().value())) {
-                                return new JavaExtendsTypeNode(new JavaWildcardTypeNode(), argType);
+                            var argTypeExpression = compileTypeLevelExpression(arg.type(), context);
+                            if (arg.isCovariant() && context.isSealedInterfaceType((Type) arg.type().value())) {
+                                return new JavaExtendsTypeNode(new JavaWildcardTypeNode(), argTypeExpression);
                             } else {
-                                return argType;
+                                return argTypeExpression;
                             }
                         })
                         .toList()

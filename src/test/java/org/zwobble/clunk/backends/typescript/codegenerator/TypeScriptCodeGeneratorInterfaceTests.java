@@ -18,8 +18,8 @@ public class TypeScriptCodeGeneratorInterfaceTests {
         var interfaceType = Types.sealedInterfaceType(NamespaceName.fromParts("one", "two"), "X");
         var node = Typed.interface_("X", interfaceType);
         var subtypeLookup = SubtypeRelations.EMPTY
-            .add(new RecordType(NamespaceName.fromParts("one", "two"), "A"), interfaceType)
-            .add(new RecordType(NamespaceName.fromParts("one", "two"), "B"), interfaceType);
+            .addSealedInterfaceCase(interfaceType, new RecordType(NamespaceName.fromParts("one", "two"), "A"))
+            .addSealedInterfaceCase(interfaceType, new RecordType(NamespaceName.fromParts("one", "two"), "B"));
         var context = new TypeScriptCodeGeneratorContext(subtypeLookup);
 
         var result = TypeScriptCodeGenerator.compileNamespaceStatement(

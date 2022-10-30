@@ -170,7 +170,12 @@ public record TypeCheckerContext(
     }
 
     public TypeCheckerContext addSubtypeRelation(RecordType subtype, InterfaceType superType) {
-        var subtypeRelations = this.subtypeRelations.add(subtype, superType);
+        var subtypeRelations = this.subtypeRelations.addSubtypeRelation(subtype, superType);
+        return new TypeCheckerContext(stack, namespaceTypes, typeToFields, memberTypes, subtypeRelations);
+    }
+
+    public TypeCheckerContext addSealedInterfaceCase(InterfaceType sealedInterfaceType, RecordType caseType) {
+        var subtypeRelations = this.subtypeRelations.addSealedInterfaceCase(sealedInterfaceType, caseType);
         return new TypeCheckerContext(stack, namespaceTypes, typeToFields, memberTypes, subtypeRelations);
     }
 
@@ -204,8 +209,8 @@ public record TypeCheckerContext(
         return Optional.ofNullable(typeMembers.get(memberName));
     }
 
-    public List<Type> subtypesOf(Type type) {
-        return subtypeRelations.subtypesOf(type);
+    public List<RecordType> sealedInterfaceCases(InterfaceType sealedInterfaceType) {
+        return subtypeRelations.sealedInterfaceCases(sealedInterfaceType);
     }
 
     public boolean isSubType(Type subtype, Type supertype) {

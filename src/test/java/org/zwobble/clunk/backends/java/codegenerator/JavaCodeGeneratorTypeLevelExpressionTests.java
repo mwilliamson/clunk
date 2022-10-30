@@ -132,9 +132,9 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
             List.of(Typed.covariant(Typed.typeLevelReference("Node", argType))),
             Types.list(argType)
         );
-        var context = JavaCodeGeneratorContext.stub(SubtypeRelations.EMPTY.add(
-            Types.recordType(NamespaceName.fromParts(), "Record"),
-            argType
+        var context = JavaCodeGeneratorContext.stub(SubtypeRelations.EMPTY.addSealedInterfaceCase(
+            argType,
+            Types.recordType(NamespaceName.fromParts(), "Record")
         ));
 
         var result = JavaCodeGenerator.compileTypeLevelExpression(node, context);

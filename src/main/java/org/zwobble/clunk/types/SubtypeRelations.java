@@ -7,23 +7,23 @@ import org.zwobble.clunk.util.P;
 public class SubtypeRelations {
     public static final SubtypeRelations EMPTY = new SubtypeRelations(P.map(), P.map());
 
-    private final PMap<Type, PVector<Type>> supertypeToSubtypes;
-    private final PMap<Type, PVector<Type>> subtypesToSupertypes;
+    private final PMap<InterfaceType, PVector<RecordType>> sealedInterfaceToCases;
+    private final PMap<Type, PVector<Type>> subtypeToSupertypes;
 
     private SubtypeRelations(
-        PMap<Type, PVector<Type>> supertypeToSubtypes,
-        PMap<Type, PVector<Type>> subtypesToSupertypes
+        PMap<InterfaceType, PVector<RecordType>> sealedInterfaceCases,
+        PMap<Type, PVector<Type>> subtypeToSupertypes
     ) {
-        this.supertypeToSubtypes = supertypeToSubtypes;
-        this.subtypesToSupertypes = subtypesToSupertypes;
+        this.sealedInterfaceToCases = sealedInterfaceCases;
+        this.subtypeToSupertypes = subtypeToSupertypes;
     }
 
-    public PVector<Type> subtypesOf(Type supertype) {
-        return supertypeToSubtypes.getOrDefault(supertype, P.vector());
+    public PVector<RecordType> sealedInterfaceCases(InterfaceType sealedInterfaceType) {
+        return sealedInterfaceToCases.getOrDefault(sealedInterfaceType, P.vector());
     }
 
     public PVector<Type> supertypesOf(Type subtype) {
-        return subtypesToSupertypes.getOrDefault(subtype, P.vector());
+        return subtypeToSupertypes.getOrDefault(subtype, P.vector());
     }
 
     public boolean isSubType(Type subtype, Type supertype) {
@@ -98,15 +98,20 @@ public class SubtypeRelations {
         return false;
     }
 
-    public SubtypeRelations add(StructuredType subtype, StructuredType supertype) {
-        var subtypesToSupertypes = this.subtypesToSupertypes.plus(
+    public SubtypeRelations addSubtypeRelation(StructuredType subtype, StructuredType supertype) {
+        var subtypeToSupertypes = this.subtypeToSupertypes.plus(
             subtype,
             supertypesOf(subtype).plus(supertype)
         );
-        var supertypeToSubtypes = this.supertypeToSubtypes.plus(
-            supertype,
-            subtypesOf(supertype).plus(subtype)
+        return new SubtypeRelations(sealedInterfaceToCases, subtypeToSupertypes);
+    }
+
+    public SubtypeRelations addSealedInterfaceCase(InterfaceType sealedInterfaceType, RecordType caseType) {
+        var sealedInterfaceCases = this.sealedInterfaceToCases.plus(
+            sealedInterfaceType,
+            sealedInterfaceCases(sealedInterfaceType).plus(caseType)
         );
-        return new SubtypeRelations(supertypeToSubtypes, subtypesToSupertypes);
+        return new SubtypeRelations(sealedInterfaceCases, subtypeToSupertypes);
+
     }
 }

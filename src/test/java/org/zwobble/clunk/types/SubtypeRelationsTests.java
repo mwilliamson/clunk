@@ -8,27 +8,28 @@ import static org.hamcrest.Matchers.empty;
 
 public class SubtypeRelationsTests {
     private static final NamespaceName NAMESPACE_NAME = NamespaceName.fromParts("Example");
-    private static final StructuredType recordTypeOne = Types.recordType(NAMESPACE_NAME, "RecordType1");
-    private static final StructuredType recordTypeTwo = Types.recordType(NAMESPACE_NAME, "RecordType2");
-    private static final StructuredType recordTypeThree = Types.recordType(NAMESPACE_NAME, "RecordType3");
+    private static final InterfaceType sealedInterfaceTypeOne = Types.interfaceType(NAMESPACE_NAME, "SealedInterface1");
+    private static final InterfaceType sealedInterfaceTypeTwo = Types.interfaceType(NAMESPACE_NAME, "SealedInterface2");
+    private static final RecordType recordTypeOne = Types.recordType(NAMESPACE_NAME, "RecordType1");
+    private static final RecordType recordTypeTwo = Types.recordType(NAMESPACE_NAME, "RecordType2");
 
     @Test
-    public void whenTypeHasNoSubtypesThenSubtypesOfReturnsEmptyList() {
+    public void whenSealedInterfaceHasNoCasesThenSealedInterfaceCasesReturnsEmptyList() {
         var relations = SubtypeRelations.EMPTY
-            .add(recordTypeOne, recordTypeTwo);
+            .addSealedInterfaceCase(sealedInterfaceTypeOne, recordTypeOne);
 
-        var result = relations.subtypesOf(recordTypeThree);
+        var result = relations.sealedInterfaceCases(sealedInterfaceTypeTwo);
 
         assertThat(result, empty());
     }
 
     @Test
-    public void whenTypeHasSubtypesThenSubtypesOfReturnsThoseSubtypes() {
+    public void whenSealedInterfaceHasCasesThenSealedInterfaceCasesReturnsThoseCases() {
         var relations = SubtypeRelations.EMPTY
-            .add(recordTypeOne, recordTypeThree)
-            .add(recordTypeTwo, recordTypeThree);
+            .addSealedInterfaceCase(sealedInterfaceTypeOne, recordTypeOne)
+            .addSealedInterfaceCase(sealedInterfaceTypeOne, recordTypeTwo);
 
-        var result = relations.subtypesOf(recordTypeThree);
+        var result = relations.sealedInterfaceCases(sealedInterfaceTypeOne);
 
         assertThat(result, containsInAnyOrder(recordTypeOne, recordTypeTwo));
     }

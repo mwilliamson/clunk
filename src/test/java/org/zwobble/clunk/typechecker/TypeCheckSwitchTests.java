@@ -41,8 +41,8 @@ public class TypeCheckSwitchTests {
             .addLocal("x", interfaceType, NullSource.INSTANCE)
             .addLocal("A", Types.metaType(recordType1), NullSource.INSTANCE)
             .addLocal("B", Types.metaType(recordType2), NullSource.INSTANCE)
-            .addSubtypeRelation(recordType1, interfaceType)
-            .addSubtypeRelation(recordType2, interfaceType);
+            .addSealedInterfaceCase(interfaceType, recordType1)
+            .addSealedInterfaceCase(interfaceType, recordType2);
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
@@ -101,8 +101,8 @@ public class TypeCheckSwitchTests {
         var context = TypeCheckerContext.stub()
             .addLocal("x", interfaceType, NullSource.INSTANCE)
             .addLocal("A", Types.metaType(recordType1), NullSource.INSTANCE)
-            .addSubtypeRelation(recordType1, interfaceType)
-            .addSubtypeRelation(recordType2, interfaceType);
+            .addSealedInterfaceCase(interfaceType, recordType1)
+            .addSealedInterfaceCase(interfaceType, recordType2);
 
         var result = assertThrows(
             SwitchIsNotExhaustiveError.class,
@@ -131,7 +131,7 @@ public class TypeCheckSwitchTests {
             .addLocal("x", interfaceType, NullSource.INSTANCE)
             .addLocal("A", Types.metaType(recordType1), NullSource.INSTANCE)
             .addLocal("B", Types.metaType(recordType2), NullSource.INSTANCE)
-            .addSubtypeRelation(recordType1, interfaceType);
+            .addSealedInterfaceCase(interfaceType, recordType1);
 
         var result = assertThrows(
             InvalidCaseTypeError.class,
@@ -161,8 +161,8 @@ public class TypeCheckSwitchTests {
             .addLocal("x", interfaceType, NullSource.INSTANCE)
             .addLocal("A", Types.metaType(recordType1), NullSource.INSTANCE)
             .addLocal("B", Types.metaType(recordType2), NullSource.INSTANCE)
-            .addSubtypeRelation(recordType1, interfaceType)
-            .addSubtypeRelation(recordType2, interfaceType)
+            .addSealedInterfaceCase(interfaceType, recordType1)
+            .addSealedInterfaceCase(interfaceType, recordType2)
             .enterFunction(Types.BOOL);
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
@@ -193,8 +193,8 @@ public class TypeCheckSwitchTests {
             .addLocal("x", interfaceType, NullSource.INSTANCE)
             .addLocal("A", Types.metaType(recordType1), NullSource.INSTANCE)
             .addLocal("B", Types.metaType(recordType2), NullSource.INSTANCE)
-            .addSubtypeRelation(recordType1, interfaceType)
-            .addSubtypeRelation(recordType2, interfaceType);
+            .addSealedInterfaceCase(interfaceType, recordType1)
+            .addSealedInterfaceCase(interfaceType, recordType2);
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
@@ -240,8 +240,8 @@ public class TypeCheckSwitchTests {
             .addLocal("x", interfaceType, NullSource.INSTANCE)
             .addLocal("A", Types.metaType(recordType1), NullSource.INSTANCE)
             .addLocal("B", Types.metaType(recordType2), NullSource.INSTANCE)
-            .addSubtypeRelation(recordType1, interfaceType)
-            .addSubtypeRelation(recordType2, interfaceType)
+            .addSealedInterfaceCase(interfaceType, recordType1)
+            .addSealedInterfaceCase(interfaceType, recordType2)
             .enterFunction(Types.INT);
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
@@ -273,8 +273,8 @@ public class TypeCheckSwitchTests {
             .addLocal("x", interfaceType, NullSource.INSTANCE)
             .addLocal("A", Types.metaType(recordType1), NullSource.INSTANCE)
             .addLocal("B", Types.metaType(recordType2), NullSource.INSTANCE)
-            .addSubtypeRelation(recordType1, interfaceType)
-            .addSubtypeRelation(recordType2, interfaceType)
+            .addSealedInterfaceCase(interfaceType, recordType1)
+            .addSealedInterfaceCase(interfaceType, recordType2)
             .enterFunction(Types.INT);
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
@@ -304,8 +304,8 @@ public class TypeCheckSwitchTests {
             .addLocal("x", interfaceType, NullSource.INSTANCE)
             .addLocal("A", Types.metaType(recordType1), NullSource.INSTANCE)
             .addLocal("B", Types.metaType(recordType2), NullSource.INSTANCE)
-            .addSubtypeRelation(recordType1, interfaceType)
-            .addSubtypeRelation(recordType2, interfaceType)
+            .addSealedInterfaceCase(interfaceType, recordType1)
+            .addSealedInterfaceCase(interfaceType, recordType2)
             .enterFunction(Types.BOOL);
 
         assertThrows(InconsistentSwitchCaseReturnError.class, () -> TypeChecker.typeCheckFunctionStatement(untypedNode, context));

@@ -1,8 +1,9 @@
 package org.zwobble.clunk.backends.typescript.codegenerator;
 
 import org.zwobble.clunk.backends.typescript.ast.TypeScriptImportNode;
+import org.zwobble.clunk.types.InterfaceType;
+import org.zwobble.clunk.types.RecordType;
 import org.zwobble.clunk.types.SubtypeRelations;
-import org.zwobble.clunk.types.Type;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -34,7 +35,7 @@ public class TypeScriptCodeGeneratorContext {
             .toList();
     }
 
-    public List<Type> subtypesOf(Type supertype) {
-        return subtypeRelations.subtypesOf(supertype);
+    public List<RecordType> sealedInterfaceCases(InterfaceType supertype) {
+        return subtypeRelations.sealedInterfaceCases(supertype);
     }
 }

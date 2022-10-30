@@ -637,12 +637,12 @@ public class TypeChecker {
         TypeCheckerContext context
     ) {
         var typedExpression = typeCheckExpression(node.expression(), context);
-        verifyIsSealedInterfaceType(typedExpression);
+        var interfaceType = verifyIsSealedInterfaceType(typedExpression);
 
         var typedTypeExpression = typeCheckTypeLevelExpressionNode(node.typeExpression(), context);
         var typeExpressionType = typedTypeLevelExpressionToType(typedTypeExpression);
 
-        var subtypes = context.subtypesOf(typedExpression.type());
+        var subtypes = context.sealedInterfaceCases(interfaceType);
         if (!subtypes.contains(typeExpressionType)) {
             throw new InvalidCaseTypeError(
                 typedExpression.type(),
@@ -968,7 +968,10 @@ public class TypeChecker {
                         newContext = newContext.addMemberTypes(recordType, memberTypes);
                         for (var typedSupertypeNode : typedSupertypeNodes) {
                             // TODO: handle type-level values that aren't types
-                            newContext = newContext.addSubtypeRelation(recordType, (InterfaceType) typedSupertypeNode.value());
+                            var interfaceType = (InterfaceType) typedSupertypeNode.value();
+                            newContext = newContext
+                                .addSubtypeRelation(recordType, interfaceType)
+                                .addSealedInterfaceCase(interfaceType, recordType);
                         }
                         return newContext;
                     }
@@ -1090,12 +1093,12 @@ public class TypeChecker {
         TypeCheckerContext context
     ) {
         var typedExpressionNode = typeCheckReference(node.expression(), context);
-        verifyIsSealedInterfaceType(typedExpressionNode);
+        var interfaceType = verifyIsSealedInterfaceType(typedExpressionNode);
 
         var returnBehaviours = new ArrayList<ReturnBehaviour>();
         var returnType = Types.NOTHING;
 
-        var unhandledTypes = new HashSet<>(context.subtypesOf(typedExpressionNode.type()));
+        var unhandledTypes = new HashSet<>(context.sealedInterfaceCases(interfaceType));
 
         var typedCaseNodes = new ArrayList<TypedSwitchCaseNode>();
         for (var switchCase : node.cases()) {
@@ -1253,8 +1256,10 @@ public class TypeChecker {
         }
     }
 
-    private static void verifyIsSealedInterfaceType(TypedExpressionNode typedExpressionNode) {
-        if (!(typedExpressionNode.type() instanceof InterfaceType)) {
+    private static InterfaceType verifyIsSealedInterfaceType(TypedExpressionNode typedExpressionNode) {
+        if (typedExpressionNode.type() instanceof InterfaceType interfaceType) {
+            return interfaceType;
+        } else {
             throw new UnexpectedTypeError(
                 SealedInterfaceTypeSet.INSTANCE,
                 typedExpressionNode.type(),

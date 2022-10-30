@@ -43,12 +43,17 @@ public class JavaCodeGeneratorContext {
         return config.packagePrefix();
     }
 
-    public List<Type> subtypesOf(Type supertype) {
-        return subtypeRelations.subtypesOf(supertype);
+    public List<RecordType> sealedInterfaceCases(InterfaceType sealedInterfaceType) {
+        return subtypeRelations.sealedInterfaceCases(sealedInterfaceType);
     }
 
-    public boolean hasSubtypes(Type supertype) {
-        return !subtypesOf(supertype).isEmpty();
+    public boolean isSealedInterfaceType(Type type) {
+        if (type instanceof InterfaceType interfaceType) {
+            return !sealedInterfaceCases(interfaceType).isEmpty();
+        } else {
+            return false;
+        }
+
     }
 
     public List<Type> supertypesOf(Type supertype) {

@@ -66,8 +66,8 @@ public class JavaCodeGeneratorRecordTests {
         var node = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "Example")
             .build();
         var subtypeRelations = SubtypeRelations.EMPTY
-            .add(node.type(), new InterfaceType(NamespaceName.fromParts("a", "b"), "X"))
-            .add(node.type(), new InterfaceType(NamespaceName.fromParts("a", "b"), "Y"));
+            .addSubtypeRelation(node.type(), new InterfaceType(NamespaceName.fromParts("a", "b"), "X"))
+            .addSubtypeRelation(node.type(), new InterfaceType(NamespaceName.fromParts("a", "b"), "Y"));
         var context = JavaCodeGeneratorContext.stub(subtypeRelations);
 
         var result = JavaCodeGenerator.compileRecord(node, context);

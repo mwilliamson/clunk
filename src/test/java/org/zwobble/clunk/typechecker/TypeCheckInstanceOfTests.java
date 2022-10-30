@@ -29,8 +29,8 @@ public class TypeCheckInstanceOfTests {
         var context = TypeCheckerContext.stub()
             .addLocal("x", interfaceType, NullSource.INSTANCE)
             .addLocal("A", Types.metaType(recordType1), NullSource.INSTANCE)
-            .addSubtypeRelation(recordType1, interfaceType)
-            .addSubtypeRelation(recordType2, interfaceType);
+            .addSealedInterfaceCase(interfaceType, recordType1)
+            .addSealedInterfaceCase(interfaceType, recordType2);
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 

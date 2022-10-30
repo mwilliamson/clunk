@@ -249,7 +249,7 @@ public class TypeCheckRecordTests {
         assertThat(result.typedNode(), has("supertypes", contains(
             has("value", isInterfaceType(NamespaceName.fromParts("a", "b"), "Person"))
         )));
-        assertThat(result.context().subtypesOf(interfaceType), containsInAnyOrder(
+        assertThat(result.context().sealedInterfaceCases(interfaceType), containsInAnyOrder(
             isRecordType(NamespaceName.fromParts("a", "b"), "User")
         ));
     }

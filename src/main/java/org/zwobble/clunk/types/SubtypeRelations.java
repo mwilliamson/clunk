@@ -23,7 +23,15 @@ public class SubtypeRelations {
     }
 
     public PVector<StructuredType> extendedTypes(Type subtype) {
-        return typeToExtendedTypes.getOrDefault(subtype, P.vector());
+        if (subtype instanceof ConstructedType subtypeConstructed) {
+            var genericType = subtypeConstructed.constructor().genericType();
+            // TODO: find a better way of converting to PVector (or just use List)
+            return P.copyOf(extendedTypes(genericType).stream()
+                .map(extendedType -> extendedType.replace(subtypeConstructed.typeMap()))
+                .toList());
+        } else {
+            return typeToExtendedTypes.getOrDefault(subtype, P.vector());
+        }
     }
 
     public boolean isSubType(Type subtype, Type supertype) {

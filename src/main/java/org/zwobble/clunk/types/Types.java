@@ -81,7 +81,7 @@ public class Types {
         return type instanceof InterfaceType;
     }
 
-    public static Type construct(TypeConstructor constructor, List<Type> args) {
+    public static StructuredType construct(TypeConstructor constructor, List<Type> args) {
         // TODO: check args
         return new ConstructedType(constructor, args);
     }

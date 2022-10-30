@@ -7,7 +7,7 @@ public record InterfaceType(NamespaceName namespaceName, String name) implements
     }
 
     @Override
-    public Type replace(TypeMap typeMap) {
+    public StructuredType replace(TypeMap typeMap) {
         return this;
     }
 }

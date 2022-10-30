@@ -7,7 +7,7 @@ public record RecordType(NamespaceName namespaceName, String name) implements St
     }
 
     @Override
-    public Type replace(TypeMap typeMap) {
+    public StructuredType replace(TypeMap typeMap) {
         return this;
     }
 }

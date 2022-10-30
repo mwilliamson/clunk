@@ -10,7 +10,6 @@ import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.types.*;
 import org.zwobble.clunk.util.P;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -187,17 +186,7 @@ public record TypeCheckerContext(
         if (type instanceof ConstructedType constructedType) {
             var genericType = constructedType.constructor().genericType();
             return memberType(genericType, memberName).map(memberType -> {
-                var params = constructedType.constructor().params();
-                var args = constructedType.args();
-
-                var typeMap = new HashMap<TypeParameter, Type>();
-                for (var i = 0; i < params.size(); i++) {
-                    var param = params.get(i);
-                    var arg = args.get(i);
-                    typeMap.put(param, arg);
-                }
-
-                return memberType.replace(new TypeMap(typeMap));
+                return memberType.replace(constructedType.typeMap());
             });
         }
 

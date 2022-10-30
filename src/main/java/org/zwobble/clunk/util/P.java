@@ -1,9 +1,9 @@
 package org.zwobble.clunk.util;
 
 import org.pcollections.*;
-import org.zwobble.clunk.typechecker.Variable;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -13,6 +13,10 @@ public class P {
 
     public static <K, V> PMap<K, V> copyOf(Map<K, V> map) {
         return HashTreePMap.from(map);
+    }
+
+    public static <T> PVector<T> copyOf(List<T> list) {
+        return TreePVector.from(list);
     }
 
     @SafeVarargs

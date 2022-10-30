@@ -2,6 +2,8 @@ package org.zwobble.clunk.types;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
@@ -53,5 +55,44 @@ public class SubtypeRelationsTests {
         var result = relations.extendedTypes(recordTypeOne);
 
         assertThat(result, containsInAnyOrder(sealedInterfaceTypeOne, sealedInterfaceTypeTwo));
+    }
+
+    @Test
+    public void whenExtendedTypesHaveNoTypeParametersThenCanFindExtendedTypesOfConstructedType() {
+        var recordTypeGeneric = Types.recordType(NAMESPACE_NAME, "Record");
+        var recordTypeConstructor = new TypeConstructor(
+            "Record",
+            List.of(TypeParameter.invariant(NAMESPACE_NAME, "Record", "T")),
+            recordTypeGeneric
+        );
+        var relations = SubtypeRelations.EMPTY
+            .addExtendedType(recordTypeGeneric, sealedInterfaceTypeOne);
+
+        var result = relations.extendedTypes(Types.construct(recordTypeConstructor, List.of(Types.STRING)));
+
+        assertThat(result, containsInAnyOrder(sealedInterfaceTypeOne));
+    }
+
+    @Test
+    public void whenExtendedTypesHaveTypeParametersThenCanFindExtendedTypesOfConstructedType() {
+        var recordTypeGeneric = Types.recordType(NAMESPACE_NAME, "Record");
+        var recordTypeParameter = TypeParameter.invariant(NAMESPACE_NAME, "Record", "T");
+        var recordTypeConstructor = new TypeConstructor(
+            "Record",
+            List.of(recordTypeParameter),
+            recordTypeGeneric
+        );
+        var interfaceTypeGeneric = Types.interfaceType(NAMESPACE_NAME, "Interface");
+        var interfaceTypeConstructor = new TypeConstructor(
+            "Interface",
+            List.of(TypeParameter.invariant(NAMESPACE_NAME, "Interface", "U")),
+            interfaceTypeGeneric
+        );
+        var relations = SubtypeRelations.EMPTY
+            .addExtendedType(recordTypeGeneric, Types.construct(interfaceTypeConstructor, List.of(recordTypeParameter)));
+
+        var result = relations.extendedTypes(Types.construct(recordTypeConstructor, List.of(Types.STRING)));
+
+        assertThat(result, containsInAnyOrder(Types.construct(interfaceTypeConstructor, List.of(Types.STRING))));
     }
 }

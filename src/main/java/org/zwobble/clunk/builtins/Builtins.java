@@ -15,6 +15,7 @@ public class Builtins {
         Map.entry("Bool", metaType(Types.BOOL)),
         Map.entry("Int", metaType(Types.INT)),
         Map.entry("List", Types.typeConstructorType(Types.LIST_CONSTRUCTOR)),
+        Map.entry("MutableList", Types.typeConstructorType(Types.MUTABLE_LIST_CONSTRUCTOR)),
         Map.entry("Option", Types.typeConstructorType(Types.OPTION_CONSTRUCTOR)),
         Map.entry("String", metaType(Types.STRING)),
         Map.entry("StringBuilder", Types.metaType(Types.STRING_BUILDER)),

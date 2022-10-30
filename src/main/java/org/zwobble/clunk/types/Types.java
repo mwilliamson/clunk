@@ -21,6 +21,12 @@ public class Types {
         Types.recordType(NamespaceName.fromParts(), "List")
     );
 
+    public static final TypeConstructor MUTABLE_LIST_CONSTRUCTOR = new TypeConstructor(
+        "MutableList",
+        List.of(TypeParameter.invariant(NamespaceName.fromParts(), "MutableList", "T")),
+        Types.recordType(NamespaceName.fromParts(), "MutableList")
+    );
+
     public static final TypeConstructor OPTION_CONSTRUCTOR = new TypeConstructor(
         "Option",
         List.of(TypeParameter.covariant(NamespaceName.fromParts(), "Option", "T")),

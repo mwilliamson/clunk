@@ -20,11 +20,6 @@ public record TypeParameter(
     }
 
     @Override
-    public String identifier() {
-        return name;
-    }
-
-    @Override
     public Type replace(TypeMap typeMap) {
         return typeMap.get(this);
     }

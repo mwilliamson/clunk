@@ -19,11 +19,6 @@ public record StaticFunctionType(
     }
 
     @Override
-    public String identifier() {
-        return "StaticFunction";
-    }
-
-    @Override
     public Type replace(TypeMap typeMap) {
         // TODO: implement properly
         return this;

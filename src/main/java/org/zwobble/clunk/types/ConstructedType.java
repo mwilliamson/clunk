@@ -14,11 +14,6 @@ public record ConstructedType(TypeConstructor constructor, List<Type> args) impl
     }
 
     @Override
-    public String identifier() {
-        return constructor.name();
-    }
-
-    @Override
     public Type replace(TypeMap typeMap) {
         return new ConstructedType(
             constructor,

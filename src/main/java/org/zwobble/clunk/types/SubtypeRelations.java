@@ -8,11 +8,11 @@ public class SubtypeRelations {
     public static final SubtypeRelations EMPTY = new SubtypeRelations(P.map(), P.map());
 
     private final PMap<InterfaceType, PVector<RecordType>> sealedInterfaceToCases;
-    private final PMap<Type, PVector<Type>> typeToExtendedTypes;
+    private final PMap<Type, PVector<StructuredType>> typeToExtendedTypes;
 
     private SubtypeRelations(
         PMap<InterfaceType, PVector<RecordType>> sealedInterfaceCases,
-        PMap<Type, PVector<Type>> typeToExtendedTypes
+        PMap<Type, PVector<StructuredType>> typeToExtendedTypes
     ) {
         this.sealedInterfaceToCases = sealedInterfaceCases;
         this.typeToExtendedTypes = typeToExtendedTypes;
@@ -22,7 +22,7 @@ public class SubtypeRelations {
         return sealedInterfaceToCases.getOrDefault(sealedInterfaceType, P.vector());
     }
 
-    public PVector<Type> extendedTypes(Type subtype) {
+    public PVector<StructuredType> extendedTypes(Type subtype) {
         return typeToExtendedTypes.getOrDefault(subtype, P.vector());
     }
 

@@ -366,7 +366,7 @@ public class TypeScriptCodeGenerator {
             node.name(),
             new TypeScriptUnionNode(
                 context.sealedInterfaceCases(node.type()).stream()
-                    .map(subtype -> new TypeScriptReferenceNode(subtype.identifier()))
+                    .map(subtype -> new TypeScriptReferenceNode(subtype.name()))
                     .toList()
             )
         );

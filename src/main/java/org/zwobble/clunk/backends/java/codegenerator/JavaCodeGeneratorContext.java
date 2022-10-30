@@ -56,7 +56,7 @@ public class JavaCodeGeneratorContext {
 
     }
 
-    public List<Type> extendedTypes(Type subtype) {
+    public List<StructuredType> extendedTypes(Type subtype) {
         return subtypeRelations.extendedTypes(subtype);
     }
 

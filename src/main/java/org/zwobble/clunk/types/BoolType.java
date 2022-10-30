@@ -13,11 +13,6 @@ public class BoolType implements Type {
     }
 
     @Override
-    public String identifier() {
-        return "Bool";
-    }
-
-    @Override
     public Type replace(TypeMap typeMap) {
         return this;
     }

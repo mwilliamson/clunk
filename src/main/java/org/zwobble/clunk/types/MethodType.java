@@ -17,11 +17,6 @@ public record MethodType(
     }
 
     @Override
-    public String identifier() {
-        return "Method";
-    }
-
-    @Override
     public Type replace(TypeMap typeMap) {
         return new MethodType(
             positionalParams.stream()

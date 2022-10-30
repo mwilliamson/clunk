@@ -33,4 +33,25 @@ public class SubtypeRelationsTests {
 
         assertThat(result, containsInAnyOrder(recordTypeOne, recordTypeTwo));
     }
+
+    @Test
+    public void whenRecordExtendsNoTypesThenExtendedTypesReturnsEmptyList() {
+        var relations = SubtypeRelations.EMPTY
+            .addExtendedType(recordTypeOne, sealedInterfaceTypeOne);
+
+        var result = relations.extendedTypes(recordTypeTwo);
+
+        assertThat(result, empty());
+    }
+
+    @Test
+    public void whenRecordExtendsTypesThenExtendedTypesReturnsThoseTypes() {
+        var relations = SubtypeRelations.EMPTY
+            .addExtendedType(recordTypeOne, sealedInterfaceTypeOne)
+            .addExtendedType(recordTypeOne, sealedInterfaceTypeTwo);
+
+        var result = relations.extendedTypes(recordTypeOne);
+
+        assertThat(result, containsInAnyOrder(sealedInterfaceTypeOne, sealedInterfaceTypeTwo));
+    }
 }

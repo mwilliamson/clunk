@@ -1,6 +1,6 @@
 package org.zwobble.clunk.types;
 
-public record InterfaceType(NamespaceName namespaceName, String name) implements Type {
+public record InterfaceType(NamespaceName namespaceName, String name) implements StructuredType {
     @Override
     public String describe() {
         return namespaceName + "." + name;

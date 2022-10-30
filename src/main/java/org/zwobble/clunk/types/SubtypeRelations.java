@@ -40,8 +40,10 @@ public class SubtypeRelations {
         }
 
         var explicitSupertypes = supertypesOf(subtype);
-        if (explicitSupertypes.contains(supertype)) {
-            return true;
+        for (var explicitSupertype : explicitSupertypes) {
+            if (isSubType(explicitSupertype, supertype)) {
+                return true;
+            }
         }
 
         if (

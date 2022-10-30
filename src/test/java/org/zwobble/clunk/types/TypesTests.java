@@ -75,6 +75,20 @@ public class TypesTests {
     }
 
     @Test
+    public void subtypingIsTransitive() {
+        var type = Types.interfaceType(NamespaceName.fromParts(), "Type");
+        var superType = Types.interfaceType(NamespaceName.fromParts(), "SuperType");
+        var superSuperType = Types.interfaceType(NamespaceName.fromParts(), "SuperSuperType");
+        var subtypeRelations = SubtypeRelations.EMPTY
+            .add(type, superType)
+            .add(superType, superSuperType);
+
+        var result = subtypeRelations.isSubType(type, superSuperType);
+
+        assertThat(result, equalTo(true));
+    }
+
+    @Test
     public void whenRecordIsUnrelatedToInterfaceThenRecordIsNotSubtypeOfInterface() {
         var unrelatedInterfaceType = Types.interfaceType(NamespaceName.fromParts(), "Node");
         var unrelatedRecordType = Types.recordType(NamespaceName.fromParts(), "Add");

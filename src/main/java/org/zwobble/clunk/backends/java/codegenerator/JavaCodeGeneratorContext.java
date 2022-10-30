@@ -4,10 +4,7 @@ import org.zwobble.clunk.backends.java.ast.JavaImportNode;
 import org.zwobble.clunk.backends.java.ast.JavaImportStaticNode;
 import org.zwobble.clunk.backends.java.ast.JavaImportTypeNode;
 import org.zwobble.clunk.backends.java.config.JavaTargetConfig;
-import org.zwobble.clunk.types.InterfaceType;
-import org.zwobble.clunk.types.RecordType;
-import org.zwobble.clunk.types.SubtypeRelations;
-import org.zwobble.clunk.types.Type;
+import org.zwobble.clunk.types.*;
 
 import java.util.*;
 
@@ -46,7 +43,7 @@ public class JavaCodeGeneratorContext {
         return config.packagePrefix();
     }
 
-    public List<RecordType> subtypesOf(Type supertype) {
+    public List<StructuredType> subtypesOf(Type supertype) {
         return subtypeRelations.subtypesOf(supertype);
     }
 
@@ -54,7 +51,7 @@ public class JavaCodeGeneratorContext {
         return !subtypesOf(supertype).isEmpty();
     }
 
-    public List<InterfaceType> supertypesOf(Type supertype) {
+    public List<StructuredType> supertypesOf(Type supertype) {
         return subtypeRelations.supertypesOf(supertype);
     }
 

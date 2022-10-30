@@ -1,8 +1,8 @@
 package org.zwobble.clunk.backends.typescript.codegenerator;
 
 import org.zwobble.clunk.backends.typescript.ast.TypeScriptImportNode;
+import org.zwobble.clunk.types.StructuredType;
 import org.zwobble.clunk.types.SubtypeRelations;
-import org.zwobble.clunk.types.RecordType;
 import org.zwobble.clunk.types.Type;
 
 import java.util.LinkedHashSet;
@@ -35,7 +35,7 @@ public class TypeScriptCodeGeneratorContext {
             .toList();
     }
 
-    public List<RecordType> subtypesOf(Type supertype) {
+    public List<StructuredType> subtypesOf(Type supertype) {
         return subtypeRelations.subtypesOf(supertype);
     }
 }

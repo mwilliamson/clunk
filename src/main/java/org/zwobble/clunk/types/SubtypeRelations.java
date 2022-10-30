@@ -7,22 +7,22 @@ import org.zwobble.clunk.util.P;
 public class SubtypeRelations {
     public static final SubtypeRelations EMPTY = new SubtypeRelations(P.map(), P.map());
 
-    private final PMap<Type, PVector<RecordType>> supertypeToSubtypes;
-    private final PMap<Type, PVector<InterfaceType>> subtypesToSupertypes;
+    private final PMap<Type, PVector<StructuredType>> supertypeToSubtypes;
+    private final PMap<Type, PVector<StructuredType>> subtypesToSupertypes;
 
     private SubtypeRelations(
-        PMap<Type, PVector<RecordType>> supertypeToSubtypes,
-        PMap<Type, PVector<InterfaceType>> subtypesToSupertypes
+        PMap<Type, PVector<StructuredType>> supertypeToSubtypes,
+        PMap<Type, PVector<StructuredType>> subtypesToSupertypes
     ) {
         this.supertypeToSubtypes = supertypeToSubtypes;
         this.subtypesToSupertypes = subtypesToSupertypes;
     }
 
-    public PVector<RecordType> subtypesOf(Type supertype) {
+    public PVector<StructuredType> subtypesOf(Type supertype) {
         return supertypeToSubtypes.getOrDefault(supertype, P.vector());
     }
 
-    public PVector<InterfaceType> supertypesOf(Type subtype) {
+    public PVector<StructuredType> supertypesOf(Type subtype) {
         return subtypesToSupertypes.getOrDefault(subtype, P.vector());
     }
 

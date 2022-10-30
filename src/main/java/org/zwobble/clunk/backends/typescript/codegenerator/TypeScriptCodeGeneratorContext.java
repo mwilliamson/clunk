@@ -1,7 +1,6 @@
 package org.zwobble.clunk.backends.typescript.codegenerator;
 
 import org.zwobble.clunk.backends.typescript.ast.TypeScriptImportNode;
-import org.zwobble.clunk.types.StructuredType;
 import org.zwobble.clunk.types.SubtypeRelations;
 import org.zwobble.clunk.types.Type;
 
@@ -35,7 +34,7 @@ public class TypeScriptCodeGeneratorContext {
             .toList();
     }
 
-    public List<StructuredType> subtypesOf(Type supertype) {
+    public List<Type> subtypesOf(Type supertype) {
         return subtypeRelations.subtypesOf(supertype);
     }
 }

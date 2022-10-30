@@ -204,7 +204,7 @@ public record TypeCheckerContext(
         return Optional.ofNullable(typeMembers.get(memberName));
     }
 
-    public List<StructuredType> subtypesOf(Type type) {
+    public List<Type> subtypesOf(Type type) {
         return subtypeRelations.subtypesOf(type);
     }
 

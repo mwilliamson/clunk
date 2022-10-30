@@ -43,7 +43,7 @@ public class JavaCodeGeneratorContext {
         return config.packagePrefix();
     }
 
-    public List<StructuredType> subtypesOf(Type supertype) {
+    public List<Type> subtypesOf(Type supertype) {
         return subtypeRelations.subtypesOf(supertype);
     }
 
@@ -51,7 +51,7 @@ public class JavaCodeGeneratorContext {
         return !subtypesOf(supertype).isEmpty();
     }
 
-    public List<StructuredType> supertypesOf(Type supertype) {
+    public List<Type> supertypesOf(Type supertype) {
         return subtypeRelations.supertypesOf(supertype);
     }
 

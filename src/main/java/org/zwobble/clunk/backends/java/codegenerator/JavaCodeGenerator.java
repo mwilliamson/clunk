@@ -324,7 +324,7 @@ public class JavaCodeGenerator {
         JavaCodeGeneratorContext context
     ) {
         var permits = context.subtypesOf(node.type()).stream()
-            .map(subtype -> new JavaTypeVariableReferenceNode(subtype.name()))
+            .map(subtype -> new JavaTypeVariableReferenceNode(subtype.identifier()))
             .toList();
 
         var visitorMethods = context.subtypesOf(node.type()).stream()
@@ -334,8 +334,8 @@ public class JavaCodeGenerator {
                 "visit",
                 List.of(
                     new JavaParamNode(
-                        new JavaTypeVariableReferenceNode(subtype.name()),
-                        upperCamelCaseToLowerCamelCase(subtype.name())
+                        new JavaTypeVariableReferenceNode(subtype.identifier()),
+                        upperCamelCaseToLowerCamelCase(subtype.identifier())
                     )
                 )
             ))
@@ -568,7 +568,7 @@ public class JavaCodeGenerator {
         var supertypes = context.supertypesOf(node.type());
 
         var implements_ = supertypes.stream()
-            .map(supertype -> new JavaTypeVariableReferenceNode(supertype.name()))
+            .map(supertype -> new JavaTypeVariableReferenceNode(supertype.identifier()))
             .toList();
 
         var body = new ArrayList<JavaClassBodyDeclarationNode>();
@@ -588,7 +588,7 @@ public class JavaCodeGenerator {
                     new JavaParamNode(
                         new JavaParameterizedType(
                             // TODO: this isn't a full qualified reference
-                            new JavaFullyQualifiedTypeReferenceNode(supertype.name(), "Visitor"),
+                            new JavaFullyQualifiedTypeReferenceNode(supertype.identifier(), "Visitor"),
                             List.of(new JavaTypeVariableReferenceNode("T"))
                         ),
                         "visitor"

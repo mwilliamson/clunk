@@ -5,7 +5,7 @@ import java.util.List;
 public record TypeConstructor(
     String name,
     List<TypeParameter> params,
-    Type genericType
+    StructuredType genericType
 ) implements TypeLevelValue {
     @Override
     public String describe() {

@@ -13,6 +13,11 @@ public class UnitType implements Type {
     }
 
     @Override
+    public String identifier() {
+        return "Unit";
+    }
+
+    @Override
     public Type replace(TypeMap typeMap) {
         return this;
     }

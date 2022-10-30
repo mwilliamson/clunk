@@ -12,6 +12,11 @@ public class ObjectType implements Type {
     }
 
     @Override
+    public String identifier() {
+        return "Object";
+    }
+
+    @Override
     public Type replace(TypeMap typeMap) {
         return this;
     }

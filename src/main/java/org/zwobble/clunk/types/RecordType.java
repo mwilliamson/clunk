@@ -7,6 +7,11 @@ public record RecordType(NamespaceName namespaceName, String name) implements St
     }
 
     @Override
+    public String identifier() {
+        return name;
+    }
+
+    @Override
     public Type replace(TypeMap typeMap) {
         return this;
     }

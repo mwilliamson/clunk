@@ -13,6 +13,11 @@ public class NothingType implements Type {
     }
 
     @Override
+    public String identifier() {
+        return "Nothing";
+    }
+
+    @Override
     public Type replace(TypeMap typeMap) {
         return this;
     }

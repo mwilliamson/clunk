@@ -13,6 +13,11 @@ public class IntType implements Type {
     }
 
     @Override
+    public String identifier() {
+        return "Int";
+    }
+
+    @Override
     public Type replace(TypeMap typeMap) {
         return this;
     }

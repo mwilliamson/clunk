@@ -7,6 +7,11 @@ public record InterfaceType(NamespaceName namespaceName, String name) implements
     }
 
     @Override
+    public String identifier() {
+        return name;
+    }
+
+    @Override
     public Type replace(TypeMap typeMap) {
         return this;
     }

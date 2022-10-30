@@ -13,6 +13,11 @@ public class StringType implements Type {
     }
 
     @Override
+    public String identifier() {
+        return "String";
+    }
+
+    @Override
     public Type replace(TypeMap typeMap) {
         return this;
     }

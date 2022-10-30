@@ -17,6 +17,11 @@ public record FunctionType(
     }
 
     @Override
+    public String identifier() {
+        return "Function";
+    }
+
+    @Override
     public Type replace(TypeMap typeMap) {
         return new FunctionType(
             positionalParams.stream()

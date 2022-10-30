@@ -1,5 +1,7 @@
 package org.zwobble.clunk.types;
 
+import org.zwobble.clunk.util.Lists;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +11,11 @@ public record NamespaceType(NamespaceName name, Map<String, Type> fields) implem
     @Override
     public String describe() {
         return name.toString();
+    }
+
+    @Override
+    public String identifier() {
+        return Lists.last(name.parts());
     }
 
     @Override

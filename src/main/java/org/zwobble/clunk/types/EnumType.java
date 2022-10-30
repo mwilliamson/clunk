@@ -13,6 +13,11 @@ public record EnumType(
     }
 
     @Override
+    public String identifier() {
+        return name;
+    }
+
+    @Override
     public Type replace(TypeMap typeMap) {
         return this;
     }

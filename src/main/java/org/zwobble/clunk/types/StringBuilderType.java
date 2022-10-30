@@ -13,6 +13,11 @@ public class StringBuilderType implements Type {
     }
 
     @Override
+    public String identifier() {
+        return "StringBuilder";
+    }
+
+    @Override
     public Type replace(TypeMap typeMap) {
         return this;
     }

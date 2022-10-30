@@ -565,9 +565,9 @@ public class JavaCodeGenerator {
             .map(field -> new JavaRecordComponentNode(compileTypeLevelExpression(field.type(), context), field.name()))
             .collect(Collectors.toList());
 
-        var supertypes = context.supertypesOf(node.type());
+        var extendedTypes = context.extendedTypes(node.type());
 
-        var implements_ = supertypes.stream()
+        var implements_ = extendedTypes.stream()
             .map(supertype -> new JavaTypeVariableReferenceNode(supertype.identifier()))
             .toList();
 
@@ -577,7 +577,7 @@ public class JavaCodeGenerator {
             body.add(compileRecordBodyDeclaration(declaration, context));
         }
 
-        for (var supertype : supertypes) {
+        for (var supertype : extendedTypes) {
             body.add(new JavaMethodDeclarationNode(
                 List.of(),
                 false,

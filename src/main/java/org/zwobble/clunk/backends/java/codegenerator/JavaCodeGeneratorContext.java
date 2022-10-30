@@ -56,8 +56,8 @@ public class JavaCodeGeneratorContext {
 
     }
 
-    public List<Type> supertypesOf(Type supertype) {
-        return subtypeRelations.supertypesOf(supertype);
+    public List<Type> extendedTypes(Type subtype) {
+        return subtypeRelations.extendedTypes(subtype);
     }
 
     public void renameVariable(String from, String to) {

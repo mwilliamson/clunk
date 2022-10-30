@@ -170,7 +170,7 @@ public record TypeCheckerContext(
     }
 
     public TypeCheckerContext addSubtypeRelation(RecordType subtype, InterfaceType superType) {
-        var subtypeRelations = this.subtypeRelations.addSubtypeRelation(subtype, superType);
+        var subtypeRelations = this.subtypeRelations.addExtendedType(subtype, superType);
         return new TypeCheckerContext(stack, namespaceTypes, typeToFields, memberTypes, subtypeRelations);
     }
 

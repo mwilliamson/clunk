@@ -67,7 +67,7 @@ public class TypesTests {
         var interfaceType = Types.interfaceType(NamespaceName.fromParts(), "Node");
         var recordType = Types.recordType(NamespaceName.fromParts(), "Add");
         var subtypeRelations = SubtypeRelations.EMPTY
-            .addSubtypeRelation(recordType, interfaceType);
+            .addExtendedType(recordType, interfaceType);
 
         var result = subtypeRelations.isSubType(recordType, interfaceType);
 
@@ -80,8 +80,8 @@ public class TypesTests {
         var superType = Types.interfaceType(NamespaceName.fromParts(), "SuperType");
         var superSuperType = Types.interfaceType(NamespaceName.fromParts(), "SuperSuperType");
         var subtypeRelations = SubtypeRelations.EMPTY
-            .addSubtypeRelation(type, superType)
-            .addSubtypeRelation(superType, superSuperType);
+            .addExtendedType(type, superType)
+            .addExtendedType(superType, superSuperType);
 
         var result = subtypeRelations.isSubType(type, superSuperType);
 
@@ -94,7 +94,7 @@ public class TypesTests {
         var unrelatedRecordType = Types.recordType(NamespaceName.fromParts(), "Add");
         var recordType = Types.recordType(NamespaceName.fromParts(), "User");
         var subtypeRelations = SubtypeRelations.EMPTY
-            .addSubtypeRelation(unrelatedRecordType, unrelatedInterfaceType);
+            .addExtendedType(unrelatedRecordType, unrelatedInterfaceType);
 
         var result = subtypeRelations.isSubType(recordType, unrelatedInterfaceType);
 

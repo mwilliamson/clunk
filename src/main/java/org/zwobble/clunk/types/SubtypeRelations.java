@@ -8,22 +8,22 @@ public class SubtypeRelations {
     public static final SubtypeRelations EMPTY = new SubtypeRelations(P.map(), P.map());
 
     private final PMap<InterfaceType, PVector<RecordType>> sealedInterfaceToCases;
-    private final PMap<Type, PVector<Type>> subtypeToSupertypes;
+    private final PMap<Type, PVector<Type>> typeToExtendedTypes;
 
     private SubtypeRelations(
         PMap<InterfaceType, PVector<RecordType>> sealedInterfaceCases,
-        PMap<Type, PVector<Type>> subtypeToSupertypes
+        PMap<Type, PVector<Type>> typeToExtendedTypes
     ) {
         this.sealedInterfaceToCases = sealedInterfaceCases;
-        this.subtypeToSupertypes = subtypeToSupertypes;
+        this.typeToExtendedTypes = typeToExtendedTypes;
     }
 
     public PVector<RecordType> sealedInterfaceCases(InterfaceType sealedInterfaceType) {
         return sealedInterfaceToCases.getOrDefault(sealedInterfaceType, P.vector());
     }
 
-    public PVector<Type> supertypesOf(Type subtype) {
-        return subtypeToSupertypes.getOrDefault(subtype, P.vector());
+    public PVector<Type> extendedTypes(Type subtype) {
+        return typeToExtendedTypes.getOrDefault(subtype, P.vector());
     }
 
     public boolean isSubType(Type subtype, Type supertype) {
@@ -39,9 +39,9 @@ public class SubtypeRelations {
             return true;
         }
 
-        var explicitSupertypes = supertypesOf(subtype);
-        for (var explicitSupertype : explicitSupertypes) {
-            if (isSubType(explicitSupertype, supertype)) {
+        var extendedTypes = extendedTypes(subtype);
+        for (var extendedType : extendedTypes) {
+            if (isSubType(extendedType, supertype)) {
                 return true;
             }
         }
@@ -98,10 +98,10 @@ public class SubtypeRelations {
         return false;
     }
 
-    public SubtypeRelations addSubtypeRelation(StructuredType subtype, StructuredType supertype) {
-        var subtypeToSupertypes = this.subtypeToSupertypes.plus(
+    public SubtypeRelations addExtendedType(StructuredType subtype, StructuredType supertype) {
+        var subtypeToSupertypes = this.typeToExtendedTypes.plus(
             subtype,
-            supertypesOf(subtype).plus(supertype)
+            extendedTypes(subtype).plus(supertype)
         );
         return new SubtypeRelations(sealedInterfaceToCases, subtypeToSupertypes);
     }
@@ -111,7 +111,7 @@ public class SubtypeRelations {
             sealedInterfaceType,
             sealedInterfaceCases(sealedInterfaceType).plus(caseType)
         );
-        return new SubtypeRelations(sealedInterfaceCases, subtypeToSupertypes);
+        return new SubtypeRelations(sealedInterfaceCases, typeToExtendedTypes);
 
     }
 }

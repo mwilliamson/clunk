@@ -49,15 +49,7 @@ public class Builtins {
         )))
         .withBuiltins(Builtins.ENVIRONMENT)
         .addMemberTypes(Types.LIST_CONSTRUCTOR.genericType(), Map.ofEntries(
-            Map.entry("flatMap", Types.methodType(
-                List.of(
-                    Types.functionType(
-                        List.of(Types.LIST_CONSTRUCTOR.params().get(0)),
-                        Types.list(Types.LIST_CONSTRUCTOR.params().get(0))
-                    )
-                ),
-                Types.list(Types.LIST_CONSTRUCTOR.params().get(0))
-            )),
+            Map.entry("flatMap", listFlatMapType()),
             // TODO: should be a property?
             Map.entry("get", Types.methodType(
                 List.of(Types.INT),
@@ -73,4 +65,16 @@ public class Builtins {
             Map.entry("append", Types.methodType(List.of(Types.STRING), Types.UNIT)),
             Map.entry("build", Types.methodType(List.of(), Types.STRING))
         ));
+
+    private static MethodType listFlatMapType() {
+        return Types.methodType(
+            List.of(
+                Types.functionType(
+                    List.of(Types.LIST_CONSTRUCTOR.params().get(0)),
+                    Types.list(Types.LIST_CONSTRUCTOR.params().get(0))
+                )
+            ),
+            Types.list(Types.LIST_CONSTRUCTOR.params().get(0))
+        );
+    }
 }

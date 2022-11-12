@@ -107,4 +107,17 @@ public class ParserCallTests {
             ))
         );
     }
+
+    @Test
+    public void typeLevelArgumentsMayHaveTrailingCommand() {
+        var source = "f[A,]()";
+
+        var node = parseString(source, Parser::parseTopLevelExpression);
+
+        assertThat(node, isUntypedCallNode()
+            .withTypeLevelArgs(contains(
+                isUntypedTypeLevelReferenceNode("A")
+            ))
+        );
+    }
 }

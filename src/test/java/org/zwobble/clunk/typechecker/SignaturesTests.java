@@ -8,6 +8,7 @@ import org.zwobble.clunk.types.StaticFunctionType;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -18,6 +19,7 @@ public class SignaturesTests {
     @Test
     public void methodHasSignature() {
         var methodType = new MethodType(
+            Optional.empty(),
             List.of(Types.INT),
             Types.INT
         );

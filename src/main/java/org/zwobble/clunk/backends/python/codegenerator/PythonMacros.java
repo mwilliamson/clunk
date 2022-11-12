@@ -55,6 +55,8 @@ public class PythonMacros {
                                 )
                             )
                         );
+                    case "get":
+                        return new PythonSubscriptionNode(receiver, positionalArgs);
                     case "length":
                         return new PythonCallNode(
                             new PythonReferenceNode("len"),

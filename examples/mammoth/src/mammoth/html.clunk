@@ -36,7 +36,7 @@ record HtmlTag(
     separator: String,
 ) {
     property defaultTagName: String {
-        return tagNames[0];
+        return tagNames.get(0);
     }
 
     property isVoid: Bool {

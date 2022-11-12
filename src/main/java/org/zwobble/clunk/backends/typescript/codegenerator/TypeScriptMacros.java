@@ -38,6 +38,8 @@ public class TypeScriptMacros {
                             new TypeScriptPropertyAccessNode(receiver, "flatMap"),
                             positionalArgs
                         );
+                    case "get":
+                        return new TypeScriptIndexNode(receiver, positionalArgs.get(0));
                     case "length":
                         return new TypeScriptPropertyAccessNode(
                             receiver,

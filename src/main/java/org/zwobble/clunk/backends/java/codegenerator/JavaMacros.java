@@ -73,6 +73,11 @@ public class JavaMacros {
                             new JavaMemberAccessNode(flatMap, "toList"),
                             List.of()
                         );
+                    case "get":
+                        return new JavaCallNode(
+                            new JavaMemberAccessNode(receiver, "get"),
+                            positionalArgs
+                        );
                     case "length":
                         return new JavaCallNode(
                             new JavaMemberAccessNode(receiver, "size"),

@@ -2,10 +2,7 @@ package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
-import org.zwobble.clunk.types.MethodType;
-import org.zwobble.clunk.types.NamespaceName;
-import org.zwobble.clunk.types.StaticFunctionType;
-import org.zwobble.clunk.types.Types;
+import org.zwobble.clunk.types.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,12 +11,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.zwobble.clunk.matchers.CastMatcher.cast;
 import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.clunk.matchers.OptionalMatcher.present;
 
 public class SignaturesTests {
     @Test
     public void methodHasSignature() {
+        var typeParameter = TypeParameter.function(NamespaceName.fromParts(), "X", "f", "A");
         var methodType = new MethodType(
-            Optional.empty(),
+            Optional.of(List.of(typeParameter)),
             List.of(Types.INT),
             Types.INT
         );
@@ -29,6 +28,7 @@ public class SignaturesTests {
 
         assertThat(result, cast(
             SignatureMethod.class,
+            has("typeParams", present(contains(equalTo(typeParameter)))),
             has("positionalParams", contains(equalTo(Types.INT))),
             has("returnType", equalTo(Types.INT))
         ));

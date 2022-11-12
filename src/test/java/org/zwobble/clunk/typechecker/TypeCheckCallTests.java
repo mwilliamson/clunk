@@ -17,7 +17,7 @@ import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
 
 public class TypeCheckCallTests {
     @Test
-    public void canTypeCheckCallToMethod() {
+    public void canTypeCheckCallToMethodWithoutTypeParams() {
         var untypedNode = Untyped.call(
             Untyped.memberAccess(
                 Untyped.reference("x"),
@@ -37,6 +37,30 @@ public class TypeCheckCallTests {
             .withMethodName("y")
             .withPositionalArgs(contains(isTypedIntLiteralNode(123)))
             .withType(Types.INT)
+        );
+    }
+    @Test
+    public void canTypeCheckCallWithExplicitTypeArgsToMethodWithTypeParams() {
+        var untypedNode = Untyped.call(
+            Untyped.memberAccess(
+                Untyped.reference("x"),
+                "y"
+            ),
+            List.of(Untyped.typeLevelReference("String")),
+            List.of(Untyped.string())
+        );
+        var namespaceName = NamespaceName.fromParts("example");
+        var recordType = Types.recordType(namespaceName, "X");
+        var typeParameter = TypeParameter.function(namespaceName, "X", "f", "T");
+        var methodType = Types.methodType(List.of(typeParameter), List.of(typeParameter), typeParameter);
+        var context = TypeCheckerContext.stub()
+            .addLocal("x", recordType, NullSource.INSTANCE)
+            .addMemberTypes(recordType, Map.of("y", methodType));
+
+        var result = TypeChecker.typeCheckExpression(untypedNode, context);
+
+        assertThat(result, isTypedCallMethodNode()
+            .withType(Types.STRING)
         );
     }
 

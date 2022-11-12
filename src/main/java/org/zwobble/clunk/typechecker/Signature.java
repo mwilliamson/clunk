@@ -9,6 +9,8 @@ sealed interface Signature {
     Optional<List<TypeParameter>> typeParams();
     List<Type> positionalParams();
     Type returnType();
+
+    Signature typeArgs(List<Type> typeArgs);
 }
 
 record SignatureConstructorRecord(List<Type> positionalParams, RecordType type) implements Signature {
@@ -20,6 +22,11 @@ record SignatureConstructorRecord(List<Type> positionalParams, RecordType type) 
     @Override
     public Type returnType() {
         return type;
+    }
+
+    @Override
+    public Signature typeArgs(List<Type> typeArgs) {
+        throw new UnsupportedOperationException();
     }
 }
 
@@ -38,6 +45,11 @@ record SignatureConstructorStringBuilder() implements Signature {
     public Type returnType() {
         return Types.STRING_BUILDER;
     }
+
+    @Override
+    public Signature typeArgs(List<Type> typeArgs) {
+        throw new UnsupportedOperationException();
+    }
 }
 
 record SignatureMethod(MethodType type) implements Signature {
@@ -55,6 +67,21 @@ record SignatureMethod(MethodType type) implements Signature {
     public Type returnType() {
         return type.returnType();
     }
+
+    @Override
+    public Signature typeArgs(List<Type> typeArgs) {
+        // TODO: check args? In practice, this has already been done, but
+        // there's no guarantee we won't accidentally call this in other cases.
+        var typeMap = TypeMap.from(type.typeLevelParams().orElseThrow(), typeArgs);
+
+        return new SignatureMethod(new MethodType(
+            Optional.empty(),
+            type.positionalParams().stream()
+                .map(param -> param.replace(typeMap))
+                .toList(),
+            type.returnType().replace(typeMap)
+        ));
+    }
 }
 
 record SignatureStaticFunction(StaticFunctionType type) implements Signature {
@@ -71,6 +98,11 @@ record SignatureStaticFunction(StaticFunctionType type) implements Signature {
     @Override
     public Type returnType() {
         return type.returnType();
+    }
+
+    @Override
+    public Signature typeArgs(List<Type> typeArgs) {
+        throw new UnsupportedOperationException();
     }
 }
 

@@ -21,6 +21,14 @@ public class Untyped {
 
     public static UntypedCallNode call(
         UntypedExpressionNode receiver,
+        List<UntypedTypeLevelExpressionNode> typeLevelArgs,
+        List<UntypedExpressionNode> positionalArgs
+    ) {
+        return new UntypedCallNode(receiver, typeLevelArgs, positionalArgs, NullSource.INSTANCE);
+    }
+
+    public static UntypedCallNode call(
+        UntypedExpressionNode receiver,
         List<UntypedExpressionNode> positionalArgs
     ) {
         return new UntypedCallNode(receiver, List.of(), positionalArgs, NullSource.INSTANCE);

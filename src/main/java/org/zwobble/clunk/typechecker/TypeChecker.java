@@ -83,6 +83,15 @@ public class TypeChecker {
     private static TypedExpressionNode typeCheckCall(UntypedCallNode node, TypeCheckerContext context) {
         var receiver = typeCheckExpression(node.receiver(), context);
         var signature = Signatures.toSignature(receiver.type(), context);
+
+        var typeArgs = typeCheckTypeArgs(signature, node, context);
+        if (signature.typeParams().isPresent()) {
+            signature = signature.typeArgs(
+                typeArgs.stream()
+                    .map(arg -> (Type) arg.value())
+                    .toList()
+            );
+        }
         var typedPositionalArgs = typeCheckArgs(signature, node, context);
 
         return switch (signature) {
@@ -1188,6 +1197,17 @@ public class TypeChecker {
             ),
             () -> Optional.empty()
         );
+    }
+
+    private static List<TypedTypeLevelExpressionNode> typeCheckTypeArgs(
+        Signature signature,
+        UntypedCallNode node,
+        TypeCheckerContext context
+    ) {
+        // TODO: check number of args
+        return node.typeLevelArgs().stream()
+            .map(arg -> typeCheckTypeLevelExpressionNode(arg, context))
+            .toList();
     }
 
     public static TypedTypeLevelExpressionNode typeCheckTypeLevelExpressionNode(

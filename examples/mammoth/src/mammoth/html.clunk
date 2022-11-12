@@ -57,7 +57,7 @@ record HtmlText(value: String) <: HtmlNode {
 }
 
 fun stripEmpty(nodes: List[HtmlNode]) -> List[HtmlNode] {
-    return nodes.flatMap(stripEmptyNode);
+    return nodes.flatMap[HtmlNode](stripEmptyNode);
 }
 
 fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {

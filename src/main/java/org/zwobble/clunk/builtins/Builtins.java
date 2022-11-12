@@ -67,14 +67,22 @@ public class Builtins {
         ));
 
     private static MethodType listFlatMapType() {
+        var typeParameterResult = TypeParameter.function(
+            NamespaceName.fromParts(),
+            "List",
+            "flatMap",
+            "R"
+        );
+
         return Types.methodType(
+            List.of(typeParameterResult),
             List.of(
                 Types.functionType(
                     List.of(Types.LIST_CONSTRUCTOR.params().get(0)),
-                    Types.list(Types.LIST_CONSTRUCTOR.params().get(0))
+                    Types.list(typeParameterResult)
                 )
             ),
-            Types.list(Types.LIST_CONSTRUCTOR.params().get(0))
+            Types.list(typeParameterResult)
         );
     }
 }

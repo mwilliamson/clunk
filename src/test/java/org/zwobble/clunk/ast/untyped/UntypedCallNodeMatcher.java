@@ -21,6 +21,10 @@ public class UntypedCallNodeMatcher extends CastMatcher<Object, UntypedCallNode>
         return addMatcher(has("receiver", receiver));
     }
 
+    public UntypedCallNodeMatcher withTypeLevelArgs(Matcher<? extends Iterable<? extends UntypedTypeLevelExpressionNode>> typeLevelArgs) {
+        return addMatcher(has("typeLevelArgs", typeLevelArgs));
+    }
+
     public UntypedCallNodeMatcher withPositionalArgs(Matcher<? extends Iterable<? extends UntypedExpressionNode>> positionalArgs) {
         return addMatcher(has("positionalArgs", positionalArgs));
     }

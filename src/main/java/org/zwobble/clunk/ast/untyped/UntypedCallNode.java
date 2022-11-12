@@ -6,6 +6,7 @@ import java.util.List;
 
 public record UntypedCallNode(
     UntypedExpressionNode receiver,
+    List<UntypedTypeLevelExpressionNode> typeLevelArgs,
     List<UntypedExpressionNode> positionalArgs,
     Source source
 ) implements UntypedExpressionNode {

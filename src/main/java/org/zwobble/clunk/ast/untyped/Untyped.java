@@ -23,7 +23,7 @@ public class Untyped {
         UntypedExpressionNode receiver,
         List<UntypedExpressionNode> positionalArgs
     ) {
-        return new UntypedCallNode(receiver, positionalArgs, NullSource.INSTANCE);
+        return new UntypedCallNode(receiver, List.of(), positionalArgs, NullSource.INSTANCE);
     }
 
     public static UntypedCastUnsafeNode castUnsafe(

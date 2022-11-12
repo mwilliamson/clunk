@@ -68,19 +68,55 @@ public class Parser {
             TokenIterator<TokenType> tokens,
             Source operatorSource
         ) {
-            var positionalArgs = parseMany(
-                () -> tokens.isNext(TokenType.SYMBOL_PAREN_CLOSE),
-                () -> parseTopLevelExpression(tokens),
-                () -> tokens.trySkip(TokenType.SYMBOL_COMMA)
-            );
+            var positionalArgs = parseCallArgs(tokens);
             tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
-            return new UntypedCallNode(left, positionalArgs, left.source());
+            return new UntypedCallNode(left, List.of(), positionalArgs, left.source());
         }
 
         @Override
         public TokenType tokenType() {
             return TokenType.SYMBOL_PAREN_OPEN;
         }
+    }
+
+    private class ParseCallWithTypeLevelArgs implements OperatorParselet {
+        @Override
+        public OperatorPrecedence precedence() {
+            return OperatorPrecedence.CALL;
+        }
+
+        @Override
+        public UntypedExpressionNode parse(
+            UntypedExpressionNode left,
+            TokenIterator<TokenType> tokens,
+            Source operatorSource
+        ) {
+            var typeLevelArgs = parseMany(
+                () -> tokens.isNext(TokenType.SYMBOL_SQUARE_CLOSE),
+                () -> parseTypeLevelExpression(tokens),
+                () -> tokens.trySkip(TokenType.SYMBOL_COMMA)
+            );
+            tokens.skip(TokenType.SYMBOL_SQUARE_CLOSE);
+
+            tokens.skip(TokenType.SYMBOL_PAREN_OPEN);
+            var positionalArgs = parseCallArgs(tokens);
+            tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
+
+            return new UntypedCallNode(left, typeLevelArgs, positionalArgs, left.source());
+        }
+
+        @Override
+        public TokenType tokenType() {
+            return TokenType.SYMBOL_SQUARE_OPEN;
+        }
+    }
+
+    private List<UntypedExpressionNode> parseCallArgs(TokenIterator<TokenType> tokens) {
+        return parseMany(
+            () -> tokens.isNext(TokenType.SYMBOL_PAREN_CLOSE),
+            () -> parseTopLevelExpression(tokens),
+            () -> tokens.trySkip(TokenType.SYMBOL_COMMA)
+        );
     }
 
     private class ParseCast implements OperatorParselet {
@@ -175,6 +211,7 @@ public class Parser {
     private final Map<TokenType, OperatorParselet> operatorParselets = Stream.of(
         new ParseAdd(),
         new ParseCall(),
+        new ParseCallWithTypeLevelArgs(),
         new ParseCast(),
         new ParseEquals(),
         new ParseInstanceOf(),

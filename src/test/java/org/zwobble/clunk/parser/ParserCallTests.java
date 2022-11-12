@@ -70,4 +70,41 @@ public class ParserCallTests {
             .withPositionalArgs(empty())
         );
     }
+
+    @Test
+    public void canParseCallWithNoTypeLevelArguments() {
+        var source = "f()";
+
+        var node = parseString(source, Parser::parseTopLevelExpression);
+
+        assertThat(node, isUntypedCallNode()
+            .withTypeLevelArgs(empty())
+        );
+    }
+
+    @Test
+    public void canParseCallWithOneTypeLevelArgument() {
+        var source = "f[A]()";
+
+        var node = parseString(source, Parser::parseTopLevelExpression);
+
+        assertThat(node, isUntypedCallNode()
+            .withTypeLevelArgs(contains(isUntypedTypeLevelReferenceNode("A")))
+        );
+    }
+
+    @Test
+    public void canParseCallWithMultipleTypeLevelArguments() {
+        var source = "f[A, B, C]()";
+
+        var node = parseString(source, Parser::parseTopLevelExpression);
+
+        assertThat(node, isUntypedCallNode()
+            .withTypeLevelArgs(contains(
+                isUntypedTypeLevelReferenceNode("A"),
+                isUntypedTypeLevelReferenceNode("B"),
+                isUntypedTypeLevelReferenceNode("C")
+            ))
+        );
+    }
 }

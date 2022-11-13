@@ -84,14 +84,9 @@ public class TypeChecker {
         var receiver = typeCheckExpression(node.receiver(), context);
         var signature = Signatures.toSignature(receiver.type(), context);
 
-        var typeArgs = typeCheckTypeArgs(signature, node, context);
-        if (signature.typeParams().isPresent()) {
-            signature = signature.typeArgs(
-                typeArgs.stream()
-                    .map(arg -> (Type) arg.value())
-                    .toList()
-            );
-        }
+        var typeCheckTypeArgsResult = typeCheckTypeArgs(signature, node, context);
+        signature = typeCheckTypeArgsResult.nonGenericSignature;
+
         var typedPositionalArgs = typeCheckArgs(signature, node, context);
 
         return switch (signature) {
@@ -1199,15 +1194,37 @@ public class TypeChecker {
         );
     }
 
-    private static List<TypedTypeLevelExpressionNode> typeCheckTypeArgs(
+    private record TypeCheckTypeArgsResult(
+        Optional<List<TypedTypeLevelExpressionNode>> nodes,
+        Signature nonGenericSignature
+    ) {
+    }
+
+    private static TypeCheckTypeArgsResult typeCheckTypeArgs(
         Signature signature,
         UntypedCallNode node,
         TypeCheckerContext context
     ) {
-        // TODO: check number of args
-        return node.typeLevelArgs().stream()
-            .map(arg -> typeCheckTypeLevelExpressionNode(arg, context))
-            .toList();
+        if (signature.typeParams().isEmpty()) {
+            if (node.typeLevelArgs().isEmpty()) {
+                return new TypeCheckTypeArgsResult(Optional.empty(), signature);
+            } else {
+                throw new CannotPassTypeLevelArgsToNonGenericValueError(node.source());
+            }
+        } else {
+            // TODO: check number of args
+            var typedArgs = node.typeLevelArgs().stream()
+                .map(arg -> typeCheckTypeLevelExpressionNode(arg, context))
+                .toList();
+
+            var nonGenericSignature = signature.typeArgs(
+                typedArgs.stream()
+                    .map(arg -> (Type) arg.value())
+                    .toList()
+            );
+
+            return new TypeCheckTypeArgsResult(Optional.of(typedArgs), nonGenericSignature);
+        }
     }
 
     public static TypedTypeLevelExpressionNode typeCheckTypeLevelExpressionNode(

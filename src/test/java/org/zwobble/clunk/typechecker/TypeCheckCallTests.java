@@ -39,6 +39,7 @@ public class TypeCheckCallTests {
             .withType(Types.INT)
         );
     }
+
     @Test
     public void canTypeCheckCallWithExplicitTypeArgsToMethodWithTypeParams() {
         var untypedNode = Untyped.call(
@@ -169,5 +170,26 @@ public class TypeCheckCallTests {
 
         assertThat(error.getExpected(), equalTo(1));
         assertThat(error.getActual(), equalTo(2));
+    }
+
+    @Test
+    public void givenSignatureHasNoTypeParamsWhenTypeArgsArePassedThenErrorIsThrown() {
+        var untypedNode = Untyped.call(
+            Untyped.memberAccess(
+                Untyped.reference("x"),
+                "y"
+            ),
+            List.of(Untyped.typeLevelReference("String")),
+            List.of()
+        );
+        var recordType = Types.recordType(NamespaceName.fromParts("example"), "X");
+        var context = TypeCheckerContext.stub()
+            .addLocal("x", recordType, NullSource.INSTANCE)
+            .addMemberTypes(recordType, Map.of("y", Types.methodType(List.of(), Types.INT)));
+
+        assertThrows(
+            CannotPassTypeLevelArgsToNonGenericValueError.class,
+            () -> TypeChecker.typeCheckExpression(untypedNode, context)
+        );
     }
 }

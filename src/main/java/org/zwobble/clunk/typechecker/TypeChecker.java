@@ -1212,18 +1212,27 @@ public class TypeChecker {
                 throw new CannotPassTypeLevelArgsToNonGenericValueError(node.source());
             }
         } else {
-            // TODO: check number of args
-            var typedArgs = node.typeLevelArgs().stream()
-                .map(arg -> typeCheckTypeLevelExpressionNode(arg, context))
-                .toList();
+            if (node.typeLevelArgs().isEmpty()) {
+                throw new MissingTypeLevelArgsError(node.source());
+            } else if (node.typeLevelArgs().size() != signature.typeParams().get().size()) {
+                throw new WrongNumberOfTypeLevelArgsError(
+                    signature.typeParams().get().size(),
+                    node.typeLevelArgs().size(),
+                    node.source()
+                );
+            } else {
+                var typedArgs = node.typeLevelArgs().stream()
+                    .map(arg -> typeCheckTypeLevelExpressionNode(arg, context))
+                    .toList();
 
-            var nonGenericSignature = signature.typeArgs(
-                typedArgs.stream()
-                    .map(arg -> (Type) arg.value())
-                    .toList()
-            );
+                var nonGenericSignature = signature.typeArgs(
+                    typedArgs.stream()
+                        .map(arg -> (Type) arg.value())
+                        .toList()
+                );
 
-            return new TypeCheckTypeArgsResult(Optional.of(typedArgs), nonGenericSignature);
+                return new TypeCheckTypeArgsResult(Optional.of(typedArgs), nonGenericSignature);
+            }
         }
     }
 

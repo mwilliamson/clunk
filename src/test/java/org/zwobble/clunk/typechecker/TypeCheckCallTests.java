@@ -192,4 +192,86 @@ public class TypeCheckCallTests {
             () -> TypeChecker.typeCheckExpression(untypedNode, context)
         );
     }
+
+    @Test
+    public void givenSignatureHasTypeParamsWhenNoTypeArgsArePassedThenErrorIsThrown() {
+        var untypedNode = Untyped.call(
+            Untyped.memberAccess(
+                Untyped.reference("x"),
+                "y"
+            ),
+            List.of(Untyped.string())
+        );
+        var namespaceName = NamespaceName.fromParts("example");
+        var recordType = Types.recordType(namespaceName, "X");
+        var typeParameter = TypeParameter.function(namespaceName, "X", "f", "T");
+        var methodType = Types.methodType(List.of(typeParameter), List.of(typeParameter), typeParameter);
+        var context = TypeCheckerContext.stub()
+            .addLocal("x", recordType, NullSource.INSTANCE)
+            .addMemberTypes(recordType, Map.of("y", methodType));
+
+        assertThrows(
+            MissingTypeLevelArgsError.class,
+            () -> TypeChecker.typeCheckExpression(untypedNode, context)
+        );
+    }
+
+    @Test
+    public void whenTypeArgIsMissingThenErrorIsThrown() {
+        var untypedNode = Untyped.call(
+            Untyped.memberAccess(
+                Untyped.reference("x"),
+                "y"
+            ),
+            List.of(Untyped.typeLevelReference("String")),
+            List.of(Untyped.string())
+        );
+        var namespaceName = NamespaceName.fromParts("example");
+        var recordType = Types.recordType(namespaceName, "X");
+        var typeParameter1 = TypeParameter.function(namespaceName, "X", "f", "T1");
+        var typeParameter2 = TypeParameter.function(namespaceName, "X", "f", "T2");
+        var methodType = Types.methodType(
+            List.of(typeParameter1, typeParameter2),
+            List.of(typeParameter1, typeParameter2),
+            typeParameter1
+        );
+        var context = TypeCheckerContext.stub()
+            .addLocal("x", recordType, NullSource.INSTANCE)
+            .addMemberTypes(recordType, Map.of("y", methodType));
+
+        var error = assertThrows(
+            WrongNumberOfTypeLevelArgsError.class,
+            () -> TypeChecker.typeCheckExpression(untypedNode, context)
+        );
+
+        assertThat(error.getExpected(), equalTo(2));
+        assertThat(error.getActual(), equalTo(1));
+    }
+
+    @Test
+    public void whenExtraTypeArgIsPassedThenErrorIsThrown() {
+        var untypedNode = Untyped.call(
+            Untyped.memberAccess(
+                Untyped.reference("x"),
+                "y"
+            ),
+            List.of(Untyped.typeLevelReference("String"), Untyped.typeLevelReference("String")),
+            List.of(Untyped.string())
+        );
+        var namespaceName = NamespaceName.fromParts("example");
+        var recordType = Types.recordType(namespaceName, "X");
+        var typeParameter = TypeParameter.function(namespaceName, "X", "f", "T");
+        var methodType = Types.methodType(List.of(typeParameter), List.of(typeParameter), typeParameter);
+        var context = TypeCheckerContext.stub()
+            .addLocal("x", recordType, NullSource.INSTANCE)
+            .addMemberTypes(recordType, Map.of("y", methodType));
+
+        var error = assertThrows(
+            WrongNumberOfTypeLevelArgsError.class,
+            () -> TypeChecker.typeCheckExpression(untypedNode, context)
+        );
+
+        assertThat(error.getExpected(), equalTo(1));
+        assertThat(error.getActual(), equalTo(2));
+    }
 }

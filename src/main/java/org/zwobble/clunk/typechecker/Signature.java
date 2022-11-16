@@ -5,37 +5,27 @@ import org.zwobble.clunk.types.*;
 import java.util.List;
 import java.util.Optional;
 
-sealed interface Signature {
-    Optional<List<TypeParameter>> typeParams();
-    List<Type> positionalParams();
-    Type returnType();
-
-    Signature typeArgs(List<Type> typeArgs);
+sealed interface Signature permits SignatureNonGeneric, SignatureGeneric {
 }
 
-record SignatureConstructorRecord(List<Type> positionalParams, RecordType type) implements Signature {
-    @Override
-    public Optional<List<TypeParameter>> typeParams() {
-        return Optional.empty();
-    }
+sealed interface SignatureNonGeneric extends Signature {
+    List<Type> positionalParams();
+    Type returnType();
+}
 
+sealed interface SignatureGeneric extends Signature {
+    List<TypeParameter> typeParams();
+    SignatureNonGeneric typeArgs(List<Type> typeArgs);
+}
+
+record SignatureConstructorRecord(List<Type> positionalParams, RecordType type) implements SignatureNonGeneric {
     @Override
     public Type returnType() {
         return type;
     }
-
-    @Override
-    public Signature typeArgs(List<Type> typeArgs) {
-        throw new UnsupportedOperationException();
-    }
 }
 
-record SignatureConstructorStringBuilder() implements Signature {
-    @Override
-    public Optional<List<TypeParameter>> typeParams() {
-        return Optional.empty();
-    }
-
+record SignatureConstructorStringBuilder() implements SignatureNonGeneric {
     @Override
     public List<Type> positionalParams() {
         return List.of();
@@ -45,36 +35,21 @@ record SignatureConstructorStringBuilder() implements Signature {
     public Type returnType() {
         return Types.STRING_BUILDER;
     }
-
-    @Override
-    public Signature typeArgs(List<Type> typeArgs) {
-        throw new UnsupportedOperationException();
-    }
 }
 
-record SignatureMethod(MethodType type) implements Signature {
+record SignatureGenericMethod(MethodType type) implements SignatureGeneric {
     @Override
-    public Optional<List<TypeParameter>> typeParams() {
-        return type.typeLevelParams();
+    public List<TypeParameter> typeParams() {
+        return type.typeLevelParams().get();
     }
 
     @Override
-    public List<Type> positionalParams() {
-        return type.positionalParams();
-    }
-
-    @Override
-    public Type returnType() {
-        return type.returnType();
-    }
-
-    @Override
-    public Signature typeArgs(List<Type> typeArgs) {
+    public SignatureNonGeneric typeArgs(List<Type> typeArgs) {
         // TODO: check args? In practice, this has already been done, but
         // there's no guarantee we won't accidentally call this in other cases.
         var typeMap = TypeMap.from(type.typeLevelParams().orElseThrow(), typeArgs);
 
-        return new SignatureMethod(new MethodType(
+        return new SignatureNonGenericMethod(new MethodType(
             Optional.empty(),
             type.positionalParams().stream()
                 .map(param -> param.replace(typeMap))
@@ -84,12 +59,7 @@ record SignatureMethod(MethodType type) implements Signature {
     }
 }
 
-record SignatureStaticFunction(StaticFunctionType type) implements Signature {
-    @Override
-    public Optional<List<TypeParameter>> typeParams() {
-        return Optional.empty();
-    }
-
+record SignatureNonGenericMethod(MethodType type) implements SignatureNonGeneric {
     @Override
     public List<Type> positionalParams() {
         return type.positionalParams();
@@ -99,10 +69,17 @@ record SignatureStaticFunction(StaticFunctionType type) implements Signature {
     public Type returnType() {
         return type.returnType();
     }
+}
+
+record SignatureStaticFunction(StaticFunctionType type) implements SignatureNonGeneric {
+    @Override
+    public List<Type> positionalParams() {
+        return type.positionalParams();
+    }
 
     @Override
-    public Signature typeArgs(List<Type> typeArgs) {
-        throw new UnsupportedOperationException();
+    public Type returnType() {
+        return type.returnType();
     }
 }
 

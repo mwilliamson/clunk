@@ -11,7 +11,11 @@ public class Signatures {
         if (type instanceof StaticFunctionType staticFunctionType) {
             return new SignatureStaticFunction(staticFunctionType);
         } else if (type instanceof MethodType methodType) {
-            return new SignatureMethod(methodType);
+            if (methodType.typeLevelParams().isEmpty()) {
+                return new SignatureNonGenericMethod(methodType);
+            } else {
+                return new SignatureGenericMethod(methodType);
+            }
         } else if (type instanceof TypeLevelValueType typeLevelValueType && typeLevelValueType.value() instanceof RecordType recordType) {
             var positionalParams = context.fieldsOf(recordType).stream()
                 .map(field -> (Type)field.type().value())

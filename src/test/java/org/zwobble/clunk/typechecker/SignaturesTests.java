@@ -11,11 +11,28 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.zwobble.clunk.matchers.CastMatcher.cast;
 import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
-import static org.zwobble.clunk.matchers.OptionalMatcher.present;
 
 public class SignaturesTests {
     @Test
-    public void methodHasSignature() {
+    public void nonGenericMethodHasNonGenericSignature() {
+        var methodType = new MethodType(
+            Optional.empty(),
+            List.of(Types.INT),
+            Types.INT
+        );
+        var context = TypeCheckerContext.stub();
+
+        var result = Signatures.toSignature(methodType, context);
+
+        assertThat(result, cast(
+            SignatureNonGenericMethod.class,
+            has("positionalParams", contains(equalTo(Types.INT))),
+            has("returnType", equalTo(Types.INT))
+        ));
+    }
+
+    @Test
+    public void genericMethodHasGenericSignature() {
         var typeParameter = TypeParameter.function(NamespaceName.fromParts(), "X", "f", "A");
         var methodType = new MethodType(
             Optional.of(List.of(typeParameter)),
@@ -27,10 +44,8 @@ public class SignaturesTests {
         var result = Signatures.toSignature(methodType, context);
 
         assertThat(result, cast(
-            SignatureMethod.class,
-            has("typeParams", present(contains(equalTo(typeParameter)))),
-            has("positionalParams", contains(equalTo(Types.INT))),
-            has("returnType", equalTo(Types.INT))
+            SignatureGenericMethod.class,
+            has("typeParams", contains(equalTo(typeParameter)))
         ));
     }
 

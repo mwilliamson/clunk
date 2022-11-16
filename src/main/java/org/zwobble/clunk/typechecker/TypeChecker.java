@@ -38,7 +38,7 @@ public class TypeChecker {
         );
     }
 
-    private static List<TypedExpressionNode> typeCheckArgs(Signature signature, UntypedCallNode node, TypeCheckerContext context) {
+    private static List<TypedExpressionNode> typeCheckArgs(SignatureNonGeneric signature, UntypedCallNode node, TypeCheckerContext context) {
         if (node.positionalArgs().size() != signature.positionalParams().size()) {
             throw new WrongNumberOfArgumentsError(
                 signature.positionalParams().size(),
@@ -85,11 +85,11 @@ public class TypeChecker {
         var signature = Signatures.toSignature(receiver.type(), context);
 
         var typeCheckTypeArgsResult = typeCheckTypeArgs(signature, node, context);
-        signature = typeCheckTypeArgsResult.nonGenericSignature;
+        var signatureNonGeneric = typeCheckTypeArgsResult.signatureNonGeneric;
 
-        var typedPositionalArgs = typeCheckArgs(signature, node, context);
+        var typedPositionalArgs = typeCheckArgs(signatureNonGeneric, node, context);
 
-        return switch (signature) {
+        return switch (signatureNonGeneric) {
             case SignatureConstructorRecord signature2 -> new TypedCallConstructorNode(
                 receiver,
                 typedPositionalArgs,
@@ -102,7 +102,7 @@ public class TypeChecker {
                 signature2.returnType(),
                 node.source()
             );
-            case SignatureMethod signature2 -> {
+            case SignatureNonGenericMethod signature2 -> {
                 var memberAccess = (TypedMemberAccessNode) receiver;
                 yield new TypedCallMethodNode(
                     memberAccess.receiver(),
@@ -1196,7 +1196,7 @@ public class TypeChecker {
 
     private record TypeCheckTypeArgsResult(
         Optional<List<TypedTypeLevelExpressionNode>> nodes,
-        Signature nonGenericSignature
+        SignatureNonGeneric signatureNonGeneric
     ) {
     }
 
@@ -1205,33 +1205,39 @@ public class TypeChecker {
         UntypedCallNode node,
         TypeCheckerContext context
     ) {
-        if (signature.typeParams().isEmpty()) {
-            if (node.typeLevelArgs().isEmpty()) {
-                return new TypeCheckTypeArgsResult(Optional.empty(), signature);
-            } else {
-                throw new CannotPassTypeLevelArgsToNonGenericValueError(node.source());
+        switch (signature) {
+            case SignatureNonGeneric signatureNonGeneric -> {
+                if (node.typeLevelArgs().isEmpty()) {
+                    return new TypeCheckTypeArgsResult(Optional.empty(), signatureNonGeneric);
+                } else {
+                    throw new CannotPassTypeLevelArgsToNonGenericValueError(node.source());
+                }
             }
-        } else {
-            if (node.typeLevelArgs().isEmpty()) {
-                throw new MissingTypeLevelArgsError(node.source());
-            } else if (node.typeLevelArgs().size() != signature.typeParams().get().size()) {
-                throw new WrongNumberOfTypeLevelArgsError(
-                    signature.typeParams().get().size(),
-                    node.typeLevelArgs().size(),
-                    node.source()
-                );
-            } else {
-                var typedArgs = node.typeLevelArgs().stream()
-                    .map(arg -> typeCheckTypeLevelExpressionNode(arg, context))
-                    .toList();
+            case SignatureGeneric signatureGeneric -> {
+                if (node.typeLevelArgs().isEmpty()) {
+                    throw new MissingTypeLevelArgsError(node.source());
+                } else if (node.typeLevelArgs().size() != signatureGeneric.typeParams().size()) {
+                    throw new WrongNumberOfTypeLevelArgsError(
+                        signatureGeneric.typeParams().size(),
+                        node.typeLevelArgs().size(),
+                        node.source()
+                    );
+                } else {
+                    var typedArgs = node.typeLevelArgs().stream()
+                        .map(arg -> typeCheckTypeLevelExpressionNode(arg, context))
+                        .toList();
 
-                var nonGenericSignature = signature.typeArgs(
-                    typedArgs.stream()
-                        .map(arg -> (Type) arg.value())
-                        .toList()
-                );
+                    var nonGenericSignature = signatureGeneric.typeArgs(
+                        typedArgs.stream()
+                            .map(arg -> (Type) arg.value())
+                            .toList()
+                    );
 
-                return new TypeCheckTypeArgsResult(Optional.of(typedArgs), nonGenericSignature);
+                    return new TypeCheckTypeArgsResult(Optional.of(typedArgs), nonGenericSignature);
+                }
+            }
+            default -> {
+                throw new UnsupportedOperationException();
             }
         }
     }

@@ -5,7 +5,6 @@ import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.backends.python.serialiser.PythonSerialiserTesting;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.NamespaceType;
-import org.zwobble.clunk.types.RecordType;
 import org.zwobble.clunk.types.Types;
 
 import java.util.Map;
@@ -17,7 +16,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class PythonCodeGeneratorMemberAccessTests {
     @Test
     public void memberAccessIsCompiledToAttributeAccess() {
-        var recordType = new RecordType(NamespaceName.fromParts("example"), "Id");
+        var recordType = Types.recordType(NamespaceName.fromParts("example"), "Id");
         var node = Typed.memberAccess(
             Typed.localReference("id", recordType),
             "value",
@@ -32,7 +31,7 @@ public class PythonCodeGeneratorMemberAccessTests {
 
     @Test
     public void memberNameInLowerCamelCaseIsConvertedToSnakeCase() {
-        var recordType = new RecordType(NamespaceName.fromParts("example"), "User");
+        var recordType = Types.recordType(NamespaceName.fromParts("example"), "User");
         var node = Typed.memberAccess(
             Typed.localReference("user", recordType),
             "fullName",

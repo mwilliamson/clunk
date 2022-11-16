@@ -15,7 +15,7 @@ public class ConstructedTypeTests {
         var constructor = new TypeConstructor(
             "Map",
             List.of(TypeParameter.invariant(namespaceName, "Map", "K"), TypeParameter.invariant(namespaceName, "Map", "V")),
-            new RecordType(namespaceName, "Map")
+            Types.recordType(namespaceName, "Map")
         );
         var type = Types.construct(constructor, List.of(Types.STRING, Types.INT));
 
@@ -30,7 +30,7 @@ public class ConstructedTypeTests {
         var constructor = new TypeConstructor(
             "Map",
             List.of(TypeParameter.invariant(namespaceName, "Map", "K"), TypeParameter.invariant(namespaceName, "Map", "V")),
-            new RecordType(namespaceName, "Map")
+            Types.recordType(namespaceName, "Map")
         );
         var typeParameter = TypeParameter.invariant(namespaceName, "Example", "T");
         var type = Types.construct(constructor, List.of(typeParameter));

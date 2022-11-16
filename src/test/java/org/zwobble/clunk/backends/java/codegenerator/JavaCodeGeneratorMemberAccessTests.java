@@ -5,7 +5,6 @@ import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiserTesting;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.NamespaceType;
-import org.zwobble.clunk.types.RecordType;
 import org.zwobble.clunk.types.Types;
 
 import java.util.Map;
@@ -17,7 +16,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class JavaCodeGeneratorMemberAccessTests {
     @Test
     public void memberAccessOnRecordIsCompiledToMethodCall() {
-        var recordType = new RecordType(NamespaceName.fromParts("example"), "Id");
+        var recordType = Types.recordType(NamespaceName.fromParts("example"), "Id");
         var node = Typed.memberAccess(
             Typed.localReference("id", recordType),
             "value",

@@ -19,7 +19,7 @@ public class TypeCheckMemberAccessTests {
     @Test
     public void canTypeCheckMemberAccess() {
         var untypedNode = Untyped.memberAccess(Untyped.reference("id"), "value");
-        var recordType = new RecordType(NamespaceName.fromParts("example"), "Id");
+        var recordType = Types.recordType(NamespaceName.fromParts("example"), "Id");
         var context = TypeCheckerContext.stub()
             .addLocal("id", recordType, NullSource.INSTANCE)
             .addMemberTypes(recordType, Map.ofEntries(Map.entry("value", Types.INT)));
@@ -36,7 +36,7 @@ public class TypeCheckMemberAccessTests {
     @Test
     public void whenMemberNameIsUnknownThenErrorIsThrown() {
         var untypedNode = Untyped.memberAccess(Untyped.reference("id"), "x");
-        var recordType = new RecordType(NamespaceName.fromParts("example"), "Id");
+        var recordType = Types.recordType(NamespaceName.fromParts("example"), "Id");
         var context = TypeCheckerContext.stub()
             .addLocal("id", recordType, NullSource.INSTANCE)
             .addFields(recordType, List.of(Typed.recordField("value", Typed.typeLevelInt())));
@@ -50,7 +50,7 @@ public class TypeCheckMemberAccessTests {
     @Test
     public void whenReceiverIsConstructedTypeThenCanTypeCheckMemberAccess() {
         var untypedNode = Untyped.memberAccess(Untyped.reference("values"), "first");
-        var genericType = new RecordType(NamespaceName.fromParts("example"), "List");
+        var genericType = Types.recordType(NamespaceName.fromParts("example"), "List");
         var typeParameter = TypeParameter.covariant(NamespaceName.fromParts("example"), "List", "T");
         var typeConstructor = new TypeConstructor(
             "List",

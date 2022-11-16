@@ -75,7 +75,7 @@ public class Types {
     }
 
     public static RecordType recordType(NamespaceName namespaceName, String name) {
-        return new RecordType(namespaceName, name);
+        return new RecordType(namespaceName, name, Visibility.PUBLIC);
     }
 
     public static InterfaceType sealedInterfaceType(NamespaceName namespaceName, String name) {

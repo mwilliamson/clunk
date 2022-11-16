@@ -7,7 +7,6 @@ import org.zwobble.clunk.backends.java.ast.Java;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiserTesting;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.NamespaceName;
-import org.zwobble.clunk.types.RecordType;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
@@ -19,7 +18,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class JavaCodeGeneratorCallConstructorTests {
     @Test
     public void callToRecordConstructorsAreCompiledToConstructorCalls() {
-        var recordType = new RecordType(NamespaceName.fromParts("example"), "Id");
+        var recordType = Types.recordType(NamespaceName.fromParts("example"), "Id");
         var node = new TypedCallConstructorNode(
             Typed.localReference("Id", Types.metaType(recordType)),
             List.of(Typed.intLiteral(123)),

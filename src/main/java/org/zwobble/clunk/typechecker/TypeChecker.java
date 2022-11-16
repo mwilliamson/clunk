@@ -918,7 +918,7 @@ public class TypeChecker {
                 new PendingTypeCheck(
                     TypeCheckerPhase.DEFINE_TYPES,
                     context -> {
-                        var recordType = new RecordType(context.namespaceName(), node.name());
+                        var recordType = new RecordType(context.namespaceName(), node.name(), Visibility.PUBLIC);
                         recordTypeBox.set(recordType);
                         return context.addLocal(node.name(), metaType(recordType), node.source());
                     }

@@ -6,7 +6,6 @@ import org.zwobble.clunk.ast.typed.TypedCallMethodNode;
 import org.zwobble.clunk.backends.python.serialiser.PythonSerialiserTesting;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.NamespaceName;
-import org.zwobble.clunk.types.RecordType;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
@@ -21,7 +20,7 @@ public class PythonCodeGeneratorCallMethodTests {
         var node = new TypedCallMethodNode(
             Typed.localReference(
                 "x",
-                new RecordType(NamespaceName.fromParts("example"), "X")
+                Types.recordType(NamespaceName.fromParts("example"), "X")
             ),
             "y",
             List.of(Typed.intLiteral(123)),
@@ -40,7 +39,7 @@ public class PythonCodeGeneratorCallMethodTests {
         var node = new TypedCallMethodNode(
             Typed.localReference(
                 "x",
-                new RecordType(NamespaceName.fromParts("example"), "X")
+                Types.recordType(NamespaceName.fromParts("example"), "X")
             ),
             "isValid",
             List.of(),

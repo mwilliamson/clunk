@@ -90,12 +90,6 @@ public class TypeChecker {
         var typedPositionalArgs = typeCheckArgs(signatureNonGeneric, node, context);
 
         return switch (signatureNonGeneric) {
-            case SignatureConstructorRecord signature2 -> new TypedCallConstructorNode(
-                receiver,
-                typedPositionalArgs,
-                signature2.returnType(),
-                node.source()
-            );
             case SignatureNonGenericCallable signature2 ->
                 switch (signature2.type()) {
                     case ConstructorType ignored -> new TypedCallConstructorNode(

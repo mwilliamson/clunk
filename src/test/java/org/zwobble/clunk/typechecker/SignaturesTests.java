@@ -92,7 +92,7 @@ public class SignaturesTests {
 
         var result = Signatures.toSignature(Types.metaType(recordType), context, NullSource.INSTANCE);
 
-        assertThat(result, cast(SignatureConstructorRecord.class));
+        assertThat(result, cast(SignatureNonGenericCallable.class));
     }
 
     @Test
@@ -105,7 +105,7 @@ public class SignaturesTests {
 
         var result = Signatures.toSignature(Types.metaType(recordType), context, NullSource.INSTANCE);
 
-        assertThat(result, cast(SignatureConstructorRecord.class));
+        assertThat(result, cast(SignatureNonGenericCallable.class));
     }
 
     @Test
@@ -121,7 +121,7 @@ public class SignaturesTests {
             () -> Signatures.toSignature(Types.metaType(recordType), context, NullSource.INSTANCE)
         );
 
-        assertThat(result.getMessage(), equalTo("The constructor for example.A is not visible from other namespaces"));
+        assertThat(result.getMessage(), equalTo("constructor () -> example.A is not visible from other namespaces"));
     }
 
     @Test
@@ -134,7 +134,7 @@ public class SignaturesTests {
         var result = Signatures.toSignature(Types.metaType(recordType), context, NullSource.INSTANCE);
 
         assertThat(result, cast(
-            SignatureConstructorRecord.class,
+            SignatureNonGenericCallable.class,
             has("positionalParams", contains(equalTo(Types.INT))),
             has("returnType", equalTo(recordType))
         ));

@@ -24,8 +24,6 @@ public class Signatures {
                 .map(field -> (Type)field.type().value())
                 .toList();
             return new SignatureConstructorRecord(positionalParams, recordType);
-        } else if (type instanceof TypeLevelValueType typeLevelValueType && typeLevelValueType.value().equals(Types.STRING_BUILDER)) {
-            return new SignatureConstructorStringBuilder();
         } else {
             throw new UnexpectedTypeError(Types.CALLABLE, type, source);
         }

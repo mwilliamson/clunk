@@ -96,12 +96,6 @@ public class TypeChecker {
                 signature2.returnType(),
                 node.source()
             );
-            case SignatureConstructorStringBuilder signature2 -> new TypedCallConstructorNode(
-                receiver,
-                typedPositionalArgs,
-                signature2.returnType(),
-                node.source()
-            );
             case SignatureNonGenericMethod signature2 -> {
                 var memberAccess = (TypedMemberAccessNode) receiver;
                 yield new TypedCallMethodNode(

@@ -25,18 +25,6 @@ record SignatureConstructorRecord(List<Type> positionalParams, RecordType type) 
     }
 }
 
-record SignatureConstructorStringBuilder() implements SignatureNonGeneric {
-    @Override
-    public List<Type> positionalParams() {
-        return List.of();
-    }
-
-    @Override
-    public Type returnType() {
-        return Types.STRING_BUILDER;
-    }
-}
-
 record SignatureGenericMethod(MethodType type) implements SignatureGeneric {
     @Override
     public List<TypeParameter> typeParams() {

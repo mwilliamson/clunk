@@ -42,7 +42,7 @@ public class SignaturesTests {
         var result = Signatures.toSignature(methodType, context, NullSource.INSTANCE);
 
         assertThat(result, cast(
-            SignatureNonGenericCallable.class,
+            SignatureNonGeneric.class,
             has("positionalParams", contains(equalTo(Types.INT))),
             has("returnType", equalTo(Types.INT))
         ));
@@ -63,7 +63,7 @@ public class SignaturesTests {
         var result = Signatures.toSignature(methodType, context, NullSource.INSTANCE);
 
         assertThat(result, cast(
-            SignatureGenericCallable.class,
+            SignatureGeneric.class,
             has("typeParams", contains(equalTo(typeParameter)))
         ));
     }
@@ -92,7 +92,7 @@ public class SignaturesTests {
 
         var result = Signatures.toSignature(Types.metaType(recordType), context, NullSource.INSTANCE);
 
-        assertThat(result, cast(SignatureNonGenericCallable.class));
+        assertThat(result, cast(SignatureNonGeneric.class));
     }
 
     @Test
@@ -105,7 +105,7 @@ public class SignaturesTests {
 
         var result = Signatures.toSignature(Types.metaType(recordType), context, NullSource.INSTANCE);
 
-        assertThat(result, cast(SignatureNonGenericCallable.class));
+        assertThat(result, cast(SignatureNonGeneric.class));
     }
 
     @Test
@@ -134,7 +134,7 @@ public class SignaturesTests {
         var result = Signatures.toSignature(Types.metaType(recordType), context, NullSource.INSTANCE);
 
         assertThat(result, cast(
-            SignatureNonGenericCallable.class,
+            SignatureNonGeneric.class,
             has("positionalParams", contains(equalTo(Types.INT))),
             has("returnType", equalTo(recordType))
         ));

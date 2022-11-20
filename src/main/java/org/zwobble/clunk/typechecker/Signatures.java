@@ -25,9 +25,9 @@ public class Signatures {
         if (callableType.visibility().equals(Visibility.PRIVATE) && !callableType.namespaceName().equals(context.namespaceName())) {
             throw new NotVisibleError(callableType.describe() + " is not visible from other namespaces", source);
         } else if (callableType.typeLevelParams().isEmpty()) {
-            return new SignatureNonGenericCallable(callableType);
+            return new SignatureNonGeneric(callableType);
         } else {
-            return new SignatureGenericCallable(callableType);
+            return new SignatureGeneric(callableType);
         }
     }
 }

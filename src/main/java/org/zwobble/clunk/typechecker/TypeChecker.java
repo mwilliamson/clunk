@@ -89,32 +89,29 @@ public class TypeChecker {
 
         var typedPositionalArgs = typeCheckArgs(signatureNonGeneric, node, context);
 
-        return switch (signatureNonGeneric) {
-            case SignatureNonGenericCallable signature2 ->
-                switch (signature2.type()) {
-                    case ConstructorType ignored -> new TypedCallConstructorNode(
-                        receiver,
-                        typedPositionalArgs,
-                        signature2.returnType(),
-                        node.source()
-                    );
-                    case MethodType ignored -> {
-                        var memberAccess = (TypedMemberAccessNode) receiver;
-                        yield new TypedCallMethodNode(
-                            memberAccess.receiver(),
-                            memberAccess.memberName(),
-                            typedPositionalArgs,
-                            signature2.returnType(),
-                            node.source()
-                        );
-                    }
-                    case StaticFunctionType staticFunctionType -> new TypedCallStaticFunctionNode(
-                        receiver,
-                        typedPositionalArgs,
-                        staticFunctionType,
-                        node.source()
-                    );
-                };
+        return switch (signatureNonGeneric.type()) {
+            case ConstructorType ignored -> new TypedCallConstructorNode(
+                receiver,
+                typedPositionalArgs,
+                signatureNonGeneric.returnType(),
+                node.source()
+            );
+            case MethodType ignored -> {
+                var memberAccess = (TypedMemberAccessNode) receiver;
+                yield new TypedCallMethodNode(
+                    memberAccess.receiver(),
+                    memberAccess.memberName(),
+                    typedPositionalArgs,
+                    signatureNonGeneric.returnType(),
+                    node.source()
+                );
+            }
+            case StaticFunctionType staticFunctionType -> new TypedCallStaticFunctionNode(
+                receiver,
+                typedPositionalArgs,
+                staticFunctionType,
+                node.source()
+            );
         };
     }
 

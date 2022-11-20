@@ -8,7 +8,6 @@ public class Signatures {
     }
 
     public static Signature toSignature(Type type, TypeCheckerContext context, Source source) {
-        // TODO: handle not callable
         if (type instanceof StaticFunctionType staticFunctionType) {
             return new SignatureStaticFunction(staticFunctionType);
         } else if (type instanceof MethodType methodType) {

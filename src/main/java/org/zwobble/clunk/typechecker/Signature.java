@@ -15,7 +15,7 @@ sealed interface SignatureNonGeneric extends Signature {
 
 sealed interface SignatureGeneric extends Signature {
     List<TypeParameter> typeParams();
-    SignatureNonGeneric typeArgs(List<Type> typeArgs);
+    Type typeArgs(List<Type> typeArgs);
 }
 
 record SignatureConstructorRecord(List<Type> positionalParams, RecordType type) implements SignatureNonGeneric {
@@ -32,18 +32,18 @@ record SignatureGenericMethod(MethodType type) implements SignatureGeneric {
     }
 
     @Override
-    public SignatureNonGeneric typeArgs(List<Type> typeArgs) {
+    public Type typeArgs(List<Type> typeArgs) {
         // TODO: check args? In practice, this has already been done, but
         // there's no guarantee we won't accidentally call this in other cases.
         var typeMap = TypeMap.from(type.typeLevelParams().orElseThrow(), typeArgs);
 
-        return new SignatureNonGenericMethod(new MethodType(
+        return new MethodType(
             Optional.empty(),
             type.positionalParams().stream()
                 .map(param -> param.replace(typeMap))
                 .toList(),
             type.returnType().replace(typeMap)
-        ));
+        );
     }
 }
 

@@ -1221,11 +1221,13 @@ public class TypeChecker {
                         .map(arg -> typeCheckTypeLevelExpressionNode(arg, context))
                         .toList();
 
-                    var nonGenericSignature = signatureGeneric.typeArgs(
+                    var nonGenericType = signatureGeneric.typeArgs(
                         typedArgs.stream()
                             .map(arg -> (Type) arg.value())
                             .toList()
                     );
+
+                    var nonGenericSignature = (SignatureNonGeneric) Signatures.toSignature(nonGenericType, context, node.source());
 
                     return new TypeCheckTypeArgsResult(Optional.of(typedArgs), nonGenericSignature);
                 }

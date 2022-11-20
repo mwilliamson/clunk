@@ -1,12 +1,13 @@
 package org.zwobble.clunk.typechecker;
 
+import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.types.*;
 
 public class Signatures {
     private Signatures() {
     }
 
-    public static Signature toSignature(Type type, TypeCheckerContext context) {
+    public static Signature toSignature(Type type, TypeCheckerContext context, Source source) {
         // TODO: handle not callable
         if (type instanceof StaticFunctionType staticFunctionType) {
             return new SignatureStaticFunction(staticFunctionType);
@@ -24,7 +25,7 @@ public class Signatures {
         } else if (type instanceof TypeLevelValueType typeLevelValueType && typeLevelValueType.value().equals(Types.STRING_BUILDER)) {
             return new SignatureConstructorStringBuilder();
         } else {
-            throw new UnsupportedOperationException("Not callable");
+            throw new UnexpectedTypeError(Types.CALLABLE, type, source);
         }
     }
 }

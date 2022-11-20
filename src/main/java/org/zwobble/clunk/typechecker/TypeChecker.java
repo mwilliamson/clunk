@@ -82,7 +82,7 @@ public class TypeChecker {
 
     private static TypedExpressionNode typeCheckCall(UntypedCallNode node, TypeCheckerContext context) {
         var receiver = typeCheckExpression(node.receiver(), context);
-        var signature = Signatures.toSignature(receiver.type(), context);
+        var signature = Signatures.toSignature(receiver.type(), context, receiver.source());
 
         var typeCheckTypeArgsResult = typeCheckTypeArgs(signature, node, context);
         var signatureNonGeneric = typeCheckTypeArgsResult.signatureNonGeneric;

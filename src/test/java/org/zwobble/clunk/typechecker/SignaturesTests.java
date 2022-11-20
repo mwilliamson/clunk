@@ -2,6 +2,7 @@ package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
+import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.*;
 
 import java.util.List;
@@ -9,10 +10,24 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.matchers.CastMatcher.cast;
 import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 
 public class SignaturesTests {
+    @Test
+    public void whenTypeIsNotCallableThenErrorIsThrown() {
+        var context = TypeCheckerContext.stub();
+
+        var result = assertThrows(
+            UnexpectedTypeError.class,
+            () -> Signatures.toSignature(Types.INT, context, NullSource.INSTANCE)
+        );
+
+        assertThat(result.getExpected(), equalTo(Types.CALLABLE));
+        assertThat(result.getActual(), equalTo(Types.INT));
+    }
+
     @Test
     public void nonGenericMethodHasNonGenericSignature() {
         var methodType = new MethodType(
@@ -22,7 +37,7 @@ public class SignaturesTests {
         );
         var context = TypeCheckerContext.stub();
 
-        var result = Signatures.toSignature(methodType, context);
+        var result = Signatures.toSignature(methodType, context, NullSource.INSTANCE);
 
         assertThat(result, cast(
             SignatureNonGenericMethod.class,
@@ -41,7 +56,7 @@ public class SignaturesTests {
         );
         var context = TypeCheckerContext.stub();
 
-        var result = Signatures.toSignature(methodType, context);
+        var result = Signatures.toSignature(methodType, context, NullSource.INSTANCE);
 
         assertThat(result, cast(
             SignatureGenericMethod.class,
@@ -59,7 +74,7 @@ public class SignaturesTests {
         );
         var context = TypeCheckerContext.stub();
 
-        var result = Signatures.toSignature(functionType, context);
+        var result = Signatures.toSignature(functionType, context, NullSource.INSTANCE);
 
         assertThat(result, cast(
             SignatureStaticFunction.class,
@@ -74,7 +89,7 @@ public class SignaturesTests {
         var context = TypeCheckerContext.stub()
             .addFields(recordType, List.of(Typed.recordField("value", Typed.typeLevelInt())));
 
-        var result = Signatures.toSignature(Types.metaType(recordType), context);
+        var result = Signatures.toSignature(Types.metaType(recordType), context, NullSource.INSTANCE);
 
         assertThat(result, cast(
             SignatureConstructorRecord.class,
@@ -87,7 +102,7 @@ public class SignaturesTests {
     public void stringBuilderIsConstructedWithoutAnyArguments() {
         var context = TypeCheckerContext.stub();
 
-        var result = Signatures.toSignature(Types.metaType(Types.STRING_BUILDER), context);
+        var result = Signatures.toSignature(Types.metaType(Types.STRING_BUILDER), context, NullSource.INSTANCE);
 
         assertThat(result, cast(
             SignatureConstructorStringBuilder.class,

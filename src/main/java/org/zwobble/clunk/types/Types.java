@@ -9,6 +9,7 @@ public class Types {
     }
 
     public static final Type BOOL = BoolType.INSTANCE;
+    public static final TypeSet CALLABLE = CallableTypeSet.INSTANCE;
     public static final Type INT = IntType.INSTANCE;
     public static final Type NOTHING = NothingType.INSTANCE;
     public static final Type OBJECT = ObjectType.INSTANCE;

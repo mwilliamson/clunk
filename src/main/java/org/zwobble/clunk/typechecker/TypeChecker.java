@@ -96,22 +96,25 @@ public class TypeChecker {
                 signature2.returnType(),
                 node.source()
             );
-            case SignatureNonGenericMethod signature2 -> {
-                var memberAccess = (TypedMemberAccessNode) receiver;
-                yield new TypedCallMethodNode(
-                    memberAccess.receiver(),
-                    memberAccess.memberName(),
-                    typedPositionalArgs,
-                    signature2.returnType(),
-                    node.source()
-                );
-            }
-            case SignatureStaticFunction signature2 -> new TypedCallStaticFunctionNode(
-                receiver,
-                typedPositionalArgs,
-                signature2.type(),
-                node.source()
-            );
+            case SignatureNonGenericCallable signature2 ->
+                switch (signature2.type()) {
+                    case MethodType ignored -> {
+                        var memberAccess = (TypedMemberAccessNode) receiver;
+                        yield new TypedCallMethodNode(
+                            memberAccess.receiver(),
+                            memberAccess.memberName(),
+                            typedPositionalArgs,
+                            signature2.returnType(),
+                            node.source()
+                        );
+                    }
+                    case StaticFunctionType staticFunctionType -> new TypedCallStaticFunctionNode(
+                        receiver,
+                        typedPositionalArgs,
+                        staticFunctionType,
+                        node.source()
+                    );
+                };
         };
     }
 

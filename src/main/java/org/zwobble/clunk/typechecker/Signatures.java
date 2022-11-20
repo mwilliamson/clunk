@@ -8,13 +8,11 @@ public class Signatures {
     }
 
     public static Signature toSignature(Type type, TypeCheckerContext context, Source source) {
-        if (type instanceof StaticFunctionType staticFunctionType) {
-            return new SignatureStaticFunction(staticFunctionType);
-        } else if (type instanceof MethodType methodType) {
-            if (methodType.typeLevelParams().isEmpty()) {
-                return new SignatureNonGenericMethod(methodType);
+        if (type instanceof CallableType callableType) {
+            if (callableType.typeLevelParams().isEmpty()) {
+                return new SignatureNonGenericCallable(callableType);
             } else {
-                return new SignatureGenericMethod(methodType);
+                return new SignatureGenericCallable(callableType);
             }
         } else if (type instanceof TypeLevelValueType typeLevelValueType && typeLevelValueType.value() instanceof RecordType recordType) {
             if (recordType.isPrivate() && !recordType.namespaceName().equals(context.namespaceName())) {

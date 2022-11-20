@@ -3,7 +3,7 @@ package org.zwobble.clunk.types;
 import java.util.List;
 import java.util.Optional;
 
-public interface CallableType extends Type {
+public sealed interface CallableType extends Type permits MethodType, StaticFunctionType {
     Optional<List<TypeParameter>> typeLevelParams();
     List<Type> positionalParams();
     Type returnType();

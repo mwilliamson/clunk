@@ -29,7 +29,7 @@ public class SignaturesTests {
     }
 
     @Test
-    public void nonGenericMethodHasNonGenericSignature() {
+    public void nonGenericCallableHasNonGenericSignature() {
         var methodType = new MethodType(
             Optional.empty(),
             List.of(Types.INT),
@@ -40,14 +40,14 @@ public class SignaturesTests {
         var result = Signatures.toSignature(methodType, context, NullSource.INSTANCE);
 
         assertThat(result, cast(
-            SignatureNonGenericMethod.class,
+            SignatureNonGenericCallable.class,
             has("positionalParams", contains(equalTo(Types.INT))),
             has("returnType", equalTo(Types.INT))
         ));
     }
 
     @Test
-    public void genericMethodHasGenericSignature() {
+    public void genericCallableHasGenericSignature() {
         var typeParameter = TypeParameter.function(NamespaceName.fromParts(), "X", "f", "A");
         var methodType = new MethodType(
             Optional.of(List.of(typeParameter)),
@@ -59,27 +59,8 @@ public class SignaturesTests {
         var result = Signatures.toSignature(methodType, context, NullSource.INSTANCE);
 
         assertThat(result, cast(
-            SignatureGenericMethod.class,
+            SignatureGenericCallable.class,
             has("typeParams", contains(equalTo(typeParameter)))
-        ));
-    }
-
-    @Test
-    public void staticFunctionHasSignature() {
-        var functionType = new StaticFunctionType(
-            NamespaceName.fromParts("Stdlib", "Math"),
-            "abs",
-            List.of(Types.INT),
-            Types.INT
-        );
-        var context = TypeCheckerContext.stub();
-
-        var result = Signatures.toSignature(functionType, context, NullSource.INSTANCE);
-
-        assertThat(result, cast(
-            SignatureStaticFunction.class,
-            has("positionalParams", contains(equalTo(Types.INT))),
-            has("returnType", equalTo(Types.INT))
         ));
     }
 

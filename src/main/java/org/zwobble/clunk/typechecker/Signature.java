@@ -30,10 +30,10 @@ record SignatureConstructorRecord(MethodType constructorType) implements Signatu
     }
 }
 
-record SignatureGenericMethod(MethodType type) implements SignatureGeneric {
+record SignatureGenericCallable(CallableType type) implements SignatureGeneric {
     @Override
     public List<TypeParameter> typeParams() {
-        return type.typeLevelParams().get();
+        return type.typeLevelParams().orElseThrow();
     }
 
     @Override
@@ -46,7 +46,7 @@ record SignatureGenericMethod(MethodType type) implements SignatureGeneric {
     }
 }
 
-record SignatureNonGenericMethod(MethodType type) implements SignatureNonGeneric {
+record SignatureNonGenericCallable(CallableType type) implements SignatureNonGeneric {
     @Override
     public List<Type> positionalParams() {
         return type.positionalParams();
@@ -57,16 +57,3 @@ record SignatureNonGenericMethod(MethodType type) implements SignatureNonGeneric
         return type.returnType();
     }
 }
-
-record SignatureStaticFunction(StaticFunctionType type) implements SignatureNonGeneric {
-    @Override
-    public List<Type> positionalParams() {
-        return type.positionalParams();
-    }
-
-    @Override
-    public Type returnType() {
-        return type.returnType();
-    }
-}
-

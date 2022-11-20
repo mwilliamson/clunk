@@ -8,7 +8,7 @@ public record StaticFunctionType(
     String functionName,
     List<Type> positionalParams,
     Type returnType
-) implements Type {
+) implements CallableType {
     @Override
     public String describe() {
         var paramsString = positionalParams.stream()

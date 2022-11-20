@@ -8,7 +8,7 @@ public record MethodType(
     Optional<List<TypeParameter>> typeLevelParams,
     List<Type> positionalParams,
     Type returnType
-) implements Type {
+) implements CallableType {
     @Override
     public String describe() {
         var typeLevelParamString = typeLevelParams.isEmpty()

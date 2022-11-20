@@ -20,19 +20,19 @@ public class Types {
     public static final TypeConstructor LIST_CONSTRUCTOR = new TypeConstructor(
         "List",
         List.of(TypeParameter.covariant(NamespaceName.fromParts(), "List", "T")),
-        Types.recordType(NamespaceName.fromParts(), "List")
+        Types.recordType(NamespaceName.fromParts(), "List", Visibility.PRIVATE)
     );
 
     public static final TypeConstructor MUTABLE_LIST_CONSTRUCTOR = new TypeConstructor(
         "MutableList",
         List.of(TypeParameter.invariant(NamespaceName.fromParts(), "MutableList", "T")),
-        Types.recordType(NamespaceName.fromParts(), "MutableList")
+        Types.recordType(NamespaceName.fromParts(), "MutableList", Visibility.PUBLIC)
     );
 
     public static final TypeConstructor OPTION_CONSTRUCTOR = new TypeConstructor(
         "Option",
         List.of(TypeParameter.covariant(NamespaceName.fromParts(), "Option", "T")),
-        Types.recordType(NamespaceName.fromParts(), "Option")
+        Types.recordType(NamespaceName.fromParts(), "Option", Visibility.PRIVATE)
     );
 
     public static Type list(Type elementType) {

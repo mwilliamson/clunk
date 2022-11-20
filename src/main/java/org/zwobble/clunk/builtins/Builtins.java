@@ -65,7 +65,7 @@ public class Builtins {
                 Types.INT
             ))
         ))
-        .addConstructorType(Types.STRING_BUILDER, List.of(), Visibility.PUBLIC)
+        .addConstructorType(Types.constructorType(NamespaceName.fromParts(), List.of(), Types.STRING_BUILDER))
         .addMemberTypes(Types.STRING_BUILDER, Map.ofEntries(
             Map.entry("append", Types.methodType(NamespaceName.fromParts(), List.of(Types.STRING), Types.UNIT)),
             Map.entry("build", Types.methodType(NamespaceName.fromParts(), List.of(), Types.STRING))

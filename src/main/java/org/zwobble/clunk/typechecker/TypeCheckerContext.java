@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public record TypeCheckerContext(
     PStack<StackFrame> stack,
     PMap<NamespaceName, NamespaceType> namespaceTypes,
-    PMap<RecordType, MethodType> constructorTypes,
+    PMap<StructuredType, ConstructorType> constructorTypes,
     PMap<Type, Map<String, Type>> memberTypes,
     SubtypeRelations subtypeRelations
 ) {
@@ -152,15 +152,8 @@ public record TypeCheckerContext(
         return lookup(name, source).type();
     }
 
-    public TypeCheckerContext addConstructorType(RecordType type, List<Type> constructorArgs, Visibility visibility) {
-        var constructorType = new MethodType(
-            type.namespaceName(),
-            Optional.empty(),
-            constructorArgs,
-            type,
-            visibility
-        );
-        var typeToFields = this.constructorTypes.plus(type, constructorType);
+    public TypeCheckerContext addConstructorType(ConstructorType constructorType) {
+        var typeToFields = this.constructorTypes.plus(constructorType.returnType(), constructorType);
         return new TypeCheckerContext(stack, namespaceTypes, typeToFields, memberTypes, subtypeRelations);
     }
 
@@ -184,7 +177,7 @@ public record TypeCheckerContext(
         return new TypeCheckerContext(stack, namespaceTypes, constructorTypes, memberTypes, subtypeRelations);
     }
 
-    public Optional<MethodType> constructorType(RecordType type) {
+    public Optional<ConstructorType> constructorType(RecordType type) {
         return Optional.ofNullable(constructorTypes.get(type));
     }
 

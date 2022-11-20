@@ -95,10 +95,11 @@ public class TypeCheckCallTests {
             Untyped.reference("Id"),
             List.of(Untyped.intLiteral(123))
         );
-        var recordType = Types.recordType(NamespaceName.fromParts("example"), "Id");
+        var namespaceName = NamespaceName.fromParts("example");
+        var recordType = Types.recordType(namespaceName, "Id");
         var context = TypeCheckerContext.stub()
             .addLocal("Id", Types.metaType(recordType), NullSource.INSTANCE)
-            .addConstructorType(recordType, List.of(Types.INT), Visibility.PUBLIC);
+            .addConstructorType(Types.constructorType(namespaceName, List.of(Types.INT), recordType, Visibility.PUBLIC));
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 

@@ -84,9 +84,10 @@ public class SignaturesTests {
 
     @Test
     public void whenRecordConstructorIsPublicThenConstructorCanBeCalledFromAnyNamespace() {
-        var recordType = Types.recordType(NamespaceName.fromParts("example"), "A");
+        var namespaceName = NamespaceName.fromParts("example");
+        var recordType = Types.recordType(namespaceName, "A");
         var context = TypeCheckerContext.stub()
-            .addConstructorType(recordType, List.of(), Visibility.PUBLIC)
+            .addConstructorType(Types.constructorType(namespaceName, List.of(), recordType, Visibility.PUBLIC))
             .enterNamespace(NamespaceName.fromParts("other"));
 
         var result = Signatures.toSignature(Types.metaType(recordType), context, NullSource.INSTANCE);
@@ -96,10 +97,11 @@ public class SignaturesTests {
 
     @Test
     public void whenRecordConstructorIsPrivateThenConstructorCanBeCalledFromSameNamespace() {
-        var recordType = Types.recordType(NamespaceName.fromParts("example"), "A");
+        var namespaceName = NamespaceName.fromParts("example");
+        var recordType = Types.recordType(namespaceName, "A");
         var context = TypeCheckerContext.stub()
-            .addConstructorType(recordType, List.of(), Visibility.PRIVATE)
-            .enterNamespace(NamespaceName.fromParts("example"));
+            .addConstructorType(Types.constructorType(namespaceName, List.of(), recordType, Visibility.PRIVATE))
+            .enterNamespace(namespaceName);
 
         var result = Signatures.toSignature(Types.metaType(recordType), context, NullSource.INSTANCE);
 
@@ -108,9 +110,10 @@ public class SignaturesTests {
 
     @Test
     public void whenRecordConstructorIsPrivateThenConstructorCannotBeCalledFromOtherNamespace() {
-        var recordType = Types.recordType(NamespaceName.fromParts("example"), "A");
+        var namespaceName = NamespaceName.fromParts("example");
+        var recordType = Types.recordType(namespaceName, "A");
         var context = TypeCheckerContext.stub()
-            .addConstructorType(recordType, List.of(), Visibility.PRIVATE)
+            .addConstructorType(Types.constructorType(namespaceName, List.of(), recordType, Visibility.PRIVATE))
             .enterNamespace(NamespaceName.fromParts("other"));
 
         var result = assertThrows(
@@ -123,9 +126,10 @@ public class SignaturesTests {
 
     @Test
     public void recordConstructorHasPositionalParamsMatchingFieldsAndReturnsSelf() {
-        var recordType = Types.recordType(NamespaceName.fromParts("example"), "Id");
+        var namespaceName = NamespaceName.fromParts("example");
+        var recordType = Types.recordType(namespaceName, "Id");
         var context = TypeCheckerContext.stub()
-            .addConstructorType(recordType, List.of(Types.INT), Visibility.PUBLIC);
+            .addConstructorType(Types.constructorType(namespaceName, List.of(Types.INT), recordType, Visibility.PUBLIC));
 
         var result = Signatures.toSignature(Types.metaType(recordType), context, NullSource.INSTANCE);
 

@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
 import static org.zwobble.clunk.matchers.CastMatcher.cast;
 import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.clunk.matchers.OptionalMatcher.present;
 import static org.zwobble.clunk.typechecker.TypeCheckNamespaceStatementTesting.typeCheckNamespaceStatementAllPhases;
 
 public class TypeCheckRecordTests {
@@ -100,12 +101,12 @@ public class TypeCheckRecordTests {
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
         var typedNode = (TypedRecordNode) result.typedNode();
-        assertThat(result.context().constructorType(typedNode.type()), cast(
-            MethodType.class,
+        assertThat(result.context().constructorType(typedNode.type()), present(cast(
+            ConstructorType.class,
             has("typeLevelParams", equalTo(Optional.empty())),
             has("positionalParams", contains(equalTo(Types.STRING))),
             has("returnType", equalTo(typedNode.type()))
-        ));
+        )));
     }
 
     @Test

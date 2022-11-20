@@ -98,6 +98,12 @@ public class TypeChecker {
             );
             case SignatureNonGenericCallable signature2 ->
                 switch (signature2.type()) {
+                    case ConstructorType ignored -> new TypedCallConstructorNode(
+                        receiver,
+                        typedPositionalArgs,
+                        signature2.returnType(),
+                        node.source()
+                    );
                     case MethodType ignored -> {
                         var memberAccess = (TypedMemberAccessNode) receiver;
                         yield new TypedCallMethodNode(
@@ -967,7 +973,13 @@ public class TypeChecker {
                         var constructorArgs = typedRecordFieldNodes.stream()
                             .map(fieldNode -> typedTypeLevelExpressionToType(fieldNode.type()))
                             .toList();
-                        var newContext = context.addConstructorType(recordType, constructorArgs, Visibility.PUBLIC);
+                        var newContext = context.addConstructorType(new ConstructorType(
+                            recordType.namespaceName(),
+                            Optional.empty(),
+                            constructorArgs,
+                            recordType,
+                            Visibility.PUBLIC
+                        ));
                         var memberTypes = memberTypesBuilder.build();
                         memberTypesBox.set(memberTypes);
                         newContext = newContext.addMemberTypes(recordType, memberTypes);

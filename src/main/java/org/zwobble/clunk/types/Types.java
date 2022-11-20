@@ -67,6 +67,50 @@ public class Types {
         return new InterfaceType(namespaceName, name);
     }
 
+    public static ConstructorType constructorType(
+        NamespaceName namespaceName,
+        List<TypeParameter> typeLevelParams,
+        List<Type> positionalParams,
+        StructuredType returnType
+    ) {
+        return new ConstructorType(
+            namespaceName,
+            Optional.of(typeLevelParams),
+            positionalParams,
+            returnType,
+            Visibility.PUBLIC
+        );
+    }
+
+    public static ConstructorType constructorType(
+        NamespaceName namespaceName,
+        List<Type> positionalParams,
+        StructuredType returnType
+    ) {
+        return new ConstructorType(
+            namespaceName,
+            Optional.empty(),
+            positionalParams,
+            returnType,
+            Visibility.PUBLIC
+        );
+    }
+
+    public static ConstructorType constructorType(
+        NamespaceName namespaceName,
+        List<Type> positionalParams,
+        StructuredType returnType,
+        Visibility visibility
+    ) {
+        return new ConstructorType(
+            namespaceName,
+            Optional.empty(),
+            positionalParams,
+            returnType,
+            visibility
+        );
+    }
+
     public static MethodType methodType(NamespaceName namespaceName, List<TypeParameter> typeLevelParams, List<Type> positionalParams, Type returnType) {
         return new MethodType(namespaceName, Optional.of(typeLevelParams), positionalParams, returnType, Visibility.PUBLIC);
     }

@@ -8,10 +8,7 @@ import org.zwobble.clunk.ast.untyped.UntypedFunctionNode;
 import org.zwobble.clunk.ast.untyped.UntypedNamespaceNode;
 import org.zwobble.clunk.ast.untyped.UntypedRecordNode;
 import org.zwobble.clunk.sources.NullSource;
-import org.zwobble.clunk.types.MethodType;
-import org.zwobble.clunk.types.NamespaceName;
-import org.zwobble.clunk.types.NamespaceType;
-import org.zwobble.clunk.types.Types;
+import org.zwobble.clunk.types.*;
 
 import java.util.Map;
 import java.util.Optional;
@@ -22,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
 import static org.zwobble.clunk.matchers.CastMatcher.cast;
 import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.clunk.matchers.OptionalMatcher.present;
 
 public class TypeCheckNamespaceTests {
     @Test
@@ -91,10 +89,10 @@ public class TypeCheckNamespaceTests {
             ))
         ));
         var typedRecordNode = (TypedRecordNode) result.typedNode().statements().get(0);
-        assertThat(result.context().constructorType(typedRecordNode.type()), cast(
-            MethodType.class,
+        assertThat(result.context().constructorType(typedRecordNode.type()), present(cast(
+            ConstructorType.class,
             has("positionalParams", contains(equalTo(Types.INT)))
-        ));
+        )));
     }
 
     @Test

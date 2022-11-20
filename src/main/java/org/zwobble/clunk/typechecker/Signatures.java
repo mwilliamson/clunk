@@ -9,6 +9,7 @@ public class Signatures {
 
     public static Signature toSignature(Type type, TypeCheckerContext context, Source source) {
         if (type instanceof CallableType callableType) {
+            // TODO: check visibility
             if (callableType.typeLevelParams().isEmpty()) {
                 return new SignatureNonGenericCallable(callableType);
             } else {

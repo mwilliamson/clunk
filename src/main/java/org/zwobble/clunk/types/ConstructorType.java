@@ -51,4 +51,8 @@ public record ConstructorType(
     public ConstructorType withTypeParams(List<TypeParameter> typeParams) {
         return new ConstructorType(namespaceName, Optional.of(typeParams), positionalParams, returnType, visibility);
     }
+
+    public ConstructorType withReturnType(StructuredType returnType) {
+        return new ConstructorType(namespaceName, typeLevelParams, positionalParams, returnType, visibility);
+    }
 }

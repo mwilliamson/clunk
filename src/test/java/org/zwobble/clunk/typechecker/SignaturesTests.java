@@ -155,7 +155,7 @@ public class SignaturesTests {
                 namespaceName,
                 List.of(typeParameter),
                 List.of(typeParameter),
-                recordType,
+                Types.construct(typeConstructor, List.of(typeParameter)),
                 Visibility.PUBLIC
             )))
         ));

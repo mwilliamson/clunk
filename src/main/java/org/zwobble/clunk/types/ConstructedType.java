@@ -3,7 +3,7 @@ package org.zwobble.clunk.types;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public record ConstructedType(TypeConstructor constructor, List<Type> args) implements StructuredType {
+public record ConstructedType(TypeConstructor constructor, List<? extends Type> args) implements StructuredType {
     @Override
     public String describe() {
         var argsString = args.stream()

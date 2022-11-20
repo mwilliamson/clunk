@@ -184,7 +184,10 @@ public record TypeCheckerContext(
     public Optional<ConstructorType> constructorType(TypeConstructor typeConstructor) {
         if (typeConstructor.genericType() instanceof RecordType recordType) {
             var constructorType = constructorType(recordType);
-            return constructorType.map(t -> t.withTypeParams(typeConstructor.params()));
+            return constructorType.map(t -> t
+                .withTypeParams(typeConstructor.params())
+                .withReturnType(Types.construct(typeConstructor, typeConstructor.params()))
+            );
         } else {
             return Optional.empty();
         }

@@ -10,15 +10,23 @@ public class Signatures {
     public static Signature toSignature(Type type, TypeCheckerContext context, Source source) {
         if (type instanceof CallableType callableType) {
             return callableToSignature(callableType, context, source);
-        } else if (type instanceof TypeLevelValueType typeLevelValueType && typeLevelValueType.value() instanceof RecordType recordType) {
-            var constructorType = context.constructorType(recordType);
-            if (constructorType.isEmpty()) {
-                throw new NoConstructorError(recordType, source);
+        } else if (type instanceof TypeLevelValueType typeLevelValueType) {
+            if (typeLevelValueType.value() instanceof RecordType recordType) {
+                var constructorType = context.constructorType(recordType);
+                if (constructorType.isEmpty()) {
+                    throw new NoConstructorError(recordType, source);
+                }
+                return callableToSignature(constructorType.get(), context, source);
+            } else if (typeLevelValueType.value() instanceof TypeConstructor typeConstructor) {
+                var constructorType = context.constructorType(typeConstructor);
+                if (constructorType.isEmpty()) {
+                    throw new NoConstructorError(typeConstructor.genericType(), source);
+                }
+                return callableToSignature(constructorType.get(), context, source);
             }
-            return callableToSignature(constructorType.get(), context, source);
-        } else {
-            throw new UnexpectedTypeError(Types.CALLABLE, type, source);
         }
+
+        throw new UnexpectedTypeError(Types.CALLABLE, type, source);
     }
 
     private static Signature callableToSignature(CallableType callableType, TypeCheckerContext context, Source source) {

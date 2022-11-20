@@ -181,6 +181,15 @@ public record TypeCheckerContext(
         return Optional.ofNullable(constructorTypes.get(type));
     }
 
+    public Optional<ConstructorType> constructorType(TypeConstructor typeConstructor) {
+        if (typeConstructor.genericType() instanceof RecordType recordType) {
+            var constructorType = constructorType(recordType);
+            return constructorType.map(t -> t.withTypeParams(typeConstructor.params()));
+        } else {
+            return Optional.empty();
+        }
+    }
+
     public Optional<Type> memberType(Type type, String memberName) {
         if (type instanceof ConstructedType constructedType) {
             var genericType = constructedType.constructor().genericType();

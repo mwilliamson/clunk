@@ -2,10 +2,7 @@ package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.sources.NullSource;
-import org.zwobble.clunk.types.NamespaceName;
-import org.zwobble.clunk.types.TypeParameter;
-import org.zwobble.clunk.types.Types;
-import org.zwobble.clunk.types.Visibility;
+import org.zwobble.clunk.types.*;
 
 import java.util.List;
 
@@ -137,6 +134,30 @@ public class SignaturesTests {
             SignatureNonGeneric.class,
             has("positionalParams", contains(equalTo(Types.INT))),
             has("returnType", equalTo(recordType))
+        ));
+    }
+
+    @Test
+    public void genericRecordConstructorHasPositionalParamsMatchingFieldsAndReturnsSelf() {
+        var namespaceName = NamespaceName.fromParts("example");
+        var typeParameter = TypeParameter.invariant(namespaceName, "Id", "T");
+        var recordType = Types.recordType(namespaceName, "Id");
+        var constructorType = Types.constructorType(namespaceName, List.of(typeParameter), recordType, Visibility.PUBLIC);
+        var typeConstructor = new TypeConstructor("Id", List.of(typeParameter), recordType);
+        var context = TypeCheckerContext.stub()
+            .addConstructorType(constructorType);
+
+        var result = Signatures.toSignature(Types.typeConstructorType(typeConstructor), context, NullSource.INSTANCE);
+
+        assertThat(result, cast(
+            SignatureGeneric.class,
+            has("type", equalTo(Types.constructorType(
+                namespaceName,
+                List.of(typeParameter),
+                List.of(typeParameter),
+                recordType,
+                Visibility.PUBLIC
+            )))
         ));
     }
 }

@@ -47,4 +47,8 @@ public record ConstructorType(
             return new ConstructorType(namespaceName, Optional.empty(), positionalParams, returnType, visibility);
         }
     }
+
+    public ConstructorType withTypeParams(List<TypeParameter> typeParams) {
+        return new ConstructorType(namespaceName, Optional.of(typeParams), positionalParams, returnType, visibility);
+    }
 }

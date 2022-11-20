@@ -84,6 +84,22 @@ public class Types {
 
     public static ConstructorType constructorType(
         NamespaceName namespaceName,
+        List<TypeParameter> typeLevelParams,
+        List<Type> positionalParams,
+        StructuredType returnType,
+        Visibility visibility
+    ) {
+        return new ConstructorType(
+            namespaceName,
+            Optional.of(typeLevelParams),
+            positionalParams,
+            returnType,
+            visibility
+        );
+    }
+
+    public static ConstructorType constructorType(
+        NamespaceName namespaceName,
         List<Type> positionalParams,
         StructuredType returnType
     ) {

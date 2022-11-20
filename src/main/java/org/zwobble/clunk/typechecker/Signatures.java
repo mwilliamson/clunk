@@ -18,6 +18,9 @@ public class Signatures {
                 return new SignatureGenericMethod(methodType);
             }
         } else if (type instanceof TypeLevelValueType typeLevelValueType && typeLevelValueType.value() instanceof RecordType recordType) {
+            if (recordType.isPrivate() && !recordType.namespaceName().equals(context.namespaceName())) {
+                throw new NotVisibleError("The constructor for " + recordType.describe() + " is not visible from other namespaces", source);
+            }
             var positionalParams = context.fieldsOf(recordType).stream()
                 .map(field -> (Type)field.type().value())
                 .toList();

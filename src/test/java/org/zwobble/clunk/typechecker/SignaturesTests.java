@@ -84,6 +84,45 @@ public class SignaturesTests {
     }
 
     @Test
+    public void whenRecordConstructorIsPublicThenConstructorCanBeCalledFromAnyNamespace() {
+        var recordType = Types.recordType(NamespaceName.fromParts("example"), "A", Visibility.PUBLIC);
+        var context = TypeCheckerContext.stub()
+            .addFields(recordType, List.of())
+            .enterNamespace(NamespaceName.fromParts("other"));
+
+        var result = Signatures.toSignature(Types.metaType(recordType), context, NullSource.INSTANCE);
+
+        assertThat(result, cast(SignatureConstructorRecord.class));
+    }
+
+    @Test
+    public void whenRecordConstructorIsPrivateThenConstructorCanBeCalledFromSameNamespace() {
+        var recordType = Types.recordType(NamespaceName.fromParts("example"), "A", Visibility.PRIVATE);
+        var context = TypeCheckerContext.stub()
+            .addFields(recordType, List.of())
+            .enterNamespace(NamespaceName.fromParts("example"));
+
+        var result = Signatures.toSignature(Types.metaType(recordType), context, NullSource.INSTANCE);
+
+        assertThat(result, cast(SignatureConstructorRecord.class));
+    }
+
+    @Test
+    public void whenRecordConstructorIsPrivateThenConstructorCannotBeCalledFromOtherNamespace() {
+        var recordType = Types.recordType(NamespaceName.fromParts("example"), "A", Visibility.PRIVATE);
+        var context = TypeCheckerContext.stub()
+            .addFields(recordType, List.of())
+            .enterNamespace(NamespaceName.fromParts("other"));
+
+        var result = assertThrows(
+            NotVisibleError.class,
+            () -> Signatures.toSignature(Types.metaType(recordType), context, NullSource.INSTANCE)
+        );
+
+        assertThat(result.getMessage(), equalTo("The constructor for example.A is not visible from other namespaces"));
+    }
+
+    @Test
     public void recordConstructorHasPositionalParamsMatchingFieldsAndReturnsSelf() {
         var recordType = Types.recordType(NamespaceName.fromParts("example"), "Id");
         var context = TypeCheckerContext.stub()

@@ -75,8 +75,16 @@ public class Types {
         return new MethodType(Optional.empty(), positionalParams, returnType);
     }
 
+    public static RecordType recordType(
+        NamespaceName namespaceName,
+        String name,
+        Visibility constructorVisibility
+    ) {
+        return new RecordType(namespaceName, name, constructorVisibility);
+    }
+
     public static RecordType recordType(NamespaceName namespaceName, String name) {
-        return new RecordType(namespaceName, name, Visibility.PUBLIC);
+        return recordType(namespaceName, name, Visibility.PUBLIC);
     }
 
     public static InterfaceType sealedInterfaceType(NamespaceName namespaceName, String name) {

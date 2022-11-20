@@ -10,4 +10,8 @@ public record RecordType(NamespaceName namespaceName, String name, Visibility co
     public StructuredType replace(TypeMap typeMap) {
         return this;
     }
+
+    public boolean isPrivate() {
+        return constructorVisibility == Visibility.PRIVATE;
+    }
 }

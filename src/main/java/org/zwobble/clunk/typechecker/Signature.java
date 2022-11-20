@@ -3,7 +3,6 @@ package org.zwobble.clunk.typechecker;
 import org.zwobble.clunk.types.*;
 
 import java.util.List;
-import java.util.Optional;
 
 sealed interface Signature permits SignatureNonGeneric, SignatureGeneric {
 }
@@ -43,13 +42,7 @@ record SignatureGenericMethod(MethodType type) implements SignatureGeneric {
         // there's no guarantee we won't accidentally call this in other cases.
         var typeMap = TypeMap.from(type.typeLevelParams().orElseThrow(), typeArgs);
 
-        return new MethodType(
-            Optional.empty(),
-            type.positionalParams().stream()
-                .map(param -> param.replace(typeMap))
-                .toList(),
-            type.returnType().replace(typeMap)
-        );
+        return type.withoutTypeParams().replace(typeMap);
     }
 }
 

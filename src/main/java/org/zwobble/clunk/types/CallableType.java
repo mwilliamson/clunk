@@ -7,4 +7,6 @@ public interface CallableType extends Type {
     Optional<List<TypeParameter>> typeLevelParams();
     List<Type> positionalParams();
     Type returnType();
+
+    CallableType withoutTypeParams();
 }

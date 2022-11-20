@@ -16,6 +16,11 @@ public record StaticFunctionType(
     }
 
     @Override
+    public CallableType withoutTypeParams() {
+        return this;
+    }
+
+    @Override
     public String describe() {
         var paramsString = positionalParams.stream()
             .map(param -> param.describe())

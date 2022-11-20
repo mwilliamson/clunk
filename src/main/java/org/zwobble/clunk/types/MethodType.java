@@ -34,4 +34,13 @@ public record MethodType(
             returnType.replace(typeMap)
         );
     }
+
+    @Override
+    public CallableType withoutTypeParams() {
+        if (typeLevelParams.isEmpty()) {
+            return this;
+        } else {
+            return new MethodType(Optional.empty(), positionalParams, returnType);
+        }
+    }
 }

@@ -31,6 +31,7 @@ public class SignaturesTests {
     @Test
     public void nonGenericCallableHasNonGenericSignature() {
         var methodType = new MethodType(
+            NamespaceName.fromParts("example"),
             Optional.empty(),
             List.of(Types.INT),
             Types.INT
@@ -48,8 +49,10 @@ public class SignaturesTests {
 
     @Test
     public void genericCallableHasGenericSignature() {
-        var typeParameter = TypeParameter.function(NamespaceName.fromParts(), "X", "f", "A");
+        var namespaceName = NamespaceName.fromParts("example");
+        var typeParameter = TypeParameter.function(namespaceName, "X", "f", "A");
         var methodType = new MethodType(
+            namespaceName,
             Optional.of(List.of(typeParameter)),
             List.of(Types.INT),
             Types.INT

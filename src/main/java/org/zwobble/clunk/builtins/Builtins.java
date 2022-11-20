@@ -52,19 +52,21 @@ public class Builtins {
             Map.entry("flatMap", listFlatMapType()),
             // TODO: should be a property?
             Map.entry("get", Types.methodType(
+                NamespaceName.fromParts(),
                 List.of(Types.INT),
                 Types.LIST_CONSTRUCTOR.params().get(0)
             )),
             // TODO: should be a property?
             Map.entry("length", Types.methodType(
+                NamespaceName.fromParts(),
                 List.of(),
                 Types.INT
             ))
         ))
         .addConstructorType(Types.STRING_BUILDER, List.of())
         .addMemberTypes(Types.STRING_BUILDER, Map.ofEntries(
-            Map.entry("append", Types.methodType(List.of(Types.STRING), Types.UNIT)),
-            Map.entry("build", Types.methodType(List.of(), Types.STRING))
+            Map.entry("append", Types.methodType(NamespaceName.fromParts(), List.of(Types.STRING), Types.UNIT)),
+            Map.entry("build", Types.methodType(NamespaceName.fromParts(), List.of(), Types.STRING))
         ));
 
     private static MethodType listFlatMapType() {
@@ -76,6 +78,7 @@ public class Builtins {
         );
 
         return Types.methodType(
+            NamespaceName.fromParts(),
             List.of(typeParameterResult),
             List.of(
                 Types.functionType(

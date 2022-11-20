@@ -13,6 +13,7 @@ public class MethodTypeTests {
     @Test
     public void describeIncludesArgsAndReturnType() {
         var type = new MethodType(
+            NamespaceName.fromParts(),
             Optional.empty(),
             List.of(Types.BOOL, Types.STRING),
             Types.INT
@@ -26,6 +27,7 @@ public class MethodTypeTests {
     @Test
     public void describeIncludesTypeLevelArgs() {
         var type = new MethodType(
+            NamespaceName.fromParts(),
             Optional.of(List.of(
                 TypeParameter.function(NamespaceName.fromParts(), "T", "f", "A"),
                 TypeParameter.function(NamespaceName.fromParts(), "T", "f", "B")
@@ -43,6 +45,7 @@ public class MethodTypeTests {
     public void replaceReplacesPositionalParamTypes() {
         var typeParameter = TypeParameter.covariant(NamespaceName.fromParts(), "X", "T");
         var type = new MethodType(
+            NamespaceName.fromParts(),
             Optional.empty(),
             List.of(typeParameter),
             Types.INT
@@ -54,6 +57,7 @@ public class MethodTypeTests {
         var result = type.replace(typeMap);
 
         assertThat(result, equalTo(new MethodType(
+            NamespaceName.fromParts(),
             Optional.empty(),
             List.of(Types.STRING),
             Types.INT
@@ -64,6 +68,7 @@ public class MethodTypeTests {
     public void replaceReplacesReturnType() {
         var typeParameter = TypeParameter.covariant(NamespaceName.fromParts(), "X", "T");
         var type = new MethodType(
+            NamespaceName.fromParts(),
             Optional.empty(),
             List.of(Types.INT),
             typeParameter
@@ -75,6 +80,7 @@ public class MethodTypeTests {
         var result = type.replace(typeMap);
 
         assertThat(result, equalTo(new MethodType(
+            NamespaceName.fromParts(),
             Optional.empty(),
             List.of(Types.INT),
             Types.STRING

@@ -154,6 +154,7 @@ public record TypeCheckerContext(
 
     public TypeCheckerContext addConstructorType(RecordType type, List<Type> constructorArgs) {
         var constructorType = new MethodType(
+            type.namespaceName(),
             Optional.empty(),
             constructorArgs,
             type

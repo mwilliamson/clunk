@@ -67,12 +67,12 @@ public class Types {
         return new InterfaceType(namespaceName, name);
     }
 
-    public static MethodType methodType(List<TypeParameter> typeLevelParams, List<Type> positionalParams, Type returnType) {
-        return new MethodType(Optional.of(typeLevelParams), positionalParams, returnType);
+    public static MethodType methodType(NamespaceName namespaceName, List<TypeParameter> typeLevelParams, List<Type> positionalParams, Type returnType) {
+        return new MethodType(namespaceName, Optional.of(typeLevelParams), positionalParams, returnType);
     }
 
-    public static MethodType methodType(List<Type> positionalParams, Type returnType) {
-        return new MethodType(Optional.empty(), positionalParams, returnType);
+    public static MethodType methodType(NamespaceName namespaceName, List<Type> positionalParams, Type returnType) {
+        return new MethodType(namespaceName, Optional.empty(), positionalParams, returnType);
     }
 
     public static RecordType recordType(

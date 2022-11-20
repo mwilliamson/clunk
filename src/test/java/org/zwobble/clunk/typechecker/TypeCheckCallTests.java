@@ -24,10 +24,11 @@ public class TypeCheckCallTests {
             ),
             List.of(Untyped.intLiteral(123))
         );
-        var recordType = Types.recordType(NamespaceName.fromParts("example"), "X");
+        var namespaceName = NamespaceName.fromParts("example");
+        var recordType = Types.recordType(namespaceName, "X");
         var context = TypeCheckerContext.stub()
             .addLocal("x", recordType, NullSource.INSTANCE)
-            .addMemberTypes(recordType, Map.of("y", Types.methodType(List.of(Types.INT), Types.INT)));
+            .addMemberTypes(recordType, Map.of("y", Types.methodType(namespaceName, List.of(Types.INT), Types.INT)));
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 
@@ -52,7 +53,7 @@ public class TypeCheckCallTests {
         var namespaceName = NamespaceName.fromParts("example");
         var recordType = Types.recordType(namespaceName, "X");
         var typeParameter = TypeParameter.function(namespaceName, "X", "f", "T");
-        var methodType = Types.methodType(List.of(typeParameter), List.of(typeParameter), typeParameter);
+        var methodType = Types.methodType(namespaceName, List.of(typeParameter), List.of(typeParameter), typeParameter);
         var context = TypeCheckerContext.stub()
             .addLocal("x", recordType, NullSource.INSTANCE)
             .addMemberTypes(recordType, Map.of("y", methodType));
@@ -181,10 +182,11 @@ public class TypeCheckCallTests {
             List.of(Untyped.typeLevelReference("String")),
             List.of()
         );
-        var recordType = Types.recordType(NamespaceName.fromParts("example"), "X");
+        var namespaceName = NamespaceName.fromParts("example");
+        var recordType = Types.recordType(namespaceName, "X");
         var context = TypeCheckerContext.stub()
             .addLocal("x", recordType, NullSource.INSTANCE)
-            .addMemberTypes(recordType, Map.of("y", Types.methodType(List.of(), Types.INT)));
+            .addMemberTypes(recordType, Map.of("y", Types.methodType(namespaceName, List.of(), Types.INT)));
 
         assertThrows(
             CannotPassTypeLevelArgsToNonGenericValueError.class,
@@ -204,7 +206,7 @@ public class TypeCheckCallTests {
         var namespaceName = NamespaceName.fromParts("example");
         var recordType = Types.recordType(namespaceName, "X");
         var typeParameter = TypeParameter.function(namespaceName, "X", "f", "T");
-        var methodType = Types.methodType(List.of(typeParameter), List.of(typeParameter), typeParameter);
+        var methodType = Types.methodType(namespaceName, List.of(typeParameter), List.of(typeParameter), typeParameter);
         var context = TypeCheckerContext.stub()
             .addLocal("x", recordType, NullSource.INSTANCE)
             .addMemberTypes(recordType, Map.of("y", methodType));
@@ -230,6 +232,7 @@ public class TypeCheckCallTests {
         var typeParameter1 = TypeParameter.function(namespaceName, "X", "f", "T1");
         var typeParameter2 = TypeParameter.function(namespaceName, "X", "f", "T2");
         var methodType = Types.methodType(
+            namespaceName,
             List.of(typeParameter1, typeParameter2),
             List.of(typeParameter1, typeParameter2),
             typeParameter1
@@ -260,7 +263,7 @@ public class TypeCheckCallTests {
         var namespaceName = NamespaceName.fromParts("example");
         var recordType = Types.recordType(namespaceName, "X");
         var typeParameter = TypeParameter.function(namespaceName, "X", "f", "T");
-        var methodType = Types.methodType(List.of(typeParameter), List.of(typeParameter), typeParameter);
+        var methodType = Types.methodType(namespaceName, List.of(typeParameter), List.of(typeParameter), typeParameter);
         var context = TypeCheckerContext.stub()
             .addLocal("x", recordType, NullSource.INSTANCE)
             .addMemberTypes(recordType, Map.of("y", methodType));

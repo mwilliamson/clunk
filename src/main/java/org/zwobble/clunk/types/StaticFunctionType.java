@@ -1,6 +1,7 @@
 package org.zwobble.clunk.types;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public record StaticFunctionType(
@@ -9,6 +10,11 @@ public record StaticFunctionType(
     List<Type> positionalParams,
     Type returnType
 ) implements CallableType {
+    @Override
+    public Optional<List<TypeParameter>> typeLevelParams() {
+        return Optional.empty();
+    }
+
     @Override
     public String describe() {
         var paramsString = positionalParams.stream()

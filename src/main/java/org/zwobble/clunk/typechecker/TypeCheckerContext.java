@@ -2,7 +2,6 @@ package org.zwobble.clunk.typechecker;
 
 import org.pcollections.PMap;
 import org.pcollections.PStack;
-import org.zwobble.clunk.ast.typed.TypedRecordFieldNode;
 import org.zwobble.clunk.builtins.Builtins;
 import org.zwobble.clunk.errors.CompilerError;
 import org.zwobble.clunk.errors.SourceError;
@@ -18,7 +17,7 @@ import java.util.stream.Collectors;
 public record TypeCheckerContext(
     PStack<StackFrame> stack,
     PMap<NamespaceName, NamespaceType> namespaceTypes,
-    PMap<RecordType, List<TypedRecordFieldNode>> typeToFields,
+    PMap<RecordType, MethodType> constructorTypes,
     PMap<Type, Map<String, Type>> memberTypes,
     SubtypeRelations subtypeRelations
 ) {
@@ -69,7 +68,7 @@ public record TypeCheckerContext(
         return new TypeCheckerContext(
             stack.plus(stackFrame),
             namespaceTypes,
-            typeToFields,
+            constructorTypes,
             memberTypes,
             subtypeRelations
         );
@@ -79,7 +78,7 @@ public record TypeCheckerContext(
         return new TypeCheckerContext(
             stack.minus(0),
             namespaceTypes,
-            typeToFields,
+            constructorTypes,
             memberTypes,
             subtypeRelations
         );
@@ -97,7 +96,7 @@ public record TypeCheckerContext(
         return new TypeCheckerContext(
             stack,
             this.namespaceTypes.plus(namespaceType.name(), namespaceType),
-            typeToFields,
+            constructorTypes,
             memberTypes.plus(namespaceType, namespaceType.fields()),
             subtypeRelations
         );
@@ -123,7 +122,7 @@ public record TypeCheckerContext(
         return new TypeCheckerContext(
             P.stackUpdateTop(stack, frame -> frame.addVariable(name, variable, source)),
             namespaceTypes,
-            typeToFields,
+            constructorTypes,
             memberTypes,
             subtypeRelations
         );
@@ -133,7 +132,7 @@ public record TypeCheckerContext(
         return new TypeCheckerContext(
             P.stackUpdateTop(stack, frame -> frame.updateVariable(name, variable, source)),
             namespaceTypes,
-            typeToFields,
+            constructorTypes,
             memberTypes,
             subtypeRelations
         );
@@ -153,8 +152,13 @@ public record TypeCheckerContext(
         return lookup(name, source).type();
     }
 
-    public TypeCheckerContext addFields(RecordType type, List<TypedRecordFieldNode> fields) {
-        var typeToFields = this.typeToFields.plus(type, fields);
+    public TypeCheckerContext addConstructorType(RecordType type, List<Type> constructorArgs) {
+        var constructorType = new MethodType(
+            Optional.empty(),
+            constructorArgs,
+            type
+        );
+        var typeToFields = this.constructorTypes.plus(type, constructorType);
         return new TypeCheckerContext(stack, namespaceTypes, typeToFields, memberTypes, subtypeRelations);
     }
 
@@ -162,7 +166,7 @@ public record TypeCheckerContext(
         return new TypeCheckerContext(
             stack,
             namespaceTypes,
-            typeToFields,
+            constructorTypes,
             this.memberTypes.plus(type, memberTypes),
             subtypeRelations
         );
@@ -170,16 +174,17 @@ public record TypeCheckerContext(
 
     public TypeCheckerContext addSubtypeRelation(RecordType subtype, InterfaceType superType) {
         var subtypeRelations = this.subtypeRelations.addExtendedType(subtype, superType);
-        return new TypeCheckerContext(stack, namespaceTypes, typeToFields, memberTypes, subtypeRelations);
+        return new TypeCheckerContext(stack, namespaceTypes, constructorTypes, memberTypes, subtypeRelations);
     }
 
     public TypeCheckerContext addSealedInterfaceCase(InterfaceType sealedInterfaceType, RecordType caseType) {
         var subtypeRelations = this.subtypeRelations.addSealedInterfaceCase(sealedInterfaceType, caseType);
-        return new TypeCheckerContext(stack, namespaceTypes, typeToFields, memberTypes, subtypeRelations);
+        return new TypeCheckerContext(stack, namespaceTypes, constructorTypes, memberTypes, subtypeRelations);
     }
 
-    public List<TypedRecordFieldNode> fieldsOf(RecordType type) {
-        return typeToFields.get(type);
+    public MethodType constructorType(RecordType type) {
+        // TODO: handle no constructor
+        return constructorTypes.get(type);
     }
 
     public Optional<Type> memberType(Type type, String memberName) {

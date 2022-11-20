@@ -92,7 +92,7 @@ public class TypeCheckRecordTests {
     }
 
     @Test
-    public void fieldsForTypeAreUpdated() {
+    public void constructorForTypeIsSet() {
         var untypedNode = UntypedRecordNode.builder("Example")
             .addField(Untyped.recordField("x", Untyped.typeLevelReference("String")))
             .build();
@@ -101,11 +101,11 @@ public class TypeCheckRecordTests {
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
         var typedNode = (TypedRecordNode) result.typedNode();
-        assertThat(result.context().fieldsOf(typedNode.type()), contains(
-            allOf(
-                has("name", equalTo("x")),
-                has("type", isTypedTypeLevelExpressionNode(StringType.INSTANCE))
-            )
+        assertThat(result.context().constructorType(typedNode.type()), cast(
+            MethodType.class,
+            has("typeLevelParams", equalTo(Optional.empty())),
+            has("positionalParams", contains(equalTo(Types.STRING))),
+            has("returnType", equalTo(typedNode.type()))
         ));
     }
 

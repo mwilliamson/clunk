@@ -960,7 +960,10 @@ public class TypeChecker {
                             memberTypesBuilder.addAll(typeCheckDeclarationResult.memberTypes(), typeCheckDeclarationResult.source());
                         }
 
-                        var newContext = context.addFields(recordType, typedRecordFieldNodes);
+                        var constructorArgs = typedRecordFieldNodes.stream()
+                            .map(fieldNode -> typedTypeLevelExpressionToType(fieldNode.type()))
+                            .toList();
+                        var newContext = context.addConstructorType(recordType, constructorArgs);
                         var memberTypes = memberTypesBuilder.build();
                         memberTypesBox.set(memberTypes);
                         newContext = newContext.addMemberTypes(recordType, memberTypes);

@@ -1,10 +1,12 @@
 package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
-import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.sources.NullSource;
-import org.zwobble.clunk.types.*;
+import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.TypeConstructor;
+import org.zwobble.clunk.types.TypeParameter;
+import org.zwobble.clunk.types.Types;
 
 import java.util.List;
 import java.util.Map;
@@ -39,7 +41,7 @@ public class TypeCheckMemberAccessTests {
         var recordType = Types.recordType(NamespaceName.fromParts("example"), "Id");
         var context = TypeCheckerContext.stub()
             .addLocal("id", recordType, NullSource.INSTANCE)
-            .addFields(recordType, List.of(Typed.recordField("value", Typed.typeLevelInt())));
+            .addConstructorType(recordType, List.of(Types.INT));
 
         var result = assertThrows(UnknownMemberError.class, () -> TypeChecker.typeCheckExpression(untypedNode, context));
 

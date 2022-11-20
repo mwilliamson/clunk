@@ -18,10 +18,16 @@ sealed interface SignatureGeneric extends Signature {
     Type typeArgs(List<Type> typeArgs);
 }
 
-record SignatureConstructorRecord(List<Type> positionalParams, RecordType type) implements SignatureNonGeneric {
+// TODO: merge into method/static function signatures?
+record SignatureConstructorRecord(MethodType constructorType) implements SignatureNonGeneric {
+    @Override
+    public List<Type> positionalParams() {
+        return constructorType.positionalParams();
+    }
+
     @Override
     public Type returnType() {
-        return type;
+        return constructorType.returnType();
     }
 }
 

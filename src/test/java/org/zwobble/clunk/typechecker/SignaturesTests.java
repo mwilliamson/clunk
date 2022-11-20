@@ -1,7 +1,6 @@
 package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
-import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.*;
 
@@ -9,7 +8,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.matchers.CastMatcher.cast;
 import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
@@ -87,7 +87,7 @@ public class SignaturesTests {
     public void whenRecordConstructorIsPublicThenConstructorCanBeCalledFromAnyNamespace() {
         var recordType = Types.recordType(NamespaceName.fromParts("example"), "A", Visibility.PUBLIC);
         var context = TypeCheckerContext.stub()
-            .addFields(recordType, List.of())
+            .addConstructorType(recordType, List.of())
             .enterNamespace(NamespaceName.fromParts("other"));
 
         var result = Signatures.toSignature(Types.metaType(recordType), context, NullSource.INSTANCE);
@@ -99,7 +99,7 @@ public class SignaturesTests {
     public void whenRecordConstructorIsPrivateThenConstructorCanBeCalledFromSameNamespace() {
         var recordType = Types.recordType(NamespaceName.fromParts("example"), "A", Visibility.PRIVATE);
         var context = TypeCheckerContext.stub()
-            .addFields(recordType, List.of())
+            .addConstructorType(recordType, List.of())
             .enterNamespace(NamespaceName.fromParts("example"));
 
         var result = Signatures.toSignature(Types.metaType(recordType), context, NullSource.INSTANCE);
@@ -111,7 +111,7 @@ public class SignaturesTests {
     public void whenRecordConstructorIsPrivateThenConstructorCannotBeCalledFromOtherNamespace() {
         var recordType = Types.recordType(NamespaceName.fromParts("example"), "A", Visibility.PRIVATE);
         var context = TypeCheckerContext.stub()
-            .addFields(recordType, List.of())
+            .addConstructorType(recordType, List.of())
             .enterNamespace(NamespaceName.fromParts("other"));
 
         var result = assertThrows(
@@ -126,7 +126,7 @@ public class SignaturesTests {
     public void recordConstructorHasPositionalParamsMatchingFieldsAndReturnsSelf() {
         var recordType = Types.recordType(NamespaceName.fromParts("example"), "Id");
         var context = TypeCheckerContext.stub()
-            .addFields(recordType, List.of(Typed.recordField("value", Typed.typeLevelInt())));
+            .addConstructorType(recordType, List.of(Types.INT));
 
         var result = Signatures.toSignature(Types.metaType(recordType), context, NullSource.INSTANCE);
 

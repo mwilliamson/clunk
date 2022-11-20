@@ -20,10 +20,7 @@ public class Signatures {
             if (recordType.isPrivate() && !recordType.namespaceName().equals(context.namespaceName())) {
                 throw new NotVisibleError("The constructor for " + recordType.describe() + " is not visible from other namespaces", source);
             }
-            var positionalParams = context.fieldsOf(recordType).stream()
-                .map(field -> (Type)field.type().value())
-                .toList();
-            return new SignatureConstructorRecord(positionalParams, recordType);
+            return new SignatureConstructorRecord(context.constructorType(recordType));
         } else {
             throw new UnexpectedTypeError(Types.CALLABLE, type, source);
         }

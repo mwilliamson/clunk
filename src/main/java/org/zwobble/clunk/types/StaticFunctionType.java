@@ -8,7 +8,8 @@ public record StaticFunctionType(
     NamespaceName namespaceName,
     String functionName,
     List<Type> positionalParams,
-    Type returnType
+    Type returnType,
+    Visibility visibility
 ) implements CallableType {
     @Override
     public Optional<List<TypeParameter>> typeLevelParams() {

@@ -7,7 +7,6 @@ import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.ast.typed.TypedTestNode;
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser;
 import org.zwobble.clunk.types.NamespaceName;
-import org.zwobble.clunk.types.StaticFunctionType;
 import org.zwobble.clunk.types.SubtypeRelations;
 import org.zwobble.clunk.types.Types;
 
@@ -89,7 +88,7 @@ public class TypeScriptCodeGeneratorNamespaceTests {
             .builder(NamespaceName.fromParts("example", "project"))
             .addImport(Typed.import_(
                 NamespaceName.fromParts("stdlib", "assertions"), "assertThat",
-                new StaticFunctionType(
+                Types.staticFunctionType(
                     NamespaceName.fromParts("stdlib", "assertions"),
                     "assertThat",
                     List.of(),
@@ -106,13 +105,13 @@ public class TypeScriptCodeGeneratorNamespaceTests {
 
     @Test
     public void macrosGenerateImports() {
-        var assertThatType = new StaticFunctionType(
+        var assertThatType = Types.staticFunctionType(
             NamespaceName.fromParts("stdlib", "assertions"),
             "assertThat",
             List.of(),
             Types.UNIT
         );
-        var equalToType = new StaticFunctionType(
+        var equalToType = Types.staticFunctionType(
             NamespaceName.fromParts("stdlib", "matchers"),
             "equalTo",
             List.of(),

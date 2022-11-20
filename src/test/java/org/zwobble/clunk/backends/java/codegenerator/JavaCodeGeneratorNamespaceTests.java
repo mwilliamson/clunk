@@ -143,13 +143,13 @@ public class JavaCodeGeneratorNamespaceTests {
 
     @Test
     public void macrosInTestsGenerateImports() {
-        var assertThatType = new StaticFunctionType(
+        var assertThatType = Types.staticFunctionType(
             NamespaceName.fromParts("stdlib", "assertions"),
             "assertThat",
             List.of(),
             Types.UNIT
         );
-        var equalToType = new StaticFunctionType(
+        var equalToType = Types.staticFunctionType(
             NamespaceName.fromParts("stdlib", "matchers"),
             "equalTo",
             List.of(),

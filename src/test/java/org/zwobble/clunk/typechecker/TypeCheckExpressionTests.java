@@ -5,7 +5,6 @@ import org.zwobble.clunk.ast.typed.TypedStaticMethodToFunctionNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.NamespaceName;
-import org.zwobble.clunk.types.StaticFunctionType;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
@@ -20,7 +19,7 @@ public class TypeCheckExpressionTests {
     @Test
     public void whenExpectedTypeIsFunctionAndActualTypeIsStaticFunctionThenStaticFunctionIsConverted() {
         var untypedNode = Untyped.reference("f");
-        var methodType = new StaticFunctionType(
+        var methodType = Types.staticFunctionType(
             NamespaceName.fromParts(),
             "f",
             List.of(Types.STRING),

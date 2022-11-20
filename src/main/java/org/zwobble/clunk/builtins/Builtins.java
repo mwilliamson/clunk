@@ -36,7 +36,8 @@ public class Builtins {
                 NamespaceName.fromParts("stdlib", "assertions"),
                 "assertThat",
                 List.of(Types.OBJECT, Types.UNIT),
-                Types.UNIT
+                Types.UNIT,
+                Visibility.PUBLIC
             ))
         )))
         .updateNamespaceType(new NamespaceType(NamespaceName.fromParts("stdlib", "matchers"), Map.ofEntries(
@@ -44,7 +45,8 @@ public class Builtins {
                 NamespaceName.fromParts("stdlib", "matchers"),
                 "equalTo",
                 List.of(Types.OBJECT),
-                Types.UNIT
+                Types.UNIT,
+                Visibility.PUBLIC
             ))
         )))
         .withBuiltins(Builtins.ENVIRONMENT)
@@ -63,7 +65,7 @@ public class Builtins {
                 Types.INT
             ))
         ))
-        .addConstructorType(Types.STRING_BUILDER, List.of())
+        .addConstructorType(Types.STRING_BUILDER, List.of(), Visibility.PUBLIC)
         .addMemberTypes(Types.STRING_BUILDER, Map.ofEntries(
             Map.entry("append", Types.methodType(NamespaceName.fromParts(), List.of(Types.STRING), Types.UNIT)),
             Map.entry("build", Types.methodType(NamespaceName.fromParts(), List.of(), Types.STRING))

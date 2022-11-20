@@ -152,12 +152,13 @@ public record TypeCheckerContext(
         return lookup(name, source).type();
     }
 
-    public TypeCheckerContext addConstructorType(RecordType type, List<Type> constructorArgs) {
+    public TypeCheckerContext addConstructorType(RecordType type, List<Type> constructorArgs, Visibility visibility) {
         var constructorType = new MethodType(
             type.namespaceName(),
             Optional.empty(),
             constructorArgs,
-            type
+            type,
+            visibility
         );
         var typeToFields = this.constructorTypes.plus(type, constructorType);
         return new TypeCheckerContext(stack, namespaceTypes, typeToFields, memberTypes, subtypeRelations);

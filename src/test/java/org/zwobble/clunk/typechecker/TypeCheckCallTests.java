@@ -71,7 +71,7 @@ public class TypeCheckCallTests {
             Untyped.reference("abs"),
             List.of(Untyped.intLiteral(123))
         );
-        var functionType = new StaticFunctionType(
+        var functionType = Types.staticFunctionType(
             NamespaceName.fromParts("Stdlib", "Math"),
             "abs",
             List.of(Types.INT),
@@ -98,7 +98,7 @@ public class TypeCheckCallTests {
         var recordType = Types.recordType(NamespaceName.fromParts("example"), "Id");
         var context = TypeCheckerContext.stub()
             .addLocal("Id", Types.metaType(recordType), NullSource.INSTANCE)
-            .addConstructorType(recordType, List.of(Types.INT));
+            .addConstructorType(recordType, List.of(Types.INT), Visibility.PUBLIC);
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 
@@ -115,7 +115,7 @@ public class TypeCheckCallTests {
             Untyped.reference("abs"),
             List.of(Untyped.string("123"))
         );
-        var functionType = new StaticFunctionType(
+        var functionType = Types.staticFunctionType(
             NamespaceName.fromParts("Stdlib", "Math"),
             "abs",
             List.of(Types.INT),
@@ -136,7 +136,7 @@ public class TypeCheckCallTests {
             Untyped.reference("abs"),
             List.of()
         );
-        var functionType = new StaticFunctionType(
+        var functionType = Types.staticFunctionType(
             NamespaceName.fromParts("Stdlib", "Math"),
             "abs",
             List.of(Types.INT),
@@ -157,7 +157,7 @@ public class TypeCheckCallTests {
             Untyped.reference("abs"),
             List.of(Untyped.intLiteral(123), Untyped.intLiteral(456))
         );
-        var functionType = new StaticFunctionType(
+        var functionType = Types.staticFunctionType(
             NamespaceName.fromParts("Stdlib", "Math"),
             "abs",
             List.of(Types.INT),

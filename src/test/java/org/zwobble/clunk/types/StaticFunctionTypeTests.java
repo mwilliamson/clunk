@@ -10,7 +10,7 @@ import static org.hamcrest.Matchers.equalTo;
 public class StaticFunctionTypeTests {
     @Test
     public void describeIncludesArgsAndReturnType() {
-        var type = new StaticFunctionType(
+        var type = Types.staticFunctionType(
             NamespaceName.fromParts("A", "B"),
             "f",
             List.of(Types.BOOL, Types.STRING),

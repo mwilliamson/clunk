@@ -127,7 +127,8 @@ public class TypeCheckFunctionTests {
                 NamespaceName.fromParts("a", "b"),
                 "f",
                 List.of(Types.INT),
-                Types.STRING
+                Types.STRING,
+                Visibility.PUBLIC
             ))
         );
     }

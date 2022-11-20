@@ -8,7 +8,8 @@ public record MethodType(
     NamespaceName namespaceName,
     Optional<List<TypeParameter>> typeLevelParams,
     List<Type> positionalParams,
-    Type returnType
+    Type returnType,
+    Visibility visibility
 ) implements CallableType {
     @Override
     public String describe() {
@@ -33,7 +34,8 @@ public record MethodType(
             positionalParams.stream()
                 .map(param -> param.replace(typeMap))
                 .toList(),
-            returnType.replace(typeMap)
+            returnType.replace(typeMap),
+            visibility
         );
     }
 
@@ -42,7 +44,7 @@ public record MethodType(
         if (typeLevelParams.isEmpty()) {
             return this;
         } else {
-            return new MethodType(namespaceName, Optional.empty(), positionalParams, returnType);
+            return new MethodType(namespaceName, Optional.empty(), positionalParams, returnType, visibility);
         }
     }
 }

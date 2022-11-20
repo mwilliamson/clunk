@@ -393,7 +393,8 @@ public class TypeChecker {
                             context.namespaceName(),
                             node.name(),
                             paramTypes,
-                            returnType
+                            returnType,
+                            Visibility.PUBLIC
                         );
                         functionTypeBox.set(type);
                         return context.addLocal(node.name(), type, node.source());
@@ -966,7 +967,7 @@ public class TypeChecker {
                         var constructorArgs = typedRecordFieldNodes.stream()
                             .map(fieldNode -> typedTypeLevelExpressionToType(fieldNode.type()))
                             .toList();
-                        var newContext = context.addConstructorType(recordType, constructorArgs);
+                        var newContext = context.addConstructorType(recordType, constructorArgs, Visibility.PUBLIC);
                         var memberTypes = memberTypesBuilder.build();
                         memberTypesBox.set(memberTypes);
                         newContext = newContext.addMemberTypes(recordType, memberTypes);

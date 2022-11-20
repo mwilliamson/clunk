@@ -8,6 +8,7 @@ public sealed interface CallableType extends Type permits MethodType, StaticFunc
     Optional<List<TypeParameter>> typeLevelParams();
     List<Type> positionalParams();
     Type returnType();
+    Visibility visibility();
 
     CallableType withoutTypeParams();
 }

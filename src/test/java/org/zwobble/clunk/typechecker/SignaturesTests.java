@@ -2,10 +2,12 @@ package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.sources.NullSource;
-import org.zwobble.clunk.types.*;
+import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.TypeParameter;
+import org.zwobble.clunk.types.Types;
+import org.zwobble.clunk.types.Visibility;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
@@ -30,9 +32,8 @@ public class SignaturesTests {
 
     @Test
     public void nonGenericCallableHasNonGenericSignature() {
-        var methodType = new MethodType(
+        var methodType = Types.methodType(
             NamespaceName.fromParts("example"),
-            Optional.empty(),
             List.of(Types.INT),
             Types.INT
         );
@@ -51,9 +52,9 @@ public class SignaturesTests {
     public void genericCallableHasGenericSignature() {
         var namespaceName = NamespaceName.fromParts("example");
         var typeParameter = TypeParameter.function(namespaceName, "X", "f", "A");
-        var methodType = new MethodType(
+        var methodType = Types.methodType(
             namespaceName,
-            Optional.of(List.of(typeParameter)),
+            List.of(typeParameter),
             List.of(Types.INT),
             Types.INT
         );
@@ -71,7 +72,7 @@ public class SignaturesTests {
     public void whenRecordConstructorIsPublicThenConstructorCanBeCalledFromAnyNamespace() {
         var recordType = Types.recordType(NamespaceName.fromParts("example"), "A", Visibility.PUBLIC);
         var context = TypeCheckerContext.stub()
-            .addConstructorType(recordType, List.of())
+            .addConstructorType(recordType, List.of(), Visibility.PUBLIC)
             .enterNamespace(NamespaceName.fromParts("other"));
 
         var result = Signatures.toSignature(Types.metaType(recordType), context, NullSource.INSTANCE);
@@ -83,7 +84,7 @@ public class SignaturesTests {
     public void whenRecordConstructorIsPrivateThenConstructorCanBeCalledFromSameNamespace() {
         var recordType = Types.recordType(NamespaceName.fromParts("example"), "A", Visibility.PRIVATE);
         var context = TypeCheckerContext.stub()
-            .addConstructorType(recordType, List.of())
+            .addConstructorType(recordType, List.of(), Visibility.PRIVATE)
             .enterNamespace(NamespaceName.fromParts("example"));
 
         var result = Signatures.toSignature(Types.metaType(recordType), context, NullSource.INSTANCE);
@@ -95,7 +96,7 @@ public class SignaturesTests {
     public void whenRecordConstructorIsPrivateThenConstructorCannotBeCalledFromOtherNamespace() {
         var recordType = Types.recordType(NamespaceName.fromParts("example"), "A", Visibility.PRIVATE);
         var context = TypeCheckerContext.stub()
-            .addConstructorType(recordType, List.of())
+            .addConstructorType(recordType, List.of(), Visibility.PRIVATE)
             .enterNamespace(NamespaceName.fromParts("other"));
 
         var result = assertThrows(
@@ -110,7 +111,7 @@ public class SignaturesTests {
     public void recordConstructorHasPositionalParamsMatchingFieldsAndReturnsSelf() {
         var recordType = Types.recordType(NamespaceName.fromParts("example"), "Id");
         var context = TypeCheckerContext.stub()
-            .addConstructorType(recordType, List.of(Types.INT));
+            .addConstructorType(recordType, List.of(Types.INT), Visibility.PRIVATE);
 
         var result = Signatures.toSignature(Types.metaType(recordType), context, NullSource.INSTANCE);
 

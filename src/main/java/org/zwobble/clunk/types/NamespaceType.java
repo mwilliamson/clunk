@@ -30,7 +30,7 @@ public record NamespaceType(NamespaceName name, Map<String, Type> fields) implem
 
         public Builder addFunction(String functionName, List<Type> positionalArgs, Type returnType) {
             var fields = new ArrayList<>(this.fields);
-            var type = new StaticFunctionType(name, functionName, positionalArgs, returnType);
+            var type = new StaticFunctionType(name, functionName, positionalArgs, returnType, Visibility.PUBLIC);
             fields.add(Map.entry(functionName, type));
             return new Builder(name, fields);
         }

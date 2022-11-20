@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.backends.python.serialiser.PythonSerialiserTesting;
 import org.zwobble.clunk.types.NamespaceName;
-import org.zwobble.clunk.types.StaticFunctionType;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
@@ -19,7 +18,7 @@ public class PythonCodeGeneratorCallTests {
         var node = Typed.callStatic(
             Typed.localReference(
                 "abs",
-                new StaticFunctionType(
+                Types.staticFunctionType(
                     NamespaceName.fromParts("Math"),
                     "abs",
                     List.of(Types.INT),

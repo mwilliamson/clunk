@@ -15,10 +15,11 @@ public class Signatures {
                 return new SignatureGenericCallable(callableType);
             }
         } else if (type instanceof TypeLevelValueType typeLevelValueType && typeLevelValueType.value() instanceof RecordType recordType) {
-            if (recordType.isPrivate() && !recordType.namespaceName().equals(context.namespaceName())) {
+            var constructorType = context.constructorType(recordType);
+            if (constructorType.visibility().equals(Visibility.PRIVATE) && !recordType.namespaceName().equals(context.namespaceName())) {
                 throw new NotVisibleError("The constructor for " + recordType.describe() + " is not visible from other namespaces", source);
             }
-            return new SignatureConstructorRecord(context.constructorType(recordType));
+            return new SignatureConstructorRecord(constructorType);
         } else {
             throw new UnexpectedTypeError(Types.CALLABLE, type, source);
         }

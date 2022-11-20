@@ -70,7 +70,7 @@ public class SignaturesTests {
 
     @Test
     public void whenRecordConstructorIsPublicThenConstructorCanBeCalledFromAnyNamespace() {
-        var recordType = Types.recordType(NamespaceName.fromParts("example"), "A", Visibility.PUBLIC);
+        var recordType = Types.recordType(NamespaceName.fromParts("example"), "A");
         var context = TypeCheckerContext.stub()
             .addConstructorType(recordType, List.of(), Visibility.PUBLIC)
             .enterNamespace(NamespaceName.fromParts("other"));
@@ -82,7 +82,7 @@ public class SignaturesTests {
 
     @Test
     public void whenRecordConstructorIsPrivateThenConstructorCanBeCalledFromSameNamespace() {
-        var recordType = Types.recordType(NamespaceName.fromParts("example"), "A", Visibility.PRIVATE);
+        var recordType = Types.recordType(NamespaceName.fromParts("example"), "A");
         var context = TypeCheckerContext.stub()
             .addConstructorType(recordType, List.of(), Visibility.PRIVATE)
             .enterNamespace(NamespaceName.fromParts("example"));
@@ -94,7 +94,7 @@ public class SignaturesTests {
 
     @Test
     public void whenRecordConstructorIsPrivateThenConstructorCannotBeCalledFromOtherNamespace() {
-        var recordType = Types.recordType(NamespaceName.fromParts("example"), "A", Visibility.PRIVATE);
+        var recordType = Types.recordType(NamespaceName.fromParts("example"), "A");
         var context = TypeCheckerContext.stub()
             .addConstructorType(recordType, List.of(), Visibility.PRIVATE)
             .enterNamespace(NamespaceName.fromParts("other"));
@@ -111,7 +111,7 @@ public class SignaturesTests {
     public void recordConstructorHasPositionalParamsMatchingFieldsAndReturnsSelf() {
         var recordType = Types.recordType(NamespaceName.fromParts("example"), "Id");
         var context = TypeCheckerContext.stub()
-            .addConstructorType(recordType, List.of(Types.INT), Visibility.PRIVATE);
+            .addConstructorType(recordType, List.of(Types.INT), Visibility.PUBLIC);
 
         var result = Signatures.toSignature(Types.metaType(recordType), context, NullSource.INSTANCE);
 

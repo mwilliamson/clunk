@@ -35,8 +35,7 @@ public class TypeCheckRecordTests {
                 has("value", cast(
                     RecordType.class,
                     has("namespaceName", equalTo(NamespaceName.fromParts("a", "b"))),
-                    has("name", equalTo("Example")),
-                    has("constructorVisibility", equalTo(Visibility.PUBLIC))
+                    has("name", equalTo("Example"))
                 ))
             )
         );

@@ -14,25 +14,25 @@ public class Types {
     public static final Type NOTHING = NothingType.INSTANCE;
     public static final Type OBJECT = ObjectType.INSTANCE;
     public static final Type STRING = StringType.INSTANCE;
-    public static final RecordType STRING_BUILDER = recordType(NamespaceName.fromParts(), "StringBuilder", Visibility.PUBLIC);
+    public static final RecordType STRING_BUILDER = recordType(NamespaceName.fromParts(), "StringBuilder");
     public static final Type UNIT = UnitType.INSTANCE;
 
     public static final TypeConstructor LIST_CONSTRUCTOR = new TypeConstructor(
         "List",
         List.of(TypeParameter.covariant(NamespaceName.fromParts(), "List", "T")),
-        Types.recordType(NamespaceName.fromParts(), "List", Visibility.PRIVATE)
+        Types.recordType(NamespaceName.fromParts(), "List")
     );
 
     public static final TypeConstructor MUTABLE_LIST_CONSTRUCTOR = new TypeConstructor(
         "MutableList",
         List.of(TypeParameter.invariant(NamespaceName.fromParts(), "MutableList", "T")),
-        Types.recordType(NamespaceName.fromParts(), "MutableList", Visibility.PUBLIC)
+        Types.recordType(NamespaceName.fromParts(), "MutableList")
     );
 
     public static final TypeConstructor OPTION_CONSTRUCTOR = new TypeConstructor(
         "Option",
         List.of(TypeParameter.covariant(NamespaceName.fromParts(), "Option", "T")),
-        Types.recordType(NamespaceName.fromParts(), "Option", Visibility.PRIVATE)
+        Types.recordType(NamespaceName.fromParts(), "Option")
     );
 
     public static Type list(Type elementType) {
@@ -84,16 +84,8 @@ public class Types {
         return new StaticFunctionType(namespaceName, functionName, positionalParams, returnType, Visibility.PUBLIC);
     }
 
-    public static RecordType recordType(
-        NamespaceName namespaceName,
-        String name,
-        Visibility constructorVisibility
-    ) {
-        return new RecordType(namespaceName, name, constructorVisibility);
-    }
-
     public static RecordType recordType(NamespaceName namespaceName, String name) {
-        return recordType(namespaceName, name, Visibility.PUBLIC);
+        return new RecordType(namespaceName, name);
     }
 
     public static InterfaceType sealedInterfaceType(NamespaceName namespaceName, String name) {

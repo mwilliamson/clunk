@@ -5,7 +5,6 @@ import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.RecordType;
-import org.zwobble.clunk.types.Visibility;
 import org.zwobble.clunk.util.P;
 
 import java.util.List;
@@ -30,7 +29,7 @@ public record TypedRecordNode(
     public static Builder builder(NamespaceName namespaceName, String name) {
         return new Builder(
             name,
-            new RecordType(namespaceName, name, Visibility.PUBLIC),
+            new RecordType(namespaceName, name),
             P.vector(),
             P.vector(),
             P.vector(),

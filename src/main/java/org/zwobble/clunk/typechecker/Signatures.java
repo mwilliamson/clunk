@@ -16,10 +16,13 @@ public class Signatures {
             }
         } else if (type instanceof TypeLevelValueType typeLevelValueType && typeLevelValueType.value() instanceof RecordType recordType) {
             var constructorType = context.constructorType(recordType);
-            if (constructorType.visibility().equals(Visibility.PRIVATE) && !recordType.namespaceName().equals(context.namespaceName())) {
+            if (constructorType.isEmpty()) {
+                throw new NoConstructorError(recordType, source);
+            }
+            if (constructorType.get().visibility().equals(Visibility.PRIVATE) && !recordType.namespaceName().equals(context.namespaceName())) {
                 throw new NotVisibleError("The constructor for " + recordType.describe() + " is not visible from other namespaces", source);
             }
-            return new SignatureConstructorRecord(constructorType);
+            return new SignatureConstructorRecord(constructorType.get());
         } else {
             throw new UnexpectedTypeError(Types.CALLABLE, type, source);
         }

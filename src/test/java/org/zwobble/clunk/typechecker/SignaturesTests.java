@@ -69,6 +69,20 @@ public class SignaturesTests {
     }
 
     @Test
+    public void whenRecordHasNoConstructorThenErrorIsThrown() {
+        var recordType = Types.recordType(NamespaceName.fromParts("example"), "A");
+        var context = TypeCheckerContext.stub()
+            .enterNamespace(NamespaceName.fromParts("other"));
+
+        var result = assertThrows(
+            NoConstructorError.class,
+            () -> Signatures.toSignature(Types.metaType(recordType), context, NullSource.INSTANCE)
+        );
+
+        assertThat(result.getMessage(), equalTo("example.A does not have a constructor"));
+    }
+
+    @Test
     public void whenRecordConstructorIsPublicThenConstructorCanBeCalledFromAnyNamespace() {
         var recordType = Types.recordType(NamespaceName.fromParts("example"), "A");
         var context = TypeCheckerContext.stub()

@@ -184,9 +184,8 @@ public record TypeCheckerContext(
         return new TypeCheckerContext(stack, namespaceTypes, constructorTypes, memberTypes, subtypeRelations);
     }
 
-    public MethodType constructorType(RecordType type) {
-        // TODO: handle no constructor
-        return constructorTypes.get(type);
+    public Optional<MethodType> constructorType(RecordType type) {
+        return Optional.ofNullable(constructorTypes.get(type));
     }
 
     public Optional<Type> memberType(Type type, String memberName) {

@@ -4,6 +4,7 @@ import org.zwobble.clunk.typechecker.TypeCheckerContext;
 import org.zwobble.clunk.typechecker.Variable;
 import org.zwobble.clunk.types.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -78,9 +79,19 @@ public class Builtins {
             Types.MUTABLE_LIST_CONSTRUCTOR.genericType()
         ));
 
+        var mutableListTypeParam = Types.MUTABLE_LIST_CONSTRUCTOR.params().get(0);
+        var mutableListListSupertype = Types.list(mutableListTypeParam);
+        var mutableListMemberTypes = new HashMap<>(context.memberTypes(mutableListListSupertype));
+        mutableListMemberTypes.put("add", Types.methodType(
+            Types.MUTABLE_LIST_CONSTRUCTOR,
+            List.of(mutableListTypeParam),
+            Types.UNIT
+        ));
+        context = context.addMemberTypes(Types.MUTABLE_LIST_CONSTRUCTOR.genericType(), mutableListMemberTypes);
+
         context = context.addSubtypeRelation(
             Types.MUTABLE_LIST_CONSTRUCTOR.genericType(),
-            Types.list(Types.MUTABLE_LIST_CONSTRUCTOR.param(0))
+            mutableListListSupertype
         );
 
         context = context.addConstructorType(Types.constructorType(List.of(), Types.STRING_BUILDER));
@@ -89,7 +100,7 @@ public class Builtins {
             Map.entry("append", Types.methodType(Types.STRING_BUILDER, List.of(Types.STRING), Types.UNIT)),
             Map.entry("build", Types.methodType(Types.STRING_BUILDER, List.of(), Types.STRING))
         ));
-        
+
         return context;
     }
 

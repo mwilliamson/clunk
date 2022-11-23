@@ -7,6 +7,7 @@ import org.zwobble.clunk.errors.CompilerError;
 import org.zwobble.clunk.errors.SourceError;
 import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.types.*;
+import org.zwobble.clunk.util.Maps;
 import org.zwobble.clunk.util.P;
 
 import java.util.List;
@@ -191,6 +192,22 @@ public record TypeCheckerContext(
         } else {
             return Optional.empty();
         }
+    }
+
+    public Map<String, Type> memberTypes(Type type) {
+        // TODO: test this!
+        if (type instanceof ConstructedType constructedType) {
+            var genericType = constructedType.constructor().genericType();
+            var typeMap = constructedType.typeMap();
+            return Maps.mapValues(memberTypes(genericType), memberType -> memberType.replace(typeMap));
+        }
+
+        var typeMembers = memberTypes.get(type);
+        if (typeMembers == null) {
+            return Map.ofEntries();
+        }
+
+        return typeMembers;
     }
 
     public Optional<Type> memberType(Type type, String memberName) {

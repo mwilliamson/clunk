@@ -35,7 +35,7 @@ public class Types {
         Types.recordType(NamespaceName.fromParts(), "Option")
     );
 
-    public static Type list(Type elementType) {
+    public static StructuredType list(Type elementType) {
         return construct(LIST_CONSTRUCTOR, List.of(elementType));
     }
 

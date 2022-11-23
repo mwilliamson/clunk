@@ -167,7 +167,7 @@ public record TypeCheckerContext(
         );
     }
 
-    public TypeCheckerContext addSubtypeRelation(RecordType subtype, InterfaceType superType) {
+    public TypeCheckerContext addSubtypeRelation(StructuredType subtype, StructuredType superType) {
         var subtypeRelations = this.subtypeRelations.addExtendedType(subtype, superType);
         return new TypeCheckerContext(stack, namespaceTypes, constructorTypes, memberTypes, subtypeRelations);
     }

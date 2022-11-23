@@ -26,7 +26,7 @@ public class Types {
     public static final TypeConstructor MUTABLE_LIST_CONSTRUCTOR = new TypeConstructor(
         "MutableList",
         List.of(TypeParameter.invariant(NamespaceName.fromParts(), "MutableList", "T")),
-        Types.interfaceType(NamespaceName.fromParts(), "MutableList")
+        Types.recordType(NamespaceName.fromParts(), "MutableList")
     );
 
     public static final TypeConstructor OPTION_CONSTRUCTOR = new TypeConstructor(

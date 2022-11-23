@@ -64,7 +64,12 @@ public class Builtins {
             Map.entry("get", Types.methodType(
                 Types.LIST_CONSTRUCTOR,
                 List.of(Types.INT),
-                Types.LIST_CONSTRUCTOR.params().get(0)
+                Types.LIST_CONSTRUCTOR.param(0)
+            )),
+            Map.entry("last", Types.methodType(
+                Types.LIST_CONSTRUCTOR,
+                List.of(),
+                Types.LIST_CONSTRUCTOR.param(0)
             )),
             // TODO: should be a property?
             Map.entry("length", Types.methodType(

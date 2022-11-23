@@ -18,19 +18,16 @@ public class Types {
     public static final Type UNIT = UnitType.INSTANCE;
 
     public static final TypeConstructor LIST_CONSTRUCTOR = new TypeConstructor(
-        "List",
         List.of(TypeParameter.covariant(NamespaceName.fromParts(), "List", "T")),
         Types.interfaceType(NamespaceName.fromParts(), "List")
     );
 
     public static final TypeConstructor MUTABLE_LIST_CONSTRUCTOR = new TypeConstructor(
-        "MutableList",
         List.of(TypeParameter.invariant(NamespaceName.fromParts(), "MutableList", "T")),
         Types.recordType(NamespaceName.fromParts(), "MutableList")
     );
 
     public static final TypeConstructor OPTION_CONSTRUCTOR = new TypeConstructor(
-        "Option",
         List.of(TypeParameter.covariant(NamespaceName.fromParts(), "Option", "T")),
         Types.recordType(NamespaceName.fromParts(), "Option")
     );

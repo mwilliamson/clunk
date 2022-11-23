@@ -61,7 +61,6 @@ public class SubtypeRelationsTests {
     public void whenExtendedTypesHaveNoTypeParametersThenCanFindExtendedTypesOfConstructedType() {
         var recordTypeGeneric = Types.recordType(NAMESPACE_NAME, "Record");
         var recordTypeConstructor = new TypeConstructor(
-            "Record",
             List.of(TypeParameter.invariant(NAMESPACE_NAME, "Record", "T")),
             recordTypeGeneric
         );
@@ -78,13 +77,11 @@ public class SubtypeRelationsTests {
         var recordTypeGeneric = Types.recordType(NAMESPACE_NAME, "Record");
         var recordTypeParameter = TypeParameter.invariant(NAMESPACE_NAME, "Record", "T");
         var recordTypeConstructor = new TypeConstructor(
-            "Record",
             List.of(recordTypeParameter),
             recordTypeGeneric
         );
         var interfaceTypeGeneric = Types.interfaceType(NAMESPACE_NAME, "Interface");
         var interfaceTypeConstructor = new TypeConstructor(
-            "Interface",
             List.of(TypeParameter.invariant(NAMESPACE_NAME, "Interface", "U")),
             interfaceTypeGeneric
         );

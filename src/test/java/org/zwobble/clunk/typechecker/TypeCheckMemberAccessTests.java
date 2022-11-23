@@ -51,7 +51,6 @@ public class TypeCheckMemberAccessTests {
         var genericType = Types.recordType(NamespaceName.fromParts("example"), "List");
         var typeParameter = TypeParameter.covariant(NamespaceName.fromParts("example"), "List", "T");
         var typeConstructor = new TypeConstructor(
-            "List",
             List.of(typeParameter),
             genericType
         );

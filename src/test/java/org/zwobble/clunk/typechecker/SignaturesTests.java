@@ -143,7 +143,7 @@ public class SignaturesTests {
         var typeParameter = TypeParameter.invariant(namespaceName, "Id", "T");
         var recordType = Types.recordType(namespaceName, "Id");
         var constructorType = Types.constructorType(namespaceName, List.of(typeParameter), recordType, Visibility.PUBLIC);
-        var typeConstructor = new TypeConstructor("Id", List.of(typeParameter), recordType);
+        var typeConstructor = new TypeConstructor(List.of(typeParameter), recordType);
         var context = TypeCheckerContext.stub()
             .addConstructorType(constructorType);
 

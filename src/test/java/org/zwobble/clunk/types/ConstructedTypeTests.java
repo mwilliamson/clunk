@@ -13,7 +13,6 @@ public class ConstructedTypeTests {
     public void describeIncludesConstructorAndArgs() {
         var namespaceName = NamespaceName.fromParts();
         var constructor = new TypeConstructor(
-            "Map",
             List.of(TypeParameter.invariant(namespaceName, "Map", "K"), TypeParameter.invariant(namespaceName, "Map", "V")),
             Types.recordType(namespaceName, "Map")
         );
@@ -28,7 +27,6 @@ public class ConstructedTypeTests {
     public void replaceReplacesArgs() {
         var namespaceName = NamespaceName.fromParts();
         var constructor = new TypeConstructor(
-            "Map",
             List.of(TypeParameter.invariant(namespaceName, "Map", "K"), TypeParameter.invariant(namespaceName, "Map", "V")),
             Types.recordType(namespaceName, "Map")
         );

@@ -30,8 +30,12 @@ public class Builtins {
         ));
 
     // TODO: proper typing for builtin modules
-    public static final TypeCheckerContext TYPE_CHECKER_CONTEXT = TypeCheckerContext.EMPTY
-        .updateNamespaceType(new NamespaceType(NamespaceName.fromParts("stdlib", "assertions"), Map.ofEntries(
+    public static final TypeCheckerContext TYPE_CHECKER_CONTEXT = createContext();
+
+    private static TypeCheckerContext createContext() {
+        var context = TypeCheckerContext.EMPTY;
+
+        context = context.updateNamespaceType(new NamespaceType(NamespaceName.fromParts("stdlib", "assertions"), Map.ofEntries(
             Map.entry("assertThat", new StaticFunctionType(
                 NamespaceName.fromParts("stdlib", "assertions"),
                 "assertThat",
@@ -39,8 +43,9 @@ public class Builtins {
                 Types.UNIT,
                 Visibility.PUBLIC
             ))
-        )))
-        .updateNamespaceType(new NamespaceType(NamespaceName.fromParts("stdlib", "matchers"), Map.ofEntries(
+        )));
+
+        context = context.updateNamespaceType(new NamespaceType(NamespaceName.fromParts("stdlib", "matchers"), Map.ofEntries(
             Map.entry("equalTo", new StaticFunctionType(
                 NamespaceName.fromParts("stdlib", "matchers"),
                 "equalTo",
@@ -48,9 +53,11 @@ public class Builtins {
                 Types.UNIT,
                 Visibility.PUBLIC
             ))
-        )))
-        .withBuiltins(Builtins.ENVIRONMENT)
-        .addMemberTypes(Types.LIST_CONSTRUCTOR.genericType(), Map.ofEntries(
+        )));
+
+        context = context.withBuiltins(Builtins.ENVIRONMENT);
+
+        context = context.addMemberTypes(Types.LIST_CONSTRUCTOR.genericType(), Map.ofEntries(
             Map.entry("flatMap", listFlatMapType()),
             // TODO: should be a property?
             Map.entry("get", Types.methodType(
@@ -64,21 +71,28 @@ public class Builtins {
                 List.of(),
                 Types.INT
             ))
-        ))
-        .addConstructorType(Types.constructorType(
+        ));
+
+        context = context.addConstructorType(Types.constructorType(
             NamespaceName.fromParts(),
             List.of(),
             Types.MUTABLE_LIST_CONSTRUCTOR.genericType()
-        ))
-        .addSubtypeRelation(
+        ));
+
+        context = context.addSubtypeRelation(
             Types.MUTABLE_LIST_CONSTRUCTOR.genericType(),
             Types.list(Types.MUTABLE_LIST_CONSTRUCTOR.params().get(0))
-        )
-        .addConstructorType(Types.constructorType(NamespaceName.fromParts(), List.of(), Types.STRING_BUILDER))
-        .addMemberTypes(Types.STRING_BUILDER, Map.ofEntries(
+        );
+
+        context = context.addConstructorType(Types.constructorType(NamespaceName.fromParts(), List.of(), Types.STRING_BUILDER));
+
+        context = context.addMemberTypes(Types.STRING_BUILDER, Map.ofEntries(
             Map.entry("append", Types.methodType(NamespaceName.fromParts(), List.of(Types.STRING), Types.UNIT)),
             Map.entry("build", Types.methodType(NamespaceName.fromParts(), List.of(), Types.STRING))
         ));
+        
+        return context;
+    }
 
     private static MethodType listFlatMapType() {
         var typeParameterResult = TypeParameter.function(

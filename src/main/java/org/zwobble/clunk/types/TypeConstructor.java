@@ -18,4 +18,8 @@ public record TypeConstructor(
     public String describe() {
         return name();
     }
+
+    public TypeParameter param(int index) {
+        return params.get(index);
+    }
 }

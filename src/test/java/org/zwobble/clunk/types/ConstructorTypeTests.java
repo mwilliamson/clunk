@@ -12,7 +12,6 @@ public class ConstructorTypeTests {
     @Test
     public void describeIncludesArgsAndReturnType() {
         var type = Types.constructorType(
-            NamespaceName.fromParts(),
             List.of(Types.BOOL, Types.STRING),
             Types.recordType(NamespaceName.fromParts(), "X")
         );
@@ -25,7 +24,6 @@ public class ConstructorTypeTests {
     @Test
     public void describeIncludesTypeLevelArgs() {
         var type = Types.constructorType(
-            NamespaceName.fromParts(),
             List.of(
                 TypeParameter.function(NamespaceName.fromParts(), "T", "f", "A"),
                 TypeParameter.function(NamespaceName.fromParts(), "T", "f", "B")
@@ -43,7 +41,6 @@ public class ConstructorTypeTests {
     public void replaceReplacesPositionalParamTypes() {
         var typeParameter = TypeParameter.covariant(NamespaceName.fromParts(), "X", "T");
         var type = Types.constructorType(
-            NamespaceName.fromParts(),
             List.of(typeParameter),
             Types.recordType(NamespaceName.fromParts(), "X")
         );
@@ -54,7 +51,6 @@ public class ConstructorTypeTests {
         var result = type.replace(typeMap);
 
         assertThat(result, equalTo(Types.constructorType(
-            NamespaceName.fromParts(),
             List.of(Types.STRING),
             Types.recordType(NamespaceName.fromParts(), "X")
         )));
@@ -64,7 +60,6 @@ public class ConstructorTypeTests {
     public void replaceReplacesReturnType() {
         var typeParameter = TypeParameter.covariant(NamespaceName.fromParts(), "X", "T");
         var type = Types.constructorType(
-            NamespaceName.fromParts(),
             List.of(Types.INT),
             Types.recordType(NamespaceName.fromParts(), "X")
         );
@@ -75,7 +70,6 @@ public class ConstructorTypeTests {
         var result = type.replace(typeMap);
 
         assertThat(result, equalTo(Types.constructorType(
-            NamespaceName.fromParts(),
             List.of(Types.INT),
             Types.recordType(NamespaceName.fromParts(), "X")
         )));

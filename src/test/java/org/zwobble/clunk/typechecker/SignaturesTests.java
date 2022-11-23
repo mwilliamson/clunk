@@ -84,7 +84,7 @@ public class SignaturesTests {
         var namespaceName = NamespaceName.fromParts("example");
         var recordType = Types.recordType(namespaceName, "A");
         var context = TypeCheckerContext.stub()
-            .addConstructorType(Types.constructorType(namespaceName, List.of(), recordType, Visibility.PUBLIC))
+            .addConstructorType(Types.constructorType(List.of(), recordType, Visibility.PUBLIC))
             .enterNamespace(NamespaceName.fromParts("other"));
 
         var result = Signatures.toSignature(Types.metaType(recordType), context, NullSource.INSTANCE);
@@ -97,7 +97,7 @@ public class SignaturesTests {
         var namespaceName = NamespaceName.fromParts("example");
         var recordType = Types.recordType(namespaceName, "A");
         var context = TypeCheckerContext.stub()
-            .addConstructorType(Types.constructorType(namespaceName, List.of(), recordType, Visibility.PRIVATE))
+            .addConstructorType(Types.constructorType(List.of(), recordType, Visibility.PRIVATE))
             .enterNamespace(namespaceName);
 
         var result = Signatures.toSignature(Types.metaType(recordType), context, NullSource.INSTANCE);
@@ -110,7 +110,7 @@ public class SignaturesTests {
         var namespaceName = NamespaceName.fromParts("example");
         var recordType = Types.recordType(namespaceName, "A");
         var context = TypeCheckerContext.stub()
-            .addConstructorType(Types.constructorType(namespaceName, List.of(), recordType, Visibility.PRIVATE))
+            .addConstructorType(Types.constructorType(List.of(), recordType, Visibility.PRIVATE))
             .enterNamespace(NamespaceName.fromParts("other"));
 
         var result = assertThrows(
@@ -126,7 +126,7 @@ public class SignaturesTests {
         var namespaceName = NamespaceName.fromParts("example");
         var recordType = Types.recordType(namespaceName, "Id");
         var context = TypeCheckerContext.stub()
-            .addConstructorType(Types.constructorType(namespaceName, List.of(Types.INT), recordType, Visibility.PUBLIC));
+            .addConstructorType(Types.constructorType(List.of(Types.INT), recordType, Visibility.PUBLIC));
 
         var result = Signatures.toSignature(Types.metaType(recordType), context, NullSource.INSTANCE);
 
@@ -142,7 +142,7 @@ public class SignaturesTests {
         var namespaceName = NamespaceName.fromParts("example");
         var typeParameter = TypeParameter.invariant(namespaceName, "Id", "T");
         var recordType = Types.recordType(namespaceName, "Id");
-        var constructorType = Types.constructorType(namespaceName, List.of(typeParameter), recordType, Visibility.PUBLIC);
+        var constructorType = Types.constructorType(List.of(typeParameter), recordType, Visibility.PUBLIC);
         var typeConstructor = new TypeConstructor(List.of(typeParameter), recordType);
         var context = TypeCheckerContext.stub()
             .addConstructorType(constructorType);
@@ -152,7 +152,6 @@ public class SignaturesTests {
         assertThat(result, cast(
             SignatureGeneric.class,
             has("type", equalTo(Types.constructorType(
-                namespaceName,
                 List.of(typeParameter),
                 List.of(typeParameter),
                 Types.construct(typeConstructor, List.of(typeParameter)),

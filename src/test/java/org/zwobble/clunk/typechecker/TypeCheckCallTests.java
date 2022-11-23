@@ -99,7 +99,7 @@ public class TypeCheckCallTests {
         var recordType = Types.recordType(namespaceName, "Id");
         var context = TypeCheckerContext.stub()
             .addLocal("Id", Types.metaType(recordType), NullSource.INSTANCE)
-            .addConstructorType(Types.constructorType(namespaceName, List.of(Types.INT), recordType, Visibility.PUBLIC));
+            .addConstructorType(Types.constructorType(List.of(Types.INT), recordType, Visibility.PUBLIC));
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 

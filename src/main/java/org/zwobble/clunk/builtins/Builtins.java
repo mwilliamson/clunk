@@ -14,9 +14,9 @@ public class Builtins {
     private static final Map<String, Type> ENVIRONMENT_TYPES = Map.ofEntries(
         Map.entry("Bool", metaType(Types.BOOL)),
         Map.entry("Int", metaType(Types.INT)),
-        Map.entry("List", Types.typeConstructorType(Types.LIST_CONSTRUCTOR)),
-        Map.entry("MutableList", Types.typeConstructorType(Types.MUTABLE_LIST_CONSTRUCTOR)),
-        Map.entry("Option", Types.typeConstructorType(Types.OPTION_CONSTRUCTOR)),
+        Map.entry(Types.LIST_CONSTRUCTOR.name(), Types.typeConstructorType(Types.LIST_CONSTRUCTOR)),
+        Map.entry(Types.MUTABLE_LIST_CONSTRUCTOR.name(), Types.typeConstructorType(Types.MUTABLE_LIST_CONSTRUCTOR)),
+        Map.entry(Types.OPTION_CONSTRUCTOR.name(), Types.typeConstructorType(Types.OPTION_CONSTRUCTOR)),
         Map.entry("String", metaType(Types.STRING)),
         Map.entry("StringBuilder", Types.metaType(Types.STRING_BUILDER)),
         Map.entry("Unit", metaType(Types.UNIT))
@@ -61,34 +61,33 @@ public class Builtins {
             Map.entry("flatMap", listFlatMapType()),
             // TODO: should be a property?
             Map.entry("get", Types.methodType(
-                NamespaceName.fromParts(),
+                Types.LIST_CONSTRUCTOR,
                 List.of(Types.INT),
                 Types.LIST_CONSTRUCTOR.params().get(0)
             )),
             // TODO: should be a property?
             Map.entry("length", Types.methodType(
-                NamespaceName.fromParts(),
+                Types.LIST_CONSTRUCTOR,
                 List.of(),
                 Types.INT
             ))
         ));
 
         context = context.addConstructorType(Types.constructorType(
-            NamespaceName.fromParts(),
             List.of(),
             Types.MUTABLE_LIST_CONSTRUCTOR.genericType()
         ));
 
         context = context.addSubtypeRelation(
             Types.MUTABLE_LIST_CONSTRUCTOR.genericType(),
-            Types.list(Types.MUTABLE_LIST_CONSTRUCTOR.params().get(0))
+            Types.list(Types.MUTABLE_LIST_CONSTRUCTOR.param(0))
         );
 
-        context = context.addConstructorType(Types.constructorType(NamespaceName.fromParts(), List.of(), Types.STRING_BUILDER));
+        context = context.addConstructorType(Types.constructorType(List.of(), Types.STRING_BUILDER));
 
         context = context.addMemberTypes(Types.STRING_BUILDER, Map.ofEntries(
-            Map.entry("append", Types.methodType(NamespaceName.fromParts(), List.of(Types.STRING), Types.UNIT)),
-            Map.entry("build", Types.methodType(NamespaceName.fromParts(), List.of(), Types.STRING))
+            Map.entry("append", Types.methodType(Types.STRING_BUILDER, List.of(Types.STRING), Types.UNIT)),
+            Map.entry("build", Types.methodType(Types.STRING_BUILDER, List.of(), Types.STRING))
         ));
         
         return context;
@@ -96,18 +95,17 @@ public class Builtins {
 
     private static MethodType listFlatMapType() {
         var typeParameterResult = TypeParameter.function(
-            NamespaceName.fromParts(),
-            "List",
+            Types.LIST_CONSTRUCTOR,
             "flatMap",
             "R"
         );
 
         return Types.methodType(
-            NamespaceName.fromParts(),
+            Types.LIST_CONSTRUCTOR,
             List.of(typeParameterResult),
             List.of(
                 Types.functionType(
-                    List.of(Types.LIST_CONSTRUCTOR.params().get(0)),
+                    List.of(Types.LIST_CONSTRUCTOR.param(0)),
                     Types.list(typeParameterResult)
                 )
             ),

@@ -65,13 +65,12 @@ public class Types {
     }
 
     public static ConstructorType constructorType(
-        NamespaceName namespaceName,
         List<TypeParameter> typeLevelParams,
         List<Type> positionalParams,
         StructuredType returnType
     ) {
         return new ConstructorType(
-            namespaceName,
+            returnType.namespaceName(),
             Optional.of(typeLevelParams),
             positionalParams,
             returnType,
@@ -80,14 +79,13 @@ public class Types {
     }
 
     public static ConstructorType constructorType(
-        NamespaceName namespaceName,
         List<TypeParameter> typeLevelParams,
         List<Type> positionalParams,
         StructuredType returnType,
         Visibility visibility
     ) {
         return new ConstructorType(
-            namespaceName,
+            returnType.namespaceName(),
             Optional.of(typeLevelParams),
             positionalParams,
             returnType,
@@ -96,12 +94,11 @@ public class Types {
     }
 
     public static ConstructorType constructorType(
-        NamespaceName namespaceName,
         List<Type> positionalParams,
         StructuredType returnType
     ) {
         return new ConstructorType(
-            namespaceName,
+            returnType.namespaceName(),
             Optional.empty(),
             positionalParams,
             returnType,
@@ -110,13 +107,12 @@ public class Types {
     }
 
     public static ConstructorType constructorType(
-        NamespaceName namespaceName,
         List<Type> positionalParams,
         StructuredType returnType,
         Visibility visibility
     ) {
         return new ConstructorType(
-            namespaceName,
+            returnType.namespaceName(),
             Optional.empty(),
             positionalParams,
             returnType,
@@ -128,8 +124,24 @@ public class Types {
         return new MethodType(namespaceName, Optional.of(typeLevelParams), positionalParams, returnType, Visibility.PUBLIC);
     }
 
+    public static MethodType methodType(StructuredType type, List<TypeParameter> typeLevelParams, List<Type> positionalParams, Type returnType) {
+        return methodType(type.namespaceName(), typeLevelParams, positionalParams, returnType);
+    }
+
+    public static MethodType methodType(TypeConstructor typeConstructor, List<TypeParameter> typeLevelParams, List<Type> positionalParams, Type returnType) {
+        return methodType(typeConstructor.genericType(), typeLevelParams, positionalParams, returnType);
+    }
+
     public static MethodType methodType(NamespaceName namespaceName, List<Type> positionalParams, Type returnType) {
         return new MethodType(namespaceName, Optional.empty(), positionalParams, returnType, Visibility.PUBLIC);
+    }
+
+    public static MethodType methodType(StructuredType type, List<Type> positionalParams, Type returnType) {
+        return methodType(type.namespaceName(), positionalParams, returnType);
+    }
+
+    public static MethodType methodType(TypeConstructor typeConstructor, List<Type> positionalParams, Type returnType) {
+        return methodType(typeConstructor.genericType(), positionalParams, returnType);
     }
 
     public static StaticFunctionType staticFunctionType(

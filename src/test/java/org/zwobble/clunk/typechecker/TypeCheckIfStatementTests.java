@@ -3,6 +3,8 @@ package org.zwobble.clunk.typechecker;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.TypedIfStatementNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
+import org.zwobble.clunk.sources.NullSource;
+import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
@@ -134,5 +136,39 @@ public class TypeCheckIfStatementTests {
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
         assertThat(result.returnBehaviour(), equalTo(ReturnBehaviour.ALWAYS));
+    }
+
+    @Test
+    public void whenConditionIsInstanceOfCheckThenConditionalBodyHasNarrowedTypeForVariable() {
+        var namespaceName = NamespaceName.fromParts("example");
+        var interfaceType = Types.interfaceType(namespaceName, "Interface");
+        var recordType = Types.recordType(namespaceName, "Record");
+        var untypedNode = Untyped.ifStatement(
+            List.of(
+                Untyped.conditionalBranch(
+                    Untyped.instanceOf(
+                        Untyped.reference("x"),
+                        Untyped.typeLevelReference("Record")
+                    ),
+                    List.of(Untyped.returnStatement(Untyped.reference("x")))
+                )
+            ),
+            List.of(Untyped.returnStatement(Untyped.reference("x")))
+        );
+        var context = TypeCheckerContext.stub()
+            .addSealedInterfaceCase(interfaceType, recordType)
+            .enterFunction(Types.OBJECT)
+            .addLocal("x", interfaceType, NullSource.INSTANCE)
+            .addLocal("Record", Types.metaType(recordType), NullSource.INSTANCE);
+
+        var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
+
+        assertThat(result.value(), allOf(
+            isA(TypedIfStatementNode.class),
+            has("conditionalBranches", contains(
+                has("body", contains(isTypedReturnNode().withExpression(isTypedReferenceNode().withType(recordType))))
+            )),
+            has("elseBody", contains(isTypedReturnNode().withExpression(isTypedReferenceNode().withType(interfaceType))))
+        ));
     }
 }

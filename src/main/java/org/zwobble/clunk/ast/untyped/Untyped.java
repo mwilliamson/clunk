@@ -76,6 +76,12 @@ public class Untyped {
     }
 
     public static UntypedIfStatementNode ifStatement(
+        List<UntypedConditionalBranchNode> conditionalBranches
+    ) {
+        return ifStatement(conditionalBranches, List.of());
+    }
+
+    public static UntypedIfStatementNode ifStatement(
         List<UntypedConditionalBranchNode> conditionalBranches,
         List<UntypedFunctionStatementNode> elseBody
     ) {

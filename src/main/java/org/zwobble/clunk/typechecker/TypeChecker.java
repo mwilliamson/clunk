@@ -136,10 +136,18 @@ public class TypeChecker {
         TypeCheckerContext context
     ) {
         var typedConditionNode = typeCheckExpression(node.condition(), context);
-
         expectExpressionType(typedConditionNode, Types.BOOL);
 
-        var typeCheckBodyResults = typeCheckFunctionStatements(node.body(), context);
+        var bodyContext = context;
+        if (
+            typedConditionNode instanceof TypedInstanceOfNode typedInstanceOfNode
+            && typedInstanceOfNode.expression() instanceof TypedReferenceNode typedInstanceOfReferenceNode
+        ) {
+            var type = (Type) typedInstanceOfNode.typeExpression().value();
+            bodyContext = bodyContext.updateLocal(typedInstanceOfReferenceNode.name(), type, typedInstanceOfNode.source());
+        }
+
+        var typeCheckBodyResults = typeCheckFunctionStatements(node.body(), bodyContext);
 
         return typeCheckBodyResults.map(body -> new TypedConditionalBranchNode(
             typedConditionNode,

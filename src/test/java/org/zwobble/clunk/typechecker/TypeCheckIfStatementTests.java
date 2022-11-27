@@ -171,4 +171,48 @@ public class TypeCheckIfStatementTests {
             has("elseBody", contains(isTypedReturnNode().withExpression(isTypedReferenceNode().withType(interfaceType))))
         ));
     }
+
+    @Test
+    public void whenConditionIsNegatedInstanceOfCheckThenFollowingBranchesHaveNarrowedTypeForVariable() {
+        var namespaceName = NamespaceName.fromParts("example");
+        var interfaceType = Types.interfaceType(namespaceName, "Interface");
+        var recordType = Types.recordType(namespaceName, "Record");
+        var untypedNode = Untyped.ifStatement(
+            List.of(
+                Untyped.conditionalBranch(
+                    Untyped.boolFalse(),
+                    List.of(Untyped.returnStatement(Untyped.reference("x")))
+                ),
+                Untyped.conditionalBranch(
+                    Untyped.logicalNot(Untyped.instanceOf(
+                        Untyped.reference("x"),
+                        Untyped.typeLevelReference("Record")
+                    )),
+                    List.of(Untyped.returnStatement(Untyped.reference("x")))
+                ),
+                Untyped.conditionalBranch(
+                    Untyped.boolFalse(),
+                    List.of(Untyped.returnStatement(Untyped.reference("x")))
+                )
+            ),
+            List.of(Untyped.returnStatement(Untyped.reference("x")))
+        );
+        var context = TypeCheckerContext.stub()
+            .addSealedInterfaceCase(interfaceType, recordType)
+            .enterFunction(Types.OBJECT)
+            .addLocal("x", interfaceType, NullSource.INSTANCE)
+            .addLocal("Record", Types.metaType(recordType), NullSource.INSTANCE);
+
+        var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
+
+        assertThat(result.value(), allOf(
+            isA(TypedIfStatementNode.class),
+            has("conditionalBranches", contains(
+                has("body", contains(isTypedReturnNode().withExpression(isTypedReferenceNode().withType(interfaceType)))),
+                has("body", contains(isTypedReturnNode().withExpression(isTypedReferenceNode().withType(interfaceType)))),
+                has("body", contains(isTypedReturnNode().withExpression(isTypedReferenceNode().withType(recordType))))
+            )),
+            has("elseBody", contains(isTypedReturnNode().withExpression(isTypedReferenceNode().withType(recordType))))
+        ));
+    }
 }

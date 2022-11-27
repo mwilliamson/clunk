@@ -557,14 +557,25 @@ public class TypeChecker {
         var returnBehaviours = new ArrayList<ReturnBehaviour>();
         var returnType = Types.NOTHING;
 
+        var bodyContext = context;
+
         for (var untypedConditionalBranch : node.conditionalBranches()) {
-            var result = typeCheckConditionalBranch(untypedConditionalBranch, context);
+            var result = typeCheckConditionalBranch(untypedConditionalBranch, bodyContext);
             typedConditionalBranches.add(result.value());
             returnBehaviours.add(result.returnBehaviour());
             returnType = Types.unify(returnType, result.returnType());
+
+            if (
+                result.value().condition() instanceof TypedLogicalNotNode typedConditionNotNode &&
+                typedConditionNotNode.operand() instanceof TypedInstanceOfNode typedInstanceOfNode &&
+                typedInstanceOfNode.expression() instanceof TypedReferenceNode typedReferenceNode
+            ) {
+                var type = (Type) typedInstanceOfNode.typeExpression().value();
+                bodyContext = bodyContext.updateLocal(typedReferenceNode.name(), type, typedConditionNotNode.source());
+            }
         }
 
-        var typeCheckElseResult = typeCheckFunctionStatements(node.elseBody(), context);
+        var typeCheckElseResult = typeCheckFunctionStatements(node.elseBody(), bodyContext);
         returnBehaviours.add(typeCheckElseResult.returnBehaviour());
         returnType = Types.unify(returnType, typeCheckElseResult.returnType());
 

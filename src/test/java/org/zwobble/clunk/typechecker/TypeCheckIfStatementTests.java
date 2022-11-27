@@ -215,4 +215,68 @@ public class TypeCheckIfStatementTests {
             has("elseBody", contains(isTypedReturnNode().withExpression(isTypedReferenceNode().withType(recordType))))
         ));
     }
+
+    @Test
+    public void whenConditionIsNegatedInstanceOfCheckWithNonReturningBodyThenFollowingStatementsHaveUnchangedTypeForVariable() {
+        var namespaceName = NamespaceName.fromParts("example");
+        var interfaceType = Types.interfaceType(namespaceName, "Interface");
+        var recordType = Types.recordType(namespaceName, "Record");
+        var untypedNode = Untyped.ifStatement(
+            List.of(
+                Untyped.conditionalBranch(
+                    Untyped.logicalNot(Untyped.instanceOf(
+                        Untyped.reference("x"),
+                        Untyped.typeLevelReference("Record")
+                    )),
+                    List.of(
+                        Untyped.ifStatement(
+                            List.of(
+                                Untyped.conditionalBranch(
+                                    Untyped.reference("maybe"),
+                                    List.of(Untyped.returnStatement(Untyped.reference("x")))
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        );
+        var context = TypeCheckerContext.stub()
+            .addSealedInterfaceCase(interfaceType, recordType)
+            .enterFunction(Types.OBJECT)
+            .addLocal("x", interfaceType, NullSource.INSTANCE)
+            .addLocal("Record", Types.metaType(recordType), NullSource.INSTANCE)
+            .addLocal("maybe", Types.BOOL, NullSource.INSTANCE);
+
+        var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
+
+        assertThat(result.context().typeOf("x", NullSource.INSTANCE), equalTo(interfaceType));
+    }
+
+    @Test
+    public void whenConditionIsNegatedInstanceOfCheckWithReturningBodyThenFollowingStatementsHaveNarrowedTypeForVariable() {
+        var namespaceName = NamespaceName.fromParts("example");
+        var interfaceType = Types.interfaceType(namespaceName, "Interface");
+        var recordType = Types.recordType(namespaceName, "Record");
+        var untypedNode = Untyped.ifStatement(
+            List.of(
+                Untyped.conditionalBranch(
+                    Untyped.logicalNot(Untyped.instanceOf(
+                        Untyped.reference("x"),
+                        Untyped.typeLevelReference("Record")
+                    )),
+                    List.of(Untyped.returnStatement(Untyped.reference("x")))
+                )
+            )
+        );
+        var context = TypeCheckerContext.stub()
+            .addSealedInterfaceCase(interfaceType, recordType)
+            .enterFunction(Types.OBJECT)
+            .addLocal("x", interfaceType, NullSource.INSTANCE)
+            .addLocal("Record", Types.metaType(recordType), NullSource.INSTANCE);
+
+        var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
+
+        assertThat(result.context().typeOf("x", NullSource.INSTANCE), equalTo(recordType));
+    }
 }

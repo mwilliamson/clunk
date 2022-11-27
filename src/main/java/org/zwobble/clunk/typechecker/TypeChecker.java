@@ -572,6 +572,10 @@ public class TypeChecker {
             ) {
                 var type = (Type) typedInstanceOfNode.typeExpression().value();
                 bodyContext = bodyContext.updateLocal(typedReferenceNode.name(), type, typedConditionNotNode.source());
+
+                if (result.alwaysReturns()) {
+                    context = context.updateLocal(typedReferenceNode.name(), type, typedConditionNotNode.source());
+                }
             }
         }
 

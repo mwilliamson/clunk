@@ -51,6 +51,8 @@ public class TypeCheckConstructedTypeTests {
         assertThat(result.value(), equalTo(Types.list(Types.INT)));
     }
 
+    // TODO: make these non-specific to List/Option/MutableList
+
     @Test
     public void listTypeArgIsCovariant() {
         var untypedNode = Untyped.constructedType(
@@ -78,6 +80,21 @@ public class TypeCheckConstructedTypeTests {
 
         assertThat(result.args(), contains(
             isArg(isTypedTypeLevelReferenceNode("Int", Types.INT), Variance.COVARIANT)
+        ));
+    }
+
+    @Test
+    public void mutableListTypeArgIsInvariant() {
+        var untypedNode = Untyped.constructedType(
+            Untyped.typeLevelReference("MutableList"),
+            List.of(Untyped.typeLevelReference("Int"))
+        );
+        var context = TypeCheckerContext.stub();
+
+        var result = (TypedConstructedTypeNode) TypeChecker.typeCheckTypeLevelExpressionNode(untypedNode, context);
+
+        assertThat(result.args(), contains(
+            isArg(isTypedTypeLevelReferenceNode("Int", Types.INT), Variance.INVARIANT)
         ));
     }
 

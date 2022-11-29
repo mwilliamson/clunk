@@ -8,6 +8,7 @@ import org.zwobble.clunk.types.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.zwobble.clunk.types.Types.metaType;
 import static org.zwobble.clunk.util.Lists.last;
@@ -164,8 +165,13 @@ public class TypeChecker {
         var receiverType = typedReceiverNode.value();
 
         if (receiverType instanceof TypeConstructor typeConstructor) {
-            var typedArgNodes = node.args().stream()
-                .map(arg -> TypedConstructedTypeNode.Arg.covariant(typeCheckTypeLevelExpressionNode(arg, context)))
+            var typedArgNodes = IntStream.range(0, node.args().size())
+                .mapToObj(argIndex -> {
+                    var arg = node.args().get(argIndex);
+                    var param = typeConstructor.param(argIndex);
+                    var argType = typeCheckTypeLevelExpressionNode(arg, context);
+                    return new TypedConstructedTypeNode.Arg(argType, param.variance());
+                })
                 .toList();
             var args = typedArgNodes.stream()
                 .map(arg -> typedTypeLevelExpressionToType(arg.type()))

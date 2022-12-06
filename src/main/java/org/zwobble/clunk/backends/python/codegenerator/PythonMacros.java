@@ -1,9 +1,15 @@
 package org.zwobble.clunk.backends.python.codegenerator;
 
-import org.zwobble.clunk.backends.python.ast.*;
-import org.zwobble.clunk.types.*;
+import org.zwobble.clunk.backends.python.ast.PythonExpressionNode;
+import org.zwobble.clunk.backends.python.ast.PythonReferenceNode;
+import org.zwobble.clunk.backends.python.codegenerator.macros.PythonListMacro;
+import org.zwobble.clunk.backends.python.codegenerator.macros.PythonMutableListMacro;
+import org.zwobble.clunk.backends.python.codegenerator.macros.PythonStringBuilderMacro;
+import org.zwobble.clunk.types.ConstructedType;
+import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.StaticFunctionType;
+import org.zwobble.clunk.types.Type;
 
-import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,131 +21,9 @@ public class PythonMacros {
     }
 
     private static final Map<Type, PythonClassMacro> CLASS_MACROS = Stream.of(
-        new PythonClassMacro() {
-            @Override
-            public Type receiverType() {
-                return Types.LIST_CONSTRUCTOR.genericType();
-            }
-
-            @Override
-            public PythonExpressionNode compileConstructorCall(List<PythonExpressionNode> positionalArgs) {
-                return new PythonListNode(List.of());
-            }
-
-            @Override
-            public PythonExpressionNode compileMethodCall(PythonExpressionNode receiver, String methodName, List<PythonExpressionNode> positionalArgs) {
-                switch (methodName) {
-                    case "flatMap":
-                        // TODO: Need to guarantee this doesn't collide -- we don't
-                        // allow variables to start with an underscore, so this should
-                        // be safe, but a little more rigour would probably be wise
-                        // e.g. keeping track of variables in scope.
-                        // Also, this probably doesn't work well with nested flatMaps.
-                        var inputElementName = "_element";
-                        var outputElementName = "_result";
-                        var func = positionalArgs.get(0);
-
-                        return new PythonListComprehensionNode(
-                            new PythonReferenceNode(outputElementName),
-                            List.of(
-                                new PythonComprehensionForClauseNode(
-                                    inputElementName,
-                                    receiver
-                                ),
-                                new PythonComprehensionForClauseNode(
-                                    outputElementName,
-                                    new PythonCallNode(
-                                        func,
-                                        List.of(new PythonReferenceNode(inputElementName)),
-                                        List.of()
-                                    )
-                                )
-                            )
-                        );
-                    case "get":
-                        return new PythonSubscriptionNode(receiver, positionalArgs);
-                    case "length":
-                        return new PythonCallNode(
-                            new PythonReferenceNode("len"),
-                            List.of(receiver),
-                            List.of()
-                        );
-                    default:
-                        throw new UnsupportedOperationException("unexpected method: " + methodName);
-                }
-            }
-        },
-        new PythonClassMacro() {
-            @Override
-            public Type receiverType() {
-                return Types.MUTABLE_LIST_CONSTRUCTOR.genericType();
-            }
-
-            @Override
-            public PythonExpressionNode compileConstructorCall(List<PythonExpressionNode> positionalArgs) {
-                return new PythonListNode(List.of());
-            }
-
-            @Override
-            public PythonExpressionNode compileMethodCall(PythonExpressionNode receiver, String methodName, List<PythonExpressionNode> positionalArgs) {
-                // TODO: remove duplication with List
-                switch (methodName) {
-                    case "add":
-                        return new PythonCallNode(
-                            new PythonAttrAccessNode(receiver, "append"),
-                            positionalArgs,
-                            List.of()
-                        );
-                    case "last":
-                        return new PythonSubscriptionNode(
-                            receiver,
-                            List.of(new PythonIntLiteralNode(BigInteger.valueOf(-1)))
-                        );
-                    case "length":
-                        return new PythonCallNode(
-                            new PythonReferenceNode("len"),
-                            List.of(receiver),
-                            List.of()
-                        );
-                    default:
-                        throw new UnsupportedOperationException("unexpected method: " + methodName);
-                }
-            }
-        },
-        new PythonClassMacro() {
-            @Override
-            public Type receiverType() {
-                return Types.STRING_BUILDER;
-            }
-
-            @Override
-            public PythonExpressionNode compileConstructorCall(List<PythonExpressionNode> positionalArgs) {
-                return new PythonListNode(List.of());
-            }
-
-            @Override
-            public PythonExpressionNode compileMethodCall(PythonExpressionNode receiver, String methodName, List<PythonExpressionNode> positionalArgs) {
-                switch (methodName) {
-                    case "append":
-                        return new PythonCallNode(
-                            new PythonAttrAccessNode(receiver, "append"),
-                            positionalArgs,
-                            List.of()
-                        );
-                    case "build":
-                        return new PythonCallNode(
-                            new PythonAttrAccessNode(
-                                new PythonStringLiteralNode(""),
-                                "join"
-                            ),
-                            List.of(receiver),
-                            List.of()
-                        );
-                    default:
-                        throw new UnsupportedOperationException("unexpected method: " + methodName);
-                }
-            }
-        }
+        PythonListMacro.INSTANCE,
+        PythonMutableListMacro.INSTANCE,
+        PythonStringBuilderMacro.INSTANCE
     ).collect(Collectors.toMap(x -> x.receiverType(), x -> x));
 
     public static Optional<PythonClassMacro> lookupClassMacro(Type type) {

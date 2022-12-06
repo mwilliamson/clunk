@@ -38,11 +38,6 @@ public class PythonMutableListMacro implements PythonClassMacro {
                     positionalArgs,
                     List.of()
                 );
-            case "last":
-                return new PythonSubscriptionNode(
-                    receiver,
-                    List.of(new PythonIntLiteralNode(BigInteger.valueOf(-1)))
-                );
             default:
                 throw new UnsupportedOperationException("unexpected method: " + methodName);
         }

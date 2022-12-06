@@ -51,6 +51,24 @@ public class PythonListMacroTests {
     }
 
     @Test
+    public void lastIsCompiledToSubscription() {
+        var node = Typed.callMethod(
+            Typed.localReference(
+                "xs",
+                Types.list(Types.STRING)
+            ),
+            "last",
+            List.of(),
+            Types.STRING
+        );
+
+        var result = PythonCodeGenerator.compileExpression(node, PythonCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("xs[-1]"));
+    }
+
+    @Test
     public void lengthIsCompiledToLenCall() {
         var node = Typed.callMethod(
             Typed.localReference(

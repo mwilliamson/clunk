@@ -5,6 +5,7 @@ import org.zwobble.clunk.backends.python.codegenerator.PythonClassMacro;
 import org.zwobble.clunk.types.Type;
 import org.zwobble.clunk.types.Types;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
 
@@ -73,6 +74,13 @@ public class PythonListMacro implements PythonClassMacro {
             }
             case "get" -> {
                 var result = new PythonSubscriptionNode(receiver, positionalArgs);
+                return Optional.of(result);
+            }
+            case "last" -> {
+                var result = new PythonSubscriptionNode(
+                    receiver,
+                    List.of(new PythonIntLiteralNode(BigInteger.valueOf(-1)))
+                );
                 return Optional.of(result);
             }
             case "length" -> {

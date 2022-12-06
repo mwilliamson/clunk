@@ -3,6 +3,7 @@ package org.zwobble.clunk.backends.python.codegenerator;
 import org.zwobble.clunk.backends.python.ast.*;
 import org.zwobble.clunk.types.*;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -57,6 +58,43 @@ public class PythonMacros {
                         );
                     case "get":
                         return new PythonSubscriptionNode(receiver, positionalArgs);
+                    case "length":
+                        return new PythonCallNode(
+                            new PythonReferenceNode("len"),
+                            List.of(receiver),
+                            List.of()
+                        );
+                    default:
+                        throw new UnsupportedOperationException("unexpected method: " + methodName);
+                }
+            }
+        },
+        new PythonClassMacro() {
+            @Override
+            public Type receiverType() {
+                return Types.MUTABLE_LIST_CONSTRUCTOR.genericType();
+            }
+
+            @Override
+            public PythonExpressionNode compileConstructorCall(List<PythonExpressionNode> positionalArgs) {
+                return new PythonListNode(List.of());
+            }
+
+            @Override
+            public PythonExpressionNode compileMethodCall(PythonExpressionNode receiver, String methodName, List<PythonExpressionNode> positionalArgs) {
+                // TODO: remove duplication with List
+                switch (methodName) {
+                    case "add":
+                        return new PythonCallNode(
+                            new PythonAttrAccessNode(receiver, "append"),
+                            positionalArgs,
+                            List.of()
+                        );
+                    case "last":
+                        return new PythonSubscriptionNode(
+                            receiver,
+                            List.of(new PythonIntLiteralNode(BigInteger.valueOf(-1)))
+                        );
                     case "length":
                         return new PythonCallNode(
                             new PythonReferenceNode("len"),

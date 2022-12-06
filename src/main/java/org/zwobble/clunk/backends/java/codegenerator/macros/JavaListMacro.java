@@ -6,6 +6,7 @@ import org.zwobble.clunk.types.Type;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
+import java.util.Optional;
 
 public class JavaListMacro implements JavaClassMacro  {
     public static final JavaListMacro INSTANCE = new JavaListMacro();
@@ -24,9 +25,26 @@ public class JavaListMacro implements JavaClassMacro  {
     }
 
     @Override
-    public JavaExpressionNode compileMethodCall(JavaExpressionNode receiver, String methodName, List<JavaExpressionNode> positionalArgs) {
+    public JavaExpressionNode compileMethodCall(
+        JavaExpressionNode receiver,
+        String methodName,
+        List<JavaExpressionNode> positionalArgs
+    ) {
+        var result = tryCompileMethodCall(receiver, methodName, positionalArgs);
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            throw new UnsupportedOperationException("unexpected method: " + methodName);
+        }
+    }
+
+    Optional<JavaCallNode> tryCompileMethodCall(
+        JavaExpressionNode receiver,
+        String methodName,
+        List<JavaExpressionNode> positionalArgs
+    ) {
         switch (methodName) {
-            case "flatMap":
+            case "flatMap" -> {
                 var func = positionalArgs.get(0);
                 var stream = new JavaCallNode(
                     new JavaMemberAccessNode(receiver, "stream"),
@@ -43,18 +61,22 @@ public class JavaListMacro implements JavaClassMacro  {
                         "stream"
                     ))
                 );
-                return new JavaCallNode(
+                var result = new JavaCallNode(
                     new JavaMemberAccessNode(flatMap, "toList"),
                     List.of()
                 );
-            case "get":
-                return new JavaCallNode(
+                return Optional.of(result);
+            }
+            case "get" -> {
+                var result = new JavaCallNode(
                     new JavaMemberAccessNode(receiver, "get"),
                     positionalArgs
                 );
-            case "last":
+                return Optional.of(result);
+            }
+            case "last" -> {
                 // TODO: this only works if the receiver expression is side-effect free
-                return new JavaCallNode(
+                var result = new JavaCallNode(
                     new JavaMemberAccessNode(receiver, "get"),
                     List.of(
                         new JavaSubtractNode(
@@ -66,13 +88,18 @@ public class JavaListMacro implements JavaClassMacro  {
                         )
                     )
                 );
-            case "length":
-                return new JavaCallNode(
+                return Optional.of(result);
+            }
+            case "length" -> {
+                var result = new JavaCallNode(
                     new JavaMemberAccessNode(receiver, "size"),
                     List.of()
                 );
-            default:
-                throw new UnsupportedOperationException("unexpected method: " + methodName);
+                return Optional.of(result);
+            }
+            default -> {
+                return Optional.empty();
+            }
         }
     }
 }

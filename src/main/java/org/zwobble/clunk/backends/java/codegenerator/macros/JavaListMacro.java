@@ -57,13 +57,12 @@ public class JavaListMacro implements JavaClassMacro  {
                 return new JavaCallNode(
                     new JavaMemberAccessNode(receiver, "get"),
                     List.of(
-                        new JavaAddNode(
+                        new JavaSubtractNode(
                             new JavaCallNode(
                                 new JavaMemberAccessNode(receiver, "size"),
                                 List.of()
                             ),
-                            // TODO: support subtraction
-                            new JavaIntLiteralNode(-1)
+                            new JavaIntLiteralNode(1)
                         )
                     )
                 );

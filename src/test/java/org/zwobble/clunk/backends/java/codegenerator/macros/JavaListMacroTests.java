@@ -65,7 +65,7 @@ public class JavaListMacroTests {
         var result = JavaCodeGenerator.compileExpression(node, JavaCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
-        assertThat(string, equalTo("xs.get(xs.size() + -1)"));
+        assertThat(string, equalTo("xs.get(xs.size() - 1)"));
     }
 
     @Test

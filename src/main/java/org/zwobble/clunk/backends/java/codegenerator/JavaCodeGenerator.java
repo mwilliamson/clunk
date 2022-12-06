@@ -220,9 +220,7 @@ public class JavaCodeGenerator {
         return new JavaForEachNode(
             node.targetName(),
             compileExpression(node.iterable(), context),
-            node.body().stream()
-                .map(statement -> compileFunctionStatement(statement, context))
-                .toList()
+            compileFunctionStatements(node.body(), context)
         );
     }
 
@@ -234,7 +232,7 @@ public class JavaCodeGenerator {
             compileTypeLevelExpression(node.returnType(), context),
             node.name(),
             node.params().stream().map(param -> compileParam(param, context)).toList(),
-            node.body().stream().map(statement -> compileFunctionStatement(statement, context)).toList()
+            compileFunctionStatements(node.body(), context)
         );
     }
 
@@ -282,6 +280,13 @@ public class JavaCodeGenerator {
         });
     }
 
+    private static List<JavaStatementNode> compileFunctionStatements(
+        List<TypedFunctionStatementNode> nodes,
+        JavaCodeGeneratorContext context
+    ) {
+        return nodes.stream().map(statement -> compileFunctionStatement(statement, context)).toList();
+    }
+
     private static JavaStatementNode compileIfStatement(
         TypedIfStatementNode node,
         JavaCodeGeneratorContext context
@@ -290,14 +295,10 @@ public class JavaCodeGenerator {
             node.conditionalBranches().stream()
                 .map(conditionalBranch -> new JavaConditionalBranchNode(
                     compileExpression(conditionalBranch.condition(), context),
-                    conditionalBranch.body().stream()
-                        .map(statement -> compileFunctionStatement(statement, context))
-                        .toList()
+                    compileFunctionStatements(conditionalBranch.body(), context)
                 ))
                 .toList(),
-            node.elseBody().stream()
-                .map(statement -> compileFunctionStatement(statement, context))
-                .toList()
+            compileFunctionStatements(node.elseBody(), context)
         );
     }
 
@@ -556,9 +557,7 @@ public class JavaCodeGenerator {
             compileTypeLevelExpression(node.type(), context),
             node.name(),
             List.of(),
-            node.body().stream()
-                .map(statement -> compileFunctionStatement(statement, context))
-                .toList()
+            compileFunctionStatements(node.body(), context)
         );
     }
 
@@ -717,9 +716,7 @@ public class JavaCodeGenerator {
                                 context.addImportType(typeToJavaTypeName(caseType, context));
 
                                 var body = new ArrayList<JavaStatementNode>();
-                                for (var statement : switchCase.body()) {
-                                    body.add(compileFunctionStatement(statement, context));
-                                }
+                                body.addAll(compileFunctionStatements(switchCase.body(), context));
                                 if (!node.returns()) {
                                     body.add(new JavaReturnNode(new JavaReferenceNode("null")));
                                 }
@@ -761,8 +758,8 @@ public class JavaCodeGenerator {
             .isStatic(false)
             .name(JavaTestNames.generateTestName(node.name()));
 
-        for (var statement : node.body()) {
-            method = method.addBodyStatement(compileFunctionStatement(statement, context));
+        for (var statement : compileFunctionStatements(node.body(), context)) {
+            method = method.addBodyStatement(statement);
         }
 
         return method.build();

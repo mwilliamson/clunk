@@ -7,7 +7,7 @@ import org.zwobble.clunk.types.Types;
 
 import java.util.List;
 
-public class JavaMutableListMacro implements JavaClassMacro  {
+public class JavaMutableListMacro implements JavaClassMacro {
     public static final JavaMutableListMacro INSTANCE = new JavaMutableListMacro();
 
     private JavaMutableListMacro() {

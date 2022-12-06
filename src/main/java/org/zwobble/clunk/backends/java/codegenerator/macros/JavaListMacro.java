@@ -52,6 +52,21 @@ public class JavaListMacro implements JavaClassMacro  {
                     new JavaMemberAccessNode(receiver, "get"),
                     positionalArgs
                 );
+            case "last":
+                // TODO: this only works if the receiver expression is side-effect free
+                return new JavaCallNode(
+                    new JavaMemberAccessNode(receiver, "get"),
+                    List.of(
+                        new JavaAddNode(
+                            new JavaCallNode(
+                                new JavaMemberAccessNode(receiver, "size"),
+                                List.of()
+                            ),
+                            // TODO: support subtraction
+                            new JavaIntLiteralNode(-1)
+                        )
+                    )
+                );
             case "length":
                 return new JavaCallNode(
                     new JavaMemberAccessNode(receiver, "size"),

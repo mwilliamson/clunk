@@ -51,6 +51,24 @@ public class JavaListMacroTests {
     }
 
     @Test
+    public void lastCallIsCompiledToGetCall() {
+        var node = Typed.callMethod(
+            Typed.localReference(
+                "xs",
+                Types.list(Types.STRING)
+            ),
+            "last",
+            List.of(),
+            Types.STRING
+        );
+
+        var result = JavaCodeGenerator.compileExpression(node, JavaCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("xs.get(xs.size() + -1)"));
+    }
+
+    @Test
     public void lengthCallIsCompiledToSizeCall() {
         var node = Typed.callMethod(
             Typed.localReference(

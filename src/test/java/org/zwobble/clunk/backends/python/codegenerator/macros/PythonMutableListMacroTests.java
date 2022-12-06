@@ -30,7 +30,6 @@ public class PythonMutableListMacroTests {
 
         var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("[]"));
-
     }
 
     @Test

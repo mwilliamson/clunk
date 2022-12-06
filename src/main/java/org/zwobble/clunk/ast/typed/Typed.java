@@ -15,6 +15,21 @@ public class Typed {
         return new TypedBoolLiteralNode(true, NullSource.INSTANCE);
     }
 
+    public static TypedCallMethodNode callMethod(
+        TypedExpressionNode receiver,
+        String methodName,
+        List<TypedExpressionNode> args,
+        Type type
+    ) {
+        return new TypedCallMethodNode(
+            receiver,
+            methodName,
+            args,
+            type,
+            NullSource.INSTANCE
+        );
+    }
+
     public static TypedCallStaticFunctionNode callStatic(TypedExpressionNode receiver, List<TypedExpressionNode> args) {
         var staticFunctionType = (StaticFunctionType) receiver.type();
         return new TypedCallStaticFunctionNode(receiver, args, staticFunctionType, NullSource.INSTANCE);

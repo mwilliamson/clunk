@@ -32,6 +32,7 @@ public class PythonListMacro implements PythonClassMacro {
                 // be safe, but a little more rigour would probably be wise
                 // e.g. keeping track of variables in scope.
                 // Also, this probably doesn't work well with nested flatMaps.
+                // TODO: avoid evaluating func multiple times
                 var inputElementName = "_element";
                 var outputElementName = "_result";
                 var func = positionalArgs.get(0);

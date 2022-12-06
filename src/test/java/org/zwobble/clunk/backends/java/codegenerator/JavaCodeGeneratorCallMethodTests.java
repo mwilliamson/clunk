@@ -35,40 +35,20 @@ public class JavaCodeGeneratorCallMethodTests {
     }
 
     @Test
-    public void stringBuilderAppendIsCompiledToAppend() {
-        var node = new TypedCallMethodNode(
+    public void whenReceiverTypeHasMacroThenMethodCallIsCompiledUsingMacro() {
+        var node = Typed.callMethod(
             Typed.localReference(
-                "builder",
-                Types.STRING_BUILDER
+                "xs",
+                Types.list(Types.STRING)
             ),
-            "append",
-            List.of(Typed.string("hello")),
-            Types.INT,
-            NullSource.INSTANCE
-        );
-
-        var result = JavaCodeGenerator.compileExpression(node, JavaCodeGeneratorContext.stub());
-
-        var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
-        assertThat(string, equalTo("builder.append(\"hello\")"));
-    }
-
-    @Test
-    public void stringBuilderBuildIsCompiledToToString() {
-        var node = new TypedCallMethodNode(
-            Typed.localReference(
-                "builder",
-                Types.STRING_BUILDER
-            ),
-            "build",
+            "length",
             List.of(),
-            Types.UNIT,
-            NullSource.INSTANCE
+            Types.INT
         );
 
         var result = JavaCodeGenerator.compileExpression(node, JavaCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
-        assertThat(string, equalTo("builder.toString()"));
+        assertThat(string, equalTo("xs.size()"));
     }
 }

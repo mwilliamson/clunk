@@ -35,7 +35,7 @@ public class JavaCodeGeneratorCallConstructorTests {
     }
 
     @Test
-    public void callToStringBuilderIsCompiledToConstructorCall() {
+    public void whenTypeHasMacroThenConstructorCallIsCompiledUsingMacro() {
         var node = new TypedCallConstructorNode(
             Typed.localReference("StringBuilder", Types.metaType(Types.STRING_BUILDER)),
             List.of(),

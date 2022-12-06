@@ -295,6 +295,12 @@ public class JavaSerialiser {
                 serialiseStringLiteral(node, builder);
                 return null;
             }
+
+            @Override
+            public Void visit(JavaSubtractNode node) {
+                serialiseSubtract(node, builder);
+                return null;
+            }
         });
 
         if (parenthesize) {
@@ -697,6 +703,10 @@ public class JavaSerialiser {
             .replace("\"", "\\\"");
         builder.append(escapedValue);
         builder.append("\"");
+    }
+
+    private static void serialiseSubtract(JavaSubtractNode node, CodeBuilder builder) {
+        serialiseBinaryOperation("-", node, builder);
     }
 
     public static void serialiseTypeDeclaration(JavaTypeDeclarationNode node, CodeBuilder builder) {

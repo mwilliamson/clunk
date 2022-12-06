@@ -127,6 +127,10 @@ public class Java {
         return new JavaStringLiteralNode(value);
     }
 
+    public static JavaSubtractNode subtract(JavaExpressionNode left, JavaExpressionNode right) {
+        return new JavaSubtractNode(left, right);
+    }
+
     public static JavaTypeVariableReferenceNode typeVariableReference(String name) {
         return new JavaTypeVariableReferenceNode(name);
     }

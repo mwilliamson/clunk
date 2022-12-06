@@ -15,6 +15,25 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class PythonMutableListMacroTests {
     @Test
+    public void mutableListConstructorCallIsCompiledToEmptyList() {
+        // TODO: missing type params
+        var node = Typed.callConstructor(
+            Typed.localReference(
+                "MutableList",
+                Types.metaType(Types.STRING)
+            ),
+            List.of(),
+            Types.mutableList(Types.STRING)
+        );
+
+        var result = PythonCodeGenerator.compileExpression(node, PythonCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("[]"));
+
+    }
+
+    @Test
     public void methodsAreInheritedFromList() {
         var node = Typed.callMethod(
             Typed.localReference(

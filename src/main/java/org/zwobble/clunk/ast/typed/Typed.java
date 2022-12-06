@@ -15,6 +15,14 @@ public class Typed {
         return new TypedBoolLiteralNode(true, NullSource.INSTANCE);
     }
 
+    public static TypedCallConstructorNode callConstructor(
+        TypedExpressionNode receiver,
+        List<TypedExpressionNode> args,
+        Type type
+    ) {
+        return new TypedCallConstructorNode(receiver, args, type, NullSource.INSTANCE);
+    }
+
     public static TypedCallMethodNode callMethod(
         TypedExpressionNode receiver,
         String methodName,

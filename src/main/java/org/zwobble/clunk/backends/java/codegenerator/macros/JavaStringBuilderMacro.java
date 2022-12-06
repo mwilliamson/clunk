@@ -20,7 +20,10 @@ public class JavaStringBuilderMacro implements JavaClassMacro {
     }
 
     @Override
-    public JavaExpressionNode compileConstructorCall(List<JavaExpressionNode> positionalArgs) {
+    public JavaExpressionNode compileConstructorCall(
+        Optional<List<JavaTypeExpressionNode>> typeArgs,
+        List<JavaExpressionNode> positionalArgs
+    ) {
         return new JavaCallNewNode(
             new JavaReferenceNode("StringBuilder"),
             Optional.empty(),

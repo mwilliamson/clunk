@@ -34,7 +34,7 @@ public class JavaCodeGenerator {
         var javaReceiver = compileExpression(node.receiver(), context);
         var javaArgs = compileArgs(node.positionalArgs(), context);
 
-        var macroResult = JavaMacros.compileConstructorCall(node.type(), javaArgs);
+        var macroResult = JavaMacros.compileConstructorCall(node.type(), javaArgs, context);
         if (macroResult.isPresent()) {
             return macroResult.get();
         } else {

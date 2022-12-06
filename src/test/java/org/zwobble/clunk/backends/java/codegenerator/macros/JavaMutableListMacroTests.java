@@ -29,8 +29,7 @@ public class JavaMutableListMacroTests {
         var result = JavaCodeGenerator.compileExpression(node, JavaCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
-        // TODO: missing type params
-        assertThat(string, equalTo("new java.util.ArrayList()"));
+        assertThat(string, equalTo("new java.util.ArrayList<String>()"));
     }
 
     @Test

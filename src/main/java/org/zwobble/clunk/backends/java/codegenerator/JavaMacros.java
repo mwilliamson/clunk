@@ -2,6 +2,7 @@ package org.zwobble.clunk.backends.java.codegenerator;
 
 import org.zwobble.clunk.backends.java.ast.JavaExpressionNode;
 import org.zwobble.clunk.backends.java.ast.JavaReferenceNode;
+import org.zwobble.clunk.backends.java.ast.JavaTypeExpressionNode;
 import org.zwobble.clunk.backends.java.codegenerator.macros.JavaListMacro;
 import org.zwobble.clunk.backends.java.codegenerator.macros.JavaMutableListMacro;
 import org.zwobble.clunk.backends.java.codegenerator.macros.JavaStringBuilderMacro;
@@ -58,11 +59,19 @@ public class JavaMacros {
 
     public static Optional<JavaExpressionNode> compileConstructorCall(
         Type type,
-        List<JavaExpressionNode> positionalArgs
+        List<JavaExpressionNode> positionalArgs,
+        JavaCodeGeneratorContext context
     ) {
         var classMacro = lookupClassMacro(type);
         if (classMacro.isPresent()) {
-            return Optional.of(classMacro.get().compileConstructorCall(positionalArgs));
+            Optional<List<JavaTypeExpressionNode>> typeArgs = type instanceof ConstructedType constructedType
+                ? Optional.of(
+                    constructedType.args().stream()
+                        .map(typeArg -> JavaCodeGenerator.typeLevelValueToTypeExpression(typeArg, true, context))
+                        .toList()
+                )
+                : Optional.empty();
+            return Optional.of(classMacro.get().compileConstructorCall(typeArgs, positionalArgs));
         } else {
             return Optional.empty();
         }

@@ -20,7 +20,10 @@ public class JavaListMacro implements JavaClassMacro  {
     }
 
     @Override
-    public JavaExpressionNode compileConstructorCall(List<JavaExpressionNode> positionalArgs) {
+    public JavaExpressionNode compileConstructorCall(
+        Optional<List<JavaTypeExpressionNode>> typeArgs,
+        List<JavaExpressionNode> positionalArgs
+    ) {
         throw new UnsupportedOperationException();
     }
 

@@ -6,6 +6,7 @@ import org.zwobble.clunk.backends.java.ast.JavaTypeExpressionNode;
 import org.zwobble.clunk.backends.java.codegenerator.macros.JavaListMacro;
 import org.zwobble.clunk.backends.java.codegenerator.macros.JavaMutableListMacro;
 import org.zwobble.clunk.backends.java.codegenerator.macros.JavaStringBuilderMacro;
+import org.zwobble.clunk.backends.java.codegenerator.macros.JavaUnitMacro;
 import org.zwobble.clunk.types.ConstructedType;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.StaticFunctionType;
@@ -48,7 +49,8 @@ public class JavaMacros {
     private static final Map<Type, JavaClassMacro> CLASS_MACROS = Stream.of(
         JavaListMacro.INSTANCE,
         JavaMutableListMacro.INSTANCE,
-        JavaStringBuilderMacro.INSTANCE
+        JavaStringBuilderMacro.INSTANCE,
+        JavaUnitMacro.INSTANCE
     ).collect(Collectors.toMap(x -> x.receiverType(), x -> x));
 
     public static Optional<JavaStaticFunctionMacro> lookupStaticFunctionMacro(StaticFunctionType receiverType) {

@@ -30,7 +30,7 @@ public class TypeScriptCodeGeneratorSwitchTests {
 
         var result = TypeScriptCodeGenerator.compileFunctionStatement(node, TypeScriptCodeGeneratorContext.stub());
 
-        var string = serialiseToString(result, TypeScriptSerialiser::serialiseStatement);
+        var string = serialiseToString(result, TypeScriptSerialiser::serialiseStatements);
         assertThat(string, equalTo(
             """
             switch (node.type) {

@@ -15,7 +15,7 @@ public class JavaCodeGeneratorReturnTests {
 
         var result = JavaCodeGenerator.compileFunctionStatement(node, JavaCodeGeneratorContext.stub());
 
-        var string = serialiseToString(result, JavaSerialiser::serialiseStatement);
+        var string = serialiseToString(result, JavaSerialiser::serialiseStatements);
         assertThat(string, equalTo("return false;\n"));
     }
 }

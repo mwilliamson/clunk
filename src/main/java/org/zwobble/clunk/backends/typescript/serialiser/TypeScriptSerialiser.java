@@ -652,6 +652,15 @@ public class TypeScriptSerialiser {
         });
     }
 
+    public static void serialiseStatements(
+        List<TypeScriptStatementNode> nodes,
+        CodeBuilder builder
+    ) {
+        for (var statement : nodes) {
+            serialiseStatement(statement, builder);
+        }
+    }
+
     private static void serialiseStrictEquals(TypeScriptStrictEqualsNode node, CodeBuilder builder) {
         serialiseBinaryOperation("===", node, builder);
     }

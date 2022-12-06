@@ -15,7 +15,7 @@ public class JavaCodeGeneratorSingleLineCommentTests {
 
         var result = JavaCodeGenerator.compileFunctionStatement(node, JavaCodeGeneratorContext.stub());
 
-        var string = serialiseToString(result, JavaSerialiser::serialiseStatement);
+        var string = serialiseToString(result, JavaSerialiser::serialiseStatements);
         assertThat(string, equalTo("// Beware.\n"));
     }
 }

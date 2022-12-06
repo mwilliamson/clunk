@@ -293,6 +293,11 @@ public class PythonCodeGenerator {
             }
 
             @Override
+            public List<PythonStatementNode> visit(TypedTypeNarrowNode node) {
+                return List.of();
+            }
+
+            @Override
             public List<PythonStatementNode> visit(TypedVarNode node) {
                 return List.of(compileVar(node, context));
             }

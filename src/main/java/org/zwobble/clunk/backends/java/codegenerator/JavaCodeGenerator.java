@@ -236,46 +236,51 @@ public class JavaCodeGenerator {
         );
     }
 
-    public static JavaStatementNode compileFunctionStatement(TypedFunctionStatementNode node, JavaCodeGeneratorContext context) {
-        return node.accept(new TypedFunctionStatementNode.Visitor<JavaStatementNode>() {
+    public static List<JavaStatementNode> compileFunctionStatement(TypedFunctionStatementNode node, JavaCodeGeneratorContext context) {
+        return node.accept(new TypedFunctionStatementNode.Visitor<List<JavaStatementNode>>() {
             @Override
-            public JavaStatementNode visit(TypedBlankLineNode node) {
-                return compileBlankLine(node, context);
+            public List<JavaStatementNode> visit(TypedBlankLineNode node) {
+                return List.of(compileBlankLine(node, context));
             }
 
             @Override
-            public JavaStatementNode visit(TypedExpressionStatementNode node) {
-                return compileExpressionStatement(node, context);
+            public List<JavaStatementNode> visit(TypedExpressionStatementNode node) {
+                return List.of(compileExpressionStatement(node, context));
             }
 
             @Override
-            public JavaStatementNode visit(TypedForEachNode node) {
-                return compileForEach(node, context);
+            public List<JavaStatementNode> visit(TypedForEachNode node) {
+                return List.of(compileForEach(node, context));
             }
 
             @Override
-            public JavaStatementNode visit(TypedIfStatementNode node) {
-                return compileIfStatement(node, context);
+            public List<JavaStatementNode> visit(TypedIfStatementNode node) {
+                return List.of(compileIfStatement(node, context));
             }
 
             @Override
-            public JavaStatementNode visit(TypedReturnNode node) {
-                return compileReturn(node, context);
+            public List<JavaStatementNode> visit(TypedReturnNode node) {
+                return List.of(compileReturn(node, context));
             }
 
             @Override
-            public JavaStatementNode visit(TypedSingleLineCommentNode node) {
-                return compileSingleLineComment(node);
+            public List<JavaStatementNode> visit(TypedSingleLineCommentNode node) {
+                return List.of(compileSingleLineComment(node));
             }
 
             @Override
-            public JavaStatementNode visit(TypedSwitchNode node) {
-                return compileSwitch(node, context);
+            public List<JavaStatementNode> visit(TypedSwitchNode node) {
+                return List.of(compileSwitch(node, context));
             }
 
             @Override
-            public JavaStatementNode visit(TypedVarNode node) {
-                return compileVar(node, context);
+            public List<JavaStatementNode> visit(TypedTypeNarrowNode node) {
+                return List.of();
+            }
+
+            @Override
+            public List<JavaStatementNode> visit(TypedVarNode node) {
+                return List.of(compileVar(node, context));
             }
         });
     }
@@ -284,7 +289,7 @@ public class JavaCodeGenerator {
         List<TypedFunctionStatementNode> nodes,
         JavaCodeGeneratorContext context
     ) {
-        return nodes.stream().map(statement -> compileFunctionStatement(statement, context)).toList();
+        return nodes.stream().flatMap(statement -> compileFunctionStatement(statement, context).stream()).toList();
     }
 
     private static JavaStatementNode compileIfStatement(

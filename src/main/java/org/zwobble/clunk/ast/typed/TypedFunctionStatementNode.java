@@ -11,6 +11,7 @@ public interface TypedFunctionStatementNode extends TypedNode {
         T visit(TypedReturnNode node);
         T visit(TypedSingleLineCommentNode node);
         T visit(TypedSwitchNode node);
+        T visit(TypedTypeNarrowNode node);
         T visit(TypedVarNode node);
     }
 }

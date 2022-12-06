@@ -691,6 +691,12 @@ public class JavaSerialiser {
         });
     }
 
+    public static void serialiseStatements(List<JavaStatementNode> nodes, CodeBuilder builder) {
+        for (var statement : nodes) {
+            serialiseStatement(statement, builder);
+        }
+    }
+
     private static void serialiseStringLiteral(JavaStringLiteralNode node, CodeBuilder builder) {
         builder.append("\"");
         var escapedValue = node.value()

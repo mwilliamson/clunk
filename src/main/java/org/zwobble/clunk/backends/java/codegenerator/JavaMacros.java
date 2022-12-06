@@ -1,9 +1,14 @@
 package org.zwobble.clunk.backends.java.codegenerator;
 
-import org.zwobble.clunk.backends.java.ast.*;
-import org.zwobble.clunk.types.*;
+import org.zwobble.clunk.backends.java.ast.JavaExpressionNode;
+import org.zwobble.clunk.backends.java.ast.JavaReferenceNode;
+import org.zwobble.clunk.backends.java.codegenerator.macros.JavaListMacro;
+import org.zwobble.clunk.backends.java.codegenerator.macros.JavaStringBuilderMacro;
+import org.zwobble.clunk.types.ConstructedType;
+import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.StaticFunctionType;
+import org.zwobble.clunk.types.Type;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,90 +43,8 @@ public class JavaMacros {
     );
 
     private static final Map<Type, JavaClassMacro> CLASS_MACROS = Stream.of(
-        new JavaClassMacro() {
-            @Override
-            public Type receiverType() {
-                return Types.LIST_CONSTRUCTOR.genericType();
-            }
-
-            @Override
-            public JavaExpressionNode compileConstructorCall(List<JavaExpressionNode> positionalArgs) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public JavaExpressionNode compileMethodCall(JavaExpressionNode receiver, String methodName, List<JavaExpressionNode> positionalArgs) {
-                switch (methodName) {
-                    case "flatMap":
-                        var func = positionalArgs.get(0);
-                        var stream = new JavaCallNode(
-                            new JavaMemberAccessNode(receiver, "stream"),
-                            List.of()
-                        );
-                        var map = new JavaCallNode(
-                            new JavaMemberAccessNode(stream, "map"),
-                            List.of(func)
-                        );
-                        var flatMap = new JavaCallNode(
-                            new JavaMemberAccessNode(map, "flatMap"),
-                            List.of(new JavaMethodReferenceStaticNode(
-                                new JavaFullyQualifiedTypeReferenceNode("java.util", "List"),
-                                "stream"
-                            ))
-                        );
-                        return new JavaCallNode(
-                            new JavaMemberAccessNode(flatMap, "toList"),
-                            List.of()
-                        );
-                    case "get":
-                        return new JavaCallNode(
-                            new JavaMemberAccessNode(receiver, "get"),
-                            positionalArgs
-                        );
-                    case "length":
-                        return new JavaCallNode(
-                            new JavaMemberAccessNode(receiver, "size"),
-                            List.of()
-                        );
-                    default:
-                        throw new UnsupportedOperationException("unexpected method: " + methodName);
-                }
-            }
-        },
-        new JavaClassMacro() {
-            @Override
-            public Type receiverType() {
-                return Types.STRING_BUILDER;
-            }
-
-            @Override
-            public JavaExpressionNode compileConstructorCall(List<JavaExpressionNode> positionalArgs) {
-                return new JavaCallNewNode(
-                    new JavaReferenceNode("StringBuilder"),
-                    Optional.empty(),
-                    positionalArgs,
-                    Optional.empty()
-                );
-            }
-
-            @Override
-            public JavaExpressionNode compileMethodCall(JavaExpressionNode receiver, String methodName, List<JavaExpressionNode> positionalArgs) {
-                switch (methodName) {
-                    case "append":
-                        return new JavaCallNode(
-                            new JavaMemberAccessNode(receiver, "append"),
-                            positionalArgs
-                        );
-                    case "build":
-                        return new JavaCallNode(
-                            new JavaMemberAccessNode(receiver, "toString"),
-                            positionalArgs
-                        );
-                    default:
-                        throw new UnsupportedOperationException("unexpected method: " + methodName);
-                }
-            }
-        }
+        JavaListMacro.INSTANCE,
+        JavaStringBuilderMacro.INSTANCE
     ).collect(Collectors.toMap(x -> x.receiverType(), x -> x));
 
     public static Optional<JavaStaticFunctionMacro> lookupStaticFunctionMacro(StaticFunctionType receiverType) {

@@ -18,13 +18,36 @@ public class JavaCodeGeneratorContext {
     }
 
     private final JavaTargetConfig config;
-    private final Set<JavaImportNode> imports = new LinkedHashSet<>();
+    private final Set<JavaImportNode> imports;
     private final SubtypeRelations subtypeRelations;
-    private final Map<String, String> variableRenames = new HashMap<>();
+    private final Map<String, String> variableRenames;
 
     public JavaCodeGeneratorContext(JavaTargetConfig config, SubtypeRelations subtypeRelations) {
         this.config = config;
+        this.imports = new LinkedHashSet<>();
         this.subtypeRelations = subtypeRelations;
+        this.variableRenames = new HashMap<>();
+    }
+
+    public JavaCodeGeneratorContext(
+        JavaTargetConfig config,
+        Set<JavaImportNode> imports,
+        SubtypeRelations subtypeRelations,
+        Map<String, String> variableRenames
+    ) {
+        this.config = config;
+        this.imports = imports;
+        this.subtypeRelations = subtypeRelations;
+        this.variableRenames = variableRenames;
+    }
+
+    public JavaCodeGeneratorContext enterBlock() {
+        return new JavaCodeGeneratorContext(
+            config,
+            imports,
+            subtypeRelations,
+            new HashMap<>(variableRenames)
+        );
     }
 
     public void addImportStatic(String packageName, String identifier) {

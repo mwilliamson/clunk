@@ -238,6 +238,10 @@ public class Typed {
         return typeLevelReference("String", Types.STRING);
     }
 
+    public static TypedTypeNarrowNode typeNarrow(String variableName, StructuredType type) {
+        return new TypedTypeNarrowNode(variableName, type, NullSource.INSTANCE);
+    }
+
     public static TypedVarNode var(String name, TypedExpressionNode expression) {
         return new TypedVarNode(name, expression, NullSource.INSTANCE);
     }

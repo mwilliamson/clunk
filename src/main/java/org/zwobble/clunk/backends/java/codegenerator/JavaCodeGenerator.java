@@ -26,6 +26,14 @@ public class JavaCodeGenerator {
         return new JavaBlankLineNode();
     }
 
+    public static List<JavaStatementNode> compileBlock(
+        List<TypedFunctionStatementNode> nodes,
+        JavaCodeGeneratorContext context
+    ) {
+        var blockContext = context.enterBlock();
+        return nodes.stream().flatMap(statement -> compileFunctionStatement(statement, blockContext).stream()).toList();
+    }
+
     private static JavaExpressionNode compileBoolLiteral(TypedBoolLiteralNode node) {
         return new JavaBoolLiteralNode(node.value());
     }
@@ -220,7 +228,7 @@ public class JavaCodeGenerator {
         return new JavaForEachNode(
             node.targetName(),
             compileExpression(node.iterable(), context),
-            compileFunctionStatements(node.body(), context)
+            compileBlock(node.body(), context)
         );
     }
 
@@ -232,7 +240,7 @@ public class JavaCodeGenerator {
             compileTypeLevelExpression(node.returnType(), context),
             node.name(),
             node.params().stream().map(param -> compileParam(param, context)).toList(),
-            compileFunctionStatements(node.body(), context)
+            compileBlock(node.body(), context)
         );
     }
 
@@ -275,7 +283,7 @@ public class JavaCodeGenerator {
 
             @Override
             public List<JavaStatementNode> visit(TypedTypeNarrowNode node) {
-                return List.of();
+                return List.of(compileTypeNarrow(node, context));
             }
 
             @Override
@@ -283,13 +291,6 @@ public class JavaCodeGenerator {
                 return List.of(compileVar(node, context));
             }
         });
-    }
-
-    private static List<JavaStatementNode> compileFunctionStatements(
-        List<TypedFunctionStatementNode> nodes,
-        JavaCodeGeneratorContext context
-    ) {
-        return nodes.stream().flatMap(statement -> compileFunctionStatement(statement, context).stream()).toList();
     }
 
     private static JavaStatementNode compileIfStatement(
@@ -300,10 +301,10 @@ public class JavaCodeGenerator {
             node.conditionalBranches().stream()
                 .map(conditionalBranch -> new JavaConditionalBranchNode(
                     compileExpression(conditionalBranch.condition(), context),
-                    compileFunctionStatements(conditionalBranch.body(), context)
+                    compileBlock(conditionalBranch.body(), context)
                 ))
                 .toList(),
-            compileFunctionStatements(node.elseBody(), context)
+            compileBlock(node.elseBody(), context)
         );
     }
 
@@ -419,7 +420,11 @@ public class JavaCodeGenerator {
     }
 
     private static JavaExpressionNode compileLocalReference(TypedLocalReferenceNode node, JavaCodeGeneratorContext context) {
-        return new JavaReferenceNode(context.variableName(node.name()));
+        return localReference(node.name(), context);
+    }
+
+    private static JavaExpressionNode localReference(String name, JavaCodeGeneratorContext context) {
+        return new JavaReferenceNode(context.variableName(name));
     }
 
     private static JavaExpressionNode compileLogicalAnd(TypedLogicalAndNode node, JavaCodeGeneratorContext context) {
@@ -562,7 +567,7 @@ public class JavaCodeGenerator {
             compileTypeLevelExpression(node.type(), context),
             node.name(),
             List.of(),
-            compileFunctionStatements(node.body(), context)
+            compileBlock(node.body(), context)
         );
     }
 
@@ -721,7 +726,7 @@ public class JavaCodeGenerator {
                                 context.addImportType(typeToJavaTypeName(caseType, context));
 
                                 var body = new ArrayList<JavaStatementNode>();
-                                body.addAll(compileFunctionStatements(switchCase.body(), context));
+                                body.addAll(compileBlock(switchCase.body(), context));
                                 if (!node.returns()) {
                                     body.add(new JavaReturnNode(new JavaReferenceNode("null")));
                                 }
@@ -763,7 +768,7 @@ public class JavaCodeGenerator {
             .isStatic(false)
             .name(JavaTestNames.generateTestName(node.name()));
 
-        for (var statement : compileFunctionStatements(node.body(), context)) {
+        for (var statement : compileBlock(node.body(), context)) {
             method = method.addBodyStatement(statement);
         }
 
@@ -830,6 +835,24 @@ public class JavaCodeGenerator {
                 }
             }
         });
+    }
+
+    private static JavaStatementNode compileTypeNarrow(
+        TypedTypeNarrowNode node,
+        JavaCodeGeneratorContext context
+    ) {
+        var narrowedName = node.variableName() + "_" + node.type().name();
+        var result = new JavaVariableDeclarationNode(
+            narrowedName,
+            new JavaCastNode(
+                typeLevelValueToTypeExpression(node.type(), false, context),
+                localReference(node.variableName(), context)
+            )
+        );
+
+        context.renameVariable(node.variableName(), narrowedName);
+
+        return result;
     }
 
     private static JavaStatementNode compileVar(TypedVarNode node, JavaCodeGeneratorContext context) {

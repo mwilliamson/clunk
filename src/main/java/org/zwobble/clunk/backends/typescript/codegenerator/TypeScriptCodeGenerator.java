@@ -214,9 +214,7 @@ public class TypeScriptCodeGenerator {
         return new TypeScriptForOfNode(
             node.targetName(),
             compileExpression(node.iterable(), context),
-            node.body().stream()
-                .map(statement -> compileFunctionStatement(statement, context))
-                .toList()
+            compileFunctionStatements(node.body(), context)
         );
     }
 
@@ -225,7 +223,7 @@ public class TypeScriptCodeGenerator {
             node.name(),
             node.params().stream().map(param -> compileParam(param)).toList(),
             compileTypeLevelExpression(node.returnType()),
-            node.body().stream().map(statement -> compileFunctionStatement(statement, context)).toList()
+            compileFunctionStatements(node.body(), context)
         );
     }
 
@@ -276,6 +274,13 @@ public class TypeScriptCodeGenerator {
         });
     }
 
+    private static List<TypeScriptStatementNode> compileFunctionStatements(
+        List<TypedFunctionStatementNode> nodes,
+        TypeScriptCodeGeneratorContext context
+    ) {
+        return nodes.stream().map(statement -> compileFunctionStatement(statement, context)).toList();
+    }
+
     private static TypeScriptStatementNode compileIfStatement(
         TypedIfStatementNode node,
         TypeScriptCodeGeneratorContext context
@@ -284,14 +289,10 @@ public class TypeScriptCodeGenerator {
             node.conditionalBranches().stream()
                 .map(conditionalBranch -> new TypeScriptConditionalBranchNode(
                     compileExpression(conditionalBranch.condition(), context),
-                    conditionalBranch.body().stream()
-                        .map(statement -> compileFunctionStatement(statement, context))
-                        .toList()
+                    compileFunctionStatements(conditionalBranch.body(), context)
                 ))
                 .toList(),
-            node.elseBody().stream()
-                .map(statement -> compileFunctionStatement(statement, context))
-                .toList()
+            compileFunctionStatements(node.elseBody(), context)
         );
     }
 
@@ -525,9 +526,7 @@ public class TypeScriptCodeGenerator {
         return new TypeScriptGetterNode(
             node.name(),
             compileTypeLevelExpression(node.type()),
-            node.body().stream()
-                .map(statement -> compileFunctionStatement(statement, context))
-                .toList()
+            compileFunctionStatements(node.body(), context)
         );
     }
 
@@ -612,9 +611,7 @@ public class TypeScriptCodeGenerator {
 
                     var body = new ArrayList<TypeScriptStatementNode>();
 
-                    for (var statement : typedCaseNode.body()) {
-                        body.add(compileFunctionStatement(statement, context));
-                    }
+                    body.addAll(compileFunctionStatements(typedCaseNode.body(), context));
 
                     return new TypeScriptSwitchCaseNode(
                         new TypeScriptStringLiteralNode(caseType.name()),
@@ -631,7 +628,7 @@ public class TypeScriptCodeGenerator {
             List.of(
                 TypeScript.string(node.name()),
                 TypeScriptFunctionExpressionNode.builder()
-                    .addBodyStatements(node.body().stream().map(statement -> compileFunctionStatement(statement, context)).toList())
+                    .addBodyStatements(compileFunctionStatements(node.body(), context))
                     .build()
             )
         ));

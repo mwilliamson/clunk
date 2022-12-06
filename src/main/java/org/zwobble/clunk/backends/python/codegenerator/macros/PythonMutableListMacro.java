@@ -26,7 +26,11 @@ public class PythonMutableListMacro implements PythonClassMacro {
 
     @Override
     public PythonExpressionNode compileMethodCall(PythonExpressionNode receiver, String methodName, List<PythonExpressionNode> positionalArgs) {
-        // TODO: remove duplication with List
+        var listResult = PythonListMacro.INSTANCE.tryCompileMethodCall(receiver, methodName, positionalArgs);
+        if (listResult.isPresent()) {
+            return listResult.get();
+        }
+
         switch (methodName) {
             case "add":
                 return new PythonCallNode(
@@ -38,12 +42,6 @@ public class PythonMutableListMacro implements PythonClassMacro {
                 return new PythonSubscriptionNode(
                     receiver,
                     List.of(new PythonIntLiteralNode(BigInteger.valueOf(-1)))
-                );
-            case "length":
-                return new PythonCallNode(
-                    new PythonReferenceNode("len"),
-                    List.of(receiver),
-                    List.of()
                 );
             default:
                 throw new UnsupportedOperationException("unexpected method: " + methodName);

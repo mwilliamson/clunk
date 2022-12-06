@@ -6,6 +6,7 @@ import org.zwobble.clunk.types.Type;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
+import java.util.Optional;
 
 public class PythonListMacro implements PythonClassMacro {
     public static final PythonListMacro INSTANCE = new PythonListMacro();
@@ -25,8 +26,22 @@ public class PythonListMacro implements PythonClassMacro {
 
     @Override
     public PythonExpressionNode compileMethodCall(PythonExpressionNode receiver, String methodName, List<PythonExpressionNode> positionalArgs) {
+        var result = tryCompileMethodCall(receiver, methodName, positionalArgs);
+
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            throw new UnsupportedOperationException("unexpected method: " + methodName);
+        }
+    }
+
+    Optional<PythonExpressionNode> tryCompileMethodCall(
+        PythonExpressionNode receiver,
+        String methodName,
+        List<PythonExpressionNode> positionalArgs
+    ) {
         switch (methodName) {
-            case "flatMap":
+            case "flatMap" -> {
                 // TODO: Need to guarantee this doesn't collide -- we don't
                 // allow variables to start with an underscore, so this should
                 // be safe, but a little more rigour would probably be wise
@@ -37,7 +52,7 @@ public class PythonListMacro implements PythonClassMacro {
                 var outputElementName = "_result";
                 var func = positionalArgs.get(0);
 
-                return new PythonListComprehensionNode(
+                var result = new PythonListComprehensionNode(
                     new PythonReferenceNode(outputElementName),
                     List.of(
                         new PythonComprehensionForClauseNode(
@@ -54,16 +69,23 @@ public class PythonListMacro implements PythonClassMacro {
                         )
                     )
                 );
-            case "get":
-                return new PythonSubscriptionNode(receiver, positionalArgs);
-            case "length":
-                return new PythonCallNode(
+                return Optional.of(result);
+            }
+            case "get" -> {
+                var result = new PythonSubscriptionNode(receiver, positionalArgs);
+                return Optional.of(result);
+            }
+            case "length" -> {
+                var result = new PythonCallNode(
                     new PythonReferenceNode("len"),
                     List.of(receiver),
                     List.of()
                 );
-            default:
-                throw new UnsupportedOperationException("unexpected method: " + methodName);
+                return Optional.of(result);
+            }
+            default -> {
+                return Optional.empty();
+            }
         }
     }
 }

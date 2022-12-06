@@ -36,6 +36,10 @@ public class Types {
         return construct(LIST_CONSTRUCTOR, List.of(elementType));
     }
 
+    public static StructuredType mutableList(Type elementType) {
+        return construct(MUTABLE_LIST_CONSTRUCTOR, List.of(elementType));
+    }
+
     public static Type option(Type elementType) {
         return construct(OPTION_CONSTRUCTOR, List.of(elementType));
     }

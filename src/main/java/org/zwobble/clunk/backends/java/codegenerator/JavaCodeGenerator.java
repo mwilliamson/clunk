@@ -46,22 +46,27 @@ public class JavaCodeGenerator {
     }
 
     private static JavaExpressionNode compileCallMethod(TypedCallMethodNode node, JavaCodeGeneratorContext context) {
-        var classMacro = JavaMacros.lookupClassMacro(node.receiver().type());
-        if (classMacro.isPresent()) {
-            return classMacro.get().compileMethodCall(
-                compileExpression(node.receiver(), context),
-                node.methodName(),
-                compileArgs(node.positionalArgs(), context)
+        var javaReceiver = compileExpression(node.receiver(), context);
+        var javaArgs = compileArgs(node.positionalArgs(), context);
+
+        var macroResult = JavaMacros.compileMethodCall(
+            node.receiver().type(),
+            javaReceiver,
+            node.methodName(),
+            javaArgs
+        );
+
+        if (macroResult.isPresent()) {
+            return macroResult.get();
+        } else {
+            return new JavaCallNode(
+                new JavaMemberAccessNode(
+                    javaReceiver,
+                    node.methodName()
+                ),
+                javaArgs
             );
         }
-
-        return new JavaCallNode(
-            new JavaMemberAccessNode(
-                compileExpression(node.receiver(), context),
-                node.methodName()
-            ),
-            compileArgs(node.positionalArgs(), context)
-        );
     }
 
     private static JavaExpressionNode compileCallStaticFunction(TypedCallStaticFunctionNode node, JavaCodeGeneratorContext context) {

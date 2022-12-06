@@ -10,6 +10,7 @@ import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.StaticFunctionType;
 import org.zwobble.clunk.types.Type;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -53,6 +54,20 @@ public class JavaMacros {
         var macro = STATIC_FUNCTION_MACROS.getOrDefault(receiverType.namespaceName(), Map.of())
             .get(receiverType.functionName());
         return Optional.ofNullable(macro);
+    }
+
+    public static Optional<JavaExpressionNode> compileMethodCall(
+        Type type,
+        JavaExpressionNode receiver,
+        String methodName,
+        List<JavaExpressionNode> positionalArgs
+    ) {
+        var classMacro = lookupClassMacro(type);
+        if (classMacro.isPresent()) {
+            return Optional.of(classMacro.get().compileMethodCall(receiver, methodName, positionalArgs));
+        } else {
+            return Optional.empty();
+        }
     }
 
     public static Optional<JavaClassMacro> lookupClassMacro(Type type) {

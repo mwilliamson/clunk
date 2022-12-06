@@ -36,7 +36,7 @@ public class PythonCodeGeneratorCallConstructorTests {
     }
 
     @Test
-    public void callToStringBuilderIsCompiledToEmptyList() {
+    public void whenTypeHasMacroThenConstructorCallIsCompiledUsingMacro() {
         var node = new TypedCallConstructorNode(
             Typed.localReference("StringBuilder", Types.metaType(Types.STRING_BUILDER)),
             List.of(),

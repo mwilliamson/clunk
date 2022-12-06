@@ -1,9 +1,14 @@
 package org.zwobble.clunk.backends.typescript.codegenerator;
 
-import org.zwobble.clunk.backends.typescript.ast.*;
-import org.zwobble.clunk.types.*;
+import org.zwobble.clunk.backends.typescript.ast.TypeScriptExpressionNode;
+import org.zwobble.clunk.backends.typescript.ast.TypeScriptReferenceNode;
+import org.zwobble.clunk.backends.typescript.codegenerator.macros.TypeScriptListMacro;
+import org.zwobble.clunk.backends.typescript.codegenerator.macros.TypeScriptStringBuilderMacro;
+import org.zwobble.clunk.types.ConstructedType;
+import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.StaticFunctionType;
+import org.zwobble.clunk.types.Type;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -14,78 +19,8 @@ public class TypeScriptMacros {
     }
 
     private static final Map<Type, TypeScriptClassMacro> CLASS_MACROS = Stream.of(
-
-        new TypeScriptClassMacro() {
-            @Override
-            public Type receiverType() {
-                return Types.LIST_CONSTRUCTOR.genericType();
-            }
-
-            @Override
-            public TypeScriptExpressionNode compileConstructorCall(List<TypeScriptExpressionNode> positionalArgs) {
-                return new TypeScriptArrayNode(List.of());
-            }
-
-            @Override
-            public TypeScriptExpressionNode compileMethodCall(
-                TypeScriptExpressionNode receiver,
-                String methodName,
-                List<TypeScriptExpressionNode> positionalArgs
-            ) {
-                switch (methodName) {
-                    case "flatMap":
-                        return new TypeScriptCallNode(
-                            new TypeScriptPropertyAccessNode(receiver, "flatMap"),
-                            positionalArgs
-                        );
-                    case "get":
-                        return new TypeScriptIndexNode(receiver, positionalArgs.get(0));
-                    case "length":
-                        return new TypeScriptPropertyAccessNode(
-                            receiver,
-                            "length"
-                        );
-                    default:
-                        throw new UnsupportedOperationException("unexpected method: " + methodName);
-                }
-            }
-        },
-        new TypeScriptClassMacro() {
-            @Override
-            public Type receiverType() {
-                return Types.STRING_BUILDER;
-            }
-
-            @Override
-            public TypeScriptExpressionNode compileConstructorCall(List<TypeScriptExpressionNode> positionalArgs) {
-                return new TypeScriptArrayNode(List.of());
-            }
-
-            @Override
-            public TypeScriptExpressionNode compileMethodCall(
-                TypeScriptExpressionNode receiver,
-                String methodName,
-                List<TypeScriptExpressionNode> positionalArgs
-            ) {
-                switch (methodName) {
-                    case "append":
-                        return new TypeScriptCallNode(
-                            new TypeScriptPropertyAccessNode(receiver, "push"),
-                            positionalArgs
-                        );
-                    case "build":
-                        return new TypeScriptCallNode(
-                            new TypeScriptPropertyAccessNode(
-                                receiver,
-                                "join"
-                            ),
-                            List.of(new TypeScriptStringLiteralNode(""))
-                        );
-                    default:
-                        throw new UnsupportedOperationException("unexpected method: " + methodName);
-                }
-            }
-        }
+        TypeScriptListMacro.INSTANCE,
+        TypeScriptStringBuilderMacro.INSTANCE
     ).collect(Collectors.toMap(x -> x.receiverType(), x -> x));
 
     public static Optional<TypeScriptClassMacro> lookupClassMacro(Type type) {

@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface JavaClassMacro {
     Type receiverType();
+    JavaTypeExpressionNode compileTypeReference();
     JavaExpressionNode compileConstructorCall(
         Optional<List<JavaTypeExpressionNode>> typeArgs,
         List<JavaExpressionNode> positionalArgs

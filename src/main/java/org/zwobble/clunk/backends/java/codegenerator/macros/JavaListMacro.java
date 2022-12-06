@@ -20,6 +20,11 @@ public class JavaListMacro implements JavaClassMacro  {
     }
 
     @Override
+    public JavaTypeExpressionNode compileTypeReference() {
+        return new JavaFullyQualifiedTypeReferenceNode("java.util", "List");
+    }
+
+    @Override
     public JavaExpressionNode compileConstructorCall(
         Optional<List<JavaTypeExpressionNode>> typeArgs,
         List<JavaExpressionNode> positionalArgs

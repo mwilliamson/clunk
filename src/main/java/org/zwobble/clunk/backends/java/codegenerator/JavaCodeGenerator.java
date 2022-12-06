@@ -34,9 +34,9 @@ public class JavaCodeGenerator {
         var javaReceiver = compileExpression(node.receiver(), context);
         var javaArgs = compileArgs(node.positionalArgs(), context);
 
-        var classMacro = JavaMacros.lookupClassMacro(node.type());
-        if (classMacro.isPresent()) {
-            return classMacro.get().compileConstructorCall(javaArgs);
+        var macroResult = JavaMacros.compileConstructorCall(node.type(), javaArgs);
+        if (macroResult.isPresent()) {
+            return macroResult.get();
         } else {
             // TODO: handle not a record type
             var recordType = (RecordType) node.type();

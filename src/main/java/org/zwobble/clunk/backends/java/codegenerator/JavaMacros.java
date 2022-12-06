@@ -56,6 +56,18 @@ public class JavaMacros {
         return Optional.ofNullable(macro);
     }
 
+    public static Optional<JavaExpressionNode> compileConstructorCall(
+        Type type,
+        List<JavaExpressionNode> positionalArgs
+    ) {
+        var classMacro = lookupClassMacro(type);
+        if (classMacro.isPresent()) {
+            return Optional.of(classMacro.get().compileConstructorCall(positionalArgs));
+        } else {
+            return Optional.empty();
+        }
+    }
+
     public static Optional<JavaExpressionNode> compileMethodCall(
         Type type,
         JavaExpressionNode receiver,
@@ -70,7 +82,7 @@ public class JavaMacros {
         }
     }
 
-    public static Optional<JavaClassMacro> lookupClassMacro(Type type) {
+    private static Optional<JavaClassMacro> lookupClassMacro(Type type) {
         if (type instanceof ConstructedType constructedType) {
             type = constructedType.constructor().genericType();
         }

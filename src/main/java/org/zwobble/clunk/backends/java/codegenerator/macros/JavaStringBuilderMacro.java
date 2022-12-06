@@ -15,13 +15,13 @@ public class JavaStringBuilderMacro implements JavaClassMacro {
     }
 
     @Override
-    public JavaTypeExpressionNode compileTypeReference() {
-        return new JavaFullyQualifiedTypeReferenceNode("java.lang", "StringBuilder");
+    public Type receiverType() {
+        return Types.STRING_BUILDER;
     }
 
     @Override
-    public Type receiverType() {
-        return Types.STRING_BUILDER;
+    public JavaTypeExpressionNode compileTypeReference() {
+        return new JavaFullyQualifiedTypeReferenceNode("java.lang", "StringBuilder");
     }
 
     @Override

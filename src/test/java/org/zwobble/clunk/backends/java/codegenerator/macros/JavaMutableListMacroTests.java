@@ -15,6 +15,25 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class JavaMutableListMacroTests {
     @Test
+    public void mutableListConstructorCallIsCompiledToNewArrayList() {
+        // TODO: missing type params
+        var node = Typed.callConstructor(
+            Typed.localReference(
+                "MutableList",
+                Types.metaType(Types.STRING)
+            ),
+            List.of(),
+            Types.mutableList(Types.STRING)
+        );
+
+        var result = JavaCodeGenerator.compileExpression(node, JavaCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
+        // TODO: missing type params
+        assertThat(string, equalTo("new java.util.ArrayList()"));
+    }
+
+    @Test
     public void methodsAreInheritedFromList() {
         var node = Typed.callMethod(
             Typed.localReference(

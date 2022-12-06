@@ -6,6 +6,7 @@ import org.zwobble.clunk.types.Type;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
+import java.util.Optional;
 
 public class JavaMutableListMacro implements JavaClassMacro {
     public static final JavaMutableListMacro INSTANCE = new JavaMutableListMacro();
@@ -20,7 +21,13 @@ public class JavaMutableListMacro implements JavaClassMacro {
 
     @Override
     public JavaExpressionNode compileConstructorCall(List<JavaExpressionNode> positionalArgs) {
-        throw new UnsupportedOperationException();
+        return new JavaCallNewNode(
+            // TODO: proper fully qualified reference
+            new JavaReferenceNode("java.util.ArrayList"),
+            Optional.empty(),
+            List.of(),
+            Optional.empty()
+        );
     }
 
     @Override

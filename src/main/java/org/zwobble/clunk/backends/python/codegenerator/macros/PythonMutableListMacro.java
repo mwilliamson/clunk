@@ -1,11 +1,13 @@
 package org.zwobble.clunk.backends.python.codegenerator.macros;
 
-import org.zwobble.clunk.backends.python.ast.*;
+import org.zwobble.clunk.backends.python.ast.PythonAttrAccessNode;
+import org.zwobble.clunk.backends.python.ast.PythonCallNode;
+import org.zwobble.clunk.backends.python.ast.PythonExpressionNode;
+import org.zwobble.clunk.backends.python.ast.PythonListNode;
 import org.zwobble.clunk.backends.python.codegenerator.PythonClassMacro;
 import org.zwobble.clunk.types.Type;
 import org.zwobble.clunk.types.Types;
 
-import java.math.BigInteger;
 import java.util.List;
 
 public class PythonMutableListMacro implements PythonClassMacro {

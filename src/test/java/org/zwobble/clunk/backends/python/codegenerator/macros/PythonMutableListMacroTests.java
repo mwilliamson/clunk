@@ -31,4 +31,22 @@ public class PythonMutableListMacroTests {
         var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("xs[42]"));
     }
+
+    @Test
+    public void addCallIsCompiledToAppend() {
+        var node = Typed.callMethod(
+            Typed.localReference(
+                "xs",
+                Types.mutableList(Types.STRING)
+            ),
+            "add",
+            List.of(Typed.string("")),
+            Types.UNIT
+        );
+
+        var result = PythonCodeGenerator.compileExpression(node, PythonCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("xs.append(\"\")"));
+    }
 }

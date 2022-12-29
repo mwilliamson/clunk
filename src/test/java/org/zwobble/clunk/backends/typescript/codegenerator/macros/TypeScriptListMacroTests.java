@@ -66,7 +66,7 @@ public class TypeScriptListMacroTests {
         var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
-        assertThat(string, equalTo("xs[xs.length + -1]"));
+        assertThat(string, equalTo("xs[xs.length - 1]"));
     }
 
     @Test

@@ -42,7 +42,7 @@ public class TypeScriptListMacro implements TypeScriptClassMacro {
                     receiver,
                     "length"
                 );
-                var index = new TypeScriptAddNode(length, new TypeScriptNumberLiteralNode(-1));
+                var index = new TypeScriptSubtractNode(length, new TypeScriptNumberLiteralNode(1));
                 return new TypeScriptIndexNode(receiver, index);
             case "length":
                 return new TypeScriptPropertyAccessNode(

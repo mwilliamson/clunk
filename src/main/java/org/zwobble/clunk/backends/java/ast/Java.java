@@ -123,6 +123,13 @@ public class Java {
         return new JavaMethodReferenceStaticNode(receiver, methodName);
     }
 
+    public static JavaNotEqualNode notEqual(
+        JavaReferenceNode left,
+        JavaReferenceNode right
+    ) {
+        return new JavaNotEqualNode(left, right);
+    }
+
     public static JavaStringLiteralNode string(String value) {
         return new JavaStringLiteralNode(value);
     }

@@ -285,6 +285,12 @@ public class JavaSerialiser {
             }
 
             @Override
+            public Void visit(JavaNotEqualNode node) {
+                serialiseNotEqual(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(JavaReferenceNode node) {
                 serialiseReference(node, builder);
                 return null;
@@ -552,6 +558,10 @@ public class JavaSerialiser {
         serialiseTypeExpression(node.receiver(), builder);
         builder.append("::");
         builder.append(node.methodName());
+    }
+
+    private static void serialiseNotEqual(JavaNotEqualNode node, CodeBuilder builder) {
+        serialiseBinaryOperation("!=", node, builder);
     }
 
     public static void serialiseOrdinaryCompilationUnit(JavaOrdinaryCompilationUnitNode node, CodeBuilder builder) {

@@ -350,6 +350,12 @@ public class TypeScriptSerialiser {
             }
 
             @Override
+            public Void visit(TypeScriptStrictNotEqualNode node) {
+                serialiseStrictNotEqual(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(TypeScriptStringLiteralNode node) {
                 serialiseStringLiteral(node, builder);
                 return null;
@@ -678,6 +684,10 @@ public class TypeScriptSerialiser {
 
     private static void serialiseStrictEquals(TypeScriptStrictEqualsNode node, CodeBuilder builder) {
         serialiseBinaryOperation("===", node, builder);
+    }
+
+    private static void serialiseStrictNotEqual(TypeScriptStrictNotEqualNode node, CodeBuilder builder) {
+        serialiseBinaryOperation("!==", node, builder);
     }
 
     private static void serialiseStringLiteral(TypeScriptStringLiteralNode node, CodeBuilder builder) {

@@ -172,6 +172,13 @@ public class TypeScript {
         return new TypeScriptStrictEqualsNode(left, right);
     }
 
+    public static TypeScriptStrictNotEqualNode strictNotEqual(
+        TypeScriptReferenceNode left,
+        TypeScriptReferenceNode right
+    ) {
+        return new TypeScriptStrictNotEqualNode(left, right);
+    }
+
     public static TypeScriptStringLiteralNode string(String value) {
         return new TypeScriptStringLiteralNode(value);
     }

@@ -217,7 +217,8 @@ public class Parser {
         new ParseInstanceOf(),
         new ParseLogicalAnd(),
         new ParseLogicalOr(),
-        new ParseMemberAccess()
+        new ParseMemberAccess(),
+        new ParseNotEqual()
     ).collect(Collectors.toMap(
             parselet -> parselet.tokenType(),
             parselet -> parselet
@@ -379,6 +380,28 @@ public class Parser {
         tokens.skip(TokenType.SYMBOL_BANG);
         var operand = parseSubexpression(tokens, OperatorPrecedence.PREFIX);
         return new UntypedLogicalNotNode(operand, source);
+    }
+
+    private class ParseNotEqual implements OperatorParselet {
+        @Override
+        public OperatorPrecedence precedence() {
+            return OperatorPrecedence.EQUALITY;
+        }
+
+        @Override
+        public UntypedExpressionNode parse(
+            UntypedExpressionNode left,
+            TokenIterator<TokenType> tokens,
+            Source operatorSource
+        ) {
+            var right = parseSubexpression(tokens, this);
+            return new UntypedNotEqualNode(left, right, left.source());
+        }
+
+        @Override
+        public TokenType tokenType() {
+            return TokenType.SYMBOL_NOT_EQUAL;
+        }
     }
 
     private class ParseLogicalOr implements OperatorParselet {

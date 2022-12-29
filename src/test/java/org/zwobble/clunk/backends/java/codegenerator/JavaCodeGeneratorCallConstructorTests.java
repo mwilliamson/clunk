@@ -35,7 +35,7 @@ public class JavaCodeGeneratorCallConstructorTests {
     }
 
     @Test
-    public void whenTypeHasMacroThenConstructorCallIsCompiledUsingMacro() {
+    public void whenNonGenericTypeHasMacroThenConstructorCallIsCompiledUsingMacro() {
         var node = new TypedCallConstructorNode(
             Typed.localReference("StringBuilder", Types.metaType(Types.STRING_BUILDER)),
             List.of(),
@@ -48,6 +48,23 @@ public class JavaCodeGeneratorCallConstructorTests {
 
         var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("new StringBuilder()"));
+        assertThat(context.imports(), empty());
+    }
+
+    @Test
+    public void whenGenericTypeHasMacroThenConstructorCallIsCompiledUsingMacro() {
+        var node = new TypedCallConstructorNode(
+            Typed.localReference("MutableList", Types.metaType(Types.mutableList(Types.STRING))),
+            List.of(),
+            Types.mutableList(Types.STRING),
+            NullSource.INSTANCE
+        );
+        var context = JavaCodeGeneratorContext.stub();
+
+        var result = JavaCodeGenerator.compileExpression(node, context);
+
+        var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("new java.util.ArrayList<String>()"));
         assertThat(context.imports(), empty());
     }
 }

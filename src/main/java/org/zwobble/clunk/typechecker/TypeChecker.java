@@ -328,6 +328,11 @@ public class TypeChecker {
             }
 
             @Override
+            public TypedExpressionNode visit(UntypedNotEqualNode node) {
+                return typeCheckNotEqual(node, context);
+            }
+
+            @Override
             public TypedExpressionNode visit(UntypedReferenceNode node) {
                 return typeCheckReference(node, context);
             }
@@ -923,6 +928,23 @@ public class TypeChecker {
                 return typeCheckTestSuite(node);
             }
         });
+    }
+
+    private static TypedExpressionNode typeCheckNotEqual(
+        UntypedNotEqualNode node,
+        TypeCheckerContext context
+    ) {
+        var left = typeCheckExpression(node.left(), context);
+        var right = typeCheckExpression(node.right(), context);
+
+        expectExpressionType(left, Types.STRING);
+        expectExpressionType(right, Types.STRING);
+
+        return new TypedStringNotEqualNode(
+            left,
+            right,
+            node.source()
+        );
     }
 
     private static TypeCheckRecordBodyDeclarationResult typeCheckProperty(

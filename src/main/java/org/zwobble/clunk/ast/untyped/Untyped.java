@@ -142,6 +142,13 @@ public class Untyped {
         return new UntypedLogicalOrNode(left, right, NullSource.INSTANCE);
     }
 
+    public static UntypedNotEqualNode notEqual(
+        UntypedExpressionNode left,
+        UntypedExpressionNode right
+    ) {
+        return new UntypedNotEqualNode(left, right, NullSource.INSTANCE);
+    }
+
     public static UntypedParamNode param(String name, UntypedTypeLevelExpressionNode type) {
         return new UntypedParamNode(name, type, NullSource.INSTANCE);
     }

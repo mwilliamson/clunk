@@ -9,6 +9,7 @@ import org.zwobble.clunk.types.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static org.zwobble.clunk.types.Types.metaType;
 import static org.zwobble.clunk.util.Lists.last;
@@ -140,19 +141,22 @@ public class TypeChecker {
         expectExpressionType(typedConditionNode, Types.BOOL);
 
         var bodyContext = context;
+        var bodyPrefix = new ArrayList<TypedFunctionStatementNode>();
         if (
             typedConditionNode instanceof TypedInstanceOfNode typedInstanceOfNode
             && typedInstanceOfNode.expression() instanceof TypedReferenceNode typedInstanceOfReferenceNode
         ) {
-            var type = (Type) typedInstanceOfNode.typeExpression().value();
-            bodyContext = bodyContext.updateLocal(typedInstanceOfReferenceNode.name(), type, typedInstanceOfNode.source());
+            var narrowedType = (StructuredType) typedInstanceOfNode.typeExpression().value();
+            var variableName = typedInstanceOfReferenceNode.name();
+            bodyContext = bodyContext.updateLocal(variableName, narrowedType, typedInstanceOfNode.source());
+            bodyPrefix.add(new TypedTypeNarrowNode(variableName, narrowedType, typedInstanceOfNode.source()));
         }
 
         var typeCheckBodyResults = typeCheckFunctionStatements(node.body(), bodyContext);
 
         return typeCheckBodyResults.map(body -> new TypedConditionalBranchNode(
             typedConditionNode,
-            body,
+            Stream.concat(bodyPrefix.stream(), body.stream()).toList(),
             node.source()
         ));
     }

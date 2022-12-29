@@ -2,6 +2,7 @@ package org.zwobble.clunk.ast.typed;
 
 import org.hamcrest.Matcher;
 import org.zwobble.clunk.types.NamespaceType;
+import org.zwobble.clunk.types.StructuredType;
 import org.zwobble.clunk.types.TypeLevelValue;
 import org.zwobble.clunk.util.P;
 
@@ -101,6 +102,17 @@ public class TypedNodeMatchers {
 
     public static Matcher<TypedTypeLevelExpressionNode> isTypedTypeLevelReferenceNode(String name, TypeLevelValue value) {
         return cast(TypedTypeLevelReferenceNode.class, has("name", equalTo(name)), has("value", equalTo(value)));
+    }
+
+    public static Matcher<TypedTypeNarrowNode> isTypedTypeNarrowNode(
+        String variableName,
+        Matcher<StructuredType> type
+    ) {
+        return cast(
+            TypedTypeNarrowNode.class,
+            has("variableName", equalTo(variableName)),
+            has("type", type)
+        );
     }
 
     public static TypedVarNodeMatcher isTypedVarNode() {

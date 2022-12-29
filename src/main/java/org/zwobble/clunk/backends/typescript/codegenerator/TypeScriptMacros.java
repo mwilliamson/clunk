@@ -5,6 +5,7 @@ import org.zwobble.clunk.backends.typescript.ast.TypeScriptReferenceNode;
 import org.zwobble.clunk.backends.typescript.codegenerator.macros.TypeScriptListMacro;
 import org.zwobble.clunk.backends.typescript.codegenerator.macros.TypeScriptMutableListMacro;
 import org.zwobble.clunk.backends.typescript.codegenerator.macros.TypeScriptStringBuilderMacro;
+import org.zwobble.clunk.backends.typescript.codegenerator.macros.TypeScriptUnitMacro;
 import org.zwobble.clunk.types.ConstructedType;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.StaticFunctionType;
@@ -22,8 +23,19 @@ public class TypeScriptMacros {
     private static final Map<Type, TypeScriptClassMacro> CLASS_MACROS = Stream.of(
         TypeScriptMutableListMacro.INSTANCE,
         TypeScriptListMacro.INSTANCE,
-        TypeScriptStringBuilderMacro.INSTANCE
+        TypeScriptStringBuilderMacro.INSTANCE,
+        TypeScriptUnitMacro.INSTANCE
     ).collect(Collectors.toMap(x -> x.receiverType(), x -> x));
+
+    public static Optional<TypeScriptExpressionNode> compileTypeReference(Type type) {
+        var macro = CLASS_MACROS.get(type);
+
+        if (macro == null) {
+            return Optional.empty();
+        } else {
+            return Optional.of(macro.compileTypeReference());
+        }
+    }
 
     public static Optional<TypeScriptClassMacro> lookupClassMacro(Type type) {
         if (type instanceof ConstructedType constructedType) {

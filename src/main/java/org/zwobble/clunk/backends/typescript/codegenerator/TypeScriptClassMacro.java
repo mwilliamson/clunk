@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface TypeScriptClassMacro {
     Type receiverType();
+    TypeScriptExpressionNode compileTypeReference();
     TypeScriptExpressionNode compileConstructorCall(
         Optional<List<TypeScriptExpressionNode>> typeArgs,
         List<TypeScriptExpressionNode> positionalArgs

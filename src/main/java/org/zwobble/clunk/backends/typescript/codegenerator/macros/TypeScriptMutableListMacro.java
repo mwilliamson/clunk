@@ -20,6 +20,11 @@ public class TypeScriptMutableListMacro implements TypeScriptClassMacro {
     }
 
     @Override
+    public TypeScriptExpressionNode compileTypeReference() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public TypeScriptExpressionNode compileConstructorCall(
         Optional<List<TypeScriptExpressionNode>> typeArgs,
         List<TypeScriptExpressionNode> positionalArgs

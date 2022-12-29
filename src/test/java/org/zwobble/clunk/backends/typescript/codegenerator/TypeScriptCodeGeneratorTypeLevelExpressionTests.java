@@ -53,20 +53,6 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
     }
 
     @Test
-    public void listTypeIsCompiledToArrayType() {
-        var node = Typed.constructedTypeInvariant(
-            Typed.typeLevelReference("List", Types.LIST_CONSTRUCTOR),
-            List.of(Typed.typeLevelReference("Int", Types.INT)),
-            Types.list(Types.INT)
-        );
-
-        var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
-
-        var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
-        assertThat(string, equalTo("Array<number>"));
-    }
-
-    @Test
     public void optionTypeIsCompiledToUnionWithNull() {
         var node = Typed.constructedTypeInvariant(
             Typed.typeLevelReference("Option", Types.OPTION_CONSTRUCTOR),
@@ -98,5 +84,15 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
 
         var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("string"));
+    }
+
+    @Test
+    public void typeMacrosAreUsedToCompileToTypeScriptTypeReference() {
+        var node = Typed.typeLevelReference("Unit", UnitType.INSTANCE);
+
+        var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
+
+        var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("void"));
     }
 }

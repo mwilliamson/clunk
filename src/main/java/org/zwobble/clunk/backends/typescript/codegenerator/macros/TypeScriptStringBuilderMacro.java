@@ -21,7 +21,10 @@ public class TypeScriptStringBuilderMacro implements TypeScriptClassMacro {
 
     @Override
     public TypeScriptExpressionNode compileTypeReference() {
-        throw new UnsupportedOperationException();
+        return new TypeScriptConstructedTypeNode(
+            new TypeScriptReferenceNode("Array"),
+            List.of(new TypeScriptReferenceNode("string"))
+        );
     }
 
     @Override

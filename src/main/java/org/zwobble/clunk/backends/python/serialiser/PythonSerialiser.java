@@ -225,6 +225,12 @@ public class PythonSerialiser {
             }
 
             @Override
+            public Void visit(PythonNotEqualNode node) {
+                serialiseNotEqual(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(PythonReferenceNode node) {
                 serialiseReference(node, builder);
                 return null;
@@ -356,6 +362,10 @@ public class PythonSerialiser {
         for (var statement : node.statements()) {
             serialiseStatement(statement, builder);
         }
+    }
+
+    private static void serialiseNotEqual(PythonNotEqualNode node, CodeBuilder builder) {
+        serialiseBinaryOperation("!=", node, builder);
     }
 
     private static void serialiseReference(PythonReferenceNode node, CodeBuilder builder) {

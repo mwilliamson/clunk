@@ -104,6 +104,10 @@ public class Python {
         return new PythonListComprehensionNode(element, forClauses);
     }
 
+    public static PythonNotEqualNode notEqual(PythonExpressionNode left, PythonExpressionNode right) {
+        return new PythonNotEqualNode(left, right);
+    }
+
     public static PythonStringLiteralNode string(String value) {
         return new PythonStringLiteralNode(value);
     }

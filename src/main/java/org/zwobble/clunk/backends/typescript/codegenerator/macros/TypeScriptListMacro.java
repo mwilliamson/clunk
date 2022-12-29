@@ -37,6 +37,13 @@ public class TypeScriptListMacro implements TypeScriptClassMacro {
                 );
             case "get":
                 return new TypeScriptIndexNode(receiver, positionalArgs.get(0));
+            case "last":
+                var length = new TypeScriptPropertyAccessNode(
+                    receiver,
+                    "length"
+                );
+                var index = new TypeScriptAddNode(length, new TypeScriptNumberLiteralNode(-1));
+                return new TypeScriptIndexNode(receiver, index);
             case "length":
                 return new TypeScriptPropertyAccessNode(
                     receiver,

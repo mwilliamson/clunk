@@ -51,6 +51,25 @@ public class TypeScriptListMacroTests {
     }
 
     @Test
+    public void lastIsCompiledToIndex() {
+        // TODO: use lodash, this is unsafe due to side effects
+        var node = Typed.callMethod(
+            Typed.localReference(
+                "xs",
+                Types.list(Types.STRING)
+            ),
+            "last",
+            List.of(),
+            Types.STRING
+        );
+
+        var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("xs[xs.length + -1]"));
+    }
+
+    @Test
     public void lengthIsCompiledToLengthAccess() {
         var node = Typed.callMethod(
             Typed.localReference(

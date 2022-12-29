@@ -33,7 +33,7 @@ public class TypeScriptCodeGeneratorCallConstructorTests {
     }
 
     @Test
-    public void callToStringBuilderIsCompiledToEmptyArray() {
+    public void whenNonGenericTypeHasMacroThenConstructorCallIsCompiledUsingMacro() {
         var node = new TypedCallConstructorNode(
             Typed.localReference("StringBuilder", Types.metaType(Types.STRING_BUILDER)),
             List.of(),
@@ -46,6 +46,24 @@ public class TypeScriptCodeGeneratorCallConstructorTests {
 
         var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("[]"));
+        assertThat(context.imports(), empty());
+    }
+
+    @Test
+    public void whenGenericTypeHasMacroThenConstructorCallIsCompiledUsingMacro() {
+        var node = new TypedCallConstructorNode(
+            Typed.localReference("MutableList", Types.metaType(Types.mutableList(Types.STRING))),
+            List.of(),
+            Types.mutableList(Types.STRING),
+            NullSource.INSTANCE
+        );
+        var context = TypeScriptCodeGeneratorContext.stub();
+
+        var result = TypeScriptCodeGenerator.compileExpression(node, context);
+
+        var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
+        // TODO: should be new Array<string>
+        assertThat(string, equalTo("new Array<any>()"));
         assertThat(context.imports(), empty());
     }
 }

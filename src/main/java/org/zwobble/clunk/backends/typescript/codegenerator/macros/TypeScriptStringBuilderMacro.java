@@ -6,6 +6,7 @@ import org.zwobble.clunk.types.Type;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
+import java.util.Optional;
 
 public class TypeScriptStringBuilderMacro implements TypeScriptClassMacro {
     public static final TypeScriptStringBuilderMacro INSTANCE = new TypeScriptStringBuilderMacro();
@@ -19,7 +20,10 @@ public class TypeScriptStringBuilderMacro implements TypeScriptClassMacro {
     }
 
     @Override
-    public TypeScriptExpressionNode compileConstructorCall(List<TypeScriptExpressionNode> positionalArgs) {
+    public TypeScriptExpressionNode compileConstructorCall(
+        Optional<List<TypeScriptExpressionNode>> typeArgs,
+        List<TypeScriptExpressionNode> positionalArgs
+    ) {
         return new TypeScriptArrayNode(List.of());
     }
 

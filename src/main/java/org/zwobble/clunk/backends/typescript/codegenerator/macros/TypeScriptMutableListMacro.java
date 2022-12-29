@@ -1,14 +1,12 @@
 package org.zwobble.clunk.backends.typescript.codegenerator.macros;
 
-import org.zwobble.clunk.backends.typescript.ast.TypeScriptArrayNode;
-import org.zwobble.clunk.backends.typescript.ast.TypeScriptCallNode;
-import org.zwobble.clunk.backends.typescript.ast.TypeScriptExpressionNode;
-import org.zwobble.clunk.backends.typescript.ast.TypeScriptPropertyAccessNode;
+import org.zwobble.clunk.backends.typescript.ast.*;
 import org.zwobble.clunk.backends.typescript.codegenerator.TypeScriptClassMacro;
 import org.zwobble.clunk.types.Type;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
+import java.util.Optional;
 
 public class TypeScriptMutableListMacro implements TypeScriptClassMacro {
     public final static TypeScriptMutableListMacro INSTANCE = new TypeScriptMutableListMacro();
@@ -22,8 +20,15 @@ public class TypeScriptMutableListMacro implements TypeScriptClassMacro {
     }
 
     @Override
-    public TypeScriptExpressionNode compileConstructorCall(List<TypeScriptExpressionNode> positionalArgs) {
-        return new TypeScriptArrayNode(List.of());
+    public TypeScriptExpressionNode compileConstructorCall(
+        Optional<List<TypeScriptExpressionNode>> typeArgs,
+        List<TypeScriptExpressionNode> positionalArgs
+    ) {
+        return new TypeScriptCallNewNode(
+            TypeScript.reference("Array"),
+            typeArgs.orElseThrow(),
+            List.of()
+        );
     }
 
     @Override

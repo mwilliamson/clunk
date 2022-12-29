@@ -20,7 +20,10 @@ public class TypeScriptListMacro implements TypeScriptClassMacro {
     }
 
     @Override
-    public TypeScriptExpressionNode compileConstructorCall(List<TypeScriptExpressionNode> positionalArgs) {
+    public TypeScriptExpressionNode compileConstructorCall(
+        Optional<List<TypeScriptExpressionNode>> typeArgs,
+        List<TypeScriptExpressionNode> positionalArgs
+    ) {
         return new TypeScriptArrayNode(List.of());
     }
 

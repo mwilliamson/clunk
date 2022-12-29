@@ -32,14 +32,10 @@ public class TypeScriptCodeGenerator {
     private static TypeScriptExpressionNode compileCallConstructor(TypedCallConstructorNode node, TypeScriptCodeGeneratorContext context) {
         var classMacro = TypeScriptMacros.lookupClassMacro(node.type());
         if (classMacro.isPresent()) {
-            Optional<List<TypeScriptExpressionNode>> typeArgs = node.type() instanceof ConstructedType constructedType
-                ? Optional.of(
-                    constructedType.args().stream()
-                        // TODO: use more specific type than any
-                        .map(typeArg -> (TypeScriptExpressionNode) new TypeScriptReferenceNode("any"))
-                        .toList()
-                )
+            Optional<List<TypeScriptExpressionNode>> typeArgs = node.typeArgs().isPresent()
+                ? Optional.of(node.typeArgs().get().stream().map(typeArg -> compileTypeLevelExpression(typeArg)).toList())
                 : Optional.empty();
+
             return classMacro.get().compileConstructorCall(
                 typeArgs,
                 compileArgs(node.positionalArgs(), context)

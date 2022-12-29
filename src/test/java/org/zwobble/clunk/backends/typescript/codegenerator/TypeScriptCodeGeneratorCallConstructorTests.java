@@ -58,8 +58,7 @@ public class TypeScriptCodeGeneratorCallConstructorTests {
         var result = TypeScriptCodeGenerator.compileExpression(node, context);
 
         var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
-        // TODO: should be new Array<string>
-        assertThat(string, equalTo("new Array<any>()"));
+        assertThat(string, equalTo("new Array<string>()"));
         assertThat(context.imports(), empty());
     }
 }

@@ -16,12 +16,12 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class TypeScriptMutableListMacroTests {
     @Test
     public void mutableListConstructorCallIsCompiledToEmptyList() {
-        // TODO: missing type params
         var node = Typed.callConstructor(
             Typed.localReference(
                 "MutableList",
                 Types.metaType(Types.STRING)
             ),
+            List.of(Typed.typeLevelReference("String", Types.STRING)),
             List.of(),
             Types.mutableList(Types.STRING)
         );
@@ -29,7 +29,7 @@ public class TypeScriptMutableListMacroTests {
         var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
-        assertThat(string, equalTo("new Array<any>()"));
+        assertThat(string, equalTo("new Array<string>()"));
     }
 
     @Test

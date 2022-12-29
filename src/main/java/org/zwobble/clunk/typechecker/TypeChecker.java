@@ -573,9 +573,13 @@ public class TypeChecker {
 
         for (var untypedConditionalBranch : node.conditionalBranches()) {
             var result = typeCheckConditionalBranch(untypedConditionalBranch, bodyContext)
-                .map(typedConditionalBranch -> typedConditionalBranch.withBody(
-                    Stream.concat(bodyPrefix.stream(), typedConditionalBranch.body().stream()).toList()
-                ));
+                .map(typedConditionalBranch ->
+                    typedConditionalBranch.body().isEmpty()
+                        ? typedConditionalBranch
+                        : typedConditionalBranch.withBody(
+                            Stream.concat(bodyPrefix.stream(), typedConditionalBranch.body().stream()).toList()
+                        )
+                );
             typedConditionalBranches.add(result.value());
             returnBehaviours.add(result.returnBehaviour());
             returnType = Types.unify(returnType, result.returnType());
@@ -598,7 +602,11 @@ public class TypeChecker {
         }
 
         var typeCheckElseResult = typeCheckFunctionStatements(node.elseBody(), bodyContext)
-            .map(typedElseBody -> Stream.concat(bodyPrefix.stream(), typedElseBody.stream()).toList());
+            .map(typedElseBody ->
+                typedElseBody.isEmpty()
+                    ? typedElseBody
+                    : Stream.concat(bodyPrefix.stream(), typedElseBody.stream()).toList()
+            );
 
         returnBehaviours.add(typeCheckElseResult.returnBehaviour());
         returnType = Types.unify(returnType, typeCheckElseResult.returnType());

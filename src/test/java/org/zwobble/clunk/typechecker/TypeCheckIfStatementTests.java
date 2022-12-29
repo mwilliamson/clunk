@@ -238,6 +238,47 @@ public class TypeCheckIfStatementTests {
     }
 
     @Test
+    public void whenBodyIsEmptyThenNoTypeNarrowIsInserted() {
+        var namespaceName = NamespaceName.fromParts("example");
+        var interfaceType = Types.interfaceType(namespaceName, "Interface");
+        var recordType = Types.recordType(namespaceName, "Record");
+        var untypedNode = Untyped.ifStatement(
+            List.of(
+                Untyped.conditionalBranch(
+                    Untyped.logicalNot(Untyped.instanceOf(
+                        Untyped.reference("x"),
+                        Untyped.typeLevelReference("Record")
+                    )),
+                    List.of(Untyped.expressionStatement(Untyped.reference("x")))
+                ),
+                Untyped.conditionalBranch(
+                    Untyped.boolFalse(),
+                    List.of()
+                )
+            ),
+            List.of()
+        );
+        var context = TypeCheckerContext.stub()
+            .addSealedInterfaceCase(interfaceType, recordType)
+            .enterFunction(Types.OBJECT)
+            .addLocal("x", interfaceType, NullSource.INSTANCE)
+            .addLocal("Record", Types.metaType(recordType), NullSource.INSTANCE);
+
+        var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
+
+        assertThat(result.value(), contains(
+            allOf(
+                isA(TypedIfStatementNode.class),
+                has("conditionalBranches", contains(
+                    has("body", contains(isTypedExpressionStatementNode(isTypedReferenceNode().withType(interfaceType)))),
+                    has("body", empty())
+                )),
+                has("elseBody", empty())
+            )
+        ));
+    }
+
+    @Test
     public void whenConditionIsNegatedInstanceOfCheckWithNonReturningBodyThenFollowingStatementsHaveUnchangedTypeForVariable() {
         var namespaceName = NamespaceName.fromParts("example");
         var interfaceType = Types.interfaceType(namespaceName, "Interface");

@@ -345,6 +345,12 @@ public class TypeScriptSerialiser {
                 serialiseStringLiteral(node, builder);
                 return null;
             }
+
+            @Override
+            public Void visit(TypeScriptSubtractNode node) {
+                serialiseSubtract(node, builder);
+                return null;
+            }
         });
 
         if (parenthesize) {
@@ -682,6 +688,10 @@ public class TypeScriptSerialiser {
             .replace("\"", "\\\"");
         builder.append(escapedValue);
         builder.append("\"");
+    }
+
+    private static void serialiseSubtract(TypeScriptSubtractNode node, CodeBuilder builder) {
+        serialiseBinaryOperation("-", node, builder);
     }
 
     private static void serialiseSwitch(TypeScriptSwitchNode node, CodeBuilder builder) {

@@ -168,6 +168,13 @@ public class TypeScript {
         return new TypeScriptStringLiteralNode(value);
     }
 
+    public static TypeScriptSubtractNode subtract(
+        TypeScriptExpressionNode left,
+        TypeScriptExpressionNode right
+    ) {
+        return new TypeScriptSubtractNode(left, right);
+    }
+
     public static TypeScriptSwitchCaseNode switchCase(
         TypeScriptExpressionNode expression,
         List<TypeScriptStatementNode> body

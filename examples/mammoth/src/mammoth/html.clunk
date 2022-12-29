@@ -7,6 +7,11 @@ fun element(tagName: String, attributes: List[HtmlAttribute], children: List[Htm
     return freshElement(tagName, attributes, children);
 }
 
+fun collapsibleElement(tagName: String, attributes: List[HtmlAttribute], children: List[HtmlNode]) -> HtmlElement {
+    var tag = HtmlTag([tagName], attributes, true, "");
+    return HtmlElement(tag, children);
+}
+
 fun freshElement(tagName: String, attributes: List[HtmlAttribute], children: List[HtmlNode]) -> HtmlElement {
     var tag = HtmlTag([tagName], attributes, false, "");
     return HtmlElement(tag, children);
@@ -15,6 +20,10 @@ fun freshElement(tagName: String, attributes: List[HtmlAttribute], children: Lis
 record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
     property defaultTagName: String {
         return tag.defaultTagName;
+    }
+
+    property isCollapsible: Bool {
+        return tag.isCollapsible;
     }
 
     property isVoid: Bool {
@@ -86,5 +95,63 @@ fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
 }
 
 fun collapse(nodes: List[HtmlNode]) -> List[HtmlNode] {
-    return nodes;
+    var collapsed = MutableList[HtmlNode]();
+
+    for (var node in nodes) {
+        collapsingAdd(collapsed, node);
+    }
+
+    return collapsed;
+}
+
+fun collapsingAdd(collapsed: MutableList[HtmlNode], node: HtmlNode) -> Unit {
+    var collapsedNode = collapseNode(node);
+    if (!tryCollapse(collapsed, collapsedNode)) {
+        collapsed.add(collapsedNode);
+    }
+}
+
+fun collapseNode(node: HtmlNode) -> HtmlNode {
+    switch (node) {
+        case HtmlElement {
+            return HtmlElement(
+                node.tag,
+                collapse(node.children),
+            );
+        }
+
+        case HtmlForceWrite {
+            return node;
+        }
+
+        case HtmlText {
+            return node;
+        }
+    }
+}
+
+fun tryCollapse(collapsed: MutableList[HtmlNode], node: HtmlNode) -> Bool {
+    if (collapsed.length() == 0) {
+        return false;
+    }
+
+    var last = collapsed.last();
+
+    if (!(node instanceof HtmlElement)) {
+        return false;
+    }
+
+    if (!(last instanceof HtmlElement)) {
+        return false;
+    }
+
+    if (!node.isCollapsible) {
+        return false;
+    }
+
+    for (var child in node.children) {
+        (last.children as MutableList[HtmlNode]).add(child);
+    }
+
+    return true;
 }

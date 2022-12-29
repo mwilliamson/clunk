@@ -223,6 +223,10 @@ public class Typed {
         return new TypedStringEqualsNode(left, right, NullSource.INSTANCE);
     }
 
+    public static TypedStringNotEqualNode stringNotEqual(TypedLocalReferenceNode left, TypedLocalReferenceNode right) {
+        return new TypedStringNotEqualNode(left, right, NullSource.INSTANCE);
+    }
+
     public static TypedSwitchCaseNode switchCase(
         TypedTypeLevelExpressionNode type,
         List<TypedFunctionStatementNode> body

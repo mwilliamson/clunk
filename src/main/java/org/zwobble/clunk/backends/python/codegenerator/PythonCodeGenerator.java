@@ -221,6 +221,11 @@ public class PythonCodeGenerator {
             public PythonExpressionNode visit(TypedStringLiteralNode node) {
                 return compileStringLiteral(node);
             }
+
+            @Override
+            public PythonExpressionNode visit(TypedStringNotEqualNode node) {
+                return compileStringNotEqual(node, context);
+            }
         });
     }
 
@@ -622,6 +627,13 @@ public class PythonCodeGenerator {
 
     private static PythonExpressionNode compileStringLiteral(TypedStringLiteralNode node) {
         return new PythonStringLiteralNode(node.value());
+    }
+
+    private static PythonExpressionNode compileStringNotEqual(TypedStringNotEqualNode node, PythonCodeGeneratorContext context) {
+        return new PythonNotEqualNode(
+            compileExpression(node.left(), context),
+            compileExpression(node.right(), context)
+        );
     }
 
     private static List<PythonStatementNode> compileSwitch(TypedSwitchNode node, PythonCodeGeneratorContext context) {

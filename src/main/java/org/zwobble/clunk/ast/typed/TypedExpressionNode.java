@@ -27,5 +27,6 @@ public interface TypedExpressionNode extends TypedNode {
         T visit(TypedStaticMethodToFunctionNode node);
         T visit(TypedStringEqualsNode node);
         T visit(TypedStringLiteralNode node);
+        T visit(TypedStringNotEqualNode node);
     }
 }

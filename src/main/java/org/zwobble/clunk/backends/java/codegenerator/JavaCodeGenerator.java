@@ -214,6 +214,11 @@ public class JavaCodeGenerator {
             public JavaExpressionNode visit(TypedStringLiteralNode node) {
                 return compileStringLiteral(node);
             }
+
+            @Override
+            public JavaExpressionNode visit(TypedStringNotEqualNode node) {
+                return compileStringNotEqual(node, context);
+            }
         });
     }
 
@@ -692,6 +697,19 @@ public class JavaCodeGenerator {
 
     private static JavaStringLiteralNode compileStringLiteral(TypedStringLiteralNode node) {
         return new JavaStringLiteralNode(node.value());
+    }
+
+    private static JavaExpressionNode compileStringNotEqual(
+        TypedStringNotEqualNode node,
+        JavaCodeGeneratorContext context
+    ) {
+        return new JavaLogicalNotNode(new JavaCallNode(
+            new JavaMemberAccessNode(
+                compileExpression(node.left(), context),
+                "equals"
+            ),
+            List.of(compileExpression(node.right(), context))
+        ));
     }
 
     private static JavaStatementNode compileSwitch(

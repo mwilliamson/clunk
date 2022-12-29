@@ -203,6 +203,11 @@ public class TypeScriptCodeGenerator {
             public TypeScriptExpressionNode visit(TypedStringLiteralNode node) {
                 return compileStringLiteral(node);
             }
+
+            @Override
+            public TypeScriptExpressionNode visit(TypedStringNotEqualNode node) {
+                return compileStringNotEqual(node, context);
+            }
         });
     }
 
@@ -606,6 +611,16 @@ public class TypeScriptCodeGenerator {
 
     private static TypeScriptExpressionNode compileStringLiteral(TypedStringLiteralNode node) {
         return new TypeScriptStringLiteralNode(node.value());
+    }
+
+    private static TypeScriptExpressionNode compileStringNotEqual(
+        TypedStringNotEqualNode node,
+        TypeScriptCodeGeneratorContext context
+    ) {
+        return new TypeScriptStrictNotEqualNode(
+            compileExpression(node.left(), context),
+            compileExpression(node.right(), context)
+        );
     }
 
     private static TypeScriptStatementNode compileSwitch(

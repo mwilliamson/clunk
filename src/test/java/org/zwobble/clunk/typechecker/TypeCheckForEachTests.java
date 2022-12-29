@@ -29,14 +29,16 @@ public class TypeCheckForEachTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
-        assertThat(result.value(), allOf(
-            isA(TypedForEachNode.class),
-            has("targetName", equalTo("x")),
-            has("targetType", equalTo(Types.INT)),
-            has("iterable", isTypedReferenceNode().withName("xs").withType(Types.list(Types.INT))),
-            has("body", contains(
-                isTypedExpressionStatementNode(isTypedStringLiteralNode("hello"))
-            ))
+        assertThat(result.value(), contains(
+            allOf(
+                isA(TypedForEachNode.class),
+                has("targetName", equalTo("x")),
+                has("targetType", equalTo(Types.INT)),
+                has("iterable", isTypedReferenceNode().withName("xs").withType(Types.list(Types.INT))),
+                has("body", contains(
+                    isTypedExpressionStatementNode(isTypedStringLiteralNode("hello"))
+                ))
+            )
         ));
     }
 
@@ -54,11 +56,13 @@ public class TypeCheckForEachTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
-        assertThat(result.value(), allOf(
-            isA(TypedForEachNode.class),
-            has("body", contains(
-                isTypedExpressionStatementNode(isTypedReferenceNode().withName("x").withType(Types.INT))
-            ))
+        assertThat(result.value(), contains(
+            allOf(
+                isA(TypedForEachNode.class),
+                has("body", contains(
+                    isTypedExpressionStatementNode(isTypedReferenceNode().withName("x").withType(Types.INT))
+                ))
+            )
         ));
         assertThat(context.currentFrame().environment().containsKey("x"), equalTo(false));
     }

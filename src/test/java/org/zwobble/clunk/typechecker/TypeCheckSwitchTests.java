@@ -46,19 +46,21 @@ public class TypeCheckSwitchTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
-        assertThat(result.value(), cast(
-            TypedSwitchNode.class,
-            has("expression", isTypedReferenceNode().withName("x").withType(interfaceType)),
-            has("cases", contains(
-                cast(
-                    TypedSwitchCaseNode.class,
-                    has("type", isTypedTypeLevelReferenceNode("A", recordType1))
-                ),
-                cast(
-                    TypedSwitchCaseNode.class,
-                    has("type", isTypedTypeLevelReferenceNode("B", recordType2))
-                )
-            ))
+        assertThat(result.value(), contains(
+            cast(
+                TypedSwitchNode.class,
+                has("expression", isTypedReferenceNode().withName("x").withType(interfaceType)),
+                has("cases", contains(
+                    cast(
+                        TypedSwitchCaseNode.class,
+                        has("type", isTypedTypeLevelReferenceNode("A", recordType1))
+                    ),
+                    cast(
+                        TypedSwitchCaseNode.class,
+                        has("type", isTypedTypeLevelReferenceNode("B", recordType2))
+                    )
+                ))
+            )
         ));
     }
 
@@ -198,22 +200,24 @@ public class TypeCheckSwitchTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
-        assertThat(result.value(), cast(
-            TypedSwitchNode.class,
-            has("cases", contains(
-                cast(
-                    TypedSwitchCaseNode.class,
-                    has("body", contains(
-                        isTypedExpressionStatementNode(isTypedReferenceNode().withName("x").withType(recordType1))
-                    ))
-                ),
-                cast(
-                    TypedSwitchCaseNode.class,
-                    has("body", contains(
-                        isTypedExpressionStatementNode(isTypedReferenceNode().withName("x").withType(recordType2))
-                    ))
-                )
-            ))
+        assertThat(result.value(), contains(
+            cast(
+                TypedSwitchNode.class,
+                has("cases", contains(
+                    cast(
+                        TypedSwitchCaseNode.class,
+                        has("body", contains(
+                            isTypedExpressionStatementNode(isTypedReferenceNode().withName("x").withType(recordType1))
+                        ))
+                    ),
+                    cast(
+                        TypedSwitchCaseNode.class,
+                        has("body", contains(
+                            isTypedExpressionStatementNode(isTypedReferenceNode().withName("x").withType(recordType2))
+                        ))
+                    )
+                ))
+            )
         ));
     }
 
@@ -246,9 +250,11 @@ public class TypeCheckSwitchTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
-        assertThat(result.value(), cast(
-            TypedSwitchNode.class,
-            has("returns", equalTo(true))
+        assertThat(result.value(), contains(
+            cast(
+                TypedSwitchNode.class,
+                has("returns", equalTo(true))
+            )
         ));
     }
 
@@ -279,9 +285,11 @@ public class TypeCheckSwitchTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
-        assertThat(result.value(), cast(
-            TypedSwitchNode.class,
-            has("returns", equalTo(false))
+        assertThat(result.value(), contains(
+            cast(
+                TypedSwitchNode.class,
+                has("returns", equalTo(false))
+            )
         ));
     }
 

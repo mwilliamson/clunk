@@ -487,49 +487,49 @@ public class TypeChecker {
         return typeCheckStatementsResult;
     }
 
-    public static TypeCheckFunctionStatementResult<TypedFunctionStatementNode> typeCheckFunctionStatement(
+    public static TypeCheckFunctionStatementResult<List<TypedFunctionStatementNode>> typeCheckFunctionStatement(
         UntypedFunctionStatementNode node,
         TypeCheckerContext context
     ) {
         return node.accept(new UntypedFunctionStatementNode.Visitor<>() {
             @Override
-            public TypeCheckFunctionStatementResult<TypedFunctionStatementNode> visit(UntypedBlankLineNode node) {
-                return typeCheckBlankLineInFunction(node, context);
+            public TypeCheckFunctionStatementResult<List<TypedFunctionStatementNode>> visit(UntypedBlankLineNode node) {
+                return typeCheckBlankLineInFunction(node, context).map(List::of);
             }
 
             @Override
-            public TypeCheckFunctionStatementResult<TypedFunctionStatementNode> visit(UntypedExpressionStatementNode node) {
-                return typeCheckExpressionStatement(node, context);
+            public TypeCheckFunctionStatementResult<List<TypedFunctionStatementNode>> visit(UntypedExpressionStatementNode node) {
+                return typeCheckExpressionStatement(node, context).map(List::of);
             }
 
             @Override
-            public TypeCheckFunctionStatementResult<TypedFunctionStatementNode> visit(UntypedForEachNode node) {
-                return typeCheckForEach(node, context);
+            public TypeCheckFunctionStatementResult<List<TypedFunctionStatementNode>> visit(UntypedForEachNode node) {
+                return typeCheckForEach(node, context).map(List::of);
             }
 
             @Override
-            public TypeCheckFunctionStatementResult<TypedFunctionStatementNode> visit(UntypedIfStatementNode node) {
-                return typeCheckIfStatement(node, context);
+            public TypeCheckFunctionStatementResult<List<TypedFunctionStatementNode>> visit(UntypedIfStatementNode node) {
+                return typeCheckIfStatement(node, context).map(List::of);
             }
 
             @Override
-            public TypeCheckFunctionStatementResult<TypedFunctionStatementNode> visit(UntypedReturnNode node) {
-                return typeCheckReturn(node, context);
+            public TypeCheckFunctionStatementResult<List<TypedFunctionStatementNode>> visit(UntypedReturnNode node) {
+                return typeCheckReturn(node, context).map(List::of);
             }
 
             @Override
-            public TypeCheckFunctionStatementResult<TypedFunctionStatementNode> visit(UntypedSingleLineCommentNode node) {
-                return typeCheckSingleLineCommentInFunction(node, context);
+            public TypeCheckFunctionStatementResult<List<TypedFunctionStatementNode>> visit(UntypedSingleLineCommentNode node) {
+                return typeCheckSingleLineCommentInFunction(node, context).map(List::of);
             }
 
             @Override
-            public TypeCheckFunctionStatementResult<TypedFunctionStatementNode> visit(UntypedSwitchNode node) {
-                return typeCheckSwitch(node, context);
+            public TypeCheckFunctionStatementResult<List<TypedFunctionStatementNode>> visit(UntypedSwitchNode node) {
+                return typeCheckSwitch(node, context).map(List::of);
             }
 
             @Override
-            public TypeCheckFunctionStatementResult<TypedFunctionStatementNode> visit(UntypedVarNode node) {
-                return typeCheckVar(node, context);
+            public TypeCheckFunctionStatementResult<List<TypedFunctionStatementNode>> visit(UntypedVarNode node) {
+                return typeCheckVar(node, context).map(List::of);
             }
         });
     }
@@ -545,7 +545,7 @@ public class TypeChecker {
         for (var statement : body) {
             var statementResult = typeCheckFunctionStatement(statement, context);
             context = statementResult.context();
-            typedStatements.add(statementResult.value());
+            typedStatements.addAll(statementResult.value());
 
             // TODO: test this!
             if (statementResult.returnBehaviour().equals(ReturnBehaviour.ALWAYS)) {

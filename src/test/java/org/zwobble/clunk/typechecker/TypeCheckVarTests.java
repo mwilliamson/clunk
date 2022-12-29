@@ -6,6 +6,7 @@ import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.BoolType;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedBoolLiteralNode;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedVarNode;
@@ -18,7 +19,9 @@ public class TypeCheckVarTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
-        assertThat(result.value(), isTypedVarNode().withName("x").withExpression(isTypedBoolLiteralNode(false)));
+        assertThat(result.value(), contains(
+            isTypedVarNode().withName("x").withExpression(isTypedBoolLiteralNode(false))
+        ));
     }
 
     @Test

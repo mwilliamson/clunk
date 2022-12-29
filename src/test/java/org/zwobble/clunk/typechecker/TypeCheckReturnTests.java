@@ -7,6 +7,7 @@ import org.zwobble.clunk.types.BoolType;
 import org.zwobble.clunk.types.StringType;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
 
@@ -18,7 +19,9 @@ public class TypeCheckReturnTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
-        assertThat(result.value(), isTypedReturnNode().withExpression(isTypedBoolLiteralNode(false)));
+        assertThat(result.value(), contains(
+            isTypedReturnNode().withExpression(isTypedBoolLiteralNode(false))
+        ));
     }
 
     @Test

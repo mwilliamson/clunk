@@ -27,11 +27,13 @@ public class TypeCheckIfStatementTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, TypeCheckerContext.stub());
 
-        assertThat(result.value(), allOf(
-            isA(TypedIfStatementNode.class),
-            has("conditionalBranches", contains(
-                has("condition", isTypedBoolLiteralNode(false))
-            ))
+        assertThat(result.value(), contains(
+            allOf(
+                isA(TypedIfStatementNode.class),
+                has("conditionalBranches", contains(
+                    has("condition", isTypedBoolLiteralNode(false))
+                ))
+            )
         ));
     }
 
@@ -66,11 +68,13 @@ public class TypeCheckIfStatementTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, TypeCheckerContext.stub());
 
-        assertThat(result.value(), allOf(
-            isA(TypedIfStatementNode.class),
-            has("conditionalBranches", contains(
-                has("body", contains(isTypedExpressionStatementNode(isTypedIntLiteralNode(42))))
-            ))
+        assertThat(result.value(), contains(
+            allOf(
+                isA(TypedIfStatementNode.class),
+                has("conditionalBranches", contains(
+                    has("body", contains(isTypedExpressionStatementNode(isTypedIntLiteralNode(42))))
+                ))
+            )
         ));
     }
 
@@ -85,9 +89,11 @@ public class TypeCheckIfStatementTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, TypeCheckerContext.stub());
 
-        assertThat(result.value(), allOf(
-            isA(TypedIfStatementNode.class),
-            has("elseBody", contains(isTypedExpressionStatementNode(isTypedIntLiteralNode(42))))
+        assertThat(result.value(), contains(
+            allOf(
+                isA(TypedIfStatementNode.class),
+                has("elseBody", contains(isTypedExpressionStatementNode(isTypedIntLiteralNode(42))))
+            )
         ));
     }
 
@@ -163,15 +169,17 @@ public class TypeCheckIfStatementTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
-        assertThat(result.value(), allOf(
-            isA(TypedIfStatementNode.class),
-            has("conditionalBranches", contains(
-                has("body", contains(
-                    isTypedTypeNarrowNode("x", equalTo(recordType)),
-                    isTypedReturnNode().withExpression(isTypedReferenceNode().withType(recordType))
-                ))
-            )),
-            has("elseBody", contains(isTypedReturnNode().withExpression(isTypedReferenceNode().withType(interfaceType))))
+        assertThat(result.value(), contains(
+            allOf(
+                isA(TypedIfStatementNode.class),
+                has("conditionalBranches", contains(
+                    has("body", contains(
+                        isTypedTypeNarrowNode("x", equalTo(recordType)),
+                        isTypedReturnNode().withExpression(isTypedReferenceNode().withType(recordType))
+                    ))
+                )),
+                has("elseBody", contains(isTypedReturnNode().withExpression(isTypedReferenceNode().withType(interfaceType))))
+            )
         ));
     }
 
@@ -208,20 +216,22 @@ public class TypeCheckIfStatementTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
-        assertThat(result.value(), allOf(
-            isA(TypedIfStatementNode.class),
-            has("conditionalBranches", contains(
-                has("body", contains(isTypedReturnNode().withExpression(isTypedReferenceNode().withType(interfaceType)))),
-                has("body", contains(isTypedReturnNode().withExpression(isTypedReferenceNode().withType(interfaceType)))),
-                has("body", contains(
+        assertThat(result.value(), contains(
+            allOf(
+                isA(TypedIfStatementNode.class),
+                has("conditionalBranches", contains(
+                    has("body", contains(isTypedReturnNode().withExpression(isTypedReferenceNode().withType(interfaceType)))),
+                    has("body", contains(isTypedReturnNode().withExpression(isTypedReferenceNode().withType(interfaceType)))),
+                    has("body", contains(
+                        isTypedTypeNarrowNode("x", equalTo(recordType)),
+                        isTypedReturnNode().withExpression(isTypedReferenceNode().withType(recordType))
+                    ))
+                )),
+                has("elseBody", contains(
                     isTypedTypeNarrowNode("x", equalTo(recordType)),
                     isTypedReturnNode().withExpression(isTypedReferenceNode().withType(recordType))
                 ))
-            )),
-            has("elseBody", contains(
-                isTypedTypeNarrowNode("x", equalTo(recordType)),
-                isTypedReturnNode().withExpression(isTypedReferenceNode().withType(recordType))
-            ))
+            )
         ));
     }
 

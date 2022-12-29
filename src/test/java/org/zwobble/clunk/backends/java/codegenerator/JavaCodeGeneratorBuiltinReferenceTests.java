@@ -60,16 +60,6 @@ public class JavaCodeGeneratorBuiltinReferenceTests {
     }
 
     @Test
-    public void listIsCompiledToList() {
-        var value = Types.LIST_CONSTRUCTOR;
-
-        var result = JavaCodeGenerator.builtinReference(value, true);
-
-        var string = serialiseToString(result.orElseThrow(), JavaSerialiser::serialiseTypeExpression);
-        assertThat(string, equalTo("java.util.List"));
-    }
-
-    @Test
     public void optionIsCompiledToOptional() {
         var value = Types.OPTION_CONSTRUCTOR;
 
@@ -77,5 +67,25 @@ public class JavaCodeGeneratorBuiltinReferenceTests {
 
         var string = serialiseToString(result.orElseThrow(), JavaSerialiser::serialiseTypeExpression);
         assertThat(string, equalTo("java.util.Optional"));
+    }
+
+    @Test
+    public void typeMacrosAreUsedToCompileToJavaTypeReference() {
+        var value = Types.STRING_BUILDER;
+
+        var result = JavaCodeGenerator.builtinReference(value, true);
+
+        var string = serialiseToString(result.orElseThrow(), JavaSerialiser::serialiseTypeExpression);
+        assertThat(string, equalTo("java.lang.StringBuilder"));
+    }
+
+    @Test
+    public void typeConstructorMacrosAreUsedToCompileToJavaTypeReference() {
+        var value = Types.LIST_CONSTRUCTOR;
+
+        var result = JavaCodeGenerator.builtinReference(value, true);
+
+        var string = serialiseToString(result.orElseThrow(), JavaSerialiser::serialiseTypeExpression);
+        assertThat(string, equalTo("java.util.List"));
     }
 }

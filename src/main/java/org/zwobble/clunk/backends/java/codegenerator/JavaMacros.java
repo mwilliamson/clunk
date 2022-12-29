@@ -90,12 +90,21 @@ public class JavaMacros {
         }
     }
 
-    public static Optional<JavaTypeExpressionNode> compileTypeConstructorReference(TypeConstructor typeConstructor) {
-        var classMacro = lookupClassMacro(typeConstructor.genericType());
-        if (classMacro.isPresent()) {
-            return Optional.of(classMacro.get().compileTypeConstructorReference());
-        } else {
+    public static Optional<JavaTypeExpressionNode> compileTypeReference(Type type) {
+        var classMacro = CLASS_MACROS.get(type);
+        if (classMacro == null) {
             return Optional.empty();
+        } else {
+            return Optional.of(classMacro.compileTypeReference());
+        }
+    }
+
+    public static Optional<JavaTypeExpressionNode> compileTypeConstructorReference(TypeConstructor typeConstructor) {
+        var classMacro = CLASS_MACROS.get(typeConstructor.genericType());
+        if (classMacro == null) {
+            return Optional.empty();
+        } else {
+            return Optional.of(classMacro.compileTypeConstructorReference());
         }
     }
 

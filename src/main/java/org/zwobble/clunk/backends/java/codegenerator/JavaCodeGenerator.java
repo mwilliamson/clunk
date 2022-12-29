@@ -903,6 +903,8 @@ public class JavaCodeGenerator {
             return Optional.of(new JavaTypeVariableReferenceNode("String"));
         } else if (value == Types.OPTION_CONSTRUCTOR) {
             return Optional.of(new JavaFullyQualifiedTypeReferenceNode("java.util", "Optional"));
+        } else if (value instanceof Type type) {
+            return JavaMacros.compileTypeReference(type);
         } else if (value instanceof TypeConstructor typeConstructor) {
             return JavaMacros.compileTypeConstructorReference(typeConstructor);
         } else {

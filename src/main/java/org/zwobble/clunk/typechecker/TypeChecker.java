@@ -568,9 +568,13 @@ public class TypeChecker {
         var returnType = Types.NOTHING;
 
         var bodyContext = context;
+        var bodyPrefix = new ArrayList<TypedFunctionStatementNode>();
 
         for (var untypedConditionalBranch : node.conditionalBranches()) {
-            var result = typeCheckConditionalBranch(untypedConditionalBranch, bodyContext);
+            var result = typeCheckConditionalBranch(untypedConditionalBranch, bodyContext)
+                .map(typedConditionalBranch -> typedConditionalBranch.withBody(
+                    Stream.concat(bodyPrefix.stream(), typedConditionalBranch.body().stream()).toList()
+                ));
             typedConditionalBranches.add(result.value());
             returnBehaviours.add(result.returnBehaviour());
             returnType = Types.unify(returnType, result.returnType());
@@ -580,16 +584,20 @@ public class TypeChecker {
                 typedConditionNotNode.operand() instanceof TypedInstanceOfNode typedInstanceOfNode &&
                 typedInstanceOfNode.expression() instanceof TypedReferenceNode typedReferenceNode
             ) {
-                var type = (Type) typedInstanceOfNode.typeExpression().value();
-                bodyContext = bodyContext.updateLocal(typedReferenceNode.name(), type, typedConditionNotNode.source());
+                var narrowedType = (StructuredType) typedInstanceOfNode.typeExpression().value();
+                var variableName = typedReferenceNode.name();
+                bodyContext = bodyContext.updateLocal(variableName, narrowedType, typedConditionNotNode.source());
+                bodyPrefix.add(new TypedTypeNarrowNode(variableName, narrowedType, typedConditionNotNode.source()));
 
                 if (result.alwaysReturns()) {
-                    context = context.updateLocal(typedReferenceNode.name(), type, typedConditionNotNode.source());
+                    context = context.updateLocal(variableName, narrowedType, typedConditionNotNode.source());
                 }
             }
         }
 
-        var typeCheckElseResult = typeCheckFunctionStatements(node.elseBody(), bodyContext);
+        var typeCheckElseResult = typeCheckFunctionStatements(node.elseBody(), bodyContext)
+            .map(typedElseBody -> Stream.concat(bodyPrefix.stream(), typedElseBody.stream()).toList());
+
         returnBehaviours.add(typeCheckElseResult.returnBehaviour());
         returnType = Types.unify(returnType, typeCheckElseResult.returnType());
 

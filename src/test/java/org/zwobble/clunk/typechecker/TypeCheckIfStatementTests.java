@@ -213,9 +213,15 @@ public class TypeCheckIfStatementTests {
             has("conditionalBranches", contains(
                 has("body", contains(isTypedReturnNode().withExpression(isTypedReferenceNode().withType(interfaceType)))),
                 has("body", contains(isTypedReturnNode().withExpression(isTypedReferenceNode().withType(interfaceType)))),
-                has("body", contains(isTypedReturnNode().withExpression(isTypedReferenceNode().withType(recordType))))
+                has("body", contains(
+                    isTypedTypeNarrowNode("x", equalTo(recordType)),
+                    isTypedReturnNode().withExpression(isTypedReferenceNode().withType(recordType))
+                ))
             )),
-            has("elseBody", contains(isTypedReturnNode().withExpression(isTypedReferenceNode().withType(recordType))))
+            has("elseBody", contains(
+                isTypedTypeNarrowNode("x", equalTo(recordType)),
+                isTypedReturnNode().withExpression(isTypedReferenceNode().withType(recordType))
+            ))
         ));
     }
 

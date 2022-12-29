@@ -271,7 +271,7 @@ fun tryCollapse(collapsed: MutableList[HtmlNode], node: HtmlNode) -> Bool {
         return false;
     }
 
-    if (!node.isCollapsible) {
+    if (!node.isCollapsible || !(node.defaultTagName == last.defaultTagName)) {
         return false;
     }
 
@@ -385,6 +385,20 @@ testSuite "collapse" {
         assertThat(result, equalTo([
             html.freshElement("p", [], []),
             html.freshElement("p", [], []),
+        ]));
+    }
+
+    test "elements with different tag names are not collapsed" {
+        var nodes = [
+            html.collapsibleElement("p", [], [html.text("One")]),
+            html.collapsibleElement("div", [], [html.text("Two")]),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.collapsibleElement("p", [], [html.text("One")]),
+            html.collapsibleElement("div", [], [html.text("Two")]),
         ]));
     }
 
@@ -880,7 +894,7 @@ public class Html {
         }
         var last_HtmlElement = (org.zwobble.mammoth.internal.mammoth.html.HtmlElement) last;
 
-        if (!node_HtmlElement.isCollapsible()) {
+        if (!node_HtmlElement.isCollapsible() || !node_HtmlElement.defaultTagName().equals(last_HtmlElement.defaultTagName())) {
             return false;
         }
 
@@ -1006,6 +1020,16 @@ public class HtmlTests {
         }
 
         @org.junit.jupiter.api.Test
+        @org.junit.jupiter.api.DisplayName("elements with different tag names are not collapsed")
+        public void elementsWithDifferentTagNamesAreNotCollapsed() {
+            var nodes = java.util.List.of(Html.collapsibleElement("p", java.util.List.of(), java.util.List.of(Html.text("One"))), Html.collapsibleElement("div", java.util.List.of(), java.util.List.of(Html.text("Two"))));
+
+            var result = Html.collapse(nodes);
+
+            assertThat(result, equalTo(java.util.List.of(Html.collapsibleElement("p", java.util.List.of(), java.util.List.of(Html.text("One"))), Html.collapsibleElement("div", java.util.List.of(), java.util.List.of(Html.text("Two"))))));
+        }
+
+        @org.junit.jupiter.api.Test
         @org.junit.jupiter.api.DisplayName("consecutive collapsible elements are collapsed if they have the same tag and attributes")
         public void consecutiveCollapsibleElementsAreCollapsedIfTheyHaveTheSameTagAndAttributes() {
             var nodes = java.util.List.of(Html.collapsibleElement("p", java.util.List.of(), java.util.List.of(Html.text("One"))), Html.collapsibleElement("p", java.util.List.of(), java.util.List.of(Html.text("Two"))));
@@ -1034,6 +1058,7 @@ public class HtmlTests {
 │     ├─ Collapse ✔
 │     │  ├─ collapsing does nothing to single text node ✔
 │     │  ├─ consecutive fresh elements are not collapsed ✔
+│     │  ├─ elements with different tag names are not collapsed ✔
 │     │  ├─ children of elements are collapsed ✔
 │     │  └─ consecutive collapsible elements are collapsed if they have the same tag and att... ✔
 │     └─ StripEmpty ✔
@@ -1054,9 +1079,9 @@ Test run finished after TIME ms
 [         0 containers aborted    ]
 [         5 containers successful ]
 [         0 containers failed     ]
-[        12 tests found           ]
+[        13 tests found           ]
 [         0 tests skipped         ]
-[        12 tests started         ]
+[        13 tests started         ]
 [         0 tests aborted         ]
-[        12 tests successful      ]
+[        13 tests successful      ]
 [         0 tests failed          ]

@@ -100,6 +100,20 @@ testSuite "collapse" {
         ]));
     }
 
+    test "elements with different tag names are not collapsed" {
+        var nodes = [
+            html.collapsibleElement("p", [], [html.text("One")]),
+            html.collapsibleElement("div", [], [html.text("Two")]),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.collapsibleElement("p", [], [html.text("One")]),
+            html.collapsibleElement("div", [], [html.text("Two")]),
+        ]));
+    }
+
     test "consecutive collapsible elements are collapsed if they have the same tag and attributes" {
         var nodes = [
             html.collapsibleElement("p", [], [html.text("One")]),

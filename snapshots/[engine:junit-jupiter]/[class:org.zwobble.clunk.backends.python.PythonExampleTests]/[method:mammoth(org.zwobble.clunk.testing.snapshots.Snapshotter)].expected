@@ -271,7 +271,7 @@ fun tryCollapse(collapsed: MutableList[HtmlNode], node: HtmlNode) -> Bool {
         return false;
     }
 
-    if (!node.isCollapsible) {
+    if (!node.isCollapsible || !(node.defaultTagName == last.defaultTagName)) {
         return false;
     }
 
@@ -385,6 +385,20 @@ testSuite "collapse" {
         assertThat(result, equalTo([
             html.freshElement("p", [], []),
             html.freshElement("p", [], []),
+        ]));
+    }
+
+    test "elements with different tag names are not collapsed" {
+        var nodes = [
+            html.collapsibleElement("p", [], [html.text("One")]),
+            html.collapsibleElement("div", [], [html.text("Two")]),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.collapsibleElement("p", [], [html.text("One")]),
+            html.collapsibleElement("div", [], [html.text("Two")]),
         ]));
     }
 
@@ -720,7 +734,7 @@ def try_collapse(collapsed, node):
     if not isinstance(last, HtmlElement):
         return False
 
-    if not node.is_collapsible:
+    if not node.is_collapsible or not node.default_tag_name == last.default_tag_name:
         return False
 
     for child in node.children:
@@ -810,6 +824,13 @@ class CollapseTests:
 
         assert_that(result, equal_to([html.fresh_element("p", [], []), html.fresh_element("p", [], [])]))
 
+    def test_elements_with_different_tag_names_are_not_collapsed(self):
+        nodes = [html.collapsible_element("p", [], [html.text("One")]), html.collapsible_element("div", [], [html.text("Two")])]
+
+        result = html.collapse(nodes)
+
+        assert_that(result, equal_to([html.collapsible_element("p", [], [html.text("One")]), html.collapsible_element("div", [], [html.text("Two")])]))
+
     def test_consecutive_collapsible_elements_are_collapsed_if_they_have_the_same_tag_and_attributes(self):
         nodes = [html.collapsible_element("p", [], [html.text("One")]), html.collapsible_element("p", [], [html.text("Two")])]
 
@@ -829,8 +850,8 @@ class CollapseTests:
 
 ============================= test session starts ==============================
 rootdir: ROOTDIR, configfile: tox.ini
-collected 12 items
+collected 13 items
 
-mammoth/html_test.py ............                                        [100%]
+mammoth/html_test.py .............                                       [100%]
 
-============================== 12 passed in TIME ==============================
+============================== 13 passed in TIME ==============================

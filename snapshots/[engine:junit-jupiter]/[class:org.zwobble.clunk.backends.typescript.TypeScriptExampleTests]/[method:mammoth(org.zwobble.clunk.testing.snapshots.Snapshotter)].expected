@@ -271,7 +271,7 @@ fun tryCollapse(collapsed: MutableList[HtmlNode], node: HtmlNode) -> Bool {
         return false;
     }
 
-    if (!node.isCollapsible) {
+    if (!node.isCollapsible || !(node.defaultTagName == last.defaultTagName)) {
         return false;
     }
 
@@ -385,6 +385,20 @@ testSuite "collapse" {
         assertThat(result, equalTo([
             html.freshElement("p", [], []),
             html.freshElement("p", [], []),
+        ]));
+    }
+
+    test "elements with different tag names are not collapsed" {
+        var nodes = [
+            html.collapsibleElement("p", [], [html.text("One")]),
+            html.collapsibleElement("div", [], [html.text("Two")]),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.collapsibleElement("p", [], [html.text("One")]),
+            html.collapsibleElement("div", [], [html.text("Two")]),
         ]));
     }
 
@@ -835,7 +849,7 @@ function tryCollapse(collapsed: Array<HtmlNode>, node: HtmlNode): boolean {
         return false;
     }
 
-    if (!node.isCollapsible) {
+    if (!node.isCollapsible || !(node.defaultTagName === last.defaultTagName)) {
         return false;
     }
 
@@ -938,6 +952,14 @@ suite("collapse", function () {
         assertThat(result, deepEqualTo([html.freshElement("p", [], []), html.freshElement("p", [], [])]));
     });
 
+    test("elements with different tag names are not collapsed", function () {
+        let nodes = [html.collapsibleElement("p", [], [html.text("One")]), html.collapsibleElement("div", [], [html.text("Two")])];
+
+        let result = html.collapse(nodes);
+
+        assertThat(result, deepEqualTo([html.collapsibleElement("p", [], [html.text("One")]), html.collapsibleElement("div", [], [html.text("Two")])]));
+    });
+
     test("consecutive collapsible elements are collapsed if they have the same tag and attributes", function () {
         let nodes = [html.collapsibleElement("p", [], [html.text("One")]), html.collapsibleElement("p", [], [html.text("Two")])];
 
@@ -973,8 +995,9 @@ suite("collapse", function () {
   collapse
     ✔ collapsing does nothing to single text node
     ✔ consecutive fresh elements are not collapsed
+    ✔ elements with different tag names are not collapsed
     ✔ consecutive collapsible elements are collapsed if they have the same tag and attributes
     ✔ children of elements are collapsed
 
 
-  12 passing (TIME)
+  13 passing (TIME)

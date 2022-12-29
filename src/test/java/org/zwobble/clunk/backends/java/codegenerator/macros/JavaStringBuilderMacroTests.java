@@ -2,7 +2,6 @@ package org.zwobble.clunk.backends.java.codegenerator.macros;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
-import org.zwobble.clunk.ast.typed.TypedCallConstructorNode;
 import org.zwobble.clunk.ast.typed.TypedCallMethodNode;
 import org.zwobble.clunk.backends.java.codegenerator.JavaCodeGenerator;
 import org.zwobble.clunk.backends.java.codegenerator.JavaCodeGeneratorContext;
@@ -20,11 +19,10 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class JavaStringBuilderMacroTests {
     @Test
     public void callToStringBuilderIsCompiledToConstructorCall() {
-        var node = new TypedCallConstructorNode(
+        var node = Typed.callConstructor(
             Typed.localReference("StringBuilder", Types.metaType(Types.STRING_BUILDER)),
             List.of(),
-            Types.STRING_BUILDER,
-            NullSource.INSTANCE
+            Types.STRING_BUILDER
         );
         var context = JavaCodeGeneratorContext.stub();
 

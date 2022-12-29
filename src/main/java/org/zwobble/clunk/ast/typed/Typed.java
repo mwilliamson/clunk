@@ -17,10 +17,25 @@ public class Typed {
 
     public static TypedCallConstructorNode callConstructor(
         TypedExpressionNode receiver,
+        List<TypedTypeLevelExpressionNode> typeArgs,
         List<TypedExpressionNode> args,
         Type type
     ) {
-        return new TypedCallConstructorNode(receiver, args, type, NullSource.INSTANCE);
+        return new TypedCallConstructorNode(
+            receiver,
+            Optional.of(typeArgs),
+            args,
+            type,
+            NullSource.INSTANCE
+        );
+    }
+
+    public static TypedCallConstructorNode callConstructor(
+        TypedExpressionNode receiver,
+        List<TypedExpressionNode> args,
+        Type type
+    ) {
+        return new TypedCallConstructorNode(receiver, Optional.empty(), args, type, NullSource.INSTANCE);
     }
 
     public static TypedCallMethodNode callMethod(

@@ -13,6 +13,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
+import static org.zwobble.clunk.matchers.OptionalMatcher.present;
 
 public class TypeCheckCallTests {
     @Test
@@ -90,7 +91,7 @@ public class TypeCheckCallTests {
     }
 
     @Test
-    public void canTypeCheckCallToRecordConstructor() {
+    public void canTypeCheckCallToNonGenericRecordConstructor() {
         var untypedNode = Untyped.call(
             Untyped.reference("Id"),
             List.of(Untyped.intLiteral(123))
@@ -107,6 +108,34 @@ public class TypeCheckCallTests {
             .withReceiver(isTypedReferenceNode().withName("Id").withType(Types.metaType(recordType)))
             .withPositionalArgs(contains(isTypedIntLiteralNode(123)))
             .withType(recordType)
+        );
+    }
+
+    @Test
+    public void canTypeCheckCallToGenericRecordConstructor() {
+        var untypedNode = Untyped.call(
+            Untyped.reference("Id"),
+            List.of(Untyped.typeLevelReference("String")),
+            List.of(Untyped.string("Hello."))
+        );
+        var namespaceName = NamespaceName.fromParts("example");
+        var recordType = Types.recordType(namespaceName, "Id");
+        var typeParameter = TypeParameter.invariant(namespaceName, "Id", "T");
+        var typeConstructor = new TypeConstructor(List.of(typeParameter), recordType);
+        var context = TypeCheckerContext.stub()
+            .addLocal("Id", Types.typeConstructorType(typeConstructor), NullSource.INSTANCE)
+            .addConstructorType(Types.constructorType(List.of(typeParameter), List.of(typeParameter), recordType, Visibility.PUBLIC));
+
+        var result = TypeChecker.typeCheckExpression(untypedNode, context);
+
+        assertThat(result, isTypedCallConstructorNode()
+            .withReceiver(isTypedReferenceNode()
+                .withName("Id")
+                .withType(Types.typeConstructorType(typeConstructor))
+            )
+            .withTypeArgs(present(contains(isTypedTypeLevelReferenceNode("String", Types.STRING))))
+            .withPositionalArgs(contains(isTypedStringLiteralNode("Hello.")))
+            .withType(Types.construct(typeConstructor, List.of(Types.STRING)))
         );
     }
 

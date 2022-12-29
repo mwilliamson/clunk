@@ -94,6 +94,7 @@ public class TypeChecker {
         return switch (signatureNonGeneric.type()) {
             case ConstructorType ignored -> new TypedCallConstructorNode(
                 receiver,
+                typeCheckTypeArgsResult.nodes,
                 typedPositionalArgs,
                 signatureNonGeneric.returnType(),
                 node.source()

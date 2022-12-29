@@ -2,9 +2,7 @@ package org.zwobble.clunk.backends.typescript.codegenerator;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
-import org.zwobble.clunk.ast.typed.TypedCallConstructorNode;
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiserTesting;
-import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.Types;
 
@@ -19,11 +17,10 @@ public class TypeScriptCodeGeneratorCallConstructorTests {
     @Test
     public void callToRecordConstructorsAreCompiledToConstructorCalls() {
         var recordType = Types.recordType(NamespaceName.fromParts("example"), "Id");
-        var node = new TypedCallConstructorNode(
+        var node = Typed.callConstructor(
             Typed.localReference("Id", Types.metaType(recordType)),
             List.of(Typed.intLiteral(123)),
-            recordType,
-            NullSource.INSTANCE
+            recordType
         );
 
         var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
@@ -34,11 +31,10 @@ public class TypeScriptCodeGeneratorCallConstructorTests {
 
     @Test
     public void whenNonGenericTypeHasMacroThenConstructorCallIsCompiledUsingMacro() {
-        var node = new TypedCallConstructorNode(
+        var node = Typed.callConstructor(
             Typed.localReference("StringBuilder", Types.metaType(Types.STRING_BUILDER)),
             List.of(),
-            Types.STRING_BUILDER,
-            NullSource.INSTANCE
+            Types.STRING_BUILDER
         );
         var context = TypeScriptCodeGeneratorContext.stub();
 
@@ -51,11 +47,11 @@ public class TypeScriptCodeGeneratorCallConstructorTests {
 
     @Test
     public void whenGenericTypeHasMacroThenConstructorCallIsCompiledUsingMacro() {
-        var node = new TypedCallConstructorNode(
+        var node = Typed.callConstructor(
             Typed.localReference("MutableList", Types.metaType(Types.mutableList(Types.STRING))),
+            List.of(Typed.typeLevelReference("String", Types.STRING)),
             List.of(),
-            Types.mutableList(Types.STRING),
-            NullSource.INSTANCE
+            Types.mutableList(Types.STRING)
         );
         var context = TypeScriptCodeGeneratorContext.stub();
 

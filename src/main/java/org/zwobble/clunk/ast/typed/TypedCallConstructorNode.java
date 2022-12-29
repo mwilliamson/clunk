@@ -4,9 +4,11 @@ import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.types.Type;
 
 import java.util.List;
+import java.util.Optional;
 
 public record TypedCallConstructorNode(
     TypedExpressionNode receiver,
+    Optional<List<TypedTypeLevelExpressionNode>> typeArgs,
     List<TypedExpressionNode> positionalArgs,
     Type type,
     Source source

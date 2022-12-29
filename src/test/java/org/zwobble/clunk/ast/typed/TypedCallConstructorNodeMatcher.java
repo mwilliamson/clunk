@@ -6,6 +6,7 @@ import org.zwobble.clunk.types.Type;
 import org.zwobble.clunk.util.Lists;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
@@ -21,6 +22,10 @@ public class TypedCallConstructorNodeMatcher extends CastMatcher<Object, TypedCa
 
     public TypedCallConstructorNodeMatcher withReceiver(Matcher<? super TypedExpressionNode> receiver) {
         return addMatcher(has("receiver", receiver));
+    }
+
+    public TypedCallConstructorNodeMatcher withTypeArgs(Matcher<Optional<Iterable<? extends TypedTypeLevelExpressionNode>>> receiver) {
+        return addMatcher(has("typeArgs", receiver));
     }
 
     public TypedCallConstructorNodeMatcher withPositionalArgs(Matcher<? extends Iterable<? extends TypedExpressionNode>> positionalArgs) {

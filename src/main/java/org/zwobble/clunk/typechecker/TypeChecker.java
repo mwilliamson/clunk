@@ -509,7 +509,7 @@ public class TypeChecker {
 
             @Override
             public TypeCheckFunctionStatementResult<List<TypedFunctionStatementNode>> visit(UntypedIfStatementNode node) {
-                return typeCheckIfStatement(node, context).map(List::of);
+                return typeCheckIfStatement(node, context);
             }
 
             @Override
@@ -559,7 +559,7 @@ public class TypeChecker {
         return new TypeCheckFunctionStatementResult<>(typedStatements, returnBehaviour, returnType, context);
     }
 
-    private static TypeCheckFunctionStatementResult<TypedFunctionStatementNode> typeCheckIfStatement(
+    private static TypeCheckFunctionStatementResult<List<TypedFunctionStatementNode>> typeCheckIfStatement(
         UntypedIfStatementNode node,
         TypeCheckerContext context
     ) {
@@ -569,6 +569,7 @@ public class TypeChecker {
 
         var bodyContext = context;
         var bodyPrefix = new ArrayList<TypedFunctionStatementNode>();
+        var typedStatements = new ArrayList<TypedFunctionStatementNode>();
 
         for (var untypedConditionalBranch : node.conditionalBranches()) {
             var result = typeCheckConditionalBranch(untypedConditionalBranch, bodyContext)
@@ -591,6 +592,7 @@ public class TypeChecker {
 
                 if (result.alwaysReturns()) {
                     context = context.updateLocal(variableName, narrowedType, typedConditionNotNode.source());
+                    typedStatements.add(new TypedTypeNarrowNode(variableName, narrowedType, typedConditionNotNode.source()));
                 }
             }
         }
@@ -606,9 +608,10 @@ public class TypeChecker {
             typeCheckElseResult.value(),
             node.source()
         );
+        typedStatements.add(0, typedNode);
 
         return new TypeCheckFunctionStatementResult<>(
-            typedNode,
+            typedStatements,
             ReturnBehaviours.or(returnBehaviours),
             returnType,
             context

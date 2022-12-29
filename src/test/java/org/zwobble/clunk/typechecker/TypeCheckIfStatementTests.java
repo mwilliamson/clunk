@@ -2,6 +2,7 @@ package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.TypedIfStatementNode;
+import org.zwobble.clunk.ast.typed.TypedTypeNarrowNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.NamespaceName;
@@ -13,6 +14,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
+import static org.zwobble.clunk.matchers.CastMatcher.cast;
 import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 
 public class TypeCheckIfStatementTests {
@@ -192,21 +194,21 @@ public class TypeCheckIfStatementTests {
             List.of(
                 Untyped.conditionalBranch(
                     Untyped.boolFalse(),
-                    List.of(Untyped.returnStatement(Untyped.reference("x")))
+                    List.of(Untyped.expressionStatement(Untyped.reference("x")))
                 ),
                 Untyped.conditionalBranch(
                     Untyped.logicalNot(Untyped.instanceOf(
                         Untyped.reference("x"),
                         Untyped.typeLevelReference("Record")
                     )),
-                    List.of(Untyped.returnStatement(Untyped.reference("x")))
+                    List.of(Untyped.expressionStatement(Untyped.reference("x")))
                 ),
                 Untyped.conditionalBranch(
                     Untyped.boolFalse(),
-                    List.of(Untyped.returnStatement(Untyped.reference("x")))
+                    List.of(Untyped.expressionStatement(Untyped.reference("x")))
                 )
             ),
-            List.of(Untyped.returnStatement(Untyped.reference("x")))
+            List.of(Untyped.expressionStatement(Untyped.reference("x")))
         );
         var context = TypeCheckerContext.stub()
             .addSealedInterfaceCase(interfaceType, recordType)
@@ -220,16 +222,16 @@ public class TypeCheckIfStatementTests {
             allOf(
                 isA(TypedIfStatementNode.class),
                 has("conditionalBranches", contains(
-                    has("body", contains(isTypedReturnNode().withExpression(isTypedReferenceNode().withType(interfaceType)))),
-                    has("body", contains(isTypedReturnNode().withExpression(isTypedReferenceNode().withType(interfaceType)))),
+                    has("body", contains(isTypedExpressionStatementNode(isTypedReferenceNode().withType(interfaceType)))),
+                    has("body", contains(isTypedExpressionStatementNode(isTypedReferenceNode().withType(interfaceType)))),
                     has("body", contains(
                         isTypedTypeNarrowNode("x", equalTo(recordType)),
-                        isTypedReturnNode().withExpression(isTypedReferenceNode().withType(recordType))
+                        isTypedExpressionStatementNode(isTypedReferenceNode().withType(recordType))
                     ))
                 )),
                 has("elseBody", contains(
                     isTypedTypeNarrowNode("x", equalTo(recordType)),
-                    isTypedReturnNode().withExpression(isTypedReferenceNode().withType(recordType))
+                    isTypedExpressionStatementNode(isTypedReferenceNode().withType(recordType))
                 ))
             )
         ));
@@ -270,6 +272,9 @@ public class TypeCheckIfStatementTests {
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
         assertThat(result.context().typeOf("x", NullSource.INSTANCE), equalTo(interfaceType));
+        assertThat(result.value(), contains(
+            isA(TypedIfStatementNode.class)
+        ));
     }
 
     @Test
@@ -297,5 +302,9 @@ public class TypeCheckIfStatementTests {
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
         assertThat(result.context().typeOf("x", NullSource.INSTANCE), equalTo(recordType));
+        assertThat(result.value(), contains(
+            isA(TypedIfStatementNode.class),
+            cast(TypedTypeNarrowNode.class, isTypedTypeNarrowNode("x", equalTo(recordType)))
+        ));
     }
 }

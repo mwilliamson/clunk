@@ -65,6 +65,15 @@ public class TypeScriptSerialiser {
     private static void serialiseCallNew(TypeScriptCallNewNode node, CodeBuilder builder) {
         builder.append("new ");
         serialiseExpression(node.receiver(), builder, Optional.of(node));
+        if (!node.typeArgs().isEmpty()) {
+            builder.append("<");
+            forEachInterspersed(
+                node.typeArgs(),
+                typeArg -> serialiseExpression(typeArg, builder, Optional.empty()),
+                () -> builder.append(", ")
+            );
+            builder.append(">");
+        }
         builder.append("(");
         forEachInterspersed(
             node.args(),

@@ -33,9 +33,17 @@ public class TypeScript {
 
     public static TypeScriptCallNewNode callNew(
         TypeScriptExpressionNode receiver,
+        List<TypeScriptExpressionNode> typeArgs,
         List<TypeScriptExpressionNode> args
     ) {
-        return new TypeScriptCallNewNode(receiver, args);
+        return new TypeScriptCallNewNode(receiver, typeArgs, args);
+    }
+
+    public static TypeScriptCallNewNode callNew(
+        TypeScriptExpressionNode receiver,
+        List<TypeScriptExpressionNode> args
+    ) {
+        return new TypeScriptCallNewNode(receiver, List.of(), args);
     }
 
     public static TypeScriptCastNode cast(

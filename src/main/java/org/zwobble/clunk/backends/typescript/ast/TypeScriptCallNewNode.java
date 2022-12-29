@@ -4,6 +4,7 @@ import java.util.List;
 
 public record TypeScriptCallNewNode(
     TypeScriptExpressionNode receiver,
+    List<TypeScriptExpressionNode> typeArgs,
     List<TypeScriptExpressionNode> args
 ) implements TypeScriptExpressionNode {
     @Override

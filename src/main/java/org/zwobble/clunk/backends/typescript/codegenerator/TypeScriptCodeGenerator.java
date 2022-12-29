@@ -38,6 +38,7 @@ public class TypeScriptCodeGenerator {
         } else {
             return new TypeScriptCallNewNode(
                 compileExpression(node.receiver(), context),
+                List.of(),
                 compileArgs(node.positionalArgs(), context)
             );
         }

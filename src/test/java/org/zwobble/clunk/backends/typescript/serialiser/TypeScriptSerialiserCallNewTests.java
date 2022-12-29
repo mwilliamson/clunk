@@ -36,4 +36,30 @@ public class TypeScriptSerialiserCallNewTests {
 
         assertThat(result, equalTo("new X(false, true)"));
     }
+
+    @Test
+    public void canSerialiseCallWithOneTypeArgument() {
+        var node = TypeScript.callNew(
+            TypeScript.reference("X"),
+            List.of(TypeScript.reference("Y")),
+            List.of()
+        );
+
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
+
+        assertThat(result, equalTo("new X<Y>()"));
+    }
+
+    @Test
+    public void canSerialiseCallWithMultipleTypeArguments() {
+        var node = TypeScript.callNew(
+            TypeScript.reference("X"),
+            List.of(TypeScript.reference("Y"), TypeScript.reference("Z")),
+            List.of()
+        );
+
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
+
+        assertThat(result, equalTo("new X<Y, Z>()"));
+    }
 }

@@ -20,6 +20,11 @@ public class JavaStringBuilderMacro implements JavaClassMacro {
     }
 
     @Override
+    public JavaTypeExpressionNode compileTypeConstructorReference() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public JavaTypeExpressionNode compileTypeReference() {
         return new JavaFullyQualifiedTypeReferenceNode("java.lang", "StringBuilder");
     }

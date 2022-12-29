@@ -20,8 +20,13 @@ public class JavaMutableListMacro implements JavaClassMacro {
     }
 
     @Override
-    public JavaTypeExpressionNode compileTypeReference() {
+    public JavaTypeExpressionNode compileTypeConstructorReference() {
         return new JavaFullyQualifiedTypeReferenceNode("java.util", "List");
+    }
+
+    @Override
+    public JavaTypeExpressionNode compileTypeReference() {
+        throw new UnsupportedOperationException();
     }
 
     @Override

@@ -901,10 +901,10 @@ public class JavaCodeGenerator {
             return Optional.of(new JavaTypeVariableReferenceNode(isGeneric ? "Integer" : "int"));
         } else if (value == StringType.INSTANCE) {
             return Optional.of(new JavaTypeVariableReferenceNode("String"));
-        } else if (value == Types.LIST_CONSTRUCTOR) {
-            return Optional.of(new JavaFullyQualifiedTypeReferenceNode("java.util", "List"));
         } else if (value == Types.OPTION_CONSTRUCTOR) {
             return Optional.of(new JavaFullyQualifiedTypeReferenceNode("java.util", "Optional"));
+        } else if (value instanceof TypeConstructor typeConstructor) {
+            return JavaMacros.compileTypeConstructorReference(typeConstructor);
         } else {
             return Optional.empty();
         }

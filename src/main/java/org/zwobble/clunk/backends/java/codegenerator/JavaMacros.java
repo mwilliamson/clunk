@@ -7,10 +7,7 @@ import org.zwobble.clunk.backends.java.codegenerator.macros.JavaListMacro;
 import org.zwobble.clunk.backends.java.codegenerator.macros.JavaMutableListMacro;
 import org.zwobble.clunk.backends.java.codegenerator.macros.JavaStringBuilderMacro;
 import org.zwobble.clunk.backends.java.codegenerator.macros.JavaUnitMacro;
-import org.zwobble.clunk.types.ConstructedType;
-import org.zwobble.clunk.types.NamespaceName;
-import org.zwobble.clunk.types.StaticFunctionType;
-import org.zwobble.clunk.types.Type;
+import org.zwobble.clunk.types.*;
 
 import java.util.List;
 import java.util.Map;
@@ -88,6 +85,15 @@ public class JavaMacros {
         var classMacro = lookupClassMacro(type);
         if (classMacro.isPresent()) {
             return Optional.of(classMacro.get().compileMethodCall(receiver, methodName, positionalArgs));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public static Optional<JavaTypeExpressionNode> compileTypeConstructorReference(TypeConstructor typeConstructor) {
+        var classMacro = lookupClassMacro(typeConstructor.genericType());
+        if (classMacro.isPresent()) {
+            return Optional.of(classMacro.get().compileTypeConstructorReference());
         } else {
             return Optional.empty();
         }

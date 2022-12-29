@@ -9,6 +9,8 @@ import java.util.Optional;
 
 public interface JavaClassMacro {
     Type receiverType();
+    // TODO: split interface depending on whether this is a generic type?
+    JavaTypeExpressionNode compileTypeConstructorReference();
     JavaTypeExpressionNode compileTypeReference();
     JavaExpressionNode compileConstructorCall(
         Optional<List<JavaTypeExpressionNode>> typeArgs,

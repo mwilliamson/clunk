@@ -99,4 +99,34 @@ testSuite "collapse" {
             html.freshElement("p", [], []),
         ]));
     }
+
+    test "consecutive collapsible elements are collapsed if they have the same tag and attributes" {
+        var nodes = [
+            html.collapsibleElement("p", [], [html.text("One")]),
+            html.collapsibleElement("p", [], [html.text("Two")]),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.collapsibleElement("p", [], [html.text("One"), html.text("Two")]),
+        ]));
+    }
+
+    test "children of elements are collapsed" {
+        var nodes = [
+            html.freshElement("div", [], [
+                html.collapsibleElement("p", [], [html.text("One")]),
+                html.collapsibleElement("p", [], [html.text("Two")]),
+            ]),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.freshElement("div", [], [
+                html.collapsibleElement("p", [], [html.text("One"), html.text("Two")]),
+            ]),
+        ]));
+    }
 }

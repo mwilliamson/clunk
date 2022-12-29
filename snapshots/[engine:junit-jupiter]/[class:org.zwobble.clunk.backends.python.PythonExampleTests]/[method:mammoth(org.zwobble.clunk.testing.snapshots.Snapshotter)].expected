@@ -133,6 +133,11 @@ fun element(tagName: String, attributes: List[HtmlAttribute], children: List[Htm
     return freshElement(tagName, attributes, children);
 }
 
+fun collapsibleElement(tagName: String, attributes: List[HtmlAttribute], children: List[HtmlNode]) -> HtmlElement {
+    var tag = HtmlTag([tagName], attributes, true, "");
+    return HtmlElement(tag, children);
+}
+
 fun freshElement(tagName: String, attributes: List[HtmlAttribute], children: List[HtmlNode]) -> HtmlElement {
     var tag = HtmlTag([tagName], attributes, false, "");
     return HtmlElement(tag, children);
@@ -141,6 +146,10 @@ fun freshElement(tagName: String, attributes: List[HtmlAttribute], children: Lis
 record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
     property defaultTagName: String {
         return tag.defaultTagName;
+    }
+
+    property isCollapsible: Bool {
+        return tag.isCollapsible;
     }
 
     property isVoid: Bool {
@@ -212,7 +221,65 @@ fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
 }
 
 fun collapse(nodes: List[HtmlNode]) -> List[HtmlNode] {
-    return nodes;
+    var collapsed = MutableList[HtmlNode]();
+
+    for (var node in nodes) {
+        collapsingAdd(collapsed, node);
+    }
+
+    return collapsed;
+}
+
+fun collapsingAdd(collapsed: MutableList[HtmlNode], node: HtmlNode) -> Unit {
+    var collapsedNode = collapseNode(node);
+    if (!tryCollapse(collapsed, collapsedNode)) {
+        collapsed.add(collapsedNode);
+    }
+}
+
+fun collapseNode(node: HtmlNode) -> HtmlNode {
+    switch (node) {
+        case HtmlElement {
+            return HtmlElement(
+                node.tag,
+                collapse(node.children),
+            );
+        }
+
+        case HtmlForceWrite {
+            return node;
+        }
+
+        case HtmlText {
+            return node;
+        }
+    }
+}
+
+fun tryCollapse(collapsed: MutableList[HtmlNode], node: HtmlNode) -> Bool {
+    if (collapsed.length() == 0) {
+        return false;
+    }
+
+    var last = collapsed.last();
+
+    if (!(node instanceof HtmlElement)) {
+        return false;
+    }
+
+    if (!(last instanceof HtmlElement)) {
+        return false;
+    }
+
+    if (!node.isCollapsible) {
+        return false;
+    }
+
+    for (var child in node.children) {
+        (last.children as MutableList[HtmlNode]).add(child);
+    }
+
+    return true;
 }
 
 
@@ -318,6 +385,36 @@ testSuite "collapse" {
         assertThat(result, equalTo([
             html.freshElement("p", [], []),
             html.freshElement("p", [], []),
+        ]));
+    }
+
+    test "consecutive collapsible elements are collapsed if they have the same tag and attributes" {
+        var nodes = [
+            html.collapsibleElement("p", [], [html.text("One")]),
+            html.collapsibleElement("p", [], [html.text("Two")]),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.collapsibleElement("p", [], [html.text("One"), html.text("Two")]),
+        ]));
+    }
+
+    test "children of elements are collapsed" {
+        var nodes = [
+            html.freshElement("div", [], [
+                html.collapsibleElement("p", [], [html.text("One")]),
+                html.collapsibleElement("p", [], [html.text("Two")]),
+            ]),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.freshElement("div", [], [
+                html.collapsibleElement("p", [], [html.text("One"), html.text("Two")]),
+            ]),
         ]));
     }
 }
@@ -507,6 +604,10 @@ class HtmlAttribute:
 def element(tag_name, attributes, children):
     return fresh_element(tag_name, attributes, children)
 
+def collapsible_element(tag_name, attributes, children):
+    tag = HtmlTag([tag_name], attributes, True, "")
+    return HtmlElement(tag, children)
+
 def fresh_element(tag_name, attributes, children):
     tag = HtmlTag([tag_name], attributes, False, "")
     return HtmlElement(tag, children)
@@ -518,6 +619,10 @@ class HtmlElement:
     @property
     def default_tag_name(self):
         return self.tag.default_tag_name
+
+    @property
+    def is_collapsible(self):
+        return self.tag.is_collapsible
 
     @property
     def is_void(self):
@@ -581,7 +686,47 @@ def strip_empty_node(node):
     return node.accept(Visitor())
 
 def collapse(nodes):
-    return nodes
+    collapsed = []
+
+    for node in nodes:
+        collapsing_add(collapsed, node)
+
+    return collapsed
+
+def collapsing_add(collapsed, node):
+    collapsed_node = collapse_node(node)
+    if not try_collapse(collapsed, collapsed_node):
+        collapsed.append(collapsed_node)
+
+def collapse_node(node):
+    class Visitor:
+        def visit_html_element(self, node):
+            return HtmlElement(node.tag, collapse(node.children))
+        def visit_html_force_write(self, node):
+            return node
+        def visit_html_text(self, node):
+            return node
+    return node.accept(Visitor())
+
+def try_collapse(collapsed, node):
+    if len(collapsed) == 0:
+        return False
+
+    last = collapsed[-1]
+
+    if not isinstance(node, HtmlElement):
+        return False
+
+    if not isinstance(last, HtmlElement):
+        return False
+
+    if not node.is_collapsible:
+        return False
+
+    for child in node.children:
+        last.children.append(child)
+
+    return True
 
 
 ==============
@@ -665,13 +810,27 @@ class CollapseTests:
 
         assert_that(result, equal_to([html.fresh_element("p", [], []), html.fresh_element("p", [], [])]))
 
+    def test_consecutive_collapsible_elements_are_collapsed_if_they_have_the_same_tag_and_attributes(self):
+        nodes = [html.collapsible_element("p", [], [html.text("One")]), html.collapsible_element("p", [], [html.text("Two")])]
+
+        result = html.collapse(nodes)
+
+        assert_that(result, equal_to([html.collapsible_element("p", [], [html.text("One"), html.text("Two")])]))
+
+    def test_children_of_elements_are_collapsed(self):
+        nodes = [html.fresh_element("div", [], [html.collapsible_element("p", [], [html.text("One")]), html.collapsible_element("p", [], [html.text("Two")])])]
+
+        result = html.collapse(nodes)
+
+        assert_that(result, equal_to([html.fresh_element("div", [], [html.collapsible_element("p", [], [html.text("One"), html.text("Two")])])]))
+
 
 ==============
 
 ============================= test session starts ==============================
 rootdir: ROOTDIR, configfile: tox.ini
-collected 10 items
+collected 12 items
 
-mammoth/html_test.py ..........                                          [100%]
+mammoth/html_test.py ............                                        [100%]
 
-============================== 10 passed in TIME ==============================
+============================== 12 passed in TIME ==============================

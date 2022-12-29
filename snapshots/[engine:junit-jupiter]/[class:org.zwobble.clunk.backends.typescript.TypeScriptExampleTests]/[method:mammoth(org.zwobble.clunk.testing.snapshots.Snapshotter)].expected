@@ -133,6 +133,11 @@ fun element(tagName: String, attributes: List[HtmlAttribute], children: List[Htm
     return freshElement(tagName, attributes, children);
 }
 
+fun collapsibleElement(tagName: String, attributes: List[HtmlAttribute], children: List[HtmlNode]) -> HtmlElement {
+    var tag = HtmlTag([tagName], attributes, true, "");
+    return HtmlElement(tag, children);
+}
+
 fun freshElement(tagName: String, attributes: List[HtmlAttribute], children: List[HtmlNode]) -> HtmlElement {
     var tag = HtmlTag([tagName], attributes, false, "");
     return HtmlElement(tag, children);
@@ -141,6 +146,10 @@ fun freshElement(tagName: String, attributes: List[HtmlAttribute], children: Lis
 record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
     property defaultTagName: String {
         return tag.defaultTagName;
+    }
+
+    property isCollapsible: Bool {
+        return tag.isCollapsible;
     }
 
     property isVoid: Bool {
@@ -212,7 +221,65 @@ fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
 }
 
 fun collapse(nodes: List[HtmlNode]) -> List[HtmlNode] {
-    return nodes;
+    var collapsed = MutableList[HtmlNode]();
+
+    for (var node in nodes) {
+        collapsingAdd(collapsed, node);
+    }
+
+    return collapsed;
+}
+
+fun collapsingAdd(collapsed: MutableList[HtmlNode], node: HtmlNode) -> Unit {
+    var collapsedNode = collapseNode(node);
+    if (!tryCollapse(collapsed, collapsedNode)) {
+        collapsed.add(collapsedNode);
+    }
+}
+
+fun collapseNode(node: HtmlNode) -> HtmlNode {
+    switch (node) {
+        case HtmlElement {
+            return HtmlElement(
+                node.tag,
+                collapse(node.children),
+            );
+        }
+
+        case HtmlForceWrite {
+            return node;
+        }
+
+        case HtmlText {
+            return node;
+        }
+    }
+}
+
+fun tryCollapse(collapsed: MutableList[HtmlNode], node: HtmlNode) -> Bool {
+    if (collapsed.length() == 0) {
+        return false;
+    }
+
+    var last = collapsed.last();
+
+    if (!(node instanceof HtmlElement)) {
+        return false;
+    }
+
+    if (!(last instanceof HtmlElement)) {
+        return false;
+    }
+
+    if (!node.isCollapsible) {
+        return false;
+    }
+
+    for (var child in node.children) {
+        (last.children as MutableList[HtmlNode]).add(child);
+    }
+
+    return true;
 }
 
 
@@ -318,6 +385,36 @@ testSuite "collapse" {
         assertThat(result, equalTo([
             html.freshElement("p", [], []),
             html.freshElement("p", [], []),
+        ]));
+    }
+
+    test "consecutive collapsible elements are collapsed if they have the same tag and attributes" {
+        var nodes = [
+            html.collapsibleElement("p", [], [html.text("One")]),
+            html.collapsibleElement("p", [], [html.text("Two")]),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.collapsibleElement("p", [], [html.text("One"), html.text("Two")]),
+        ]));
+    }
+
+    test "children of elements are collapsed" {
+        var nodes = [
+            html.freshElement("div", [], [
+                html.collapsibleElement("p", [], [html.text("One")]),
+                html.collapsibleElement("p", [], [html.text("Two")]),
+            ]),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.freshElement("div", [], [
+                html.collapsibleElement("p", [], [html.text("One"), html.text("Two")]),
+            ]),
         ]));
     }
 }
@@ -593,6 +690,11 @@ function element(tagName: string, attributes: ReadonlyArray<HtmlAttribute>, chil
     return freshElement(tagName, attributes, children);
 }
 
+function collapsibleElement(tagName: string, attributes: ReadonlyArray<HtmlAttribute>, children: ReadonlyArray<HtmlNode>): HtmlElement {
+    let tag = new HtmlTag([tagName], attributes, true, "");
+    return new HtmlElement(tag, children);
+}
+
 function freshElement(tagName: string, attributes: ReadonlyArray<HtmlAttribute>, children: ReadonlyArray<HtmlNode>): HtmlElement {
     let tag = new HtmlTag([tagName], attributes, false, "");
     return new HtmlElement(tag, children);
@@ -609,6 +711,10 @@ class HtmlElement {
     }
     get defaultTagName(): string {
         return this.tag.defaultTagName;
+    }
+
+    get isCollapsible(): boolean {
+        return this.tag.isCollapsible;
     }
 
     get isVoid(): boolean {
@@ -687,9 +793,59 @@ function stripEmptyNode(node: HtmlNode): ReadonlyArray<HtmlNode> {
 }
 
 function collapse(nodes: ReadonlyArray<HtmlNode>): ReadonlyArray<HtmlNode> {
-    return nodes;
+    let collapsed = new Array<HtmlNode>();
+
+    for (let node of nodes) {
+        collapsingAdd(collapsed, node);
+    }
+
+    return collapsed;
 }
-export {HtmlAttribute, HtmlElement, HtmlForceWrite, HtmlNode, HtmlTag, HtmlText, collapse, element, forceWrite, freshElement, stripEmpty, stripEmptyNode, text};
+
+function collapsingAdd(collapsed: Array<HtmlNode>, node: HtmlNode): void {
+    let collapsedNode = collapseNode(node);
+    if (!tryCollapse(collapsed, collapsedNode)) {
+        collapsed.push(collapsedNode);
+    }
+}
+
+function collapseNode(node: HtmlNode): HtmlNode {
+    switch (node.type) {
+        case "HtmlElement":
+            return new HtmlElement(node.tag, collapse(node.children));
+        case "HtmlForceWrite":
+            return node;
+        case "HtmlText":
+            return node;
+    }
+}
+
+function tryCollapse(collapsed: Array<HtmlNode>, node: HtmlNode): boolean {
+    if (collapsed.length === 0) {
+        return false;
+    }
+
+    let last = collapsed[collapsed.length - 1];
+
+    if (!(node.type === "HtmlElement")) {
+        return false;
+    }
+
+    if (!(last.type === "HtmlElement")) {
+        return false;
+    }
+
+    if (!node.isCollapsible) {
+        return false;
+    }
+
+    for (let child of node.children) {
+        ((last.children) as Array<HtmlNode>).push(child);
+    }
+
+    return true;
+}
+export {HtmlAttribute, HtmlElement, HtmlForceWrite, HtmlNode, HtmlTag, HtmlText, collapse, collapseNode, collapsibleElement, collapsingAdd, element, forceWrite, freshElement, stripEmpty, stripEmptyNode, text, tryCollapse};
 
 
 ==============
@@ -781,6 +937,22 @@ suite("collapse", function () {
 
         assertThat(result, deepEqualTo([html.freshElement("p", [], []), html.freshElement("p", [], [])]));
     });
+
+    test("consecutive collapsible elements are collapsed if they have the same tag and attributes", function () {
+        let nodes = [html.collapsibleElement("p", [], [html.text("One")]), html.collapsibleElement("p", [], [html.text("Two")])];
+
+        let result = html.collapse(nodes);
+
+        assertThat(result, deepEqualTo([html.collapsibleElement("p", [], [html.text("One"), html.text("Two")])]));
+    });
+
+    test("children of elements are collapsed", function () {
+        let nodes = [html.freshElement("div", [], [html.collapsibleElement("p", [], [html.text("One")]), html.collapsibleElement("p", [], [html.text("Two")])])];
+
+        let result = html.collapse(nodes);
+
+        assertThat(result, deepEqualTo([html.freshElement("div", [], [html.collapsibleElement("p", [], [html.text("One"), html.text("Two")])])]));
+    });
 });
 
 
@@ -801,6 +973,8 @@ suite("collapse", function () {
   collapse
     ✔ collapsing does nothing to single text node
     ✔ consecutive fresh elements are not collapsed
+    ✔ consecutive collapsible elements are collapsed if they have the same tag and attributes
+    ✔ children of elements are collapsed
 
 
-  10 passing (TIME)
+  12 passing (TIME)

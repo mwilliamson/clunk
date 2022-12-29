@@ -133,6 +133,11 @@ fun element(tagName: String, attributes: List[HtmlAttribute], children: List[Htm
     return freshElement(tagName, attributes, children);
 }
 
+fun collapsibleElement(tagName: String, attributes: List[HtmlAttribute], children: List[HtmlNode]) -> HtmlElement {
+    var tag = HtmlTag([tagName], attributes, true, "");
+    return HtmlElement(tag, children);
+}
+
 fun freshElement(tagName: String, attributes: List[HtmlAttribute], children: List[HtmlNode]) -> HtmlElement {
     var tag = HtmlTag([tagName], attributes, false, "");
     return HtmlElement(tag, children);
@@ -141,6 +146,10 @@ fun freshElement(tagName: String, attributes: List[HtmlAttribute], children: Lis
 record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
     property defaultTagName: String {
         return tag.defaultTagName;
+    }
+
+    property isCollapsible: Bool {
+        return tag.isCollapsible;
     }
 
     property isVoid: Bool {
@@ -212,7 +221,65 @@ fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
 }
 
 fun collapse(nodes: List[HtmlNode]) -> List[HtmlNode] {
-    return nodes;
+    var collapsed = MutableList[HtmlNode]();
+
+    for (var node in nodes) {
+        collapsingAdd(collapsed, node);
+    }
+
+    return collapsed;
+}
+
+fun collapsingAdd(collapsed: MutableList[HtmlNode], node: HtmlNode) -> Unit {
+    var collapsedNode = collapseNode(node);
+    if (!tryCollapse(collapsed, collapsedNode)) {
+        collapsed.add(collapsedNode);
+    }
+}
+
+fun collapseNode(node: HtmlNode) -> HtmlNode {
+    switch (node) {
+        case HtmlElement {
+            return HtmlElement(
+                node.tag,
+                collapse(node.children),
+            );
+        }
+
+        case HtmlForceWrite {
+            return node;
+        }
+
+        case HtmlText {
+            return node;
+        }
+    }
+}
+
+fun tryCollapse(collapsed: MutableList[HtmlNode], node: HtmlNode) -> Bool {
+    if (collapsed.length() == 0) {
+        return false;
+    }
+
+    var last = collapsed.last();
+
+    if (!(node instanceof HtmlElement)) {
+        return false;
+    }
+
+    if (!(last instanceof HtmlElement)) {
+        return false;
+    }
+
+    if (!node.isCollapsible) {
+        return false;
+    }
+
+    for (var child in node.children) {
+        (last.children as MutableList[HtmlNode]).add(child);
+    }
+
+    return true;
 }
 
 
@@ -318,6 +385,36 @@ testSuite "collapse" {
         assertThat(result, equalTo([
             html.freshElement("p", [], []),
             html.freshElement("p", [], []),
+        ]));
+    }
+
+    test "consecutive collapsible elements are collapsed if they have the same tag and attributes" {
+        var nodes = [
+            html.collapsibleElement("p", [], [html.text("One")]),
+            html.collapsibleElement("p", [], [html.text("Two")]),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.collapsibleElement("p", [], [html.text("One"), html.text("Two")]),
+        ]));
+    }
+
+    test "children of elements are collapsed" {
+        var nodes = [
+            html.freshElement("div", [], [
+                html.collapsibleElement("p", [], [html.text("One")]),
+                html.collapsibleElement("p", [], [html.text("Two")]),
+            ]),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.freshElement("div", [], [
+                html.collapsibleElement("p", [], [html.text("One"), html.text("Two")]),
+            ]),
         ]));
     }
 }
@@ -625,6 +722,10 @@ public record HtmlElement(HtmlTag tag, java.util.List<? extends HtmlNode> childr
         return tag().defaultTagName();
     }
 
+    public boolean isCollapsible() {
+        return tag().isCollapsible();
+    }
+
     public boolean isVoid() {
         return tag().isVoid();
     }
@@ -688,6 +789,10 @@ public class Html {
     public static HtmlElement element(String tagName, java.util.List<HtmlAttribute> attributes, java.util.List<? extends HtmlNode> children) {
         return freshElement(tagName, attributes, children);
     }
+    public static HtmlElement collapsibleElement(String tagName, java.util.List<HtmlAttribute> attributes, java.util.List<? extends HtmlNode> children) {
+        var tag = new HtmlTag(java.util.List.of(tagName), attributes, true, "");
+        return new HtmlElement(tag, children);
+    }
     public static HtmlElement freshElement(String tagName, java.util.List<HtmlAttribute> attributes, java.util.List<? extends HtmlNode> children) {
         var tag = new HtmlTag(java.util.List.of(tagName), attributes, false, "");
         return new HtmlElement(tag, children);
@@ -728,7 +833,62 @@ public class Html {
         });
     }
     public static java.util.List<? extends HtmlNode> collapse(java.util.List<? extends HtmlNode> nodes) {
-        return nodes;
+        var collapsed = new java.util.ArrayList<org.zwobble.mammoth.internal.mammoth.html.HtmlNode>();
+
+        for (var node : nodes) {
+            collapsingAdd(collapsed, node);
+        }
+
+        return collapsed;
+    }
+    public static void collapsingAdd(java.util.List<HtmlNode> collapsed, HtmlNode node) {
+        var collapsedNode = collapseNode(node);
+        if (!tryCollapse(collapsed, collapsedNode)) {
+            collapsed.add(collapsedNode);
+        }
+    }
+    public static HtmlNode collapseNode(HtmlNode node) {
+        return node.accept(new HtmlNode.Visitor<>() {
+            @Override
+            public org.zwobble.mammoth.internal.mammoth.html.HtmlNode visit(HtmlElement node) {
+                return new HtmlElement(node.tag(), collapse(node.children()));
+            }
+            @Override
+            public org.zwobble.mammoth.internal.mammoth.html.HtmlNode visit(HtmlForceWrite node) {
+                return node;
+            }
+            @Override
+            public org.zwobble.mammoth.internal.mammoth.html.HtmlNode visit(HtmlText node) {
+                return node;
+            }
+        });
+    }
+    public static boolean tryCollapse(java.util.List<HtmlNode> collapsed, HtmlNode node) {
+        if (collapsed.size() == 0) {
+            return false;
+        }
+
+        var last = collapsed.get(collapsed.size() - 1);
+
+        if (!(node instanceof HtmlElement)) {
+            return false;
+        }
+        var node_HtmlElement = (org.zwobble.mammoth.internal.mammoth.html.HtmlElement) node;
+
+        if (!(last instanceof HtmlElement)) {
+            return false;
+        }
+        var last_HtmlElement = (org.zwobble.mammoth.internal.mammoth.html.HtmlElement) last;
+
+        if (!node_HtmlElement.isCollapsible()) {
+            return false;
+        }
+
+        for (var child : node_HtmlElement.children()) {
+            ((java.util.List<HtmlNode>) last_HtmlElement.children()).add(child);
+        }
+
+        return true;
     }
 }
 
@@ -844,6 +1004,26 @@ public class HtmlTests {
 
             assertThat(result, equalTo(java.util.List.of(Html.freshElement("p", java.util.List.of(), java.util.List.of()), Html.freshElement("p", java.util.List.of(), java.util.List.of()))));
         }
+
+        @org.junit.jupiter.api.Test
+        @org.junit.jupiter.api.DisplayName("consecutive collapsible elements are collapsed if they have the same tag and attributes")
+        public void consecutiveCollapsibleElementsAreCollapsedIfTheyHaveTheSameTagAndAttributes() {
+            var nodes = java.util.List.of(Html.collapsibleElement("p", java.util.List.of(), java.util.List.of(Html.text("One"))), Html.collapsibleElement("p", java.util.List.of(), java.util.List.of(Html.text("Two"))));
+
+            var result = Html.collapse(nodes);
+
+            assertThat(result, equalTo(java.util.List.of(Html.collapsibleElement("p", java.util.List.of(), java.util.List.of(Html.text("One"), Html.text("Two"))))));
+        }
+
+        @org.junit.jupiter.api.Test
+        @org.junit.jupiter.api.DisplayName("children of elements are collapsed")
+        public void childrenOfElementsAreCollapsed() {
+            var nodes = java.util.List.of(Html.freshElement("div", java.util.List.of(), java.util.List.of(Html.collapsibleElement("p", java.util.List.of(), java.util.List.of(Html.text("One"))), Html.collapsibleElement("p", java.util.List.of(), java.util.List.of(Html.text("Two"))))));
+
+            var result = Html.collapse(nodes);
+
+            assertThat(result, equalTo(java.util.List.of(Html.freshElement("div", java.util.List.of(), java.util.List.of(Html.collapsibleElement("p", java.util.List.of(), java.util.List.of(Html.text("One"), Html.text("Two"))))))));
+        }
     }}
 
 ==============
@@ -853,7 +1033,9 @@ public class HtmlTests {
 │  └─ HtmlTests ✔
 │     ├─ Collapse ✔
 │     │  ├─ collapsing does nothing to single text node ✔
-│     │  └─ consecutive fresh elements are not collapsed ✔
+│     │  ├─ consecutive fresh elements are not collapsed ✔
+│     │  ├─ children of elements are collapsed ✔
+│     │  └─ consecutive collapsible elements are collapsed if they have the same tag and att... ✔
 │     └─ StripEmpty ✔
 │        ├─ text nodes with text are not stripped ✔
 │        ├─ force writes are never empty ✔
@@ -872,9 +1054,9 @@ Test run finished after TIME ms
 [         0 containers aborted    ]
 [         5 containers successful ]
 [         0 containers failed     ]
-[        10 tests found           ]
+[        12 tests found           ]
 [         0 tests skipped         ]
-[        10 tests started         ]
+[        12 tests started         ]
 [         0 tests aborted         ]
-[        10 tests successful      ]
+[        12 tests successful      ]
 [         0 tests failed          ]

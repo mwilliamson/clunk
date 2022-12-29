@@ -351,11 +351,11 @@ class BreakColumn {
 
 class Comment {
     readonly commentId: string;
-    readonly body: Array<DocumentElement>;
+    readonly body: ReadonlyArray<DocumentElement>;
     readonly authorName: string | null;
     readonly authorInitials: string | null;
 
-    constructor(commentId: string, body: Array<DocumentElement>, authorName: string | null, authorInitials: string | null) {
+    constructor(commentId: string, body: ReadonlyArray<DocumentElement>, authorName: string | null, authorInitials: string | null) {
         this.commentId = commentId;
         this.body = body;
         this.authorName = authorName;
@@ -373,11 +373,11 @@ class CommentReference {
 }
 
 class Document {
-    readonly children: Array<DocumentElement>;
-    readonly notes: Array<Note>;
-    readonly comments: Array<Comment>;
+    readonly children: ReadonlyArray<DocumentElement>;
+    readonly notes: ReadonlyArray<Note>;
+    readonly comments: ReadonlyArray<Comment>;
 
-    constructor(children: Array<DocumentElement>, notes: Array<Note>, comments: Array<Comment>) {
+    constructor(children: ReadonlyArray<DocumentElement>, notes: ReadonlyArray<Note>, comments: ReadonlyArray<Comment>) {
         this.children = children;
         this.notes = notes;
         this.comments = comments;
@@ -388,9 +388,9 @@ class Hyperlink {
     readonly type: "Hyperlink" = "Hyperlink";
     readonly href: string;
     readonly targetFrame: string | null;
-    readonly children: Array<DocumentElement>;
+    readonly children: ReadonlyArray<DocumentElement>;
 
-    constructor(href: string, targetFrame: string | null, children: Array<DocumentElement>) {
+    constructor(href: string, targetFrame: string | null, children: ReadonlyArray<DocumentElement>) {
         this.href = href;
         this.targetFrame = targetFrame;
         this.children = children;
@@ -411,9 +411,9 @@ class Image {
 class Note {
     readonly noteType: NoteType;
     readonly id: string;
-    readonly body: Array<DocumentElement>;
+    readonly body: ReadonlyArray<DocumentElement>;
 
-    constructor(noteType: NoteType, id: string, body: Array<DocumentElement>) {
+    constructor(noteType: NoteType, id: string, body: ReadonlyArray<DocumentElement>) {
         this.noteType = noteType;
         this.id = id;
         this.body = body;
@@ -459,9 +459,9 @@ class Paragraph {
     readonly style: string | null;
     readonly numbering: NumberingLevel | null;
     readonly indent: ParagraphIndent;
-    readonly children: Array<DocumentElement>;
+    readonly children: ReadonlyArray<DocumentElement>;
 
-    constructor(style: string | null, numbering: NumberingLevel | null, indent: ParagraphIndent, children: Array<DocumentElement>) {
+    constructor(style: string | null, numbering: NumberingLevel | null, indent: ParagraphIndent, children: ReadonlyArray<DocumentElement>) {
         this.style = style;
         this.numbering = numbering;
         this.indent = indent;
@@ -493,9 +493,9 @@ class Run {
     readonly isSmallCaps: boolean;
     readonly verticalAlignment: VerticalAlignment;
     readonly style: string | null;
-    readonly children: Array<DocumentElement>;
+    readonly children: ReadonlyArray<DocumentElement>;
 
-    constructor(isBold: boolean, isItalic: boolean, isUnderline: boolean, isStrikethrough: boolean, isAllCaps: boolean, isSmallCaps: boolean, verticalAlignment: VerticalAlignment, style: string | null, children: Array<DocumentElement>) {
+    constructor(isBold: boolean, isItalic: boolean, isUnderline: boolean, isStrikethrough: boolean, isAllCaps: boolean, isSmallCaps: boolean, verticalAlignment: VerticalAlignment, style: string | null, children: ReadonlyArray<DocumentElement>) {
         this.isBold = isBold;
         this.isItalic = isItalic;
         this.isUnderline = isUnderline;
@@ -525,9 +525,9 @@ class Tab {
 class Table {
     readonly type: "Table" = "Table";
     readonly style: Style | null;
-    readonly children: Array<DocumentElement>;
+    readonly children: ReadonlyArray<DocumentElement>;
 
-    constructor(style: Style | null, children: Array<DocumentElement>) {
+    constructor(style: Style | null, children: ReadonlyArray<DocumentElement>) {
         this.style = style;
         this.children = children;
     }
@@ -537,9 +537,9 @@ class TableCell {
     readonly type: "TableCell" = "TableCell";
     readonly rowspan: number;
     readonly colspan: number;
-    readonly children: Array<DocumentElement>;
+    readonly children: ReadonlyArray<DocumentElement>;
 
-    constructor(rowspan: number, colspan: number, children: Array<DocumentElement>) {
+    constructor(rowspan: number, colspan: number, children: ReadonlyArray<DocumentElement>) {
         this.rowspan = rowspan;
         this.colspan = colspan;
         this.children = children;
@@ -548,10 +548,10 @@ class TableCell {
 
 class TableRow {
     readonly type: "TableRow" = "TableRow";
-    readonly children: Array<DocumentElement>;
+    readonly children: ReadonlyArray<DocumentElement>;
     readonly isHeader: boolean;
 
-    constructor(children: Array<DocumentElement>, isHeader: boolean) {
+    constructor(children: ReadonlyArray<DocumentElement>, isHeader: boolean) {
         this.children = children;
         this.isHeader = isHeader;
     }
@@ -589,11 +589,11 @@ class HtmlAttribute {
     }
 }
 
-function element(tagName: string, attributes: Array<HtmlAttribute>, children: Array<HtmlNode>): HtmlElement {
+function element(tagName: string, attributes: ReadonlyArray<HtmlAttribute>, children: ReadonlyArray<HtmlNode>): HtmlElement {
     return freshElement(tagName, attributes, children);
 }
 
-function freshElement(tagName: string, attributes: Array<HtmlAttribute>, children: Array<HtmlNode>): HtmlElement {
+function freshElement(tagName: string, attributes: ReadonlyArray<HtmlAttribute>, children: ReadonlyArray<HtmlNode>): HtmlElement {
     let tag = new HtmlTag([tagName], attributes, false, "");
     return new HtmlElement(tag, children);
 }
@@ -601,9 +601,9 @@ function freshElement(tagName: string, attributes: Array<HtmlAttribute>, childre
 class HtmlElement {
     readonly type: "HtmlElement" = "HtmlElement";
     readonly tag: HtmlTag;
-    readonly children: Array<HtmlNode>;
+    readonly children: ReadonlyArray<HtmlNode>;
 
-    constructor(tag: HtmlTag, children: Array<HtmlNode>) {
+    constructor(tag: HtmlTag, children: ReadonlyArray<HtmlNode>) {
         this.tag = tag;
         this.children = children;
     }
@@ -626,12 +626,12 @@ class HtmlForceWrite {
 }
 
 class HtmlTag {
-    readonly tagNames: Array<string>;
-    readonly attributes: Array<HtmlAttribute>;
+    readonly tagNames: ReadonlyArray<string>;
+    readonly attributes: ReadonlyArray<HtmlAttribute>;
     readonly isCollapsible: boolean;
     readonly separator: string;
 
-    constructor(tagNames: Array<string>, attributes: Array<HtmlAttribute>, isCollapsible: boolean, separator: string) {
+    constructor(tagNames: ReadonlyArray<string>, attributes: ReadonlyArray<HtmlAttribute>, isCollapsible: boolean, separator: string) {
         this.tagNames = tagNames;
         this.attributes = attributes;
         this.isCollapsible = isCollapsible;
@@ -662,11 +662,11 @@ class HtmlText {
     }
 }
 
-function stripEmpty(nodes: Array<HtmlNode>): Array<HtmlNode> {
+function stripEmpty(nodes: ReadonlyArray<HtmlNode>): ReadonlyArray<HtmlNode> {
     return nodes.flatMap(stripEmptyNode);
 }
 
-function stripEmptyNode(node: HtmlNode): Array<HtmlNode> {
+function stripEmptyNode(node: HtmlNode): ReadonlyArray<HtmlNode> {
     switch (node.type) {
         case "HtmlElement":
             let children = stripEmpty(node.children);
@@ -686,7 +686,7 @@ function stripEmptyNode(node: HtmlNode): Array<HtmlNode> {
     }
 }
 
-function collapse(nodes: Array<HtmlNode>): Array<HtmlNode> {
+function collapse(nodes: ReadonlyArray<HtmlNode>): ReadonlyArray<HtmlNode> {
     return nodes;
 }
 export {HtmlAttribute, HtmlElement, HtmlForceWrite, HtmlNode, HtmlTag, HtmlText, collapse, element, forceWrite, freshElement, stripEmpty, stripEmptyNode, text};

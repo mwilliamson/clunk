@@ -6,10 +6,7 @@ import org.zwobble.clunk.backends.typescript.codegenerator.macros.TypeScriptList
 import org.zwobble.clunk.backends.typescript.codegenerator.macros.TypeScriptMutableListMacro;
 import org.zwobble.clunk.backends.typescript.codegenerator.macros.TypeScriptStringBuilderMacro;
 import org.zwobble.clunk.backends.typescript.codegenerator.macros.TypeScriptUnitMacro;
-import org.zwobble.clunk.types.ConstructedType;
-import org.zwobble.clunk.types.NamespaceName;
-import org.zwobble.clunk.types.StaticFunctionType;
-import org.zwobble.clunk.types.Type;
+import org.zwobble.clunk.types.*;
 
 import java.util.Map;
 import java.util.Optional;
@@ -34,6 +31,16 @@ public class TypeScriptMacros {
             return Optional.empty();
         } else {
             return Optional.of(macro.compileTypeReference());
+        }
+    }
+
+    public static Optional<TypeScriptExpressionNode> compileTypeConstructorReference(TypeConstructor typeConstructor) {
+        var macro = CLASS_MACROS.get(typeConstructor.genericType());
+
+        if (macro == null) {
+            return Optional.empty();
+        } else {
+            return Optional.of(macro.compileTypeConstructorReference());
         }
     }
 

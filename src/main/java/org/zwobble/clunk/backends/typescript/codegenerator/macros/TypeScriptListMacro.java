@@ -25,6 +25,11 @@ public class TypeScriptListMacro implements TypeScriptClassMacro {
     }
 
     @Override
+    public TypeScriptExpressionNode compileTypeConstructorReference() {
+        return new TypeScriptReferenceNode("ReadonlyArray");
+    }
+
+    @Override
     public TypeScriptExpressionNode compileConstructorCall(
         Optional<List<TypeScriptExpressionNode>> typeArgs,
         List<TypeScriptExpressionNode> positionalArgs

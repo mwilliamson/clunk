@@ -95,4 +95,18 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
         var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("void"));
     }
+
+    @Test
+    public void typeConstructorMacrosAreUsedToCompileToTypeScriptTypeReference() {
+        var node = Typed.constructedTypeInvariant(
+            Typed.typeLevelReference("List", Types.LIST_CONSTRUCTOR),
+            List.of(Typed.typeLevelReference("String", Types.STRING)),
+            Types.list(Types.STRING)
+        );
+
+        var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
+
+        var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("ReadonlyArray<string>"));
+    }
 }

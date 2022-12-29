@@ -700,12 +700,12 @@ public class TypeScriptCodeGenerator {
             return Optional.of(new TypeScriptReferenceNode("boolean"));
         } else if (value == IntType.INSTANCE) {
             return Optional.of(new TypeScriptReferenceNode("number"));
-        } else if (value == Types.LIST_CONSTRUCTOR) {
-            return Optional.of(new TypeScriptReferenceNode("Array"));
         } else if (value == StringType.INSTANCE) {
             return Optional.of(new TypeScriptReferenceNode("string"));
         } else if (value instanceof Type type) {
             return TypeScriptMacros.compileTypeReference(type);
+        } else if (value instanceof TypeConstructor typeConstructor) {
+            return TypeScriptMacros.compileTypeConstructorReference(typeConstructor);
         } else {
             return Optional.empty();
         }

@@ -153,6 +153,13 @@ public class Typed {
         return new TypedIntLiteralNode(value, NullSource.INSTANCE);
     }
 
+    public static TypedIntNotEqualNode intNotEqual(
+        TypedExpressionNode left,
+        TypedExpressionNode right
+    ) {
+        return new TypedIntNotEqualNode(left, right, NullSource.INSTANCE);
+    }
+
     public static TypedListLiteralNode listLiteral(List<TypedExpressionNode> elements, Type elementType) {
         return new TypedListLiteralNode(elements, elementType, NullSource.INSTANCE);
     }

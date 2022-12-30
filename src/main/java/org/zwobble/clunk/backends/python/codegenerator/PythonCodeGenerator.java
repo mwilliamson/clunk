@@ -173,6 +173,11 @@ public class PythonCodeGenerator {
             }
 
             @Override
+            public PythonExpressionNode visit(TypedIntNotEqualNode node) {
+                return compileIntNotEqual(node, context);
+            }
+
+            @Override
             public PythonExpressionNode visit(TypedListLiteralNode node) {
                 return compileListLiteral(node, context);
             }
@@ -391,6 +396,16 @@ public class PythonCodeGenerator {
 
     private static PythonExpressionNode compileIntLiteral(TypedIntLiteralNode node) {
         return new PythonIntLiteralNode(BigInteger.valueOf(node.value()));
+    }
+
+    private static PythonExpressionNode compileIntNotEqual(
+        TypedIntNotEqualNode node,
+        PythonCodeGeneratorContext context
+    ) {
+        return new PythonNotEqualNode(
+            compileExpression(node.left(), context),
+            compileExpression(node.right(), context)
+        );
     }
 
     private static PythonExpressionNode compileListLiteral(

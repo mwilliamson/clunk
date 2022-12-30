@@ -166,6 +166,11 @@ public class JavaCodeGenerator {
             }
 
             @Override
+            public JavaExpressionNode visit(TypedIntNotEqualNode node) {
+                return compileIntNotEqual(node, context);
+            }
+
+            @Override
             public JavaExpressionNode visit(TypedListLiteralNode node) {
                 return compileListLiteral(node, context);
             }
@@ -409,6 +414,16 @@ public class JavaCodeGenerator {
 
     private static JavaExpressionNode compileIntLiteral(TypedIntLiteralNode node) {
         return new JavaIntLiteralNode(node.value());
+    }
+
+    private static JavaExpressionNode compileIntNotEqual(
+        TypedIntNotEqualNode node,
+        JavaCodeGeneratorContext context
+    ) {
+        return new JavaNotEqualNode(
+            compileExpression(node.left(), context),
+            compileExpression(node.right(), context)
+        );
     }
 
     private static JavaExpressionNode compileListLiteral(

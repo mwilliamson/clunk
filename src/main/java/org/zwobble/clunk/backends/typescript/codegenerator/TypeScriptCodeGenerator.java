@@ -155,6 +155,11 @@ public class TypeScriptCodeGenerator {
             }
 
             @Override
+            public TypeScriptExpressionNode visit(TypedIntNotEqualNode node) {
+                return compileIntNotEqual(node, context);
+            }
+
+            @Override
             public TypeScriptExpressionNode visit(TypedListLiteralNode node) {
                 return compileListLiteral(node, context);
             }
@@ -405,6 +410,16 @@ public class TypeScriptCodeGenerator {
 
     private static TypeScriptExpressionNode compileIntLiteral(TypedIntLiteralNode node) {
         return new TypeScriptNumberLiteralNode(node.value());
+    }
+
+    private static TypeScriptExpressionNode compileIntNotEqual(
+        TypedIntNotEqualNode node,
+        TypeScriptCodeGeneratorContext context
+    ) {
+        return new TypeScriptStrictNotEqualNode(
+            compileExpression(node.left(), context),
+            compileExpression(node.right(), context)
+        );
     }
 
     private static TypeScriptExpressionNode compileListLiteral(

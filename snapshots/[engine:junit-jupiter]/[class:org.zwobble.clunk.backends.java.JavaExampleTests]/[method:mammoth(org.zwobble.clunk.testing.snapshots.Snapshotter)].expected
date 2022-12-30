@@ -271,7 +271,7 @@ fun tryCollapse(collapsed: MutableList[HtmlNode], node: HtmlNode) -> Bool {
         return false;
     }
 
-    if (!node.isCollapsible || !(node.defaultTagName == last.defaultTagName)) {
+    if (!node.isCollapsible || node.defaultTagName != last.defaultTagName) {
         return false;
     }
 

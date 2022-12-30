@@ -271,7 +271,7 @@ fun tryCollapse(collapsed: MutableList[HtmlNode], node: HtmlNode) -> Bool {
         return false;
     }
 
-    if (!node.isCollapsible || !(node.defaultTagName == last.defaultTagName)) {
+    if (!node.isCollapsible || node.defaultTagName != last.defaultTagName) {
         return false;
     }
 
@@ -734,7 +734,7 @@ def try_collapse(collapsed, node):
     if not isinstance(last, HtmlElement):
         return False
 
-    if not node.is_collapsible or not node.default_tag_name == last.default_tag_name:
+    if not node.is_collapsible or node.default_tag_name != last.default_tag_name:
         return False
 
     for child in node.children:

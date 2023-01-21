@@ -400,7 +400,21 @@ testSuite "collapse" {
         ]));
     }
 
-    test "consecutive collapsible elements are collapsed if they have the same tag and no attributes" {
+    test "elements with different attributes are not collapsed" {
+        var nodes = [
+            html.collapsibleElement("p", #[["id", "a"]], [html.text("One")]),
+            html.collapsibleElement("p", #[], [html.text("Two")]),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.collapsibleElement("p", #[["id", "a"]], [html.text("One")]),
+            html.collapsibleElement("p", #[], [html.text("Two")]),
+        ]));
+    }
+
+    test "consecutive collapsible elements are collapsed if they have the same tag name and no attributes" {
         var nodes = [
             html.collapsibleElement("p", #[], [html.text("One")]),
             html.collapsibleElement("p", #[], [html.text("Two")]),
@@ -413,7 +427,7 @@ testSuite "collapse" {
         ]));
     }
 
-    test "consecutive collapsible elements are collapsed if they have the same tag and same attributes" {
+    test "consecutive collapsible elements are collapsed if they have the same tag name and same attributes" {
         var nodes = [
             html.collapsibleElement("p", #[["a", "1"], ["b", "2"]], [html.text("One")]),
             html.collapsibleElement("p", #[["b", "2"], ["a", "1"]], [html.text("Two")]),
@@ -423,34 +437,6 @@ testSuite "collapse" {
 
         assertThat(result, equalTo([
             html.collapsibleElement("p", #[["a", "1"], ["b", "2"]], [html.text("One"), html.text("Two")]),
-        ]));
-    }
-
-    test "elements with different tags are not collapsed" {
-        var nodes = [
-            html.collapsibleElement("p", #[], [html.text("One")]),
-            html.collapsibleElement("div", #[], [html.text("Two")]),
-        ];
-
-        var result = html.collapse(nodes);
-
-        assertThat(result, equalTo([
-            html.collapsibleElement("p", #[], [html.text("One")]),
-            html.collapsibleElement("div", #[], [html.text("Two")]),
-        ]));
-    }
-
-    test "elements with different attributes are not collapsed" {
-        var nodes = [
-            html.collapsibleElement("p", #[["id", "a"]], [html.text("One")]),
-            html.collapsibleElement("p", #[], [html.text("Two")]),
-        ];
-
-        var result = html.collapse(nodes);
-
-        assertThat(result, equalTo([
-            html.collapsibleElement("p", #[["id", "a"]], [html.text("One")]),
-            html.collapsibleElement("p", #[], [html.text("Two")]),
         ]));
     }
 
@@ -865,33 +851,26 @@ class CollapseTests:
 
         assert_that(result, equal_to([html.collapsible_element("p", {}, [html.text("One")]), html.collapsible_element("div", {}, [html.text("Two")])]))
 
-    def test_consecutive_collapsible_elements_are_collapsed_if_they_have_the_same_tag_and_no_attributes(self):
-        nodes = [html.collapsible_element("p", {}, [html.text("One")]), html.collapsible_element("p", {}, [html.text("Two")])]
-
-        result = html.collapse(nodes)
-
-        assert_that(result, equal_to([html.collapsible_element("p", {}, [html.text("One"), html.text("Two")])]))
-
-    def test_consecutive_collapsible_elements_are_collapsed_if_they_have_the_same_tag_and_same_attributes(self):
-        nodes = [html.collapsible_element("p", {"a": "1", "b": "2"}, [html.text("One")]), html.collapsible_element("p", {"b": "2", "a": "1"}, [html.text("Two")])]
-
-        result = html.collapse(nodes)
-
-        assert_that(result, equal_to([html.collapsible_element("p", {"a": "1", "b": "2"}, [html.text("One"), html.text("Two")])]))
-
-    def test_elements_with_different_tags_are_not_collapsed(self):
-        nodes = [html.collapsible_element("p", {}, [html.text("One")]), html.collapsible_element("div", {}, [html.text("Two")])]
-
-        result = html.collapse(nodes)
-
-        assert_that(result, equal_to([html.collapsible_element("p", {}, [html.text("One")]), html.collapsible_element("div", {}, [html.text("Two")])]))
-
     def test_elements_with_different_attributes_are_not_collapsed(self):
         nodes = [html.collapsible_element("p", {"id": "a"}, [html.text("One")]), html.collapsible_element("p", {}, [html.text("Two")])]
 
         result = html.collapse(nodes)
 
         assert_that(result, equal_to([html.collapsible_element("p", {"id": "a"}, [html.text("One")]), html.collapsible_element("p", {}, [html.text("Two")])]))
+
+    def test_consecutive_collapsible_elements_are_collapsed_if_they_have_the_same_tag_name_and_no_attributes(self):
+        nodes = [html.collapsible_element("p", {}, [html.text("One")]), html.collapsible_element("p", {}, [html.text("Two")])]
+
+        result = html.collapse(nodes)
+
+        assert_that(result, equal_to([html.collapsible_element("p", {}, [html.text("One"), html.text("Two")])]))
+
+    def test_consecutive_collapsible_elements_are_collapsed_if_they_have_the_same_tag_name_and_same_attributes(self):
+        nodes = [html.collapsible_element("p", {"a": "1", "b": "2"}, [html.text("One")]), html.collapsible_element("p", {"b": "2", "a": "1"}, [html.text("Two")])]
+
+        result = html.collapse(nodes)
+
+        assert_that(result, equal_to([html.collapsible_element("p", {"a": "1", "b": "2"}, [html.text("One"), html.text("Two")])]))
 
     def test_children_of_elements_are_collapsed(self):
         nodes = [html.fresh_element("div", {}, [html.collapsible_element("p", {}, [html.text("One")]), html.collapsible_element("p", {}, [html.text("Two")])])]
@@ -905,13 +884,13 @@ class CollapseTests:
 
 ============================= test session starts ==============================
 rootdir: ROOTDIR, configfile: tox.ini
-collected 16 items
+collected 15 items
 
-mammoth/html_test.py ..............F.                                    [100%]
+mammoth/html_test.py ...........F...                                     [100%]
 
 =================================== FAILURES ===================================
 ___ CollapseTests.test_elements_with_different_attributes_are_not_collapsed ____
-mammoth/html_test.py:112: in test_elements_with_different_attributes_are_not_collapsed
+mammoth/html_test.py:91: in test_elements_with_different_attributes_are_not_collapsed
     assert_that(result, equal_to([html.collapsible_element("p", {"id": "a"}, [html.text("One")]), html.collapsible_element("p", {}, [html.text("Two")])]))
 SITE-PACKAGES/precisely/__init__.py:50: in assert_that
     raise AssertionError("\nExpected:{0}\nbut:{1}".format(
@@ -922,4 +901,4 @@ E   but:
 E     was [HtmlElement(tag=HtmlTag(tag_names=['p'], attributes={'id': 'a'}, is_collapsible=True, separator=''), children=[HtmlText(value='One'), HtmlText(value='Two')])]
 =========================== short test summary info ============================
 FAILED mammoth/html_test.py::CollapseTests::test_elements_with_different_attributes_are_not_collapsed
-========================= 1 failed, 15 passed in TIME =========================
+========================= 1 failed, 14 passed in TIME =========================

@@ -400,7 +400,21 @@ testSuite "collapse" {
         ]));
     }
 
-    test "consecutive collapsible elements are collapsed if they have the same tag and no attributes" {
+    test "elements with different attributes are not collapsed" {
+        var nodes = [
+            html.collapsibleElement("p", #[["id", "a"]], [html.text("One")]),
+            html.collapsibleElement("p", #[], [html.text("Two")]),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.collapsibleElement("p", #[["id", "a"]], [html.text("One")]),
+            html.collapsibleElement("p", #[], [html.text("Two")]),
+        ]));
+    }
+
+    test "consecutive collapsible elements are collapsed if they have the same tag name and no attributes" {
         var nodes = [
             html.collapsibleElement("p", #[], [html.text("One")]),
             html.collapsibleElement("p", #[], [html.text("Two")]),
@@ -413,7 +427,7 @@ testSuite "collapse" {
         ]));
     }
 
-    test "consecutive collapsible elements are collapsed if they have the same tag and same attributes" {
+    test "consecutive collapsible elements are collapsed if they have the same tag name and same attributes" {
         var nodes = [
             html.collapsibleElement("p", #[["a", "1"], ["b", "2"]], [html.text("One")]),
             html.collapsibleElement("p", #[["b", "2"], ["a", "1"]], [html.text("Two")]),
@@ -423,34 +437,6 @@ testSuite "collapse" {
 
         assertThat(result, equalTo([
             html.collapsibleElement("p", #[["a", "1"], ["b", "2"]], [html.text("One"), html.text("Two")]),
-        ]));
-    }
-
-    test "elements with different tags are not collapsed" {
-        var nodes = [
-            html.collapsibleElement("p", #[], [html.text("One")]),
-            html.collapsibleElement("div", #[], [html.text("Two")]),
-        ];
-
-        var result = html.collapse(nodes);
-
-        assertThat(result, equalTo([
-            html.collapsibleElement("p", #[], [html.text("One")]),
-            html.collapsibleElement("div", #[], [html.text("Two")]),
-        ]));
-    }
-
-    test "elements with different attributes are not collapsed" {
-        var nodes = [
-            html.collapsibleElement("p", #[["id", "a"]], [html.text("One")]),
-            html.collapsibleElement("p", #[], [html.text("Two")]),
-        ];
-
-        var result = html.collapse(nodes);
-
-        assertThat(result, equalTo([
-            html.collapsibleElement("p", #[["id", "a"]], [html.text("One")]),
-            html.collapsibleElement("p", #[], [html.text("Two")]),
         ]));
     }
 
@@ -989,7 +975,15 @@ suite("collapse", function () {
         assertThat(result, deepEqualTo([html.collapsibleElement("p", new Map([]), [html.text("One")]), html.collapsibleElement("div", new Map([]), [html.text("Two")])]));
     });
 
-    test("consecutive collapsible elements are collapsed if they have the same tag and no attributes", function () {
+    test("elements with different attributes are not collapsed", function () {
+        let nodes = [html.collapsibleElement("p", new Map([["id", "a"]]), [html.text("One")]), html.collapsibleElement("p", new Map([]), [html.text("Two")])];
+
+        let result = html.collapse(nodes);
+
+        assertThat(result, deepEqualTo([html.collapsibleElement("p", new Map([["id", "a"]]), [html.text("One")]), html.collapsibleElement("p", new Map([]), [html.text("Two")])]));
+    });
+
+    test("consecutive collapsible elements are collapsed if they have the same tag name and no attributes", function () {
         let nodes = [html.collapsibleElement("p", new Map([]), [html.text("One")]), html.collapsibleElement("p", new Map([]), [html.text("Two")])];
 
         let result = html.collapse(nodes);
@@ -997,28 +991,12 @@ suite("collapse", function () {
         assertThat(result, deepEqualTo([html.collapsibleElement("p", new Map([]), [html.text("One"), html.text("Two")])]));
     });
 
-    test("consecutive collapsible elements are collapsed if they have the same tag and same attributes", function () {
+    test("consecutive collapsible elements are collapsed if they have the same tag name and same attributes", function () {
         let nodes = [html.collapsibleElement("p", new Map([["a", "1"], ["b", "2"]]), [html.text("One")]), html.collapsibleElement("p", new Map([["b", "2"], ["a", "1"]]), [html.text("Two")])];
 
         let result = html.collapse(nodes);
 
         assertThat(result, deepEqualTo([html.collapsibleElement("p", new Map([["a", "1"], ["b", "2"]]), [html.text("One"), html.text("Two")])]));
-    });
-
-    test("elements with different tags are not collapsed", function () {
-        let nodes = [html.collapsibleElement("p", new Map([]), [html.text("One")]), html.collapsibleElement("div", new Map([]), [html.text("Two")])];
-
-        let result = html.collapse(nodes);
-
-        assertThat(result, deepEqualTo([html.collapsibleElement("p", new Map([]), [html.text("One")]), html.collapsibleElement("div", new Map([]), [html.text("Two")])]));
-    });
-
-    test("elements with different attributes are not collapsed", function () {
-        let nodes = [html.collapsibleElement("p", new Map([["id", "a"]]), [html.text("One")]), html.collapsibleElement("p", new Map([]), [html.text("Two")])];
-
-        let result = html.collapse(nodes);
-
-        assertThat(result, deepEqualTo([html.collapsibleElement("p", new Map([["id", "a"]]), [html.text("One")]), html.collapsibleElement("p", new Map([]), [html.text("Two")])]));
     });
 
     test("children of elements are collapsed", function () {
@@ -1049,14 +1027,13 @@ suite("collapse", function () {
     ✔ collapsing does nothing to single text node
     ✔ consecutive fresh elements are not collapsed
     ✔ elements with different tag names are not collapsed
-    ✔ consecutive collapsible elements are collapsed if they have the same tag and no attributes
-    ✔ consecutive collapsible elements are collapsed if they have the same tag and same attributes
-    ✔ elements with different tags are not collapsed
     1) elements with different attributes are not collapsed
+    ✔ consecutive collapsible elements are collapsed if they have the same tag name and no attributes
+    ✔ consecutive collapsible elements are collapsed if they have the same tag name and same attributes
     ✔ children of elements are collapsed
 
 
-  15 passing (TIME)
+  14 passing (TIME)
   1 failing
 
   1) collapse
@@ -1099,7 +1076,7 @@ but:
       }
     ]
       at assertThat (node_modules/@mwilliamson/precisely/lib/assertThat.js:14:15)
-      at Context.<anonymous> (src/mammoth/html.test.ts:125:19)
+      at Context.<anonymous> (src/mammoth/html.test.ts:101:19)
       at processImmediate (node:internal/timers:466:21)
 
 

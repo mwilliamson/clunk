@@ -400,7 +400,21 @@ testSuite "collapse" {
         ]));
     }
 
-    test "consecutive collapsible elements are collapsed if they have the same tag and no attributes" {
+    test "elements with different attributes are not collapsed" {
+        var nodes = [
+            html.collapsibleElement("p", #[["id", "a"]], [html.text("One")]),
+            html.collapsibleElement("p", #[], [html.text("Two")]),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.collapsibleElement("p", #[["id", "a"]], [html.text("One")]),
+            html.collapsibleElement("p", #[], [html.text("Two")]),
+        ]));
+    }
+
+    test "consecutive collapsible elements are collapsed if they have the same tag name and no attributes" {
         var nodes = [
             html.collapsibleElement("p", #[], [html.text("One")]),
             html.collapsibleElement("p", #[], [html.text("Two")]),
@@ -413,7 +427,7 @@ testSuite "collapse" {
         ]));
     }
 
-    test "consecutive collapsible elements are collapsed if they have the same tag and same attributes" {
+    test "consecutive collapsible elements are collapsed if they have the same tag name and same attributes" {
         var nodes = [
             html.collapsibleElement("p", #[["a", "1"], ["b", "2"]], [html.text("One")]),
             html.collapsibleElement("p", #[["b", "2"], ["a", "1"]], [html.text("Two")]),
@@ -423,34 +437,6 @@ testSuite "collapse" {
 
         assertThat(result, equalTo([
             html.collapsibleElement("p", #[["a", "1"], ["b", "2"]], [html.text("One"), html.text("Two")]),
-        ]));
-    }
-
-    test "elements with different tags are not collapsed" {
-        var nodes = [
-            html.collapsibleElement("p", #[], [html.text("One")]),
-            html.collapsibleElement("div", #[], [html.text("Two")]),
-        ];
-
-        var result = html.collapse(nodes);
-
-        assertThat(result, equalTo([
-            html.collapsibleElement("p", #[], [html.text("One")]),
-            html.collapsibleElement("div", #[], [html.text("Two")]),
-        ]));
-    }
-
-    test "elements with different attributes are not collapsed" {
-        var nodes = [
-            html.collapsibleElement("p", #[["id", "a"]], [html.text("One")]),
-            html.collapsibleElement("p", #[], [html.text("Two")]),
-        ];
-
-        var result = html.collapse(nodes);
-
-        assertThat(result, equalTo([
-            html.collapsibleElement("p", #[["id", "a"]], [html.text("One")]),
-            html.collapsibleElement("p", #[], [html.text("Two")]),
         ]));
     }
 
@@ -1061,8 +1047,18 @@ public class HtmlTests {
         }
 
         @org.junit.jupiter.api.Test
-        @org.junit.jupiter.api.DisplayName("consecutive collapsible elements are collapsed if they have the same tag and no attributes")
-        public void consecutiveCollapsibleElementsAreCollapsedIfTheyHaveTheSameTagAndNoAttributes() {
+        @org.junit.jupiter.api.DisplayName("elements with different attributes are not collapsed")
+        public void elementsWithDifferentAttributesAreNotCollapsed() {
+            var nodes = java.util.List.of(Html.collapsibleElement("p", java.util.Map.ofEntries(java.util.Map.entry("id", "a")), java.util.List.of(Html.text("One"))), Html.collapsibleElement("p", java.util.Map.ofEntries(), java.util.List.of(Html.text("Two"))));
+
+            var result = Html.collapse(nodes);
+
+            assertThat(result, equalTo(java.util.List.of(Html.collapsibleElement("p", java.util.Map.ofEntries(java.util.Map.entry("id", "a")), java.util.List.of(Html.text("One"))), Html.collapsibleElement("p", java.util.Map.ofEntries(), java.util.List.of(Html.text("Two"))))));
+        }
+
+        @org.junit.jupiter.api.Test
+        @org.junit.jupiter.api.DisplayName("consecutive collapsible elements are collapsed if they have the same tag name and no attributes")
+        public void consecutiveCollapsibleElementsAreCollapsedIfTheyHaveTheSameTagNameAndNoAttributes() {
             var nodes = java.util.List.of(Html.collapsibleElement("p", java.util.Map.ofEntries(), java.util.List.of(Html.text("One"))), Html.collapsibleElement("p", java.util.Map.ofEntries(), java.util.List.of(Html.text("Two"))));
 
             var result = Html.collapse(nodes);
@@ -1071,33 +1067,13 @@ public class HtmlTests {
         }
 
         @org.junit.jupiter.api.Test
-        @org.junit.jupiter.api.DisplayName("consecutive collapsible elements are collapsed if they have the same tag and same attributes")
-        public void consecutiveCollapsibleElementsAreCollapsedIfTheyHaveTheSameTagAndSameAttributes() {
+        @org.junit.jupiter.api.DisplayName("consecutive collapsible elements are collapsed if they have the same tag name and same attributes")
+        public void consecutiveCollapsibleElementsAreCollapsedIfTheyHaveTheSameTagNameAndSameAttributes() {
             var nodes = java.util.List.of(Html.collapsibleElement("p", java.util.Map.ofEntries(java.util.Map.entry("a", "1"), java.util.Map.entry("b", "2")), java.util.List.of(Html.text("One"))), Html.collapsibleElement("p", java.util.Map.ofEntries(java.util.Map.entry("b", "2"), java.util.Map.entry("a", "1")), java.util.List.of(Html.text("Two"))));
 
             var result = Html.collapse(nodes);
 
             assertThat(result, equalTo(java.util.List.of(Html.collapsibleElement("p", java.util.Map.ofEntries(java.util.Map.entry("a", "1"), java.util.Map.entry("b", "2")), java.util.List.of(Html.text("One"), Html.text("Two"))))));
-        }
-
-        @org.junit.jupiter.api.Test
-        @org.junit.jupiter.api.DisplayName("elements with different tags are not collapsed")
-        public void elementsWithDifferentTagsAreNotCollapsed() {
-            var nodes = java.util.List.of(Html.collapsibleElement("p", java.util.Map.ofEntries(), java.util.List.of(Html.text("One"))), Html.collapsibleElement("div", java.util.Map.ofEntries(), java.util.List.of(Html.text("Two"))));
-
-            var result = Html.collapse(nodes);
-
-            assertThat(result, equalTo(java.util.List.of(Html.collapsibleElement("p", java.util.Map.ofEntries(), java.util.List.of(Html.text("One"))), Html.collapsibleElement("div", java.util.Map.ofEntries(), java.util.List.of(Html.text("Two"))))));
-        }
-
-        @org.junit.jupiter.api.Test
-        @org.junit.jupiter.api.DisplayName("elements with different attributes are not collapsed")
-        public void elementsWithDifferentAttributesAreNotCollapsed() {
-            var nodes = java.util.List.of(Html.collapsibleElement("p", java.util.Map.ofEntries(java.util.Map.entry("id", "a")), java.util.List.of(Html.text("One"))), Html.collapsibleElement("p", java.util.Map.ofEntries(), java.util.List.of(Html.text("Two"))));
-
-            var result = Html.collapse(nodes);
-
-            assertThat(result, equalTo(java.util.List.of(Html.collapsibleElement("p", java.util.Map.ofEntries(java.util.Map.entry("id", "a")), java.util.List.of(Html.text("One"))), Html.collapsibleElement("p", java.util.Map.ofEntries(), java.util.List.of(Html.text("Two"))))));
         }
 
         @org.junit.jupiter.api.Test
@@ -1120,13 +1096,12 @@ public class HtmlTests {
 │     │  ├─ elements with different attributes are not collapsed ✘ 
 │     │  │        Expected: <[HtmlElement[tag=HtmlTag[tagNames=[p], attributes={id=a}, isCollapsible=true, separator=], children=[HtmlText[value=One]]], HtmlElement[tag=HtmlTag[tagNames=[p], attributes={}, isCollapsible=true, separator=], children=[HtmlText[value=Two]]]]>
 │     │  │             but: was <[HtmlElement[tag=HtmlTag[tagNames=[p], attributes={id=a}, isCollapsible=true, separator=], children=[HtmlText[value=One], HtmlText[value=Two]]]]>
-│     │  ├─ consecutive collapsible elements are collapsed if they have the same tag and no ... ✔
-│     │  ├─ elements with different tags are not collapsed ✔
 │     │  ├─ collapsing does nothing to single text node ✔
 │     │  ├─ consecutive fresh elements are not collapsed ✔
 │     │  ├─ elements with different tag names are not collapsed ✔
+│     │  ├─ consecutive collapsible elements are collapsed if they have the same tag name an... ✔
 │     │  ├─ children of elements are collapsed ✔
-│     │  └─ consecutive collapsible elements are collapsed if they have the same tag and sam... ✔
+│     │  └─ consecutive collapsible elements are collapsed if they have the same tag name an... ✔
 │     └─ StripEmpty ✔
 │        ├─ text nodes with text are not stripped ✔
 │        ├─ force writes are never empty ✔
@@ -1163,9 +1138,9 @@ Test run finished after TIME ms
 [         0 containers aborted    ]
 [         5 containers successful ]
 [         0 containers failed     ]
-[        16 tests found           ]
+[        15 tests found           ]
 [         0 tests skipped         ]
-[        16 tests started         ]
+[        15 tests started         ]
 [         0 tests aborted         ]
-[        15 tests successful      ]
+[        14 tests successful      ]
 [         1 tests failed          ]

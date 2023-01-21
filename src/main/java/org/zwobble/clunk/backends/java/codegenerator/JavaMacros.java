@@ -3,10 +3,7 @@ package org.zwobble.clunk.backends.java.codegenerator;
 import org.zwobble.clunk.backends.java.ast.JavaExpressionNode;
 import org.zwobble.clunk.backends.java.ast.JavaReferenceNode;
 import org.zwobble.clunk.backends.java.ast.JavaTypeExpressionNode;
-import org.zwobble.clunk.backends.java.codegenerator.macros.JavaListMacro;
-import org.zwobble.clunk.backends.java.codegenerator.macros.JavaMutableListMacro;
-import org.zwobble.clunk.backends.java.codegenerator.macros.JavaStringBuilderMacro;
-import org.zwobble.clunk.backends.java.codegenerator.macros.JavaUnitMacro;
+import org.zwobble.clunk.backends.java.codegenerator.macros.*;
 import org.zwobble.clunk.types.*;
 
 import java.util.List;
@@ -45,6 +42,7 @@ public class JavaMacros {
 
     private static final Map<Type, JavaClassMacro> CLASS_MACROS = Stream.of(
         JavaListMacro.INSTANCE,
+        JavaMapMacro.INSTANCE,
         JavaMutableListMacro.INSTANCE,
         JavaStringBuilderMacro.INSTANCE,
         JavaUnitMacro.INSTANCE

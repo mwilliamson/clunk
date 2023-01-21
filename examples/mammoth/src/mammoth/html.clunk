@@ -1,18 +1,16 @@
 sealed interface HtmlNode {
 }
 
-record HtmlAttribute(name: String, value: String)
-
-fun element(tagName: String, attributes: List[HtmlAttribute], children: List[HtmlNode]) -> HtmlElement {
+fun element(tagName: String, attributes: Map[String, String], children: List[HtmlNode]) -> HtmlElement {
     return freshElement(tagName, attributes, children);
 }
 
-fun collapsibleElement(tagName: String, attributes: List[HtmlAttribute], children: List[HtmlNode]) -> HtmlElement {
+fun collapsibleElement(tagName: String, attributes: Map[String, String], children: List[HtmlNode]) -> HtmlElement {
     var tag = HtmlTag([tagName], attributes, true, "");
     return HtmlElement(tag, children);
 }
 
-fun freshElement(tagName: String, attributes: List[HtmlAttribute], children: List[HtmlNode]) -> HtmlElement {
+fun freshElement(tagName: String, attributes: Map[String, String], children: List[HtmlNode]) -> HtmlElement {
     var tag = HtmlTag([tagName], attributes, false, "");
     return HtmlElement(tag, children);
 }
@@ -40,7 +38,7 @@ record HtmlForceWrite() <: HtmlNode
 
 record HtmlTag(
     tagNames: List[String],
-    attributes: List[HtmlAttribute],
+    attributes: Map[String, String],
     isCollapsible: Bool,
     separator: String,
 ) {

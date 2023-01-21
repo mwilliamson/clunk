@@ -127,18 +127,16 @@ Source path: src/mammoth/html.clunk
 sealed interface HtmlNode {
 }
 
-record HtmlAttribute(name: String, value: String)
-
-fun element(tagName: String, attributes: List[HtmlAttribute], children: List[HtmlNode]) -> HtmlElement {
+fun element(tagName: String, attributes: Map[String, String], children: List[HtmlNode]) -> HtmlElement {
     return freshElement(tagName, attributes, children);
 }
 
-fun collapsibleElement(tagName: String, attributes: List[HtmlAttribute], children: List[HtmlNode]) -> HtmlElement {
+fun collapsibleElement(tagName: String, attributes: Map[String, String], children: List[HtmlNode]) -> HtmlElement {
     var tag = HtmlTag([tagName], attributes, true, "");
     return HtmlElement(tag, children);
 }
 
-fun freshElement(tagName: String, attributes: List[HtmlAttribute], children: List[HtmlNode]) -> HtmlElement {
+fun freshElement(tagName: String, attributes: Map[String, String], children: List[HtmlNode]) -> HtmlElement {
     var tag = HtmlTag([tagName], attributes, false, "");
     return HtmlElement(tag, children);
 }
@@ -166,7 +164,7 @@ record HtmlForceWrite() <: HtmlNode
 
 record HtmlTag(
     tagNames: List[String],
-    attributes: List[HtmlAttribute],
+    attributes: Map[String, String],
     isCollapsible: Bool,
     separator: String,
 ) {
@@ -308,15 +306,15 @@ testSuite "stripEmpty" {
     }
 
     test "elements with non-empty children are not stripped" {
-        var nodes = [html.element("p", [], [html.text("H")])];
+        var nodes = [html.element("p", #[], [html.text("H")])];
 
         var result = html.stripEmpty(nodes);
 
-        assertThat(result, equalTo([html.element("p", [], [html.text("H")])]));
+        assertThat(result, equalTo([html.element("p", #[], [html.text("H")])]));
     }
 
     test "elements with no children are stripped" {
-        var nodes = [html.element("p", [], [])];
+        var nodes = [html.element("p", #[], [])];
 
         var result = html.stripEmpty(nodes);
 
@@ -324,7 +322,7 @@ testSuite "stripEmpty" {
     }
 
     test "elements with only empty children are stripped" {
-        var nodes = [html.element("p", [], [html.text("")])];
+        var nodes = [html.element("p", #[], [html.text("")])];
 
         var result = html.stripEmpty(nodes);
 
@@ -333,27 +331,27 @@ testSuite "stripEmpty" {
 
     test "empty children are removed" {
         var nodes = [
-            html.element("ul", [], [
-                html.element("li", [], [html.text("")]),
-                html.element("li", [], [html.text("H")]),
+            html.element("ul", #[], [
+                html.element("li", #[], [html.text("")]),
+                html.element("li", #[], [html.text("H")]),
             ]),
         ];
 
         var result = html.stripEmpty(nodes);
 
         assertThat(result, equalTo([
-            html.element("ul", [], [
-                html.element("li", [], [html.text("H")]),
+            html.element("ul", #[], [
+                html.element("li", #[], [html.text("H")]),
             ]),
         ]));
     }
 
     test "self-closing elements are never empty" {
-        var nodes = [html.element("br", [], [])];
+        var nodes = [html.element("br", #[], [])];
 
         var result = html.stripEmpty(nodes);
 
-        assertThat(result, equalTo([html.element("br", [], [])]));
+        assertThat(result, equalTo([html.element("br", #[], [])]));
     }
 
     test "force writes are never empty" {
@@ -376,58 +374,99 @@ testSuite "collapse" {
 
     test "consecutive fresh elements are not collapsed" {
         var nodes = [
-            html.freshElement("p", [], []),
-            html.freshElement("p", [], []),
+            html.freshElement("p", #[], []),
+            html.freshElement("p", #[], []),
         ];
 
         var result = html.collapse(nodes);
 
         assertThat(result, equalTo([
-            html.freshElement("p", [], []),
-            html.freshElement("p", [], []),
+            html.freshElement("p", #[], []),
+            html.freshElement("p", #[], []),
         ]));
     }
 
     test "elements with different tag names are not collapsed" {
         var nodes = [
-            html.collapsibleElement("p", [], [html.text("One")]),
-            html.collapsibleElement("div", [], [html.text("Two")]),
+            html.collapsibleElement("p", #[], [html.text("One")]),
+            html.collapsibleElement("div", #[], [html.text("Two")]),
         ];
 
         var result = html.collapse(nodes);
 
         assertThat(result, equalTo([
-            html.collapsibleElement("p", [], [html.text("One")]),
-            html.collapsibleElement("div", [], [html.text("Two")]),
+            html.collapsibleElement("p", #[], [html.text("One")]),
+            html.collapsibleElement("div", #[], [html.text("Two")]),
         ]));
     }
 
-    test "consecutive collapsible elements are collapsed if they have the same tag and attributes" {
+    test "consecutive collapsible elements are collapsed if they have the same tag and no attributes" {
         var nodes = [
-            html.collapsibleElement("p", [], [html.text("One")]),
-            html.collapsibleElement("p", [], [html.text("Two")]),
+            html.collapsibleElement("p", #[], [html.text("One")]),
+            html.collapsibleElement("p", #[], [html.text("Two")]),
         ];
 
         var result = html.collapse(nodes);
 
         assertThat(result, equalTo([
-            html.collapsibleElement("p", [], [html.text("One"), html.text("Two")]),
+            html.collapsibleElement("p", #[], [html.text("One"), html.text("Two")]),
+        ]));
+    }
+
+    test "consecutive collapsible elements are collapsed if they have the same tag and same attributes" {
+        var nodes = [
+            html.collapsibleElement("p", #[["a", "1"], ["b", "2"]], [html.text("One")]),
+            html.collapsibleElement("p", #[["b", "2"], ["a", "1"]], [html.text("Two")]),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.collapsibleElement("p", #[["a", "1"], ["b", "2"]], [html.text("One"), html.text("Two")]),
+        ]));
+    }
+
+    test "elements with different tags are not collapsed" {
+        var nodes = [
+            html.collapsibleElement("p", #[], [html.text("One")]),
+            html.collapsibleElement("div", #[], [html.text("Two")]),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.collapsibleElement("p", #[], [html.text("One")]),
+            html.collapsibleElement("div", #[], [html.text("Two")]),
+        ]));
+    }
+
+    test "elements with different attributes are not collapsed" {
+        var nodes = [
+            html.collapsibleElement("p", #[["id", "a"]], [html.text("One")]),
+            html.collapsibleElement("p", #[], [html.text("Two")]),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.collapsibleElement("p", #[["id", "a"]], [html.text("One")]),
+            html.collapsibleElement("p", #[], [html.text("Two")]),
         ]));
     }
 
     test "children of elements are collapsed" {
         var nodes = [
-            html.freshElement("div", [], [
-                html.collapsibleElement("p", [], [html.text("One")]),
-                html.collapsibleElement("p", [], [html.text("Two")]),
+            html.freshElement("div", #[], [
+                html.collapsibleElement("p", #[], [html.text("One")]),
+                html.collapsibleElement("p", #[], [html.text("Two")]),
             ]),
         ];
 
         var result = html.collapse(nodes);
 
         assertThat(result, equalTo([
-            html.freshElement("div", [], [
-                html.collapsibleElement("p", [], [html.text("One"), html.text("Two")]),
+            html.freshElement("div", #[], [
+                html.collapsibleElement("p", #[], [html.text("One"), html.text("Two")]),
             ]),
         ]));
     }
@@ -720,14 +759,6 @@ public sealed interface HtmlNode permits HtmlElement, HtmlForceWrite, HtmlText {
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/mammoth/html/HtmlAttribute.java
-package org.zwobble.mammoth.internal.mammoth.html;
-
-public record HtmlAttribute(String name, String value) {
-}
-
-==============
-
 Output path: org/zwobble/mammoth/internal/mammoth/html/HtmlElement.java
 package org.zwobble.mammoth.internal.mammoth.html;
 
@@ -764,7 +795,7 @@ public record HtmlForceWrite() implements HtmlNode {
 Output path: org/zwobble/mammoth/internal/mammoth/html/HtmlTag.java
 package org.zwobble.mammoth.internal.mammoth.html;
 
-public record HtmlTag(java.util.List<String> tagNames, java.util.List<HtmlAttribute> attributes, boolean isCollapsible, String separator) {
+public record HtmlTag(java.util.List<String> tagNames, java.util.Map<String, String> attributes, boolean isCollapsible, String separator) {
     public String defaultTagName() {
         return tagNames().get(0);
     }
@@ -800,14 +831,14 @@ import org.zwobble.mammoth.internal.mammoth.html.HtmlText;
 import org.zwobble.mammoth.internal.mammoth.html.HtmlNode;
 
 public class Html {
-    public static HtmlElement element(String tagName, java.util.List<HtmlAttribute> attributes, java.util.List<? extends HtmlNode> children) {
+    public static HtmlElement element(String tagName, java.util.Map<String, String> attributes, java.util.List<? extends HtmlNode> children) {
         return freshElement(tagName, attributes, children);
     }
-    public static HtmlElement collapsibleElement(String tagName, java.util.List<HtmlAttribute> attributes, java.util.List<? extends HtmlNode> children) {
+    public static HtmlElement collapsibleElement(String tagName, java.util.Map<String, String> attributes, java.util.List<? extends HtmlNode> children) {
         var tag = new HtmlTag(java.util.List.of(tagName), attributes, true, "");
         return new HtmlElement(tag, children);
     }
-    public static HtmlElement freshElement(String tagName, java.util.List<HtmlAttribute> attributes, java.util.List<? extends HtmlNode> children) {
+    public static HtmlElement freshElement(String tagName, java.util.Map<String, String> attributes, java.util.List<? extends HtmlNode> children) {
         var tag = new HtmlTag(java.util.List.of(tagName), attributes, false, "");
         return new HtmlElement(tag, children);
     }
@@ -941,17 +972,17 @@ public class HtmlTests {
         @org.junit.jupiter.api.Test
         @org.junit.jupiter.api.DisplayName("elements with non-empty children are not stripped")
         public void elementsWithNonEmptyChildrenAreNotStripped() {
-            var nodes = java.util.List.of(Html.element("p", java.util.List.of(), java.util.List.of(Html.text("H"))));
+            var nodes = java.util.List.of(Html.element("p", java.util.Map.ofEntries(), java.util.List.of(Html.text("H"))));
 
             var result = Html.stripEmpty(nodes);
 
-            assertThat(result, equalTo(java.util.List.of(Html.element("p", java.util.List.of(), java.util.List.of(Html.text("H"))))));
+            assertThat(result, equalTo(java.util.List.of(Html.element("p", java.util.Map.ofEntries(), java.util.List.of(Html.text("H"))))));
         }
 
         @org.junit.jupiter.api.Test
         @org.junit.jupiter.api.DisplayName("elements with no children are stripped")
         public void elementsWithNoChildrenAreStripped() {
-            var nodes = java.util.List.of(Html.element("p", java.util.List.of(), java.util.List.of()));
+            var nodes = java.util.List.of(Html.element("p", java.util.Map.ofEntries(), java.util.List.of()));
 
             var result = Html.stripEmpty(nodes);
 
@@ -961,7 +992,7 @@ public class HtmlTests {
         @org.junit.jupiter.api.Test
         @org.junit.jupiter.api.DisplayName("elements with only empty children are stripped")
         public void elementsWithOnlyEmptyChildrenAreStripped() {
-            var nodes = java.util.List.of(Html.element("p", java.util.List.of(), java.util.List.of(Html.text(""))));
+            var nodes = java.util.List.of(Html.element("p", java.util.Map.ofEntries(), java.util.List.of(Html.text(""))));
 
             var result = Html.stripEmpty(nodes);
 
@@ -971,21 +1002,21 @@ public class HtmlTests {
         @org.junit.jupiter.api.Test
         @org.junit.jupiter.api.DisplayName("empty children are removed")
         public void emptyChildrenAreRemoved() {
-            var nodes = java.util.List.of(Html.element("ul", java.util.List.of(), java.util.List.of(Html.element("li", java.util.List.of(), java.util.List.of(Html.text(""))), Html.element("li", java.util.List.of(), java.util.List.of(Html.text("H"))))));
+            var nodes = java.util.List.of(Html.element("ul", java.util.Map.ofEntries(), java.util.List.of(Html.element("li", java.util.Map.ofEntries(), java.util.List.of(Html.text(""))), Html.element("li", java.util.Map.ofEntries(), java.util.List.of(Html.text("H"))))));
 
             var result = Html.stripEmpty(nodes);
 
-            assertThat(result, equalTo(java.util.List.of(Html.element("ul", java.util.List.of(), java.util.List.of(Html.element("li", java.util.List.of(), java.util.List.of(Html.text("H"))))))));
+            assertThat(result, equalTo(java.util.List.of(Html.element("ul", java.util.Map.ofEntries(), java.util.List.of(Html.element("li", java.util.Map.ofEntries(), java.util.List.of(Html.text("H"))))))));
         }
 
         @org.junit.jupiter.api.Test
         @org.junit.jupiter.api.DisplayName("self-closing elements are never empty")
         public void selfClosingElementsAreNeverEmpty() {
-            var nodes = java.util.List.of(Html.element("br", java.util.List.of(), java.util.List.of()));
+            var nodes = java.util.List.of(Html.element("br", java.util.Map.ofEntries(), java.util.List.of()));
 
             var result = Html.stripEmpty(nodes);
 
-            assertThat(result, equalTo(java.util.List.of(Html.element("br", java.util.List.of(), java.util.List.of()))));
+            assertThat(result, equalTo(java.util.List.of(Html.element("br", java.util.Map.ofEntries(), java.util.List.of()))));
         }
 
         @org.junit.jupiter.api.Test
@@ -1012,41 +1043,71 @@ public class HtmlTests {
         @org.junit.jupiter.api.Test
         @org.junit.jupiter.api.DisplayName("consecutive fresh elements are not collapsed")
         public void consecutiveFreshElementsAreNotCollapsed() {
-            var nodes = java.util.List.of(Html.freshElement("p", java.util.List.of(), java.util.List.of()), Html.freshElement("p", java.util.List.of(), java.util.List.of()));
+            var nodes = java.util.List.of(Html.freshElement("p", java.util.Map.ofEntries(), java.util.List.of()), Html.freshElement("p", java.util.Map.ofEntries(), java.util.List.of()));
 
             var result = Html.collapse(nodes);
 
-            assertThat(result, equalTo(java.util.List.of(Html.freshElement("p", java.util.List.of(), java.util.List.of()), Html.freshElement("p", java.util.List.of(), java.util.List.of()))));
+            assertThat(result, equalTo(java.util.List.of(Html.freshElement("p", java.util.Map.ofEntries(), java.util.List.of()), Html.freshElement("p", java.util.Map.ofEntries(), java.util.List.of()))));
         }
 
         @org.junit.jupiter.api.Test
         @org.junit.jupiter.api.DisplayName("elements with different tag names are not collapsed")
         public void elementsWithDifferentTagNamesAreNotCollapsed() {
-            var nodes = java.util.List.of(Html.collapsibleElement("p", java.util.List.of(), java.util.List.of(Html.text("One"))), Html.collapsibleElement("div", java.util.List.of(), java.util.List.of(Html.text("Two"))));
+            var nodes = java.util.List.of(Html.collapsibleElement("p", java.util.Map.ofEntries(), java.util.List.of(Html.text("One"))), Html.collapsibleElement("div", java.util.Map.ofEntries(), java.util.List.of(Html.text("Two"))));
 
             var result = Html.collapse(nodes);
 
-            assertThat(result, equalTo(java.util.List.of(Html.collapsibleElement("p", java.util.List.of(), java.util.List.of(Html.text("One"))), Html.collapsibleElement("div", java.util.List.of(), java.util.List.of(Html.text("Two"))))));
+            assertThat(result, equalTo(java.util.List.of(Html.collapsibleElement("p", java.util.Map.ofEntries(), java.util.List.of(Html.text("One"))), Html.collapsibleElement("div", java.util.Map.ofEntries(), java.util.List.of(Html.text("Two"))))));
         }
 
         @org.junit.jupiter.api.Test
-        @org.junit.jupiter.api.DisplayName("consecutive collapsible elements are collapsed if they have the same tag and attributes")
-        public void consecutiveCollapsibleElementsAreCollapsedIfTheyHaveTheSameTagAndAttributes() {
-            var nodes = java.util.List.of(Html.collapsibleElement("p", java.util.List.of(), java.util.List.of(Html.text("One"))), Html.collapsibleElement("p", java.util.List.of(), java.util.List.of(Html.text("Two"))));
+        @org.junit.jupiter.api.DisplayName("consecutive collapsible elements are collapsed if they have the same tag and no attributes")
+        public void consecutiveCollapsibleElementsAreCollapsedIfTheyHaveTheSameTagAndNoAttributes() {
+            var nodes = java.util.List.of(Html.collapsibleElement("p", java.util.Map.ofEntries(), java.util.List.of(Html.text("One"))), Html.collapsibleElement("p", java.util.Map.ofEntries(), java.util.List.of(Html.text("Two"))));
 
             var result = Html.collapse(nodes);
 
-            assertThat(result, equalTo(java.util.List.of(Html.collapsibleElement("p", java.util.List.of(), java.util.List.of(Html.text("One"), Html.text("Two"))))));
+            assertThat(result, equalTo(java.util.List.of(Html.collapsibleElement("p", java.util.Map.ofEntries(), java.util.List.of(Html.text("One"), Html.text("Two"))))));
+        }
+
+        @org.junit.jupiter.api.Test
+        @org.junit.jupiter.api.DisplayName("consecutive collapsible elements are collapsed if they have the same tag and same attributes")
+        public void consecutiveCollapsibleElementsAreCollapsedIfTheyHaveTheSameTagAndSameAttributes() {
+            var nodes = java.util.List.of(Html.collapsibleElement("p", java.util.Map.ofEntries(java.util.Map.entry("a", "1"), java.util.Map.entry("b", "2")), java.util.List.of(Html.text("One"))), Html.collapsibleElement("p", java.util.Map.ofEntries(java.util.Map.entry("b", "2"), java.util.Map.entry("a", "1")), java.util.List.of(Html.text("Two"))));
+
+            var result = Html.collapse(nodes);
+
+            assertThat(result, equalTo(java.util.List.of(Html.collapsibleElement("p", java.util.Map.ofEntries(java.util.Map.entry("a", "1"), java.util.Map.entry("b", "2")), java.util.List.of(Html.text("One"), Html.text("Two"))))));
+        }
+
+        @org.junit.jupiter.api.Test
+        @org.junit.jupiter.api.DisplayName("elements with different tags are not collapsed")
+        public void elementsWithDifferentTagsAreNotCollapsed() {
+            var nodes = java.util.List.of(Html.collapsibleElement("p", java.util.Map.ofEntries(), java.util.List.of(Html.text("One"))), Html.collapsibleElement("div", java.util.Map.ofEntries(), java.util.List.of(Html.text("Two"))));
+
+            var result = Html.collapse(nodes);
+
+            assertThat(result, equalTo(java.util.List.of(Html.collapsibleElement("p", java.util.Map.ofEntries(), java.util.List.of(Html.text("One"))), Html.collapsibleElement("div", java.util.Map.ofEntries(), java.util.List.of(Html.text("Two"))))));
+        }
+
+        @org.junit.jupiter.api.Test
+        @org.junit.jupiter.api.DisplayName("elements with different attributes are not collapsed")
+        public void elementsWithDifferentAttributesAreNotCollapsed() {
+            var nodes = java.util.List.of(Html.collapsibleElement("p", java.util.Map.ofEntries(java.util.Map.entry("id", "a")), java.util.List.of(Html.text("One"))), Html.collapsibleElement("p", java.util.Map.ofEntries(), java.util.List.of(Html.text("Two"))));
+
+            var result = Html.collapse(nodes);
+
+            assertThat(result, equalTo(java.util.List.of(Html.collapsibleElement("p", java.util.Map.ofEntries(java.util.Map.entry("id", "a")), java.util.List.of(Html.text("One"))), Html.collapsibleElement("p", java.util.Map.ofEntries(), java.util.List.of(Html.text("Two"))))));
         }
 
         @org.junit.jupiter.api.Test
         @org.junit.jupiter.api.DisplayName("children of elements are collapsed")
         public void childrenOfElementsAreCollapsed() {
-            var nodes = java.util.List.of(Html.freshElement("div", java.util.List.of(), java.util.List.of(Html.collapsibleElement("p", java.util.List.of(), java.util.List.of(Html.text("One"))), Html.collapsibleElement("p", java.util.List.of(), java.util.List.of(Html.text("Two"))))));
+            var nodes = java.util.List.of(Html.freshElement("div", java.util.Map.ofEntries(), java.util.List.of(Html.collapsibleElement("p", java.util.Map.ofEntries(), java.util.List.of(Html.text("One"))), Html.collapsibleElement("p", java.util.Map.ofEntries(), java.util.List.of(Html.text("Two"))))));
 
             var result = Html.collapse(nodes);
 
-            assertThat(result, equalTo(java.util.List.of(Html.freshElement("div", java.util.List.of(), java.util.List.of(Html.collapsibleElement("p", java.util.List.of(), java.util.List.of(Html.text("One"), Html.text("Two"))))))));
+            assertThat(result, equalTo(java.util.List.of(Html.freshElement("div", java.util.Map.ofEntries(), java.util.List.of(Html.collapsibleElement("p", java.util.Map.ofEntries(), java.util.List.of(Html.text("One"), Html.text("Two"))))))));
         }
     }}
 
@@ -1056,11 +1117,16 @@ public class HtmlTests {
 ├─ JUnit Jupiter ✔
 │  └─ HtmlTests ✔
 │     ├─ Collapse ✔
+│     │  ├─ elements with different attributes are not collapsed ✘ 
+│     │  │        Expected: <[HtmlElement[tag=HtmlTag[tagNames=[p], attributes={id=a}, isCollapsible=true, separator=], children=[HtmlText[value=One]]], HtmlElement[tag=HtmlTag[tagNames=[p], attributes={}, isCollapsible=true, separator=], children=[HtmlText[value=Two]]]]>
+│     │  │             but: was <[HtmlElement[tag=HtmlTag[tagNames=[p], attributes={id=a}, isCollapsible=true, separator=], children=[HtmlText[value=One], HtmlText[value=Two]]]]>
+│     │  ├─ consecutive collapsible elements are collapsed if they have the same tag and no ... ✔
+│     │  ├─ elements with different tags are not collapsed ✔
 │     │  ├─ collapsing does nothing to single text node ✔
 │     │  ├─ consecutive fresh elements are not collapsed ✔
 │     │  ├─ elements with different tag names are not collapsed ✔
 │     │  ├─ children of elements are collapsed ✔
-│     │  └─ consecutive collapsible elements are collapsed if they have the same tag and att... ✔
+│     │  └─ consecutive collapsible elements are collapsed if they have the same tag and sam... ✔
 │     └─ StripEmpty ✔
 │        ├─ text nodes with text are not stripped ✔
 │        ├─ force writes are never empty ✔
@@ -1072,6 +1138,24 @@ public class HtmlTests {
 │        └─ elements with only empty children are stripped ✔
 └─ JUnit Vintage ✔
 
+Failures (1):
+  JUnit Jupiter:HtmlTests:Collapse:elements with different attributes are not collapsed
+    MethodSource [className = 'org.zwobble.mammoth.internal.mammoth.html.HtmlTests$Collapse', methodName = 'elementsWithDifferentAttributesAreNotCollapsed', methodParameterTypes = '']
+    => java.lang.AssertionError: 
+Expected: <[HtmlElement[tag=HtmlTag[tagNames=[p], attributes={id=a}, isCollapsible=true, separator=], children=[HtmlText[value=One]]], HtmlElement[tag=HtmlTag[tagNames=[p], attributes={}, isCollapsible=true, separator=], children=[HtmlText[value=Two]]]]>
+     but: was <[HtmlElement[tag=HtmlTag[tagNames=[p], attributes={id=a}, isCollapsible=true, separator=], children=[HtmlText[value=One], HtmlText[value=Two]]]]>
+       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:20)
+       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:8)
+       org.zwobble.mammoth.internal.mammoth.html.HtmlTests$Collapse.elementsWithDifferentAttributesAreNotCollapsed(Unknown Source)
+       java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+       java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+       java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+       java.base/java.lang.reflect.Method.invoke(Method.java:568)
+       org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:725)
+       org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+       org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+       [...]
+
 Test run finished after TIME ms
 [         5 containers found      ]
 [         0 containers skipped    ]
@@ -1079,9 +1163,9 @@ Test run finished after TIME ms
 [         0 containers aborted    ]
 [         5 containers successful ]
 [         0 containers failed     ]
-[        13 tests found           ]
+[        16 tests found           ]
 [         0 tests skipped         ]
-[        13 tests started         ]
+[        16 tests started         ]
 [         0 tests aborted         ]
-[        13 tests successful      ]
-[         0 tests failed          ]
+[        15 tests successful      ]
+[         1 tests failed          ]

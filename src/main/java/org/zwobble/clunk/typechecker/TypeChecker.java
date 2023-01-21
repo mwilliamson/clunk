@@ -323,6 +323,11 @@ public class TypeChecker {
             }
 
             @Override
+            public TypedExpressionNode visit(UntypedMapLiteralNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public TypedExpressionNode visit(UntypedMemberAccessNode node) {
                 return typeCheckMemberAccess(node, context);
             }

@@ -246,6 +246,8 @@ public class Parser {
             return expression;
         } else if (tokens.isNext(TokenType.SYMBOL_SQUARE_OPEN)) {
             return parseListLiteral(tokens);
+        } else if (tokens.isNext(TokenType.SYMBOL_HASH_OPEN)) {
+            return parseMapLiteral(tokens);
         } else {
             throw new UnexpectedTokenException("primary expression", tokens.peek().describe(), source);
         }
@@ -373,6 +375,34 @@ public class Parser {
         public TokenType tokenType() {
             return TokenType.SYMBOL_AMPERSAND_AMPERSAND;
         }
+    }
+
+    private UntypedMapLiteralNode parseMapLiteral(TokenIterator<TokenType> tokens) {
+        var source = source(tokens);
+
+        tokens.skip(TokenType.SYMBOL_HASH_OPEN);
+
+        var entries = parseMany(
+            () -> tokens.isNext(TokenType.SYMBOL_SQUARE_CLOSE),
+            () -> parseMapEntryLiteral(tokens),
+            () -> tokens.trySkip(TokenType.SYMBOL_COMMA)
+        );
+
+        tokens.skip(TokenType.SYMBOL_SQUARE_CLOSE);
+
+        return new UntypedMapLiteralNode(entries, source);
+    }
+
+    private UntypedMapEntryLiteralNode parseMapEntryLiteral(TokenIterator<TokenType> tokens) {
+        var source = source(tokens);
+
+        tokens.skip(TokenType.SYMBOL_SQUARE_OPEN);
+        var key = parseTopLevelExpression(tokens);
+        tokens.skip(TokenType.SYMBOL_COMMA);
+        var value = parseTopLevelExpression(tokens);
+        tokens.skip(TokenType.SYMBOL_SQUARE_CLOSE);
+
+        return new UntypedMapEntryLiteralNode(key, value, source);
     }
 
     private UntypedLogicalNotNode parseLogicalNot(TokenIterator<TokenType> tokens) {

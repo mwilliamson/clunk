@@ -16,6 +16,7 @@ public interface UntypedExpressionNode extends UntypedNode {
         T visit(UntypedLogicalAndNode node);
         T visit(UntypedLogicalNotNode node);
         T visit(UntypedLogicalOrNode node);
+        T visit(UntypedMapLiteralNode node);
         T visit(UntypedMemberAccessNode node);
         T visit(UntypedNotEqualNode node);
         T visit(UntypedReferenceNode node);

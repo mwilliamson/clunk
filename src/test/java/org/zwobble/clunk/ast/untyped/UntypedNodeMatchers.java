@@ -7,8 +7,7 @@ import org.zwobble.clunk.util.P;
 import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.zwobble.clunk.matchers.CastMatcher.cast;
 import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 
@@ -78,6 +77,25 @@ public class UntypedNodeMatchers {
 
     public static Matcher<UntypedExpressionNode> isUntypedLogicalNotNode(Matcher<UntypedExpressionNode> operand) {
         return cast(UntypedLogicalNotNode.class, has("operand", operand));
+    }
+
+    public static Matcher<UntypedExpressionNode> isUntypedMapLiteralNode(
+        Matcher<? extends Iterable<? extends UntypedMapEntryLiteralNode>> entries
+    ) {
+        return cast(
+            UntypedMapLiteralNode.class,
+            has("entries", entries)
+        );
+    }
+
+    public static Matcher<UntypedMapEntryLiteralNode> isUntypedMapEntryLiteralNode(
+        Matcher<UntypedExpressionNode> key,
+        Matcher<UntypedExpressionNode> value
+    ) {
+        return allOf(
+            has("key", key),
+            has("value", value)
+        );
     }
 
     public static Matcher<UntypedExpressionNode> isUntypedMemberAccessNode(

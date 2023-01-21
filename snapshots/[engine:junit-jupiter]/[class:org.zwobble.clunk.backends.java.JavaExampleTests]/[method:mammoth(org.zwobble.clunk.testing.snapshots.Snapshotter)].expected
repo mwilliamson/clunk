@@ -475,6 +475,19 @@ testSuite "collapse" {
             ]),
         ]));
     }
+
+    test "collapsible element can collapse into previous fresh element" {
+        var nodes = [
+            html.freshElement("p", #[], []),
+            html.collapsibleElement("p", #[], []),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.freshElement("p", #[], []),
+        ]));
+    }
 }
 
 
@@ -1114,6 +1127,16 @@ public class HtmlTests {
 
             assertThat(result, equalTo(java.util.List.of(Html.collapsibleElement("blockquote", java.util.Map.ofEntries(), java.util.List.of(Html.collapsibleElement("p", java.util.Map.ofEntries(), java.util.List.of(Html.text("One"), Html.text("Two"))))))));
         }
+
+        @org.junit.jupiter.api.Test
+        @org.junit.jupiter.api.DisplayName("collapsible element can collapse into previous fresh element")
+        public void collapsibleElementCanCollapseIntoPreviousFreshElement() {
+            var nodes = java.util.List.of(Html.freshElement("p", java.util.Map.ofEntries(), java.util.List.of()), Html.collapsibleElement("p", java.util.Map.ofEntries(), java.util.List.of()));
+
+            var result = Html.collapse(nodes);
+
+            assertThat(result, equalTo(java.util.List.of(Html.freshElement("p", java.util.Map.ofEntries(), java.util.List.of()))));
+        }
     }}
 
 ==============
@@ -1126,6 +1149,7 @@ public class HtmlTests {
 │     │  │        Expected: <[HtmlElement[tag=HtmlTag[tagNames=[p], attributes={id=a}, isCollapsible=true, separator=], children=[HtmlText[value=One]]], HtmlElement[tag=HtmlTag[tagNames=[p], attributes={}, isCollapsible=true, separator=], children=[HtmlText[value=Two]]]]>
 │     │  │             but: was <[HtmlElement[tag=HtmlTag[tagNames=[p], attributes={id=a}, isCollapsible=true, separator=], children=[HtmlText[value=One], HtmlText[value=Two]]]]>
 │     │  ├─ collapsing does nothing to single text node ✔
+│     │  ├─ collapsible element can collapse into previous fresh element ✔
 │     │  ├─ consecutive fresh elements are not collapsed ✔
 │     │  ├─ elements with different tag names are not collapsed ✔
 │     │  ├─ consecutive collapsible elements are collapsed if they have the same tag name an... ✔
@@ -1168,9 +1192,9 @@ Test run finished after TIME ms
 [         0 containers aborted    ]
 [         5 containers successful ]
 [         0 containers failed     ]
-[        16 tests found           ]
+[        17 tests found           ]
 [         0 tests skipped         ]
-[        16 tests started         ]
+[        17 tests started         ]
 [         0 tests aborted         ]
-[        15 tests successful      ]
+[        16 tests successful      ]
 [         1 tests failed          ]

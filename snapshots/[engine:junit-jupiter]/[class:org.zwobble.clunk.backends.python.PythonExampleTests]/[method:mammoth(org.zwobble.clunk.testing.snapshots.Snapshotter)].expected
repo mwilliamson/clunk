@@ -475,6 +475,19 @@ testSuite "collapse" {
             ]),
         ]));
     }
+
+    test "collapsible element can collapse into previous fresh element" {
+        var nodes = [
+            html.freshElement("p", #[], []),
+            html.collapsibleElement("p", #[], []),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.freshElement("p", #[], []),
+        ]));
+    }
 }
 
 
@@ -905,14 +918,21 @@ class CollapseTests:
 
         assert_that(result, equal_to([html.collapsible_element("blockquote", {}, [html.collapsible_element("p", {}, [html.text("One"), html.text("Two")])])]))
 
+    def test_collapsible_element_can_collapse_into_previous_fresh_element(self):
+        nodes = [html.fresh_element("p", {}, []), html.collapsible_element("p", {}, [])]
+
+        result = html.collapse(nodes)
+
+        assert_that(result, equal_to([html.fresh_element("p", {}, [])]))
+
 
 ==============
 
 ============================= test session starts ==============================
 rootdir: ROOTDIR, configfile: tox.ini
-collected 16 items
+collected 17 items
 
-mammoth/html_test.py ...........F....                                    [100%]
+mammoth/html_test.py ...........F.....                                   [100%]
 
 =================================== FAILURES ===================================
 ___ CollapseTests.test_elements_with_different_attributes_are_not_collapsed ____
@@ -927,4 +947,4 @@ E   but:
 E     was [HtmlElement(tag=HtmlTag(tag_names=['p'], attributes={'id': 'a'}, is_collapsible=True, separator=''), children=[HtmlText(value='One'), HtmlText(value='Two')])]
 =========================== short test summary info ============================
 FAILED mammoth/html_test.py::CollapseTests::test_elements_with_different_attributes_are_not_collapsed
-========================= 1 failed, 15 passed in TIME =========================
+========================= 1 failed, 16 passed in TIME =========================

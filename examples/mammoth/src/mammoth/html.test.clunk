@@ -189,4 +189,17 @@ testSuite "collapse" {
             ]),
         ]));
     }
+
+    test "collapsible element can collapse into previous fresh element" {
+        var nodes = [
+            html.freshElement("p", #[], []),
+            html.collapsibleElement("p", #[], []),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.freshElement("p", #[], []),
+        ]));
+    }
 }

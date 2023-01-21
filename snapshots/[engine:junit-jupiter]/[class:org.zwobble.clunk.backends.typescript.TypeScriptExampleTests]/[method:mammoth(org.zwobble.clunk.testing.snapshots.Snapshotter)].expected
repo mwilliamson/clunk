@@ -475,6 +475,19 @@ testSuite "collapse" {
             ]),
         ]));
     }
+
+    test "collapsible element can collapse into previous fresh element" {
+        var nodes = [
+            html.freshElement("p", #[], []),
+            html.collapsibleElement("p", #[], []),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.freshElement("p", #[], []),
+        ]));
+    }
 }
 
 
@@ -1033,6 +1046,14 @@ suite("collapse", function () {
 
         assertThat(result, deepEqualTo([html.collapsibleElement("blockquote", new Map([]), [html.collapsibleElement("p", new Map([]), [html.text("One"), html.text("Two")])])]));
     });
+
+    test("collapsible element can collapse into previous fresh element", function () {
+        let nodes = [html.freshElement("p", new Map([]), []), html.collapsibleElement("p", new Map([]), [])];
+
+        let result = html.collapse(nodes);
+
+        assertThat(result, deepEqualTo([html.freshElement("p", new Map([]), [])]));
+    });
 });
 
 
@@ -1059,9 +1080,10 @@ suite("collapse", function () {
     ✔ consecutive collapsible elements are collapsed if they have the same tag name and same attributes
     ✔ children of elements are collapsed
     ✔ children of collapsed element can collapse with children of previous element
+    ✔ collapsible element can collapse into previous fresh element
 
 
-  15 passing (TIME)
+  16 passing (TIME)
   1 failing
 
   1) collapse

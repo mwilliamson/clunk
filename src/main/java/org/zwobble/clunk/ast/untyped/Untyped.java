@@ -142,6 +142,17 @@ public class Untyped {
         return new UntypedLogicalOrNode(left, right, NullSource.INSTANCE);
     }
 
+    public static UntypedMapLiteralNode mapLiteral(List<UntypedMapEntryLiteralNode> entries) {
+        return new UntypedMapLiteralNode(entries, NullSource.INSTANCE);
+    }
+
+    public static UntypedMapEntryLiteralNode mapEntryLiteral(
+        UntypedExpressionNode key,
+        UntypedExpressionNode value
+    ) {
+        return new UntypedMapEntryLiteralNode(key, value, NullSource.INSTANCE);
+    }
+
     public static UntypedNotEqualNode notEqual(
         UntypedExpressionNode left,
         UntypedExpressionNode right

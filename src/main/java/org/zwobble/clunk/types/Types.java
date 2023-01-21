@@ -22,6 +22,14 @@ public class Types {
         Types.interfaceType(NamespaceName.fromParts(), "List")
     );
 
+    public static final TypeConstructor MAP_CONSTRUCTOR = new TypeConstructor(
+        List.of(
+            TypeParameter.covariant(NamespaceName.fromParts(), "Map", "K"),
+            TypeParameter.covariant(NamespaceName.fromParts(), "Map", "V")
+        ),
+        Types.interfaceType(NamespaceName.fromParts(), "Map")
+    );
+
     public static final TypeConstructor MUTABLE_LIST_CONSTRUCTOR = new TypeConstructor(
         List.of(TypeParameter.invariant(NamespaceName.fromParts(), "MutableList", "T")),
         Types.recordType(NamespaceName.fromParts(), "MutableList")
@@ -34,6 +42,10 @@ public class Types {
 
     public static StructuredType list(Type elementType) {
         return construct(LIST_CONSTRUCTOR, List.of(elementType));
+    }
+
+    public static StructuredType map(Type keyType, Type valueType) {
+        return construct(MAP_CONSTRUCTOR, List.of(keyType, valueType));
     }
 
     public static StructuredType mutableList(Type elementType) {

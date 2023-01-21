@@ -324,7 +324,7 @@ public class TypeChecker {
 
             @Override
             public TypedExpressionNode visit(UntypedMapLiteralNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return typeCheckMapLiteral(node, context);
             }
 
             @Override
@@ -797,6 +797,38 @@ public class TypeChecker {
         return new TypedLogicalOrNode(
             left,
             right,
+            node.source()
+        );
+    }
+
+    private static TypedExpressionNode typeCheckMapLiteral(
+        UntypedMapLiteralNode node,
+        TypeCheckerContext context
+    ) {
+        var entries = node.entries().stream()
+            .map(entry -> new TypedMapEntryLiteralNode(
+                typeCheckExpression(entry.key(), context),
+                typeCheckExpression(entry.value(), context),
+                entry.source()
+            ))
+            .toList();
+
+        var keyTypes = entries.stream()
+            .map(entry -> entry.keyType())
+            .distinct()
+            .toList();
+        var keyType = Types.unify(keyTypes, Types.NOTHING);
+
+        var valueTypes = entries.stream()
+            .map(entry -> entry.valueType())
+            .distinct()
+            .toList();
+        var valueType = Types.unify(valueTypes, Types.NOTHING);
+
+        return new TypedMapLiteralNode(
+            entries,
+            keyType,
+            valueType,
             node.source()
         );
     }

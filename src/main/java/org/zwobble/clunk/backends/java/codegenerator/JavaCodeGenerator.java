@@ -196,6 +196,11 @@ public class JavaCodeGenerator {
             }
 
             @Override
+            public JavaExpressionNode visit(TypedMapLiteralNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public JavaExpressionNode visit(TypedMemberAccessNode node) {
                 return compileMemberAccess(node, context);
             }

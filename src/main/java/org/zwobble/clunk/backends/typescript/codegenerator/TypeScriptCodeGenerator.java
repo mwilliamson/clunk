@@ -185,6 +185,11 @@ public class TypeScriptCodeGenerator {
             }
 
             @Override
+            public TypeScriptExpressionNode visit(TypedMapLiteralNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public TypeScriptExpressionNode visit(TypedMemberAccessNode node) {
                 return compileMemberAccess(node, context);
             }

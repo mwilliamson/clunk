@@ -203,6 +203,11 @@ public class PythonCodeGenerator {
             }
 
             @Override
+            public PythonExpressionNode visit(TypedMapLiteralNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public PythonExpressionNode visit(TypedMemberAccessNode node) {
                 return compileMemberAccess(node, context);
             }

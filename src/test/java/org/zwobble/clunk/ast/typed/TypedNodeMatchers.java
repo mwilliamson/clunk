@@ -50,6 +50,16 @@ public class TypedNodeMatchers {
         return cast(TypedIntLiteralNode.class, has("value", equalTo(value)));
     }
 
+    public static Matcher<TypedMapEntryLiteralNode> isTypedMapEntryLiteralNode(
+        Matcher<TypedExpressionNode> key,
+        Matcher<TypedExpressionNode> value
+    ) {
+        return allOf(
+            has("key", key),
+            has("value", value)
+        );
+    }
+
     public static TypedMemberAccessNodeMatcher isTypedMemberAccessNode() {
         return new TypedMemberAccessNodeMatcher(P.vector());
     }

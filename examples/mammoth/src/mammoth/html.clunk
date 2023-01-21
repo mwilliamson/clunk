@@ -148,7 +148,7 @@ fun tryCollapse(collapsed: MutableList[HtmlNode], node: HtmlNode) -> Bool {
     }
 
     for (var child in node.children) {
-        (last.children as MutableList[HtmlNode]).add(child);
+        collapsingAdd(last.children as MutableList[HtmlNode], child);
     }
 
     return true;

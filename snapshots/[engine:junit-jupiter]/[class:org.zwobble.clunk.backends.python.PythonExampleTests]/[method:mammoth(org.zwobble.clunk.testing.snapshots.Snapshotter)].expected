@@ -274,7 +274,7 @@ fun tryCollapse(collapsed: MutableList[HtmlNode], node: HtmlNode) -> Bool {
     }
 
     for (var child in node.children) {
-        (last.children as MutableList[HtmlNode]).add(child);
+        collapsingAdd(last.children as MutableList[HtmlNode], child);
     }
 
     return true;
@@ -452,6 +452,25 @@ testSuite "collapse" {
 
         assertThat(result, equalTo([
             html.freshElement("div", #[], [
+                html.collapsibleElement("p", #[], [html.text("One"), html.text("Two")]),
+            ]),
+        ]));
+    }
+
+    test "children of collapsed element can collapse with children of previous element" {
+        var nodes = [
+            html.collapsibleElement("blockquote", #[], [
+                html.collapsibleElement("p", #[], [html.text("One")]),
+            ]),
+            html.collapsibleElement("blockquote", #[], [
+                html.collapsibleElement("p", #[], [html.text("Two")]),
+            ]),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.collapsibleElement("blockquote", #[], [
                 html.collapsibleElement("p", #[], [html.text("One"), html.text("Two")]),
             ]),
         ]));
@@ -758,7 +777,7 @@ def try_collapse(collapsed, node):
         return False
 
     for child in node.children:
-        last.children.append(child)
+        collapsing_add(last.children, child)
 
     return True
 
@@ -879,14 +898,21 @@ class CollapseTests:
 
         assert_that(result, equal_to([html.fresh_element("div", {}, [html.collapsible_element("p", {}, [html.text("One"), html.text("Two")])])]))
 
+    def test_children_of_collapsed_element_can_collapse_with_children_of_previous_element(self):
+        nodes = [html.collapsible_element("blockquote", {}, [html.collapsible_element("p", {}, [html.text("One")])]), html.collapsible_element("blockquote", {}, [html.collapsible_element("p", {}, [html.text("Two")])])]
+
+        result = html.collapse(nodes)
+
+        assert_that(result, equal_to([html.collapsible_element("blockquote", {}, [html.collapsible_element("p", {}, [html.text("One"), html.text("Two")])])]))
+
 
 ==============
 
 ============================= test session starts ==============================
 rootdir: ROOTDIR, configfile: tox.ini
-collected 15 items
+collected 16 items
 
-mammoth/html_test.py ...........F...                                     [100%]
+mammoth/html_test.py ...........F....                                    [100%]
 
 =================================== FAILURES ===================================
 ___ CollapseTests.test_elements_with_different_attributes_are_not_collapsed ____
@@ -901,4 +927,4 @@ E   but:
 E     was [HtmlElement(tag=HtmlTag(tag_names=['p'], attributes={'id': 'a'}, is_collapsible=True, separator=''), children=[HtmlText(value='One'), HtmlText(value='Two')])]
 =========================== short test summary info ============================
 FAILED mammoth/html_test.py::CollapseTests::test_elements_with_different_attributes_are_not_collapsed
-========================= 1 failed, 14 passed in TIME =========================
+========================= 1 failed, 15 passed in TIME =========================

@@ -274,7 +274,7 @@ fun tryCollapse(collapsed: MutableList[HtmlNode], node: HtmlNode) -> Bool {
     }
 
     for (var child in node.children) {
-        (last.children as MutableList[HtmlNode]).add(child);
+        collapsingAdd(last.children as MutableList[HtmlNode], child);
     }
 
     return true;
@@ -452,6 +452,25 @@ testSuite "collapse" {
 
         assertThat(result, equalTo([
             html.freshElement("div", #[], [
+                html.collapsibleElement("p", #[], [html.text("One"), html.text("Two")]),
+            ]),
+        ]));
+    }
+
+    test "children of collapsed element can collapse with children of previous element" {
+        var nodes = [
+            html.collapsibleElement("blockquote", #[], [
+                html.collapsibleElement("p", #[], [html.text("One")]),
+            ]),
+            html.collapsibleElement("blockquote", #[], [
+                html.collapsibleElement("p", #[], [html.text("Two")]),
+            ]),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.collapsibleElement("blockquote", #[], [
                 html.collapsibleElement("p", #[], [html.text("One"), html.text("Two")]),
             ]),
         ]));
@@ -916,7 +935,7 @@ public class Html {
         }
 
         for (var child : node_HtmlElement.children()) {
-            ((java.util.List<HtmlNode>) last_HtmlElement.children()).add(child);
+            collapsingAdd((java.util.List<HtmlNode>) last_HtmlElement.children(), child);
         }
 
         return true;
@@ -1085,6 +1104,16 @@ public class HtmlTests {
 
             assertThat(result, equalTo(java.util.List.of(Html.freshElement("div", java.util.Map.ofEntries(), java.util.List.of(Html.collapsibleElement("p", java.util.Map.ofEntries(), java.util.List.of(Html.text("One"), Html.text("Two"))))))));
         }
+
+        @org.junit.jupiter.api.Test
+        @org.junit.jupiter.api.DisplayName("children of collapsed element can collapse with children of previous element")
+        public void childrenOfCollapsedElementCanCollapseWithChildrenOfPreviousElement() {
+            var nodes = java.util.List.of(Html.collapsibleElement("blockquote", java.util.Map.ofEntries(), java.util.List.of(Html.collapsibleElement("p", java.util.Map.ofEntries(), java.util.List.of(Html.text("One"))))), Html.collapsibleElement("blockquote", java.util.Map.ofEntries(), java.util.List.of(Html.collapsibleElement("p", java.util.Map.ofEntries(), java.util.List.of(Html.text("Two"))))));
+
+            var result = Html.collapse(nodes);
+
+            assertThat(result, equalTo(java.util.List.of(Html.collapsibleElement("blockquote", java.util.Map.ofEntries(), java.util.List.of(Html.collapsibleElement("p", java.util.Map.ofEntries(), java.util.List.of(Html.text("One"), Html.text("Two"))))))));
+        }
     }}
 
 ==============
@@ -1101,7 +1130,8 @@ public class HtmlTests {
 │     │  ├─ elements with different tag names are not collapsed ✔
 │     │  ├─ consecutive collapsible elements are collapsed if they have the same tag name an... ✔
 │     │  ├─ children of elements are collapsed ✔
-│     │  └─ consecutive collapsible elements are collapsed if they have the same tag name an... ✔
+│     │  ├─ consecutive collapsible elements are collapsed if they have the same tag name an... ✔
+│     │  └─ children of collapsed element can collapse with children of previous element ✔
 │     └─ StripEmpty ✔
 │        ├─ text nodes with text are not stripped ✔
 │        ├─ force writes are never empty ✔
@@ -1138,9 +1168,9 @@ Test run finished after TIME ms
 [         0 containers aborted    ]
 [         5 containers successful ]
 [         0 containers failed     ]
-[        15 tests found           ]
+[        16 tests found           ]
 [         0 tests skipped         ]
-[        15 tests started         ]
+[        16 tests started         ]
 [         0 tests aborted         ]
-[        14 tests successful      ]
+[        15 tests successful      ]
 [         1 tests failed          ]

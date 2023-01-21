@@ -170,4 +170,23 @@ testSuite "collapse" {
             ]),
         ]));
     }
+
+    test "children of collapsed element can collapse with children of previous element" {
+        var nodes = [
+            html.collapsibleElement("blockquote", #[], [
+                html.collapsibleElement("p", #[], [html.text("One")]),
+            ]),
+            html.collapsibleElement("blockquote", #[], [
+                html.collapsibleElement("p", #[], [html.text("Two")]),
+            ]),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.collapsibleElement("blockquote", #[], [
+                html.collapsibleElement("p", #[], [html.text("One"), html.text("Two")]),
+            ]),
+        ]));
+    }
 }

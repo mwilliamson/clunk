@@ -274,7 +274,7 @@ fun tryCollapse(collapsed: MutableList[HtmlNode], node: HtmlNode) -> Bool {
     }
 
     for (var child in node.children) {
-        (last.children as MutableList[HtmlNode]).add(child);
+        collapsingAdd(last.children as MutableList[HtmlNode], child);
     }
 
     return true;
@@ -452,6 +452,25 @@ testSuite "collapse" {
 
         assertThat(result, equalTo([
             html.freshElement("div", #[], [
+                html.collapsibleElement("p", #[], [html.text("One"), html.text("Two")]),
+            ]),
+        ]));
+    }
+
+    test "children of collapsed element can collapse with children of previous element" {
+        var nodes = [
+            html.collapsibleElement("blockquote", #[], [
+                html.collapsibleElement("p", #[], [html.text("One")]),
+            ]),
+            html.collapsibleElement("blockquote", #[], [
+                html.collapsibleElement("p", #[], [html.text("Two")]),
+            ]),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.collapsibleElement("blockquote", #[], [
                 html.collapsibleElement("p", #[], [html.text("One"), html.text("Two")]),
             ]),
         ]));
@@ -869,7 +888,7 @@ function tryCollapse(collapsed: Array<HtmlNode>, node: HtmlNode): boolean {
     }
 
     for (let child of node.children) {
-        ((last.children) as Array<HtmlNode>).push(child);
+        collapsingAdd(((last.children) as Array<HtmlNode>), child);
     }
 
     return true;
@@ -1006,6 +1025,14 @@ suite("collapse", function () {
 
         assertThat(result, deepEqualTo([html.freshElement("div", new Map([]), [html.collapsibleElement("p", new Map([]), [html.text("One"), html.text("Two")])])]));
     });
+
+    test("children of collapsed element can collapse with children of previous element", function () {
+        let nodes = [html.collapsibleElement("blockquote", new Map([]), [html.collapsibleElement("p", new Map([]), [html.text("One")])]), html.collapsibleElement("blockquote", new Map([]), [html.collapsibleElement("p", new Map([]), [html.text("Two")])])];
+
+        let result = html.collapse(nodes);
+
+        assertThat(result, deepEqualTo([html.collapsibleElement("blockquote", new Map([]), [html.collapsibleElement("p", new Map([]), [html.text("One"), html.text("Two")])])]));
+    });
 });
 
 
@@ -1031,9 +1058,10 @@ suite("collapse", function () {
     ✔ consecutive collapsible elements are collapsed if they have the same tag name and no attributes
     ✔ consecutive collapsible elements are collapsed if they have the same tag name and same attributes
     ✔ children of elements are collapsed
+    ✔ children of collapsed element can collapse with children of previous element
 
 
-  14 passing (TIME)
+  15 passing (TIME)
   1 failing
 
   1) collapse

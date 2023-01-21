@@ -2,10 +2,7 @@ package org.zwobble.clunk.backends.typescript.codegenerator;
 
 import org.zwobble.clunk.backends.typescript.ast.TypeScriptExpressionNode;
 import org.zwobble.clunk.backends.typescript.ast.TypeScriptReferenceNode;
-import org.zwobble.clunk.backends.typescript.codegenerator.macros.TypeScriptListMacro;
-import org.zwobble.clunk.backends.typescript.codegenerator.macros.TypeScriptMutableListMacro;
-import org.zwobble.clunk.backends.typescript.codegenerator.macros.TypeScriptStringBuilderMacro;
-import org.zwobble.clunk.backends.typescript.codegenerator.macros.TypeScriptUnitMacro;
+import org.zwobble.clunk.backends.typescript.codegenerator.macros.*;
 import org.zwobble.clunk.types.*;
 
 import java.util.Map;
@@ -20,6 +17,7 @@ public class TypeScriptMacros {
     private static final Map<Type, TypeScriptClassMacro> CLASS_MACROS = Stream.of(
         TypeScriptMutableListMacro.INSTANCE,
         TypeScriptListMacro.INSTANCE,
+        TypeScriptMapMacro.INSTANCE,
         TypeScriptStringBuilderMacro.INSTANCE,
         TypeScriptUnitMacro.INSTANCE
     ).collect(Collectors.toMap(x -> x.receiverType(), x -> x));

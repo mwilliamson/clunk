@@ -62,6 +62,14 @@ public class Python {
         return new PythonConditionalBranchNode(condition, body);
     }
 
+    public static PythonDictNode dict(List<PythonDictItemNode> items) {
+        return new PythonDictNode(items);
+    }
+
+    public static PythonDictItemNode dictItem(PythonExpressionNode key, PythonExpressionNode value) {
+        return new PythonDictItemNode(key, value);
+    }
+
     public static PythonEqualsNode equals(PythonExpressionNode left, PythonExpressionNode right) {
         return new PythonEqualsNode(left, right);
     }

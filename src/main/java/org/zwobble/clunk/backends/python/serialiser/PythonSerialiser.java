@@ -143,6 +143,20 @@ public class PythonSerialiser {
         }
     }
 
+    private static void serialiseDict(PythonDictNode node, CodeBuilder builder) {
+        builder.append("{");
+        forEachInterspersed(
+            node.items(),
+            item -> {
+                serialiseExpressionTopLevel(item.key(), builder);
+                builder.append(": ");
+                serialiseExpressionTopLevel(item.value(), builder);
+            },
+            () -> builder.append(", ")
+        );
+        builder.append("}");
+    }
+
     private static void serialiseEquals(PythonEqualsNode node, CodeBuilder builder) {
         serialiseBinaryOperation("==", node, builder);
     }
@@ -197,6 +211,12 @@ public class PythonSerialiser {
             @Override
             public Void visit(PythonCallNode node) {
                 serialiseCall(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(PythonDictNode node) {
+                serialiseDict(node, builder);
                 return null;
             }
 

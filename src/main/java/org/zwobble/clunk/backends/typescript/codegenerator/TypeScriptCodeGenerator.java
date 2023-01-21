@@ -186,7 +186,7 @@ public class TypeScriptCodeGenerator {
 
             @Override
             public TypeScriptExpressionNode visit(TypedMapLiteralNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileMapLiteral(node, context);
             }
 
             @Override
@@ -457,6 +457,26 @@ public class TypeScriptCodeGenerator {
         return new TypeScriptLogicalOrNode(
             compileExpression(node.left(), context),
             compileExpression(node.right(), context)
+        );
+    }
+
+    private static TypeScriptExpressionNode compileMapLiteral(
+        TypedMapLiteralNode node,
+        TypeScriptCodeGeneratorContext context
+    ) {
+        return new TypeScriptCallNewNode(
+            new TypeScriptReferenceNode("Map"),
+            List.of(),
+            List.of(
+                new TypeScriptArrayNode(
+                    node.entries().stream()
+                        .<TypeScriptExpressionNode>map(entry -> new TypeScriptArrayNode(List.of(
+                            compileExpression(entry.key(), context),
+                            compileExpression(entry.value(), context)
+                        )))
+                        .toList()
+                )
+            )
         );
     }
 

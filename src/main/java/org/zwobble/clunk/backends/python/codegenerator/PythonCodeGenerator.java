@@ -204,7 +204,7 @@ public class PythonCodeGenerator {
 
             @Override
             public PythonExpressionNode visit(TypedMapLiteralNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileMapLiteral(node, context);
             }
 
             @Override
@@ -443,6 +443,20 @@ public class PythonCodeGenerator {
         return new PythonBoolOrNode(
             compileExpression(node.left(), context),
             compileExpression(node.right(), context)
+        );
+    }
+
+    private static PythonExpressionNode compileMapLiteral(
+        TypedMapLiteralNode node,
+        PythonCodeGeneratorContext context
+    ) {
+        return new PythonDictNode(
+            node.entries().stream()
+                .map(entry -> new PythonDictItemNode(
+                    compileExpression(entry.key(), context),
+                    compileExpression(entry.value(), context)
+                ))
+                .toList()
         );
     }
 

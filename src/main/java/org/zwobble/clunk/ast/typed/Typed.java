@@ -180,6 +180,21 @@ public class Typed {
         return new TypedLogicalOrNode(left, right, NullSource.INSTANCE);
     }
 
+    public static TypedMapLiteralNode mapLiteral(
+        List<TypedMapEntryLiteralNode> entries,
+        Type keyType,
+        Type valueType
+    ) {
+        return new TypedMapLiteralNode(entries, keyType, valueType, NullSource.INSTANCE);
+    }
+
+    public static TypedMapEntryLiteralNode mapEntryLiteral(
+        TypedExpressionNode key,
+        TypedExpressionNode value
+    ) {
+        return new TypedMapEntryLiteralNode(key, value, NullSource.INSTANCE);
+    }
+
     public static TypedMemberAccessNode memberAccess(
         TypedLocalReferenceNode receiver,
         String memberName,

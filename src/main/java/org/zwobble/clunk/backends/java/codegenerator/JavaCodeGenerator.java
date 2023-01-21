@@ -197,7 +197,7 @@ public class JavaCodeGenerator {
 
             @Override
             public JavaExpressionNode visit(TypedMapLiteralNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileMapLiteral(node, context);
             }
 
             @Override
@@ -467,6 +467,25 @@ public class JavaCodeGenerator {
         return new JavaLogicalOrNode(
             compileExpression(node.left(), context),
             compileExpression(node.right(), context)
+        );
+    }
+
+    private static JavaExpressionNode compileMapLiteral(
+        TypedMapLiteralNode node,
+        JavaCodeGeneratorContext context
+    ) {
+        return new JavaCallStaticNode(
+            // TODO: handle fully-qualified references
+            new JavaTypeVariableReferenceNode("java.util.Map.ofEntries"),
+            node.entries().stream()
+                .<JavaExpressionNode>map(entry -> new JavaCallStaticNode(
+                    new JavaTypeVariableReferenceNode("java.util.Map.entry"),
+                    List.of(
+                        compileExpression(entry.key(), context),
+                        compileExpression(entry.value(), context)
+                    )
+                ))
+                .toList()
         );
     }
 

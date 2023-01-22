@@ -15,6 +15,24 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class PythonListMacroTests {
     @Test
+    public void containsIsCompiledToInOperation() {
+        var node = Typed.callMethod(
+            Typed.localReference(
+                "xs",
+                Types.list(Types.STRING)
+            ),
+            "contains",
+            List.of(Typed.localReference("x", Types.STRING)),
+            Types.BOOL
+        );
+
+        var result = PythonCodeGenerator.compileExpression(node, PythonCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("x in xs"));
+    }
+
+    @Test
     public void flatMapIsCompiledToListComprehension() {
         var node = Typed.callMethod(
             Typed.localReference(

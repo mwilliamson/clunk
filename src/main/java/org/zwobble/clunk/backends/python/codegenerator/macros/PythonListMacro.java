@@ -42,6 +42,10 @@ public class PythonListMacro implements PythonClassMacro {
         List<PythonExpressionNode> positionalArgs
     ) {
         switch (methodName) {
+            case "contains" -> {
+                var result = new PythonInNode(positionalArgs.get(0), receiver);
+                return Optional.of(result);
+            }
             case "flatMap" -> {
                 // TODO: Need to guarantee this doesn't collide -- we don't
                 // allow variables to start with an underscore, so this should

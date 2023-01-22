@@ -15,7 +15,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class JavaListMacroTests {
     @Test
-    public void containsIsCompiledToIncludesCall() {
+    public void containsIsCompiledToContainsCall() {
         var node = Typed.callMethod(
             Typed.localReference(
                 "xs",

@@ -15,6 +15,25 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class TypeScriptListMacroTests {
     @Test
+    public void containsIsCompiledToIncludesCall() {
+        // TODO: handle object equality
+        var node = Typed.callMethod(
+            Typed.localReference(
+                "xs",
+                Types.list(Types.STRING)
+            ),
+            "contains",
+            List.of(Typed.localReference("x", Types.STRING)),
+            Types.BOOL
+        );
+
+        var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("xs.includes(x)"));
+    }
+
+    @Test
     public void flatMapIsCompiledToFlatMapCall() {
         var node = Typed.callMethod(
             Typed.localReference(

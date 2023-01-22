@@ -58,6 +58,13 @@ public class TypeScriptListMacro implements TypeScriptClassMacro {
         List<TypeScriptExpressionNode> positionalArgs
     ) {
         switch (methodName) {
+            case "contains" -> {
+                var result = new TypeScriptCallNode(
+                    new TypeScriptPropertyAccessNode(receiver, "includes"),
+                    positionalArgs
+                );
+                return Optional.of(result);
+            }
             case "flatMap" -> {
                 var result = new TypeScriptCallNode(
                     new TypeScriptPropertyAccessNode(receiver, "flatMap"),

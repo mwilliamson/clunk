@@ -20,6 +20,10 @@ record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
         return tag.defaultTagName;
     }
 
+    property tagNames: List[String] {
+        return tag.tagNames;
+    }
+
     property isCollapsible: Bool {
         return tag.isCollapsible;
     }
@@ -143,7 +147,7 @@ fun tryCollapse(collapsed: MutableList[HtmlNode], node: HtmlNode) -> Bool {
         return false;
     }
 
-    if (!node.isCollapsible || node.defaultTagName != last.defaultTagName) {
+    if (!node.isCollapsible || !node.tagNames.contains(last.defaultTagName)) {
         return false;
     }
 

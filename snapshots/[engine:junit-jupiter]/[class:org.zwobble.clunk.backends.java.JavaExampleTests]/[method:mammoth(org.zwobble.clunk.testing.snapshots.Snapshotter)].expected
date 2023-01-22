@@ -146,6 +146,10 @@ record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
         return tag.defaultTagName;
     }
 
+    property tagNames: List[String] {
+        return tag.tagNames;
+    }
+
     property isCollapsible: Bool {
         return tag.isCollapsible;
     }
@@ -269,7 +273,7 @@ fun tryCollapse(collapsed: MutableList[HtmlNode], node: HtmlNode) -> Bool {
         return false;
     }
 
-    if (!node.isCollapsible || node.defaultTagName != last.defaultTagName) {
+    if (!node.isCollapsible || !node.tagNames.contains(last.defaultTagName)) {
         return false;
     }
 
@@ -486,6 +490,33 @@ testSuite "collapse" {
 
         assertThat(result, equalTo([
             html.freshElement("p", #[], []),
+        ]));
+    }
+
+    test "consecutive elements can collapse if second element has choice of tag names including main tag name of first element" {
+        var nodes = [
+            html.collapsibleElement("ol", #[], []),
+            html.HtmlElement(html.HtmlTag(["ul", "ol"], #[], true, ""), []),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.collapsibleElement("ol", #[], []),
+        ]));
+    }
+
+    test "consecutive elements cannot collapse if second element has tag name as non-main tag name of first element" {
+        var nodes = [
+            html.HtmlElement(html.HtmlTag(["ul", "ol"], #[], true, ""), []),
+            html.collapsibleElement("ol", #[], []),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.HtmlElement(html.HtmlTag(["ul", "ol"], #[], true, ""), []),
+            html.collapsibleElement("ol", #[], []),
         ]));
     }
 }
@@ -785,6 +816,10 @@ public record HtmlElement(HtmlTag tag, java.util.List<? extends HtmlNode> childr
         return tag().defaultTagName();
     }
 
+    public java.util.List<String> tagNames() {
+        return tag().tagNames();
+    }
+
     public boolean isCollapsible() {
         return tag().isCollapsible();
     }
@@ -943,7 +978,7 @@ public class Html {
         }
         var last_HtmlElement = (org.zwobble.mammoth.internal.mammoth.html.HtmlElement) last;
 
-        if (!node_HtmlElement.isCollapsible() || !node_HtmlElement.defaultTagName().equals(last_HtmlElement.defaultTagName())) {
+        if (!node_HtmlElement.isCollapsible() || !node_HtmlElement.tagNames().contains(last_HtmlElement.defaultTagName())) {
             return false;
         }
 
@@ -963,6 +998,8 @@ package org.zwobble.mammoth.internal.mammoth.html;
 import org.zwobble.mammoth.internal.mammoth.html.Html;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import org.zwobble.mammoth.internal.mammoth.html.HtmlTag;
+import org.zwobble.mammoth.internal.mammoth.html.HtmlElement;
 
 public class HtmlTests {
     @org.junit.jupiter.api.Nested
@@ -1137,6 +1174,26 @@ public class HtmlTests {
 
             assertThat(result, equalTo(java.util.List.of(Html.freshElement("p", java.util.Map.ofEntries(), java.util.List.of()))));
         }
+
+        @org.junit.jupiter.api.Test
+        @org.junit.jupiter.api.DisplayName("consecutive elements can collapse if second element has choice of tag names including main tag name of first element")
+        public void consecutiveElementsCanCollapseIfSecondElementHasChoiceOfTagNamesIncludingMainTagNameOfFirstElement() {
+            var nodes = java.util.List.of(Html.collapsibleElement("ol", java.util.Map.ofEntries(), java.util.List.of()), new HtmlElement(new HtmlTag(java.util.List.of("ul", "ol"), java.util.Map.ofEntries(), true, ""), java.util.List.of()));
+
+            var result = Html.collapse(nodes);
+
+            assertThat(result, equalTo(java.util.List.of(Html.collapsibleElement("ol", java.util.Map.ofEntries(), java.util.List.of()))));
+        }
+
+        @org.junit.jupiter.api.Test
+        @org.junit.jupiter.api.DisplayName("consecutive elements cannot collapse if second element has tag name as non-main tag name of first element")
+        public void consecutiveElementsCannotCollapseIfSecondElementHasTagNameAsNonMainTagNameOfFirstElement() {
+            var nodes = java.util.List.of(new HtmlElement(new HtmlTag(java.util.List.of("ul", "ol"), java.util.Map.ofEntries(), true, ""), java.util.List.of()), Html.collapsibleElement("ol", java.util.Map.ofEntries(), java.util.List.of()));
+
+            var result = Html.collapse(nodes);
+
+            assertThat(result, equalTo(java.util.List.of(new HtmlElement(new HtmlTag(java.util.List.of("ul", "ol"), java.util.Map.ofEntries(), true, ""), java.util.List.of()), Html.collapsibleElement("ol", java.util.Map.ofEntries(), java.util.List.of()))));
+        }
     }}
 
 ==============
@@ -1145,6 +1202,7 @@ public class HtmlTests {
 ├─ JUnit Jupiter ✔
 │  └─ HtmlTests ✔
 │     ├─ Collapse ✔
+│     │  ├─ consecutive elements can collapse if second element has choice of tag names incl... ✔
 │     │  ├─ elements with different attributes are not collapsed ✘ 
 │     │  │        Expected: <[HtmlElement[tag=HtmlTag[tagNames=[p], attributes={id=a}, isCollapsible=true, separator=], children=[HtmlText[value=One]]], HtmlElement[tag=HtmlTag[tagNames=[p], attributes={}, isCollapsible=true, separator=], children=[HtmlText[value=Two]]]]>
 │     │  │             but: was <[HtmlElement[tag=HtmlTag[tagNames=[p], attributes={id=a}, isCollapsible=true, separator=], children=[HtmlText[value=One], HtmlText[value=Two]]]]>
@@ -1155,6 +1213,7 @@ public class HtmlTests {
 │     │  ├─ consecutive collapsible elements are collapsed if they have the same tag name an... ✔
 │     │  ├─ children of elements are collapsed ✔
 │     │  ├─ consecutive collapsible elements are collapsed if they have the same tag name an... ✔
+│     │  ├─ consecutive elements cannot collapse if second element has tag name as non-main ... ✔
 │     │  └─ children of collapsed element can collapse with children of previous element ✔
 │     └─ StripEmpty ✔
 │        ├─ text nodes with text are not stripped ✔
@@ -1192,9 +1251,9 @@ Test run finished after TIME ms
 [         0 containers aborted    ]
 [         5 containers successful ]
 [         0 containers failed     ]
-[        17 tests found           ]
+[        19 tests found           ]
 [         0 tests skipped         ]
-[        17 tests started         ]
+[        19 tests started         ]
 [         0 tests aborted         ]
-[        16 tests successful      ]
+[        18 tests successful      ]
 [         1 tests failed          ]

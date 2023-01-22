@@ -202,4 +202,31 @@ testSuite "collapse" {
             html.freshElement("p", #[], []),
         ]));
     }
+
+    test "consecutive elements can collapse if second element has choice of tag names including main tag name of first element" {
+        var nodes = [
+            html.collapsibleElement("ol", #[], []),
+            html.HtmlElement(html.HtmlTag(["ul", "ol"], #[], true, ""), []),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.collapsibleElement("ol", #[], []),
+        ]));
+    }
+
+    test "consecutive elements cannot collapse if second element has tag name as non-main tag name of first element" {
+        var nodes = [
+            html.HtmlElement(html.HtmlTag(["ul", "ol"], #[], true, ""), []),
+            html.collapsibleElement("ol", #[], []),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.HtmlElement(html.HtmlTag(["ul", "ol"], #[], true, ""), []),
+            html.collapsibleElement("ol", #[], []),
+        ]));
+    }
 }

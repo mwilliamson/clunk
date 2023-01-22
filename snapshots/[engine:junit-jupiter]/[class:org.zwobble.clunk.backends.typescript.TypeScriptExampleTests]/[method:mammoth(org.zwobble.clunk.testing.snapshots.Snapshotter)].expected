@@ -146,6 +146,10 @@ record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
         return tag.defaultTagName;
     }
 
+    property tagNames: List[String] {
+        return tag.tagNames;
+    }
+
     property isCollapsible: Bool {
         return tag.isCollapsible;
     }
@@ -269,7 +273,7 @@ fun tryCollapse(collapsed: MutableList[HtmlNode], node: HtmlNode) -> Bool {
         return false;
     }
 
-    if (!node.isCollapsible || node.defaultTagName != last.defaultTagName) {
+    if (!node.isCollapsible || !node.tagNames.contains(last.defaultTagName)) {
         return false;
     }
 
@@ -486,6 +490,33 @@ testSuite "collapse" {
 
         assertThat(result, equalTo([
             html.freshElement("p", #[], []),
+        ]));
+    }
+
+    test "consecutive elements can collapse if second element has choice of tag names including main tag name of first element" {
+        var nodes = [
+            html.collapsibleElement("ol", #[], []),
+            html.HtmlElement(html.HtmlTag(["ul", "ol"], #[], true, ""), []),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.collapsibleElement("ol", #[], []),
+        ]));
+    }
+
+    test "consecutive elements cannot collapse if second element has tag name as non-main tag name of first element" {
+        var nodes = [
+            html.HtmlElement(html.HtmlTag(["ul", "ol"], #[], true, ""), []),
+            html.collapsibleElement("ol", #[], []),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.HtmlElement(html.HtmlTag(["ul", "ol"], #[], true, ""), []),
+            html.collapsibleElement("ol", #[], []),
         ]));
     }
 }
@@ -774,6 +805,10 @@ class HtmlElement {
         return this.tag.defaultTagName;
     }
 
+    get tagNames(): ReadonlyArray<string> {
+        return this.tag.tagNames;
+    }
+
     get isCollapsible(): boolean {
         return this.tag.isCollapsible;
     }
@@ -896,7 +931,7 @@ function tryCollapse(collapsed: Array<HtmlNode>, node: HtmlNode): boolean {
         return false;
     }
 
-    if (!node.isCollapsible || node.defaultTagName !== last.defaultTagName) {
+    if (!node.isCollapsible || !node.tagNames.includes(last.defaultTagName)) {
         return false;
     }
 
@@ -1054,6 +1089,22 @@ suite("collapse", function () {
 
         assertThat(result, deepEqualTo([html.freshElement("p", new Map([]), [])]));
     });
+
+    test("consecutive elements can collapse if second element has choice of tag names including main tag name of first element", function () {
+        let nodes = [html.collapsibleElement("ol", new Map([]), []), new html.HtmlElement(new html.HtmlTag(["ul", "ol"], new Map([]), true, ""), [])];
+
+        let result = html.collapse(nodes);
+
+        assertThat(result, deepEqualTo([html.collapsibleElement("ol", new Map([]), [])]));
+    });
+
+    test("consecutive elements cannot collapse if second element has tag name as non-main tag name of first element", function () {
+        let nodes = [new html.HtmlElement(new html.HtmlTag(["ul", "ol"], new Map([]), true, ""), []), html.collapsibleElement("ol", new Map([]), [])];
+
+        let result = html.collapse(nodes);
+
+        assertThat(result, deepEqualTo([new html.HtmlElement(new html.HtmlTag(["ul", "ol"], new Map([]), true, ""), []), html.collapsibleElement("ol", new Map([]), [])]));
+    });
 });
 
 
@@ -1081,9 +1132,11 @@ suite("collapse", function () {
     ✔ children of elements are collapsed
     ✔ children of collapsed element can collapse with children of previous element
     ✔ collapsible element can collapse into previous fresh element
+    ✔ consecutive elements can collapse if second element has choice of tag names including main tag name of first element
+    ✔ consecutive elements cannot collapse if second element has tag name as non-main tag name of first element
 
 
-  16 passing (TIME)
+  18 passing (TIME)
   1 failing
 
   1) collapse

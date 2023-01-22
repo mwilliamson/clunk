@@ -146,6 +146,10 @@ record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
         return tag.defaultTagName;
     }
 
+    property tagNames: List[String] {
+        return tag.tagNames;
+    }
+
     property isCollapsible: Bool {
         return tag.isCollapsible;
     }
@@ -269,7 +273,7 @@ fun tryCollapse(collapsed: MutableList[HtmlNode], node: HtmlNode) -> Bool {
         return false;
     }
 
-    if (!node.isCollapsible || node.defaultTagName != last.defaultTagName) {
+    if (!node.isCollapsible || !node.tagNames.contains(last.defaultTagName)) {
         return false;
     }
 
@@ -488,6 +492,33 @@ testSuite "collapse" {
             html.freshElement("p", #[], []),
         ]));
     }
+
+    test "consecutive elements can collapse if second element has choice of tag names including main tag name of first element" {
+        var nodes = [
+            html.collapsibleElement("ol", #[], []),
+            html.HtmlElement(html.HtmlTag(["ul", "ol"], #[], true, ""), []),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.collapsibleElement("ol", #[], []),
+        ]));
+    }
+
+    test "consecutive elements cannot collapse if second element has tag name as non-main tag name of first element" {
+        var nodes = [
+            html.HtmlElement(html.HtmlTag(["ul", "ol"], #[], true, ""), []),
+            html.collapsibleElement("ol", #[], []),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.HtmlElement(html.HtmlTag(["ul", "ol"], #[], true, ""), []),
+            html.collapsibleElement("ol", #[], []),
+        ]));
+    }
 }
 
 
@@ -687,6 +718,10 @@ class HtmlElement:
         return self.tag.default_tag_name
 
     @property
+    def tag_names(self):
+        return self.tag.tag_names
+
+    @property
     def is_collapsible(self):
         return self.tag.is_collapsible
 
@@ -786,7 +821,7 @@ def try_collapse(collapsed, node):
     if not isinstance(last, HtmlElement):
         return False
 
-    if not node.is_collapsible or node.default_tag_name != last.default_tag_name:
+    if not node.is_collapsible or not last.default_tag_name in node.tag_names:
         return False
 
     for child in node.children:
@@ -925,14 +960,28 @@ class CollapseTests:
 
         assert_that(result, equal_to([html.fresh_element("p", {}, [])]))
 
+    def test_consecutive_elements_can_collapse_if_second_element_has_choice_of_tag_names_including_main_tag_name_of_first_element(self):
+        nodes = [html.collapsible_element("ol", {}, []), html.HtmlElement(html.HtmlTag(["ul", "ol"], {}, True, ""), [])]
+
+        result = html.collapse(nodes)
+
+        assert_that(result, equal_to([html.collapsible_element("ol", {}, [])]))
+
+    def test_consecutive_elements_cannot_collapse_if_second_element_has_tag_name_as_non_main_tag_name_of_first_element(self):
+        nodes = [html.HtmlElement(html.HtmlTag(["ul", "ol"], {}, True, ""), []), html.collapsible_element("ol", {}, [])]
+
+        result = html.collapse(nodes)
+
+        assert_that(result, equal_to([html.HtmlElement(html.HtmlTag(["ul", "ol"], {}, True, ""), []), html.collapsible_element("ol", {}, [])]))
+
 
 ==============
 
 ============================= test session starts ==============================
 rootdir: ROOTDIR, configfile: tox.ini
-collected 17 items
+collected 19 items
 
-mammoth/html_test.py ...........F.....                                   [100%]
+mammoth/html_test.py ...........F.......                                 [100%]
 
 =================================== FAILURES ===================================
 ___ CollapseTests.test_elements_with_different_attributes_are_not_collapsed ____
@@ -947,4 +996,4 @@ E   but:
 E     was [HtmlElement(tag=HtmlTag(tag_names=['p'], attributes={'id': 'a'}, is_collapsible=True, separator=''), children=[HtmlText(value='One'), HtmlText(value='Two')])]
 =========================== short test summary info ============================
 FAILED mammoth/html_test.py::CollapseTests::test_elements_with_different_attributes_are_not_collapsed
-========================= 1 failed, 16 passed in TIME =========================
+========================= 1 failed, 18 passed in TIME =========================

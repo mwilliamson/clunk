@@ -623,6 +623,11 @@ public class TypeScriptCodeGenerator {
             }
 
             @Override
+            public TypeScriptClassBodyDeclarationNode visit(TypedFunctionNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public TypeScriptClassBodyDeclarationNode visit(TypedPropertyNode node) {
                 return compileProperty(node, context);
             }

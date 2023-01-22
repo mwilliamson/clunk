@@ -4,6 +4,7 @@ import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
+import org.zwobble.clunk.ast.untyped.UntypedFunctionNode;
 import org.zwobble.clunk.ast.untyped.UntypedRecordNode;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.*;
@@ -215,6 +216,33 @@ public class TypeCheckRecordTests {
                     isTypedReturnNode().withExpression(isTypedMemberReferenceNode().withName("x").withType(Types.STRING))
                 ))
             )
+        ));
+    }
+
+    @Test
+    public void functionsAreIncludedInTypedNode() {
+        // TODO: test functions more thoroughly?
+        // Add equivalents to (or combine with) property tests? It relies on the same machinery.
+        var untypedNode = UntypedRecordNode.builder("Example")
+            .addBodyDeclaration(UntypedFunctionNode.builder()
+                .name("x")
+                .returnType(Untyped.typeLevelReference("String"))
+                .addBodyStatement(Untyped.returnStatement(Untyped.string("hello")))
+                .build()
+            )
+            .build();
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
+
+        var typedNode = (TypedRecordNode) result.typedNode();
+        assertThat(typedNode.body(), contains(
+            isTypedFunctionNode()
+                .withName("x")
+                .withReturnType(Types.STRING)
+                .withBody(contains(
+                    isTypedReturnNode().withExpression(isTypedStringLiteralNode("hello"))
+                ))
         ));
     }
 

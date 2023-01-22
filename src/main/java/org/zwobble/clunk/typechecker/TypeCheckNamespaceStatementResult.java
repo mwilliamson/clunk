@@ -13,6 +13,15 @@ public record TypeCheckNamespaceStatementResult(
     Supplier<TypedNamespaceStatementNode> valueSupplier,
     Supplier<Optional<Map.Entry<String, Type>>> fieldTypeSupplier
 ) {
+    public TypeCheckerContext typeCheckPhase(TypeCheckerPhase phase, TypeCheckerContext context) {
+        for (var typeCheck : pendingTypeChecks) {
+            if (typeCheck.phase().equals(phase)) {
+                context = typeCheck.typeCheck(context);
+            }
+        }
+        return context;
+    }
+
     public TypedNamespaceStatementNode value() {
         return valueSupplier.get();
     }

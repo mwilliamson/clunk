@@ -690,6 +690,11 @@ public class JavaCodeGenerator {
             }
 
             @Override
+            public JavaClassBodyDeclarationNode visit(TypedFunctionNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public JavaClassBodyDeclarationNode visit(TypedPropertyNode node) {
                 return compileProperty(node, context);
             }

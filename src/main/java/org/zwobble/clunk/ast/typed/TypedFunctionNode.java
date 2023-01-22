@@ -13,12 +13,17 @@ public record TypedFunctionNode(
     TypedTypeLevelExpressionNode returnType,
     List<TypedFunctionStatementNode> body,
     Source source
-) implements TypedNamespaceStatementNode {
+) implements TypedNamespaceStatementNode, TypedRecordBodyDeclarationNode {
+
     @Override
-    public <T> T accept(Visitor<T> visitor) {
+    public <T> T accept(TypedNamespaceStatementNode.Visitor<T> visitor) {
         return visitor.visit(this);
     }
 
+    @Override
+    public <T> T accept(TypedRecordBodyDeclarationNode.Visitor<T> visitor) {
+        return visitor.visit(this);
+    }
 
     public static Builder builder() {
         return new Builder("f", List.of(), Typed.typeLevelReference("Int", IntType.INSTANCE), List.of());

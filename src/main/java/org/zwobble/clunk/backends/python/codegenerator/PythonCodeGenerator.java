@@ -633,6 +633,11 @@ public class PythonCodeGenerator {
             }
 
             @Override
+            public PythonStatementNode visit(TypedFunctionNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public PythonStatementNode visit(TypedPropertyNode node) {
                 return compileProperty(node, context);
             }

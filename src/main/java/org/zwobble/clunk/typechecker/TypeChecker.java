@@ -1141,6 +1141,11 @@ public class TypeChecker {
             }
 
             @Override
+            public TypeCheckRecordBodyDeclarationResult visit(UntypedFunctionNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public TypeCheckRecordBodyDeclarationResult visit(UntypedPropertyNode node) {
                 return typeCheckProperty(node, context);
             }

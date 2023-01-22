@@ -12,14 +12,19 @@ public record UntypedFunctionNode(
     UntypedTypeLevelExpressionNode returnType,
     List<UntypedFunctionStatementNode> body,
     Source source
-) implements UntypedNamespaceStatementNode {
+) implements UntypedNamespaceStatementNode, UntypedRecordBodyDeclarationNode {
     @Override
     public boolean isTypeDefinition() {
         return false;
     }
 
     @Override
-    public <T> T accept(Visitor<T> visitor) {
+    public <T> T accept(UntypedNamespaceStatementNode.Visitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public <T> T accept(UntypedRecordBodyDeclarationNode.Visitor<T> visitor) {
         return visitor.visit(this);
     }
 

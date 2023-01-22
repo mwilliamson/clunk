@@ -77,6 +77,26 @@ public class ParserRecordTests {
     }
 
     @Test
+    public void canParseSingleMethod() {
+        var source = """
+            record User() {
+                fun active() -> Bool {
+                    return true;
+                }
+            }
+            """;
+
+        var node = parseString(source, Parser::parseNamespaceStatement);
+
+        assertThat(node, isUntypedRecordNode().withBody(contains(
+            isUntypedFunctionNode()
+                .withName("active")
+                .withReturnType(isUntypedTypeLevelReferenceNode("Bool"))
+                .withBody(contains(isUntypedReturnNode().withExpression(isUntypedBoolLiteralNode(true))))
+        )));
+    }
+
+    @Test
     public void canParseSingleProperty() {
         var source = """
             record User() {

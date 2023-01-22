@@ -524,7 +524,7 @@ public class Parser {
         }
     }
 
-    private UntypedNamespaceStatementNode parseFunction(TokenIterator<TokenType> tokens) {
+    private UntypedFunctionNode parseFunction(TokenIterator<TokenType> tokens) {
         var source = tokens.peek().source();
 
         tokens.skip(TokenType.KEYWORD_FUN);
@@ -688,16 +688,19 @@ public class Parser {
 
         if (tokens.isNext(TokenType.BLANK_LINE)) {
             return parseBlankLine(tokens);
-        }
-        if (tokens.isNext(TokenType.COMMENT_SINGLE_LINE)) {
+        } else if (tokens.isNext(TokenType.COMMENT_SINGLE_LINE)) {
             return parseSingleLineComment(tokens);
-        } else {
-            tokens.skip(TokenType.KEYWORD_PROPERTY);
+        } else if (tokens.isNext(TokenType.KEYWORD_FUN)) {
+            return parseFunction(tokens);
+        } else if (tokens.trySkip(TokenType.KEYWORD_PROPERTY)) {
             var name = tokens.nextValue(TokenType.IDENTIFIER);
             tokens.skip(TokenType.SYMBOL_COLON);
             var type = parseTypeLevelExpression(tokens);
             var body = parseBlock(tokens);
             return new UntypedPropertyNode(name, type, body, source);
+        } else {
+            // TODO: test this
+            throw new UnexpectedTokenException("record body declaration", tokens.peek().describe(), source);
         }
     }
 

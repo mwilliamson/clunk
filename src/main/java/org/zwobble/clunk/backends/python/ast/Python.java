@@ -97,6 +97,10 @@ public class Python {
         return new PythonIfStatementNode(conditionalBranches, elseBody);
     }
 
+    public static PythonInNode in(PythonExpressionNode left, PythonExpressionNode right) {
+        return new PythonInNode(left, right);
+    }
+
     public static PythonExpressionNode intLiteral(int value) {
         return new PythonIntLiteralNode(BigInteger.valueOf(value));
     }

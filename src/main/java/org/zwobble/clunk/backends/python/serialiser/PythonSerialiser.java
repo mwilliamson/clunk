@@ -227,6 +227,12 @@ public class PythonSerialiser {
             }
 
             @Override
+            public Void visit(PythonInNode node) {
+                serialiseIn(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(PythonIntLiteralNode node) {
                 serialiseIntLiteral(node, builder);
                 return null;
@@ -347,6 +353,10 @@ public class PythonSerialiser {
             () -> builder.append(", ")
         );
         builder.newLine();
+    }
+
+    private static void serialiseIn(PythonInNode node, CodeBuilder builder) {
+        serialiseBinaryOperation("in", node, builder);
     }
 
     private static void serialiseIntLiteral(PythonIntLiteralNode node, CodeBuilder builder) {

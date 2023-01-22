@@ -13,7 +13,7 @@ public class TypeCheckNamespaceStatementTesting {
         TypeCheckerContext context
     ) {
         public TypedNamespaceStatementNode typedNode() {
-            return result.value(context);
+            return result.value();
         }
 
         public Optional<Map.Entry<String, Type>> fieldType() {

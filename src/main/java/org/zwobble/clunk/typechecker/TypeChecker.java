@@ -73,7 +73,7 @@ public class TypeChecker {
     ) {
         return new TypeCheckNamespaceStatementResult(
             List.of(),
-            context -> new TypedBlankLineNode(node.source()),
+            () -> new TypedBlankLineNode(node.source()),
             () -> Optional.empty()
         );
     }
@@ -209,7 +209,7 @@ public class TypeChecker {
                     }
                 )
             ),
-            context -> new TypedEnumNode(typeBox.get(), node.source()),
+            () -> new TypedEnumNode(typeBox.get(), node.source()),
             () -> Optional.of(Map.entry(node.name(), Types.metaType(typeBox.get())))
         );
     }
@@ -453,7 +453,7 @@ public class TypeChecker {
                     }
                 )
             ),
-            context -> new TypedFunctionNode(
+            () -> new TypedFunctionNode(
                 node.name(),
                 typedParamNodesBox.get(),
                 typedReturnTypeNodeBox.get(),
@@ -719,7 +719,7 @@ public class TypeChecker {
                     }
                 )
             ),
-            context ->  new TypedInterfaceNode(node.name(), interfaceTypeBox.get(), node.source()),
+            () ->  new TypedInterfaceNode(node.name(), interfaceTypeBox.get(), node.source()),
             () -> Optional.of(Map.entry(
                 node.name(),
                 Types.metaType(interfaceTypeBox.get())
@@ -896,7 +896,7 @@ public class TypeChecker {
         var typedBody = new ArrayList<TypedNamespaceStatementNode>();
         var fieldTypes = new HashMap<String, Type>();
         for (var result : typeCheckResults) {
-            typedBody.add(result.value(context));
+            typedBody.add(result.value());
             var fieldType = result.fieldType();
             if (fieldType.isPresent()) {
                 fieldTypes.put(fieldType.get().getKey(), fieldType.get().getValue());
@@ -1099,7 +1099,7 @@ public class TypeChecker {
                     }
                 )
             ),
-            context -> new TypedRecordNode(
+            () -> new TypedRecordNode(
                 node.name(),
                 recordTypeBox.get(),
                 typedRecordFieldNodesBox.get(),
@@ -1195,7 +1195,7 @@ public class TypeChecker {
     ) {
         return new TypeCheckNamespaceStatementResult(
             List.of(),
-            context -> typeCheckSingleLineComment(node),
+            () -> typeCheckSingleLineComment(node),
             () -> Optional.empty()
         );
     }
@@ -1261,21 +1261,29 @@ public class TypeChecker {
     private static TypeCheckNamespaceStatementResult typeCheckTest(
         UntypedTestNode node
     ) {
+        var typedStatementsBox = new Box<List<TypedFunctionStatementNode>>();
 
         return new TypeCheckNamespaceStatementResult(
-            List.of(),
-            context -> {
-                var typedStatements = typeCheckFunctionStatements(
-                    node.body(),
-                    context.enterTest()
-                ).value();
+            List.of(
+                new PendingTypeCheck(
+                    TypeCheckerPhase.TYPE_CHECK_BODIES,
+                    context -> {
+                        var typedStatements = typeCheckFunctionStatements(
+                            node.body(),
+                            context.enterTest()
+                        ).value();
 
-                return new TypedTestNode(
-                    node.name(),
-                    typedStatements,
-                    node.source()
-                );
-            },
+                        typedStatementsBox.set(typedStatements);
+
+                        return context;
+                    }
+                )
+            ),
+            () -> new TypedTestNode(
+                node.name(),
+                typedStatementsBox.get(),
+                node.source()
+            ),
             () -> Optional.empty()
         );
     }
@@ -1297,7 +1305,7 @@ public class TypeChecker {
                     }
                 )
             ),
-            context -> new TypedTestSuiteNode(
+            () -> new TypedTestSuiteNode(
                 node.name(),
                 typeCheckBodyResultBox.get().typedBody,
                 node.source()

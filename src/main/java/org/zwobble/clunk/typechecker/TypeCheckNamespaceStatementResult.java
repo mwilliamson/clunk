@@ -6,16 +6,15 @@ import org.zwobble.clunk.types.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public record TypeCheckNamespaceStatementResult(
     List<PendingTypeCheck> pendingTypeChecks,
-    Function<TypeCheckerContext, TypedNamespaceStatementNode> value,
+    Supplier<TypedNamespaceStatementNode> valueSupplier,
     Supplier<Optional<Map.Entry<String, Type>>> fieldTypeSupplier
 ) {
-    public TypedNamespaceStatementNode value(TypeCheckerContext context) {
-        return value.apply(context);
+    public TypedNamespaceStatementNode value() {
+        return valueSupplier.get();
     }
 
     public Optional<Map.Entry<String, Type>> fieldType() {

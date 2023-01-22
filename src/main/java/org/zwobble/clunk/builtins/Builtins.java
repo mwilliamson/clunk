@@ -60,6 +60,11 @@ public class Builtins {
         context = context.withBuiltins(Builtins.ENVIRONMENT);
 
         context = context.addMemberTypes(Types.LIST_CONSTRUCTOR.genericType(), Map.ofEntries(
+            Map.entry("contains", Types.methodType(
+                Types.LIST_CONSTRUCTOR,
+                List.of(Types.LIST_CONSTRUCTOR.param(0)),
+                Types.BOOL
+            )),
             Map.entry("flatMap", listFlatMapType()),
             // TODO: should be a property?
             Map.entry("get", Types.methodType(

@@ -57,6 +57,13 @@ public class JavaListMacro implements JavaClassMacro  {
         List<JavaExpressionNode> positionalArgs
     ) {
         switch (methodName) {
+            case "contains" -> {
+                var result = new JavaCallNode(
+                    new JavaMemberAccessNode(receiver, "contains"),
+                    positionalArgs
+                );
+                return Optional.of(result);
+            }
             case "flatMap" -> {
                 var func = positionalArgs.get(0);
                 var stream = new JavaCallNode(

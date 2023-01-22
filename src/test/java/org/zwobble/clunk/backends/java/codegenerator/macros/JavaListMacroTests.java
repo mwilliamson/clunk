@@ -15,6 +15,24 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class JavaListMacroTests {
     @Test
+    public void containsIsCompiledToIncludesCall() {
+        var node = Typed.callMethod(
+            Typed.localReference(
+                "xs",
+                Types.list(Types.STRING)
+            ),
+            "contains",
+            List.of(Typed.localReference("x", Types.STRING)),
+            Types.BOOL
+        );
+
+        var result = JavaCodeGenerator.compileExpression(node, JavaCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("xs.contains(x)"));
+    }
+
+    @Test
     public void flatMapIsCompiledToStreamFlatMap() {
         var node = Typed.callMethod(
             Typed.localReference(

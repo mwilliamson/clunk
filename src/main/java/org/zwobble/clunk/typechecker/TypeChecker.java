@@ -453,28 +453,13 @@ public class TypeChecker {
                     }
                 )
             ),
-            context -> {
-                var functionType = functionTypeBox.get();
-                var typedParamNodes = typedParamNodesBox.get();
-                var typedReturnTypeNode = typedReturnTypeNodeBox.get();
-
-                var bodyContext = context.enterFunction(functionType.returnType());
-                for (var typedParamNode : typedParamNodes) {
-                    bodyContext = bodyContext.addLocal(
-                        typedParamNode.name(),
-                        typedTypeLevelExpressionToType(typedParamNode.type()),
-                        typedParamNode.source()
-                    );
-                }
-
-                return new TypedFunctionNode(
-                    node.name(),
-                    typedParamNodes,
-                    typedReturnTypeNode,
-                    typedBodyBox.get(),
-                    node.source()
-                );
-            },
+            context -> new TypedFunctionNode(
+                node.name(),
+                typedParamNodesBox.get(),
+                typedReturnTypeNodeBox.get(),
+                typedBodyBox.get(),
+                node.source()
+            ),
             () -> Optional.of(Map.entry(
                 node.name(),
                 functionTypeBox.get()

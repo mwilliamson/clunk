@@ -48,8 +48,9 @@ public class JavaCodeGenerator {
         } else {
             // TODO: handle not a record type
             var recordType = (RecordType) node.type();
+            // TODO: handle conflicts
             context.addImportType(typeToJavaTypeName(recordType, context));
-            return new JavaCallNewNode(javaReceiver, Optional.empty(), javaArgs, Optional.empty());
+            return new JavaCallNewNode(new JavaReferenceNode(recordType.name()), Optional.empty(), javaArgs, Optional.empty());
         }
     }
 

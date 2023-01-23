@@ -242,7 +242,7 @@ public class TypeScriptCodeGenerator {
         );
     }
 
-    private static TypeScriptStatementNode compileFunction(TypedFunctionNode node, TypeScriptCodeGeneratorContext context) {
+    private static TypeScriptFunctionDeclarationNode compileFunction(TypedFunctionNode node, TypeScriptCodeGeneratorContext context) {
         return new TypeScriptFunctionDeclarationNode(
             node.name(),
             node.params().stream().map(param -> compileParam(param)).toList(),
@@ -627,7 +627,7 @@ public class TypeScriptCodeGenerator {
 
             @Override
             public TypeScriptClassBodyDeclarationNode visit(TypedFunctionNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileFunction(node, context);
             }
 
             @Override

@@ -2,6 +2,7 @@ package org.zwobble.clunk.backends.typescript.codegenerator;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
+import org.zwobble.clunk.ast.typed.TypedFunctionNode;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser;
 import org.zwobble.clunk.types.NamespaceName;
@@ -87,6 +88,32 @@ public class TypeScriptCodeGeneratorRecordTests {
                 class Example {
                     get value(): string {
                         return "hello";
+                    }
+                }
+                """
+        ));
+    }
+
+    @Test
+    public void functionsAreCompiledToMethods() {
+        var node = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "Example")
+            .addMethod(TypedFunctionNode.builder()
+                .name("fullName")
+                .returnType(Typed.typeLevelString())
+                .addBodyStatement(Typed.returnStatement(Typed.string("Bob")))
+                .build()
+            )
+            .build();
+        var context = TypeScriptCodeGeneratorContext.stub();
+
+        var result = TypeScriptCodeGenerator.compileNamespaceStatement(node, context);
+
+        var string = serialiseToString(result, TypeScriptSerialiser::serialiseStatement);
+        assertThat(string, equalTo(
+            """
+                class Example {
+                    fullName(): string {
+                        return "Bob";
                     }
                 }
                 """

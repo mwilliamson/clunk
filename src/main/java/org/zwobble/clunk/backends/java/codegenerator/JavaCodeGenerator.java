@@ -252,10 +252,14 @@ public class JavaCodeGenerator {
         );
     }
 
-    public static JavaClassBodyDeclarationNode compileFunction(TypedFunctionNode node, JavaCodeGeneratorContext context) {
+    public static JavaClassBodyDeclarationNode compileFunction(
+        TypedFunctionNode node,
+        boolean isStatic,
+        JavaCodeGeneratorContext context
+    ) {
         return new JavaMethodDeclarationNode(
             List.of(),
-            true,
+            isStatic,
             List.of(),
             compileTypeLevelExpression(node.returnType(), context),
             node.name(),
@@ -550,7 +554,7 @@ public class JavaCodeGenerator {
 
                 @Override
                 public Void visit(TypedFunctionNode functionNode) {
-                    classBody.add(compileFunction(functionNode, context));
+                    classBody.add(compileFunction(functionNode, true, context));
                     return null;
                 }
 
@@ -695,7 +699,7 @@ public class JavaCodeGenerator {
 
             @Override
             public JavaClassBodyDeclarationNode visit(TypedFunctionNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileFunction(node, false, context);
             }
 
             @Override

@@ -2,6 +2,7 @@ package org.zwobble.clunk.backends.java.codegenerator;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
+import org.zwobble.clunk.ast.typed.TypedFunctionNode;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
 import org.zwobble.clunk.types.InterfaceType;
@@ -56,6 +57,33 @@ public class JavaCodeGeneratorRecordTests {
                 public record Example() {
                     public String value() {
                         return "hello";
+                    }
+                }"""
+        ));
+    }
+
+    @Test
+    public void functionsAreCompiledToMethods() {
+        var node = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "Example")
+            .addMethod(TypedFunctionNode.builder()
+                .name("fullName")
+                .returnType(Typed.typeLevelString())
+                .addBodyStatement(Typed.returnStatement(Typed.string("Bob")))
+                .build()
+            )
+            .build();
+        var context = JavaCodeGeneratorContext.stub();
+
+        var result = JavaCodeGenerator.compileRecord(node, context);
+
+        var string = serialiseToString(result, JavaSerialiser::serialiseOrdinaryCompilationUnit);
+        assertThat(string, equalTo(
+            """
+                package example.project;
+                
+                public record Example() {
+                    public String fullName() {
+                        return "Bob";
                     }
                 }"""
         ));

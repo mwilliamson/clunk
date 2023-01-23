@@ -15,7 +15,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class PythonCodeGeneratorCallMethodTests {
     @Test
-    public void callToMethodsAreCompiledToCalls() {
+    public void callToMethodsWithExplicitReceiverAreCompiledToCallsWithExplicitReceiver() {
         var node = TypedCallMethodNode.builder()
             .receiver(Typed.localReference(
                 "x",
@@ -30,6 +30,20 @@ public class PythonCodeGeneratorCallMethodTests {
 
         var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("x.y(123)"));
+    }
+
+    @Test
+    public void callToMethodsWithImplicitReceiverAreCompiledToCallsWithExplicitSelfReceiver() {
+        var node = TypedCallMethodNode.builder()
+            .methodName("y")
+            .positionalArgs(List.of(Typed.intLiteral(123)))
+            .type(Types.INT)
+            .build();
+
+        var result = PythonCodeGenerator.compileExpression(node, PythonCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, PythonSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("self.y(123)"));
     }
 
     @Test

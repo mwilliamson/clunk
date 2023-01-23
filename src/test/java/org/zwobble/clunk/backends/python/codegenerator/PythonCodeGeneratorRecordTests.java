@@ -2,6 +2,7 @@ package org.zwobble.clunk.backends.python.codegenerator;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
+import org.zwobble.clunk.ast.typed.TypedFunctionNode;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.backends.python.serialiser.PythonSerialiser;
 import org.zwobble.clunk.types.NamespaceName;
@@ -122,6 +123,32 @@ public class PythonCodeGeneratorRecordTests {
                 @dataclasses.dataclass(frozen=True)
                 class User:
                     @property
+                    def full_name(self):
+                        return "Bob"
+                """
+        ));
+    }
+
+    @Test
+    public void functionsAreCompiledToMethods() {
+        var node = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "Example")
+            .addMethod(TypedFunctionNode.builder()
+                // Use a name that tests Pythonization of identifiers
+                .name("fullName")
+                .returnType(Typed.typeLevelString())
+                .addBodyStatement(Typed.returnStatement(Typed.string("Bob")))
+                .build()
+            )
+            .build();
+        var context = PythonCodeGeneratorContext.stub();
+
+        var result = PythonCodeGenerator.compileRecord(node, context);
+
+        var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
+        assertThat(string, equalTo(
+            """
+                @dataclasses.dataclass(frozen=True)
+                class Example:
                     def full_name(self):
                         return "Bob"
                 """

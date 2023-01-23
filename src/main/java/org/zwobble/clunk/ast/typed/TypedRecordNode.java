@@ -57,6 +57,10 @@ public record TypedRecordNode(
             return new Builder(name, type, fields, supertypes.plus(supertype), body, source);
         }
 
+        public Builder addMethod(TypedFunctionNode method) {
+            return new Builder(name, type, fields, supertypes, body.plus(method), source);
+        }
+
         public Builder addProperty(TypedPropertyNode property) {
             return new Builder(name, type, fields, supertypes, body.plus(property), source);
         }

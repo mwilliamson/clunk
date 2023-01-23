@@ -8,6 +8,13 @@ public class Lists {
     private Lists() {
     }
 
+    public static <T> List<T> concatOne(T element, List<T> list) {
+        var result = new ArrayList<T>();
+        result.add(element);
+        result.addAll(list);
+        return result;
+    }
+
     public static <T> List<T> concatOne(List<T> list, T element) {
         var result = new ArrayList<>(list);
         result.add(element);

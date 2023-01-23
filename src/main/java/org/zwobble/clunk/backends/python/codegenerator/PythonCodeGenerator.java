@@ -3,6 +3,7 @@ package org.zwobble.clunk.backends.python.codegenerator;
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.python.ast.*;
 import org.zwobble.clunk.types.*;
+import org.zwobble.clunk.util.Lists;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -261,7 +262,7 @@ public class PythonCodeGenerator {
         return new PythonFunctionNode(
             pythonizeName(node.name()),
             List.of(),
-            node.params().stream().map(param -> compileParam(param)).toList(),
+            compileParams(node.params()),
             compileFunctionStatements(node.body(), context)
         );
     }
@@ -480,6 +481,15 @@ public class PythonCodeGenerator {
         );
     }
 
+    private static PythonStatementNode compileMethod(TypedFunctionNode node, PythonCodeGeneratorContext context) {
+        return new PythonFunctionNode(
+            pythonizeName(node.name()),
+            List.of(),
+            Lists.concatOne("self", compileParams(node.params())),
+            compileFunctionStatements(node.body(), context)
+        );
+    }
+
     public static PythonModuleNode compileNamespace(TypedNamespaceNode node) {
         var context = PythonCodeGeneratorContext.initial();
         var moduleName = namespaceNameToModuleName(node.name());
@@ -548,6 +558,10 @@ public class PythonCodeGenerator {
 
     private static String compileParam(TypedParamNode node) {
         return pythonizeName(node.name());
+    }
+
+    private static List<String> compileParams(List<TypedParamNode> nodes) {
+        return nodes.stream().map(param -> compileParam(param)).toList();
     }
 
     private static PythonStatementNode compileProperty(
@@ -634,7 +648,7 @@ public class PythonCodeGenerator {
 
             @Override
             public PythonStatementNode visit(TypedFunctionNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileMethod(node, context);
             }
 
             @Override

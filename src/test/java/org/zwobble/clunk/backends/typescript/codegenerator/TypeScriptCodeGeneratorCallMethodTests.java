@@ -15,7 +15,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class TypeScriptCodeGeneratorCallMethodTests {
     @Test
-    public void callToMethodsAreCompiledToCalls() {
+    public void callToMethodsWithExplicitReceiverAreCompiledToCallsWithExplicitReceiver() {
         var node = TypedCallMethodNode.builder()
             .receiver(Typed.localReference(
                 "x",
@@ -30,6 +30,20 @@ public class TypeScriptCodeGeneratorCallMethodTests {
 
         var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("x.y(123)"));
+    }
+
+    @Test
+    public void callToMethodsWithImplicitReceiverAreCompiledToCallsWithExplicitThisReceiver() {
+        var node = TypedCallMethodNode.builder()
+            .methodName("y")
+            .positionalArgs(List.of(Typed.intLiteral(123)))
+            .type(Types.INT)
+            .build();
+
+        var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("this.y(123)"));
     }
 
     @Test

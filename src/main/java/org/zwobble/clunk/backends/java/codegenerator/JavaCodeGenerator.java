@@ -55,28 +55,31 @@ public class JavaCodeGenerator {
     }
 
     private static JavaExpressionNode compileCallMethod(TypedCallMethodNode node, JavaCodeGeneratorContext context) {
-        var receiver = node.receiver().orElseThrow();
-        var javaReceiver = compileExpression(receiver, context);
+        var receiver = node.receiver();
+        var javaReceiver = receiver.map(r -> compileExpression(r, context));
         var javaArgs = compileArgs(node.positionalArgs(), context);
 
-        var macroResult = JavaMacros.compileMethodCall(
-            receiver.type(),
-            javaReceiver,
-            node.methodName(),
-            javaArgs
-        );
-
-        if (macroResult.isPresent()) {
-            return macroResult.get();
-        } else {
-            return new JavaCallNode(
-                new JavaMemberAccessNode(
-                    javaReceiver,
-                    node.methodName()
-                ),
+        if (receiver.isPresent()) {
+            var macroResult = JavaMacros.compileMethodCall(
+                receiver.get().type(),
+                javaReceiver.get(),
+                node.methodName(),
                 javaArgs
             );
+            if (macroResult.isPresent()) {
+                return macroResult.get();
+            }
         }
+
+        return new JavaCallNode(
+            javaReceiver.isPresent()
+                ? new JavaMemberAccessNode(
+                    javaReceiver.get(),
+                    node.methodName()
+                )
+                : new JavaReferenceNode(node.methodName()),
+            javaArgs
+        );
     }
 
     private static JavaExpressionNode compileCallStaticFunction(TypedCallStaticFunctionNode node, JavaCodeGeneratorContext context) {

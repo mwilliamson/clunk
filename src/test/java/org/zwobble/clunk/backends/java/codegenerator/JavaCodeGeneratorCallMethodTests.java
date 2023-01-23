@@ -15,7 +15,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class JavaCodeGeneratorCallMethodTests {
     @Test
-    public void callToMethodsAreCompiledToCalls() {
+    public void callToMethodsWithExplicitReceiverAreCompiledToCallsWithExplicitReceiver() {
         var node = TypedCallMethodNode.builder()
             .receiver(Typed.localReference(
                 "x",
@@ -30,6 +30,20 @@ public class JavaCodeGeneratorCallMethodTests {
 
         var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("x.y(123)"));
+    }
+
+    @Test
+    public void callToMethodsWithImplicitReceiverAreCompiledToCallsWithImplicitReceiver() {
+        var node = TypedCallMethodNode.builder()
+            .methodName("y")
+            .positionalArgs(List.of(Typed.intLiteral(123)))
+            .type(Types.INT)
+            .build();
+
+        var result = JavaCodeGenerator.compileExpression(node, JavaCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("y(123)"));
     }
 
     @Test

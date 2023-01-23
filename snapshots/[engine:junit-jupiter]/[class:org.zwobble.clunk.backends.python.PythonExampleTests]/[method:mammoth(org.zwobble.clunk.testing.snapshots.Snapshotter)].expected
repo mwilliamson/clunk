@@ -157,6 +157,36 @@ record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
     property isVoid: Bool {
         return tag.isVoid;
     }
+
+    property separator: String {
+        return tag.separator;
+    }
+}
+
+record HtmlTagBuilder(tagName: String, isCollapsible: Bool, separator: String) {
+    fun collapsible() -> HtmlTagBuilder {
+        return HtmlTagBuilder(tagName, true, separator);
+    }
+
+    fun fresh() -> HtmlTagBuilder {
+        return HtmlTagBuilder(tagName, false, separator);
+    }
+
+    fun withSeparator(newSeparator: String) -> HtmlTagBuilder {
+        return HtmlTagBuilder(tagName, isCollapsible, newSeparator);
+    }
+
+    fun element(children: List[HtmlNode]) -> HtmlElement {
+        return HtmlElement(tag(), children);
+    }
+
+    fun tag() -> HtmlTag {
+        return HtmlTag([tagName], #[], isCollapsible, separator);
+    }
+}
+
+fun tagBuilder(tagName: String) -> HtmlTagBuilder {
+    return HtmlTagBuilder(tagName, false, "");
 }
 
 fun forceWrite() -> HtmlForceWrite {
@@ -275,6 +305,10 @@ fun tryCollapse(collapsed: MutableList[HtmlNode], node: HtmlNode) -> Bool {
 
     if (!node.isCollapsible || !node.tagNames.contains(last.defaultTagName)) {
         return false;
+    }
+
+    if (node.separator != "") {
+        (last.children as MutableList[HtmlNode]).add(text(node.separator));
     }
 
     for (var child in node.children) {
@@ -519,6 +553,24 @@ testSuite "collapse" {
             html.collapsibleElement("ol", #[], []),
         ]));
     }
+
+    test "when separator is present then separator is prepended to collapsed element" {
+        var nodes = [
+            html.tagBuilder("pre").fresh().element([html.text("Hello")]),
+            html.tagBuilder("pre").collapsible().withSeparator("\n").element([html.text(" the"), html.text("re")]),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.freshElement("pre", #[], [
+                html.text("Hello"),
+                html.text("\n"),
+                html.text(" the"),
+                html.text("re"),
+            ]),
+        ]));
+    }
 }
 
 
@@ -728,8 +780,35 @@ class HtmlElement:
     @property
     def is_void(self):
         return self.tag.is_void
+
+    @property
+    def separator(self):
+        return self.tag.separator
     def accept(self, visitor):
         return visitor.visit_html_element(self)
+
+@dataclasses.dataclass(frozen=True)
+class HtmlTagBuilder:
+    tag_name: str
+    is_collapsible: bool
+    separator: str
+    def collapsible(self):
+        return HtmlTagBuilder(self.tag_name, True, self.separator)
+
+    def fresh(self):
+        return HtmlTagBuilder(self.tag_name, False, self.separator)
+
+    def with_separator(self, new_separator):
+        return HtmlTagBuilder(self.tag_name, self.is_collapsible, new_separator)
+
+    def element(self, children):
+        return HtmlElement(self.tag(), children)
+
+    def tag(self):
+        return HtmlTag([self.tag_name], {}, self.is_collapsible, self.separator)
+
+def tag_builder(tag_name):
+    return HtmlTagBuilder(tag_name, False, "")
 
 def force_write():
     # TODO: support top-level variables
@@ -823,6 +902,9 @@ def try_collapse(collapsed, node):
 
     if not node.is_collapsible or not last.default_tag_name in node.tag_names:
         return False
+
+    if node.separator != "":
+        last.children.append(text(node.separator))
 
     for child in node.children:
         collapsing_add(last.children, child)
@@ -974,14 +1056,21 @@ class CollapseTests:
 
         assert_that(result, equal_to([html.HtmlElement(html.HtmlTag(["ul", "ol"], {}, True, ""), []), html.collapsible_element("ol", {}, [])]))
 
+    def test_when_separator_is_present_then_separator_is_prepended_to_collapsed_element(self):
+        nodes = [html.tag_builder("pre").fresh().element([html.text("Hello")]), html.tag_builder("pre").collapsible().with_separator("\n").element([html.text(" the"), html.text("re")])]
+
+        result = html.collapse(nodes)
+
+        assert_that(result, equal_to([html.fresh_element("pre", {}, [html.text("Hello"), html.text("\n"), html.text(" the"), html.text("re")])]))
+
 
 ==============
 
 ============================= test session starts ==============================
 rootdir: ROOTDIR, configfile: tox.ini
-collected 19 items
+collected 20 items
 
-mammoth/html_test.py ...........F.......                                 [100%]
+mammoth/html_test.py ...........F........                                [100%]
 
 =================================== FAILURES ===================================
 ___ CollapseTests.test_elements_with_different_attributes_are_not_collapsed ____
@@ -996,4 +1085,4 @@ E   but:
 E     was [HtmlElement(tag=HtmlTag(tag_names=['p'], attributes={'id': 'a'}, is_collapsible=True, separator=''), children=[HtmlText(value='One'), HtmlText(value='Two')])]
 =========================== short test summary info ============================
 FAILED mammoth/html_test.py::CollapseTests::test_elements_with_different_attributes_are_not_collapsed
-========================= 1 failed, 18 passed in TIME =========================
+========================= 1 failed, 19 passed in TIME =========================

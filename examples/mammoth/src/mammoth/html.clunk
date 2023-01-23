@@ -31,6 +31,36 @@ record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
     property isVoid: Bool {
         return tag.isVoid;
     }
+
+    property separator: String {
+        return tag.separator;
+    }
+}
+
+record HtmlTagBuilder(tagName: String, isCollapsible: Bool, separator: String) {
+    fun collapsible() -> HtmlTagBuilder {
+        return HtmlTagBuilder(tagName, true, separator);
+    }
+
+    fun fresh() -> HtmlTagBuilder {
+        return HtmlTagBuilder(tagName, false, separator);
+    }
+
+    fun withSeparator(newSeparator: String) -> HtmlTagBuilder {
+        return HtmlTagBuilder(tagName, isCollapsible, newSeparator);
+    }
+
+    fun element(children: List[HtmlNode]) -> HtmlElement {
+        return HtmlElement(tag(), children);
+    }
+
+    fun tag() -> HtmlTag {
+        return HtmlTag([tagName], #[], isCollapsible, separator);
+    }
+}
+
+fun tagBuilder(tagName: String) -> HtmlTagBuilder {
+    return HtmlTagBuilder(tagName, false, "");
 }
 
 fun forceWrite() -> HtmlForceWrite {
@@ -149,6 +179,10 @@ fun tryCollapse(collapsed: MutableList[HtmlNode], node: HtmlNode) -> Bool {
 
     if (!node.isCollapsible || !node.tagNames.contains(last.defaultTagName)) {
         return false;
+    }
+
+    if (node.separator != "") {
+        (last.children as MutableList[HtmlNode]).add(text(node.separator));
     }
 
     for (var child in node.children) {

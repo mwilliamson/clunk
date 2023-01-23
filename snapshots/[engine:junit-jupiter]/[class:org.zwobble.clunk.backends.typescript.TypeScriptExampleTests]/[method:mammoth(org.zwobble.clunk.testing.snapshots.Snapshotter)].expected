@@ -157,6 +157,36 @@ record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
     property isVoid: Bool {
         return tag.isVoid;
     }
+
+    property separator: String {
+        return tag.separator;
+    }
+}
+
+record HtmlTagBuilder(tagName: String, isCollapsible: Bool, separator: String) {
+    fun collapsible() -> HtmlTagBuilder {
+        return HtmlTagBuilder(tagName, true, separator);
+    }
+
+    fun fresh() -> HtmlTagBuilder {
+        return HtmlTagBuilder(tagName, false, separator);
+    }
+
+    fun withSeparator(newSeparator: String) -> HtmlTagBuilder {
+        return HtmlTagBuilder(tagName, isCollapsible, newSeparator);
+    }
+
+    fun element(children: List[HtmlNode]) -> HtmlElement {
+        return HtmlElement(tag(), children);
+    }
+
+    fun tag() -> HtmlTag {
+        return HtmlTag([tagName], #[], isCollapsible, separator);
+    }
+}
+
+fun tagBuilder(tagName: String) -> HtmlTagBuilder {
+    return HtmlTagBuilder(tagName, false, "");
 }
 
 fun forceWrite() -> HtmlForceWrite {
@@ -275,6 +305,10 @@ fun tryCollapse(collapsed: MutableList[HtmlNode], node: HtmlNode) -> Bool {
 
     if (!node.isCollapsible || !node.tagNames.contains(last.defaultTagName)) {
         return false;
+    }
+
+    if (node.separator != "") {
+        (last.children as MutableList[HtmlNode]).add(text(node.separator));
     }
 
     for (var child in node.children) {
@@ -517,6 +551,24 @@ testSuite "collapse" {
         assertThat(result, equalTo([
             html.HtmlElement(html.HtmlTag(["ul", "ol"], #[], true, ""), []),
             html.collapsibleElement("ol", #[], []),
+        ]));
+    }
+
+    test "when separator is present then separator is prepended to collapsed element" {
+        var nodes = [
+            html.tagBuilder("pre").fresh().element([html.text("Hello")]),
+            html.tagBuilder("pre").collapsible().withSeparator("\n").element([html.text(" the"), html.text("re")]),
+        ];
+
+        var result = html.collapse(nodes);
+
+        assertThat(result, equalTo([
+            html.freshElement("pre", #[], [
+                html.text("Hello"),
+                html.text("\n"),
+                html.text(" the"),
+                html.text("re"),
+            ]),
         ]));
     }
 }
@@ -816,6 +868,45 @@ class HtmlElement {
     get isVoid(): boolean {
         return this.tag.isVoid;
     }
+
+    get separator(): string {
+        return this.tag.separator;
+    }
+}
+
+class HtmlTagBuilder {
+    readonly tagName: string;
+    readonly isCollapsible: boolean;
+    readonly separator: string;
+
+    constructor(tagName: string, isCollapsible: boolean, separator: string) {
+        this.tagName = tagName;
+        this.isCollapsible = isCollapsible;
+        this.separator = separator;
+    }
+    collapsible(): HtmlTagBuilder {
+        return new HtmlTagBuilder(this.tagName, true, this.separator);
+    }
+
+    fresh(): HtmlTagBuilder {
+        return new HtmlTagBuilder(this.tagName, false, this.separator);
+    }
+
+    withSeparator(newSeparator: string): HtmlTagBuilder {
+        return new HtmlTagBuilder(this.tagName, this.isCollapsible, newSeparator);
+    }
+
+    element(children: ReadonlyArray<HtmlNode>): HtmlElement {
+        return new HtmlElement(this.tag(), children);
+    }
+
+    tag(): HtmlTag {
+        return new HtmlTag([this.tagName], new Map([]), this.isCollapsible, this.separator);
+    }
+}
+
+function tagBuilder(tagName: string): HtmlTagBuilder {
+    return new HtmlTagBuilder(tagName, false, "");
 }
 
 function forceWrite(): HtmlForceWrite {
@@ -935,13 +1026,17 @@ function tryCollapse(collapsed: Array<HtmlNode>, node: HtmlNode): boolean {
         return false;
     }
 
+    if (node.separator !== "") {
+        ((last.children) as Array<HtmlNode>).push(text(node.separator));
+    }
+
     for (let child of node.children) {
         collapsingAdd(((last.children) as Array<HtmlNode>), child);
     }
 
     return true;
 }
-export {HtmlElement, HtmlForceWrite, HtmlNode, HtmlTag, HtmlText, collapse, collapseNode, collapsibleElement, collapsingAdd, element, forceWrite, freshElement, stripEmpty, stripEmptyNode, text, tryCollapse};
+export {HtmlElement, HtmlForceWrite, HtmlNode, HtmlTag, HtmlTagBuilder, HtmlText, collapse, collapseNode, collapsibleElement, collapsingAdd, element, forceWrite, freshElement, stripEmpty, stripEmptyNode, tagBuilder, text, tryCollapse};
 
 
 ==============
@@ -1105,6 +1200,14 @@ suite("collapse", function () {
 
         assertThat(result, deepEqualTo([new html.HtmlElement(new html.HtmlTag(["ul", "ol"], new Map([]), true, ""), []), html.collapsibleElement("ol", new Map([]), [])]));
     });
+
+    test("when separator is present then separator is prepended to collapsed element", function () {
+        let nodes = [html.tagBuilder("pre").fresh().element([html.text("Hello")]), html.tagBuilder("pre").collapsible().withSeparator("\n").element([html.text(" the"), html.text("re")])];
+
+        let result = html.collapse(nodes);
+
+        assertThat(result, deepEqualTo([html.freshElement("pre", new Map([]), [html.text("Hello"), html.text("\n"), html.text(" the"), html.text("re")])]));
+    });
 });
 
 
@@ -1134,9 +1237,10 @@ suite("collapse", function () {
     ✔ collapsible element can collapse into previous fresh element
     ✔ consecutive elements can collapse if second element has choice of tag names including main tag name of first element
     ✔ consecutive elements cannot collapse if second element has tag name as non-main tag name of first element
+    ✔ when separator is present then separator is prepended to collapsed element
 
 
-  18 passing (TIME)
+  19 passing (TIME)
   1 failing
 
   1) collapse

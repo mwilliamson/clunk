@@ -393,36 +393,92 @@ public class TypeChecker {
         );
     }
 
+    private static class FunctionTypeChecker {
+        private final Box<StaticFunctionType> functionTypeBox = new Box<>();
+        private final Box<List<TypedParamNode>> typedParamNodesBox = new Box<>();
+        private final Box<TypedTypeLevelExpressionNode> typedReturnTypeNodeBox = new Box<>();
+        private final Box<List<TypedFunctionStatementNode>> typedBodyBox = new Box<>();
+        private final UntypedFunctionNode node;
+
+        public FunctionTypeChecker(UntypedFunctionNode node) {
+            this.node = node;
+        }
+
+        public void defineFunctionType(TypeCheckerContext context) {
+            var typedParamNodes = node.params().stream().map(param -> typeCheckParam(param, context)).toList();
+            typedParamNodesBox.set(typedParamNodes);
+            var paramTypes = typedParamNodes.stream()
+                .map(param -> typedTypeLevelExpressionToType(param.type()))
+                .toList();
+            var typedReturnTypeNode = typeCheckTypeLevelExpressionNode(node.returnType(), context);
+            typedReturnTypeNodeBox.set(typedReturnTypeNode);
+            var returnType = typedTypeLevelExpressionToType(typedReturnTypeNode);
+
+            var type = new StaticFunctionType(
+                context.namespaceName(),
+                node.name(),
+                paramTypes,
+                returnType,
+                Visibility.PUBLIC
+            );
+            functionTypeBox.set(type);
+        }
+
+        public void typeCheckBody(TypeCheckerContext context) {
+            var functionType = functionTypeBox.get();
+            var typedParamNodes = typedParamNodesBox.get();
+
+            var bodyContext = context.enterFunction(functionType.returnType());
+            for (var typedParamNode : typedParamNodes) {
+                bodyContext = bodyContext.addLocal(
+                    typedParamNode.name(),
+                    typedTypeLevelExpressionToType(typedParamNode.type()),
+                    typedParamNode.source()
+                );
+            }
+
+            var typeCheckStatementsResult = typeCheckFunctionBody(
+                node.body(),
+                node.source(),
+                bodyContext
+            );
+            typedBodyBox.set(typeCheckStatementsResult.value());
+        }
+
+        public StaticFunctionType type() {
+            return functionTypeBox.get();
+        }
+
+        public TypedFunctionNode typedNode() {
+            return new TypedFunctionNode(
+                node.name(),
+                typedParamNodesBox.get(),
+                typedReturnTypeNodeBox.get(),
+                typedBodyBox.get(),
+                node.source()
+            );
+        }
+
+        public Optional<Map.Entry<String, Type>> fieldType() {
+            return Optional.of(Map.entry(
+                node.name(),
+                functionTypeBox.get()
+            ));
+        }
+    }
+
     private static TypeCheckNamespaceStatementResult typeCheckFunction(
         UntypedFunctionNode node
     ) {
-        var functionTypeBox = new Box<StaticFunctionType>();
-        var typedParamNodesBox = new Box<List<TypedParamNode>>();
-        var typedReturnTypeNodeBox = new Box<TypedTypeLevelExpressionNode>();
-        var typedBodyBox = new Box<List<TypedFunctionStatementNode>>();
+        var functionTypeChecker = new FunctionTypeChecker(node);
 
         return new TypeCheckNamespaceStatementResult(
             List.of(
                 new PendingTypeCheck(
                     TypeCheckerPhase.DEFINE_FUNCTIONS,
                     context -> {
-                        var typedParamNodes = node.params().stream().map(param -> typeCheckParam(param, context)).toList();
-                        typedParamNodesBox.set(typedParamNodes);
-                        var paramTypes = typedParamNodes.stream()
-                            .map(param -> typedTypeLevelExpressionToType(param.type()))
-                            .toList();
-                        var typedReturnTypeNode = typeCheckTypeLevelExpressionNode(node.returnType(), context);
-                        typedReturnTypeNodeBox.set(typedReturnTypeNode);
-                        var returnType = typedTypeLevelExpressionToType(typedReturnTypeNode);
-
-                        var type = new StaticFunctionType(
-                            context.namespaceName(),
-                            node.name(),
-                            paramTypes,
-                            returnType,
-                            Visibility.PUBLIC
-                        );
-                        functionTypeBox.set(type);
+                        functionTypeChecker.defineFunctionType(context);
+                        var type = functionTypeChecker.type();
                         return context.addLocal(node.name(), type, node.source());
                     }
                 ),
@@ -430,40 +486,13 @@ public class TypeChecker {
                 new PendingTypeCheck(
                     TypeCheckerPhase.TYPE_CHECK_BODIES,
                     context -> {
-                        var functionType = functionTypeBox.get();
-                        var typedParamNodes = typedParamNodesBox.get();
-
-                        var bodyContext = context.enterFunction(functionType.returnType());
-                        for (var typedParamNode : typedParamNodes) {
-                            bodyContext = bodyContext.addLocal(
-                                typedParamNode.name(),
-                                typedTypeLevelExpressionToType(typedParamNode.type()),
-                                typedParamNode.source()
-                            );
-                        }
-
-                        var typeCheckStatementsResult = typeCheckFunctionBody(
-                            node.body(),
-                            node.source(),
-                            bodyContext
-                        );
-                        typedBodyBox.set(typeCheckStatementsResult.value());
-
+                        functionTypeChecker.typeCheckBody(context);
                         return context;
                     }
                 )
             ),
-            () -> new TypedFunctionNode(
-                node.name(),
-                typedParamNodesBox.get(),
-                typedReturnTypeNodeBox.get(),
-                typedBodyBox.get(),
-                node.source()
-            ),
-            () -> Optional.of(Map.entry(
-                node.name(),
-                functionTypeBox.get()
-            ))
+            () -> functionTypeChecker.typedNode(),
+            () -> functionTypeChecker.fieldType()
         );
     }
 

@@ -394,7 +394,7 @@ public class TypeChecker {
     }
 
     private static class FunctionTypeChecker {
-        private final Box<StaticFunctionType> functionTypeBox = new Box<>();
+        private final Box<FunctionType> functionTypeBox = new Box<>();
         private final Box<List<TypedParamNode>> typedParamNodesBox = new Box<>();
         private final Box<TypedTypeLevelExpressionNode> typedReturnTypeNodeBox = new Box<>();
         private final Box<List<TypedFunctionStatementNode>> typedBodyBox = new Box<>();
@@ -414,14 +414,7 @@ public class TypeChecker {
             typedReturnTypeNodeBox.set(typedReturnTypeNode);
             var returnType = typedTypeLevelExpressionToType(typedReturnTypeNode);
 
-            var type = new StaticFunctionType(
-                context.namespaceName(),
-                node.name(),
-                paramTypes,
-                returnType,
-                Visibility.PUBLIC
-            );
-            functionTypeBox.set(type);
+            functionTypeBox.set(new FunctionType(paramTypes, returnType));
         }
 
         public void typeCheckBody(TypeCheckerContext context) {
@@ -445,7 +438,7 @@ public class TypeChecker {
             typedBodyBox.set(typeCheckStatementsResult.value());
         }
 
-        public StaticFunctionType type() {
+        public FunctionType type() {
             return functionTypeBox.get();
         }
 
@@ -458,19 +451,13 @@ public class TypeChecker {
                 node.source()
             );
         }
-
-        public Optional<Map.Entry<String, Type>> fieldType() {
-            return Optional.of(Map.entry(
-                node.name(),
-                functionTypeBox.get()
-            ));
-        }
     }
 
     private static TypeCheckNamespaceStatementResult typeCheckFunction(
         UntypedFunctionNode node
     ) {
         var functionTypeChecker = new FunctionTypeChecker(node);
+        var typeBox = new Box<StaticFunctionType>();
 
         return new TypeCheckNamespaceStatementResult(
             List.of(
@@ -478,7 +465,15 @@ public class TypeChecker {
                     TypeCheckerPhase.DEFINE_FUNCTIONS,
                     context -> {
                         functionTypeChecker.defineFunctionType(context);
-                        var type = functionTypeChecker.type();
+                        var functionType = functionTypeChecker.type();
+                        var type = new StaticFunctionType(
+                            context.namespaceName(),
+                            node.name(),
+                            functionType.positionalParams(),
+                            functionType.returnType(),
+                            Visibility.PUBLIC
+                        );
+                        typeBox.set(type);
                         return context.addLocal(node.name(), type, node.source());
                     }
                 ),
@@ -492,7 +487,10 @@ public class TypeChecker {
                 )
             ),
             () -> functionTypeChecker.typedNode(),
-            () -> functionTypeChecker.fieldType()
+            () -> Optional.of(Map.entry(
+                node.name(),
+                typeBox.get()
+            ))
         );
     }
 
@@ -872,11 +870,17 @@ public class TypeChecker {
         var functionTypeChecker = new FunctionTypeChecker(node);
         functionTypeChecker.defineFunctionType(context);
 
-        var memberTypes = functionTypeChecker.fieldType().isPresent()
-            ? Map.ofEntries(functionTypeChecker.fieldType().get())
-            : Map.<String, Type>of();
+        var functionType = functionTypeChecker.type();
+        var type = new MethodType(
+            context.namespaceName(),
+            Optional.empty(),
+            functionType.positionalParams(),
+            functionType.returnType(),
+            Visibility.PUBLIC
+        );
+
         return new TypeCheckRecordBodyDeclarationResult(
-            memberTypes,
+            Map.ofEntries(Map.entry(node.name(), type)),
             bodyContext -> {
                 functionTypeChecker.typeCheckBody(bodyContext);
                 return functionTypeChecker.typedNode();

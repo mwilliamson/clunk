@@ -42,6 +42,26 @@ public class TypeCheckCallTests {
     }
 
     @Test
+    public void canTypeCheckCallToMethodWithImplicitReceiver() {
+        var untypedNode = Untyped.call(
+            Untyped.reference("y"),
+            List.of(Untyped.intLiteral(123))
+        );
+        var namespaceName = NamespaceName.fromParts("example");
+        var context = TypeCheckerContext.stub()
+            .enterRecordBody(Map.of("y", Types.methodType(namespaceName, List.of(Types.INT), Types.INT)));
+
+        var result = TypeChecker.typeCheckExpression(untypedNode, context);
+
+        assertThat(result, isTypedCallMethodNode()
+            .withImplicitReceiver()
+            .withMethodName("y")
+            .withPositionalArgs(contains(isTypedIntLiteralNode(123)))
+            .withType(Types.INT)
+        );
+    }
+
+    @Test
     public void canTypeCheckCallWithExplicitTypeArgsToMethodWithTypeParams() {
         var untypedNode = Untyped.call(
             Untyped.memberAccess(

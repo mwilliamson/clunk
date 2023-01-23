@@ -2,6 +2,7 @@ package org.zwobble.clunk.typechecker;
 
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.ast.untyped.*;
+import org.zwobble.clunk.errors.InternalCompilerError;
 import org.zwobble.clunk.errors.SourceError;
 import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.types.*;
@@ -100,14 +101,26 @@ public class TypeChecker {
                 node.source()
             );
             case MethodType ignored -> {
-                var memberAccess = (TypedMemberAccessNode) receiver;
-                yield new TypedCallMethodNode(
-                    Optional.of(memberAccess.receiver()),
-                    memberAccess.memberName(),
-                    typedPositionalArgs,
-                    signatureNonGeneric.returnType(),
-                    node.source()
-                );
+                if (receiver instanceof TypedMemberAccessNode memberAccess) {
+                    yield new TypedCallMethodNode(
+                        Optional.of(memberAccess.receiver()),
+                        memberAccess.memberName(),
+                        typedPositionalArgs,
+                        signatureNonGeneric.returnType(),
+                        node.source()
+                    );
+                } else if (receiver instanceof TypedMemberReferenceNode memberReference) {
+                    yield new TypedCallMethodNode(
+                        Optional.empty(),
+                        memberReference.name(),
+                        typedPositionalArgs,
+                        signatureNonGeneric.returnType(),
+                        node.source()
+                    );
+                } else {
+                    throw new InternalCompilerError("unexpected receiver for method");
+                }
+
             }
             case StaticFunctionType staticFunctionType -> new TypedCallStaticFunctionNode(
                 receiver,

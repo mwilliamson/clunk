@@ -869,23 +869,17 @@ public class TypeChecker {
         UntypedFunctionNode node,
         TypeCheckerContext context
     ) {
-        // TODO: fix duplication of knowledge of phases.
-        //  split function type checking into explicit components?
-        //  change record type checking to match phases?
-        var result = typeCheckFunction(node);
-        context = result.typeCheckPhase(TypeCheckerPhase.DEFINE_TYPES, context);
-        context = result.typeCheckPhase(TypeCheckerPhase.DEFINE_FUNCTIONS, context);
-        context = result.typeCheckPhase(TypeCheckerPhase.GENERATE_TYPE_INFO, context);
+        var functionTypeChecker = new FunctionTypeChecker(node);
+        functionTypeChecker.defineFunctionType(context);
 
-        var memberTypes = result.fieldType().isPresent()
-            ? Map.ofEntries(result.fieldType().get())
+        var memberTypes = functionTypeChecker.fieldType().isPresent()
+            ? Map.ofEntries(functionTypeChecker.fieldType().get())
             : Map.<String, Type>of();
         return new TypeCheckRecordBodyDeclarationResult(
             memberTypes,
             bodyContext -> {
-                bodyContext = result.typeCheckPhase(TypeCheckerPhase.TYPE_CHECK_BODIES, bodyContext);
-                // TODO: remove cast
-                return (TypedFunctionNode) result.value();
+                functionTypeChecker.typeCheckBody(bodyContext);
+                return functionTypeChecker.typedNode();
             },
             node.source()
         );

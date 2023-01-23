@@ -6,10 +6,12 @@ import org.zwobble.clunk.types.Type;
 import org.zwobble.clunk.util.Lists;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.clunk.matchers.OptionalMatcher.present;
 
 public class TypedCallMethodNodeMatcher extends CastMatcher<Object, TypedCallMethodNode> {
     private final List<Matcher<? super TypedCallMethodNode>> matchers;
@@ -20,7 +22,11 @@ public class TypedCallMethodNodeMatcher extends CastMatcher<Object, TypedCallMet
     }
 
     public TypedCallMethodNodeMatcher withReceiver(Matcher<? super TypedExpressionNode> receiver) {
-        return addMatcher(has("receiver", receiver));
+        return addMatcher(has("receiver", present(receiver)));
+    }
+
+    public TypedCallMethodNodeMatcher withImplicitReceiver() {
+        return addMatcher(has("receiver", equalTo(Optional.empty())));
     }
 
     public TypedCallMethodNodeMatcher withMethodName(String methodName) {

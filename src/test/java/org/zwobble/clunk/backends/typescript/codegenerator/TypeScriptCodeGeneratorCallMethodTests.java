@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedCallMethodNode;
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiserTesting;
-import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.Types;
 
@@ -17,16 +16,15 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class TypeScriptCodeGeneratorCallMethodTests {
     @Test
     public void callToMethodsAreCompiledToCalls() {
-        var node = new TypedCallMethodNode(
-            Typed.localReference(
+        var node = TypedCallMethodNode.builder()
+            .receiver(Typed.localReference(
                 "x",
                 Types.recordType(NamespaceName.fromParts("example"), "X")
-            ),
-            "y",
-            List.of(Typed.intLiteral(123)),
-            Types.INT,
-            NullSource.INSTANCE
-        );
+            ))
+            .methodName("y")
+            .positionalArgs(List.of(Typed.intLiteral(123)))
+            .type(Types.INT)
+            .build();
 
         var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
 
@@ -36,16 +34,15 @@ public class TypeScriptCodeGeneratorCallMethodTests {
 
     @Test
     public void stringBuilderAppendIsCompiledToArrayPush() {
-        var node = new TypedCallMethodNode(
-            Typed.localReference(
+        var node = TypedCallMethodNode.builder()
+            .receiver(Typed.localReference(
                 "builder",
                 Types.STRING_BUILDER
-            ),
-            "append",
-            List.of(Typed.string("hello")),
-            Types.INT,
-            NullSource.INSTANCE
-        );
+            ))
+            .methodName("append")
+            .positionalArgs(List.of(Typed.string("hello")))
+            .type(Types.INT)
+            .build();
 
         var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
 
@@ -55,16 +52,15 @@ public class TypeScriptCodeGeneratorCallMethodTests {
 
     @Test
     public void stringBuilderBuildIsCompiledToArrayJoin() {
-        var node = new TypedCallMethodNode(
-            Typed.localReference(
+        var node = TypedCallMethodNode.builder()
+            .receiver(Typed.localReference(
                 "builder",
                 Types.STRING_BUILDER
-            ),
-            "build",
-            List.of(),
-            Types.UNIT,
-            NullSource.INSTANCE
-        );
+            ))
+            .methodName("build")
+            .positionalArgs(List.of())
+            .type(Types.UNIT)
+            .build();
 
         var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
 

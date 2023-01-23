@@ -55,11 +55,12 @@ public class JavaCodeGenerator {
     }
 
     private static JavaExpressionNode compileCallMethod(TypedCallMethodNode node, JavaCodeGeneratorContext context) {
-        var javaReceiver = compileExpression(node.receiver(), context);
+        var receiver = node.receiver().orElseThrow();
+        var javaReceiver = compileExpression(receiver, context);
         var javaArgs = compileArgs(node.positionalArgs(), context);
 
         var macroResult = JavaMacros.compileMethodCall(
-            node.receiver().type(),
+            receiver.type(),
             javaReceiver,
             node.methodName(),
             javaArgs

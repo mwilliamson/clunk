@@ -45,7 +45,7 @@ public class Typed {
         Type type
     ) {
         return new TypedCallMethodNode(
-            receiver,
+            Optional.of(receiver),
             methodName,
             args,
             type,

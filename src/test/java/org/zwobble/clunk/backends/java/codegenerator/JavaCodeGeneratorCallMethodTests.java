@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedCallMethodNode;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiserTesting;
-import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.Types;
 
@@ -17,16 +16,15 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class JavaCodeGeneratorCallMethodTests {
     @Test
     public void callToMethodsAreCompiledToCalls() {
-        var node = new TypedCallMethodNode(
-            Typed.localReference(
+        var node = TypedCallMethodNode.builder()
+            .receiver(Typed.localReference(
                 "x",
                 Types.recordType(NamespaceName.fromParts("example"), "X")
-            ),
-            "y",
-            List.of(Typed.intLiteral(123)),
-            Types.INT,
-            NullSource.INSTANCE
-        );
+            ))
+            .methodName("y")
+            .positionalArgs(List.of(Typed.intLiteral(123)))
+            .type(Types.INT)
+            .build();
 
         var result = JavaCodeGenerator.compileExpression(node, JavaCodeGeneratorContext.stub());
 

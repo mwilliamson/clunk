@@ -50,18 +50,19 @@ public class TypeScriptCodeGenerator {
     }
 
     private static TypeScriptExpressionNode compileCallMethod(TypedCallMethodNode node, TypeScriptCodeGeneratorContext context) {
-        var macro = TypeScriptMacros.lookupClassMacro(node.receiver().type());
+        var receiver = node.receiver().orElseThrow();
+        var macro = TypeScriptMacros.lookupClassMacro(receiver.type());
 
         if (macro.isPresent()) {
             return macro.get().compileMethodCall(
-                compileExpression(node.receiver(), context),
+                compileExpression(receiver, context),
                 node.methodName(),
                 compileArgs(node.positionalArgs(), context)
             );
         } else {
             return new TypeScriptCallNode(
                 new TypeScriptPropertyAccessNode(
-                    compileExpression(node.receiver(), context),
+                    compileExpression(receiver, context),
                     node.methodName()
                 ),
                 compileArgs(node.positionalArgs(), context)

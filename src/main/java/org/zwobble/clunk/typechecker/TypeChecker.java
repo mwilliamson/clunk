@@ -102,7 +102,7 @@ public class TypeChecker {
             case MethodType ignored -> {
                 var memberAccess = (TypedMemberAccessNode) receiver;
                 yield new TypedCallMethodNode(
-                    memberAccess.receiver(),
+                    Optional.of(memberAccess.receiver()),
                     memberAccess.memberName(),
                     typedPositionalArgs,
                     signatureNonGeneric.returnType(),

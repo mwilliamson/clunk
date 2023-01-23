@@ -46,9 +46,10 @@ public class PythonCodeGenerator {
     }
 
     private static PythonExpressionNode compileCallMethod(TypedCallMethodNode node, PythonCodeGeneratorContext context) {
-        var classMacro = PythonMacros.lookupClassMacro(node.receiver().type());
+        var receiver = node.receiver().orElseThrow();
+        var classMacro = PythonMacros.lookupClassMacro(receiver.type());
         if (classMacro.isPresent()) {
-            var pythonReceiver = compileExpression(node.receiver(), context);
+            var pythonReceiver = compileExpression(receiver, context);
             return classMacro.get().compileMethodCall(
                 pythonReceiver,
                 node.methodName(),
@@ -58,7 +59,7 @@ public class PythonCodeGenerator {
 
         return new PythonCallNode(
             new PythonAttrAccessNode(
-                compileExpression(node.receiver(), context),
+                compileExpression(receiver, context),
                 pythonizeName(node.methodName())
             ),
             compileArgs(node.positionalArgs(), context),

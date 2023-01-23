@@ -6,7 +6,6 @@ import org.zwobble.clunk.ast.typed.TypedCallMethodNode;
 import org.zwobble.clunk.backends.typescript.codegenerator.TypeScriptCodeGenerator;
 import org.zwobble.clunk.backends.typescript.codegenerator.TypeScriptCodeGeneratorContext;
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiserTesting;
-import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
@@ -35,16 +34,15 @@ public class TypeScriptStringBuilderMacroTests {
 
     @Test
     public void stringBuilderAppendIsCompiledToArrayPush() {
-        var node = new TypedCallMethodNode(
-            Typed.localReference(
+        var node = TypedCallMethodNode.builder()
+            .receiver(Typed.localReference(
                 "builder",
                 Types.STRING_BUILDER
-            ),
-            "append",
-            List.of(Typed.string("hello")),
-            Types.INT,
-            NullSource.INSTANCE
-        );
+            ))
+            .methodName("append")
+            .positionalArgs(List.of(Typed.string("hello")))
+            .type(Types.INT)
+            .build();
 
         var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
 
@@ -54,16 +52,15 @@ public class TypeScriptStringBuilderMacroTests {
 
     @Test
     public void stringBuilderBuildIsCompiledToArrayJoin() {
-        var node = new TypedCallMethodNode(
-            Typed.localReference(
+        var node = TypedCallMethodNode.builder()
+            .receiver(Typed.localReference(
                 "builder",
                 Types.STRING_BUILDER
-            ),
-            "build",
-            List.of(),
-            Types.UNIT,
-            NullSource.INSTANCE
-        );
+            ))
+            .methodName("build")
+            .positionalArgs(List.of())
+            .type(Types.UNIT)
+            .build();
 
         var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
 

@@ -17,7 +17,7 @@ import static org.zwobble.clunk.matchers.OptionalMatcher.present;
 
 public class TypeCheckCallTests {
     @Test
-    public void canTypeCheckCallToMethodWithoutTypeParams() {
+    public void canTypeCheckCallToMethodWithExplicitReceiver() {
         var untypedNode = Untyped.call(
             Untyped.memberAccess(
                 Untyped.reference("x"),

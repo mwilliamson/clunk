@@ -6,7 +6,6 @@ import org.zwobble.clunk.ast.typed.TypedCallMethodNode;
 import org.zwobble.clunk.backends.python.codegenerator.PythonCodeGenerator;
 import org.zwobble.clunk.backends.python.codegenerator.PythonCodeGeneratorContext;
 import org.zwobble.clunk.backends.python.serialiser.PythonSerialiserTesting;
-import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
@@ -35,16 +34,15 @@ public class PythonStringBuilderMacroTests {
 
     @Test
     public void stringBuilderAppendIsCompiledToListAppend() {
-        var node = new TypedCallMethodNode(
-            Typed.localReference(
+        var node = TypedCallMethodNode.builder()
+            .receiver(Typed.localReference(
                 "builder",
                 Types.STRING_BUILDER
-            ),
-            "append",
-            List.of(Typed.string("hello")),
-            Types.INT,
-            NullSource.INSTANCE
-        );
+            ))
+            .methodName("append")
+            .positionalArgs(List.of(Typed.string("hello")))
+            .type(Types.INT)
+            .build();
 
         var result = PythonCodeGenerator.compileExpression(node, PythonCodeGeneratorContext.stub());
 
@@ -54,16 +52,15 @@ public class PythonStringBuilderMacroTests {
 
     @Test
     public void stringBuilderBuildIsCompiledToStringJoin() {
-        var node = new TypedCallMethodNode(
-            Typed.localReference(
+        var node = TypedCallMethodNode.builder()
+            .receiver(Typed.localReference(
                 "builder",
                 Types.STRING_BUILDER
-            ),
-            "build",
-            List.of(),
-            Types.UNIT,
-            NullSource.INSTANCE
-        );
+            ))
+            .methodName("build")
+            .positionalArgs(List.of())
+            .type(Types.UNIT)
+            .build();
 
         var result = PythonCodeGenerator.compileExpression(node, PythonCodeGeneratorContext.stub());
 

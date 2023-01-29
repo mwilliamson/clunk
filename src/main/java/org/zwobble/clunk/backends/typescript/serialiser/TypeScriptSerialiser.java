@@ -314,6 +314,12 @@ public class TypeScriptSerialiser {
             }
 
             @Override
+            public Void visit(TypeScriptNonNullAssertionNode node) {
+                serialiseNonNullAssertion(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(TypeScriptUnionNode node) {
                 serialiseUnion(node, builder);
                 return null;
@@ -446,6 +452,14 @@ public class TypeScriptSerialiser {
         serialiseExpression(node.returnType(), builder, Optional.empty());
         serialiseBlock(node.body(), builder);
         builder.newLine();
+    }
+
+    private static void serialiseNonNullAssertion(
+        TypeScriptNonNullAssertionNode node,
+        CodeBuilder builder
+    ) {
+        serialiseExpression(node.operand(), builder, Optional.of(node));
+        builder.append("!");
     }
 
     private static void serialiseNumberLiteral(TypeScriptNumberLiteralNode node, CodeBuilder builder) {

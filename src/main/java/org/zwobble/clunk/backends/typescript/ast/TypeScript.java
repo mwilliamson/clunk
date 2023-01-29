@@ -149,6 +149,10 @@ public class TypeScript {
         return new TypeScriptModuleNode(name, statements);
     }
 
+    public static TypeScriptNonNullAssertionNode notNullAssertion(TypeScriptExpressionNode operand) {
+        return new TypeScriptNonNullAssertionNode(operand);
+    }
+
     public static TypeScriptExpressionNode numberLiteral(double value) {
         return new TypeScriptNumberLiteralNode(value);
     }

@@ -222,6 +222,11 @@ public class TypeScriptCodeGenerator {
             public TypeScriptExpressionNode visit(TypedStringNotEqualNode node) {
                 return compileStringNotEqual(node, context);
             }
+
+            @Override
+            public TypeScriptExpressionNode visit(TypedStructuredEqualsNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
         });
     }
 

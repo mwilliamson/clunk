@@ -234,6 +234,11 @@ public class JavaCodeGenerator {
             public JavaExpressionNode visit(TypedStringNotEqualNode node) {
                 return compileStringNotEqual(node, context);
             }
+
+            @Override
+            public JavaExpressionNode visit(TypedStructuredEqualsNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
         });
     }
 

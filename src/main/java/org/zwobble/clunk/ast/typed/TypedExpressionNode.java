@@ -30,5 +30,6 @@ public interface TypedExpressionNode extends TypedNode {
         T visit(TypedStringEqualsNode node);
         T visit(TypedStringLiteralNode node);
         T visit(TypedStringNotEqualNode node);
+        T visit(TypedStructuredEqualsNode node);
     }
 }

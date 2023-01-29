@@ -237,7 +237,7 @@ public class JavaCodeGenerator {
 
             @Override
             public JavaExpressionNode visit(TypedStructuredEqualsNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileStructuredEquals(node, context);
             }
         });
     }
@@ -802,6 +802,19 @@ public class JavaCodeGenerator {
             ),
             List.of(compileExpression(node.right(), context))
         ));
+    }
+
+    private static JavaExpressionNode compileStructuredEquals(
+        TypedStructuredEqualsNode node,
+        JavaCodeGeneratorContext context
+    ) {
+        return new JavaCallNode(
+            new JavaMemberAccessNode(
+                compileExpression(node.left(), context),
+                "equals"
+            ),
+            List.of(compileExpression(node.right(), context))
+        );
     }
 
     private static JavaStatementNode compileSwitch(

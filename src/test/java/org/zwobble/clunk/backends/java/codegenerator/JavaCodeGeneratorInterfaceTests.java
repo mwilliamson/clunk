@@ -42,4 +42,27 @@ public class JavaCodeGeneratorInterfaceTests {
                 """
         ));
     }
+
+    @Test
+    public void unsealedInterfaceIsCompiledToUnsealedInterface() {
+        var interfaceType = Types.unsealedInterfaceType(NamespaceName.fromParts("one", "two"), "X");
+        var node = Typed.interface_("X", interfaceType);
+        var subtypeLookup = SubtypeRelations.EMPTY;
+        var context = new JavaCodeGeneratorContext(JavaTargetConfig.stub(), subtypeLookup);
+
+        var result = JavaCodeGenerator.compileInterface(
+            node,
+            context
+        );
+
+        var string = serialiseToString(result, JavaSerialiser::serialiseOrdinaryCompilationUnit);
+        assertThat(string, equalTo(
+            """
+                package one.two;
+                
+                public interface X {
+                }
+                """
+        ));
+    }
 }

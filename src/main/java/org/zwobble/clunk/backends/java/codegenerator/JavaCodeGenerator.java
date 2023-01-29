@@ -359,6 +359,14 @@ public class JavaCodeGenerator {
         TypedInterfaceNode node,
         JavaCodeGeneratorContext context
     ) {
+        if (node.type().isSealed()) {
+            return compiledInterfaceSealed(node, context);
+        } else {
+            return compileInterfaceUnsealed(node, context);
+        }
+    }
+
+    private static JavaOrdinaryCompilationUnitNode compiledInterfaceSealed(TypedInterfaceNode node, JavaCodeGeneratorContext context) {
         var permits = context.sealedInterfaceCases(node.type()).stream()
             .map(subtype -> new JavaTypeVariableReferenceNode(subtype.name()))
             .toList();
@@ -408,6 +416,19 @@ public class JavaCodeGenerator {
                 node.name(),
                 Optional.of(permits),
                 List.of(acceptDeclaration, visitorDeclaration)
+            )
+        );
+    }
+
+    private static JavaOrdinaryCompilationUnitNode compileInterfaceUnsealed(TypedInterfaceNode node, JavaCodeGeneratorContext context) {
+        return new JavaOrdinaryCompilationUnitNode(
+            namespaceToPackage(node.type().namespaceName(), context),
+            List.of(),
+            new JavaInterfaceDeclarationNode(
+                List.of(),
+                node.name(),
+                Optional.empty(),
+                List.of()
             )
         );
     }

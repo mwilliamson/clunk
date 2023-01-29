@@ -182,7 +182,7 @@ public class Types {
     }
 
     public static boolean isSealedInterfaceType(Type type) {
-        return type instanceof InterfaceType;
+        return type instanceof InterfaceType interfaceType && interfaceType.isSealed();
     }
 
     public static StructuredType construct(TypeConstructor constructor, List<? extends Type> args) {

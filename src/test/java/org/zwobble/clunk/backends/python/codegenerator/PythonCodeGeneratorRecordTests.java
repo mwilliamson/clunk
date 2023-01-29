@@ -80,6 +80,28 @@ public class PythonCodeGeneratorRecordTests {
     }
 
     @Test
+    public void whenRecordIsSubtypeOfUnsealedInterfaceThenNoAcceptMethodIsGenerated() {
+        var node = TypedRecordNode.builder("ExampleRecord")
+            .addField(Typed.recordField("first", Typed.typeLevelString()))
+            .addField(Typed.recordField("second", Typed.typeLevelInt()))
+            .addSupertype(Typed.typeLevelReference("Supertype", Types.unsealedInterfaceType(NamespaceName.fromParts(), "Supertype")))
+            .build();
+        var context = PythonCodeGeneratorContext.stub();
+
+        var result = PythonCodeGenerator.compileRecord(node, context);
+
+        var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
+        assertThat(string, equalTo(
+            """
+                @dataclasses.dataclass(frozen=True)
+                class ExampleRecord:
+                    first: str
+                    second: int
+                """
+        ));
+    }
+
+    @Test
     public void propertiesAreCompiledToProperties() {
         var node = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "Example")
             .addProperty(Typed.property(

@@ -394,6 +394,14 @@ public class TypeScriptCodeGenerator {
         TypedInterfaceNode node,
         TypeScriptCodeGeneratorContext context
     ) {
+        if (node.type().isSealed()) {
+            return compileInterfaceSealed(node, context);
+        } else {
+            return compileInterfaceUnsealed(node, context);
+        }
+    }
+
+    private static TypeScriptTypeDeclarationNode compileInterfaceSealed(TypedInterfaceNode node, TypeScriptCodeGeneratorContext context) {
         return new TypeScriptTypeDeclarationNode(
             node.name(),
             new TypeScriptUnionNode(
@@ -401,6 +409,13 @@ public class TypeScriptCodeGenerator {
                     .map(subtype -> new TypeScriptReferenceNode(subtype.name()))
                     .toList()
             )
+        );
+    }
+
+    private static TypeScriptStatementNode compileInterfaceUnsealed(TypedInterfaceNode node, TypeScriptCodeGeneratorContext context) {
+        return new TypeScriptInterfaceDeclarationNode(
+            node.name(),
+            List.of()
         );
     }
 

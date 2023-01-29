@@ -33,4 +33,25 @@ public class TypeScriptCodeGeneratorInterfaceTests {
             """
         ));
     }
+
+    @Test
+    public void unsealedInterfaceIsCompiledToInterface() {
+        var interfaceType = Types.unsealedInterfaceType(NamespaceName.fromParts("one", "two"), "X");
+        var node = Typed.interface_("X", interfaceType);
+        var subtypeLookup = SubtypeRelations.EMPTY;
+        var context = new TypeScriptCodeGeneratorContext(subtypeLookup);
+
+        var result = TypeScriptCodeGenerator.compileNamespaceStatement(
+            node,
+            context
+        );
+
+        var string = serialiseToString(result, TypeScriptSerialiser::serialiseStatement);
+        assertThat(string, equalTo(
+            """
+            interface X {
+            }
+            """
+        ));
+    }
 }

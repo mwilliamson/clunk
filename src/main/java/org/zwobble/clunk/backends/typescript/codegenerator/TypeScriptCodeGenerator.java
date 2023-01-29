@@ -225,7 +225,7 @@ public class TypeScriptCodeGenerator {
 
             @Override
             public TypeScriptExpressionNode visit(TypedStructuredEqualsNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileStructuredEquals(node, context);
             }
         });
     }
@@ -690,6 +690,21 @@ public class TypeScriptCodeGenerator {
         return new TypeScriptStrictNotEqualNode(
             compileExpression(node.left(), context),
             compileExpression(node.right(), context)
+        );
+    }
+
+    private static TypeScriptExpressionNode compileStructuredEquals(
+        TypedStructuredEqualsNode node,
+        TypeScriptCodeGeneratorContext context
+    ) {
+        context.addImport("lodash", "isEqual", "lodash_isEqual");
+
+        return new TypeScriptCallNode(
+            new TypeScriptReferenceNode("lodash_isEqual"),
+            List.of(
+                compileExpression(node.left(), context),
+                compileExpression(node.right(), context)
+            )
         );
     }
 

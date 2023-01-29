@@ -664,7 +664,12 @@ public class Parser {
 
         List<UntypedTypeLevelExpressionNode> supertypes;
         if (tokens.trySkip(TokenType.SYMBOL_SUBTYPE)) {
-            supertypes = List.of(parseTypeLevelExpression(tokens));
+            // TODO: at the time of writing, the only instance of parseOneOrMore,
+            // meaning inconsistent parsing rules. Make consistent with other repeated terms?
+            supertypes = parseOneOrMore(
+                () -> parseTypeLevelExpression(tokens),
+                () -> tokens.trySkip(TokenType.SYMBOL_COMMA)
+            );
         } else {
             supertypes = List.of();
         }
@@ -850,6 +855,18 @@ public class Parser {
                 return values;
             }
 
+            var element = parseElement.get();
+            values.add(element);
+            if (!parseSeparator.getAsBoolean()) {
+                return values;
+            }
+        }
+    }
+
+    private <T> List<T> parseOneOrMore(Supplier<T> parseElement, BooleanSupplier parseSeparator) {
+        var values = new ArrayList<T>();
+
+        while (true) {
             var element = parseElement.get();
             values.add(element);
             if (!parseSeparator.getAsBoolean()) {

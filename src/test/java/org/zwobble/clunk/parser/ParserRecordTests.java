@@ -77,6 +77,18 @@ public class ParserRecordTests {
     }
 
     @Test
+    public void canParseMultipleSupertypes() {
+        var source = "record User() <: Person, Principal";
+
+        var node = parseString(source, Parser::parseNamespaceStatement);
+
+        assertThat(node, isUntypedRecordNode().withSupertypes(contains(
+            isUntypedTypeLevelReferenceNode("Person"),
+            isUntypedTypeLevelReferenceNode("Principal")
+        )));
+    }
+
+    @Test
     public void canParseSingleMethod() {
         var source = """
             record User() {

@@ -70,6 +70,33 @@ public class TypeScriptCodeGeneratorRecordTests {
     }
 
     @Test
+    public void whenRecordIsSubtypeOfUnsealedInterfaceThenNoDiscriminatorIsGenerated() {
+        var node = TypedRecordNode.builder("Example")
+            .addField(Typed.recordField("first", Typed.typeLevelString()))
+            .addField(Typed.recordField("second", Typed.typeLevelInt()))
+            .addSupertype(Typed.typeLevelReference("Supertype", Types.unsealedInterfaceType(NamespaceName.fromParts(), "Supertype")))
+            .build();
+        var context = TypeScriptCodeGeneratorContext.stub();
+
+        var result = TypeScriptCodeGenerator.compileNamespaceStatement(node, context);
+
+        var string = serialiseToString(result, TypeScriptSerialiser::serialiseStatement);
+        assertThat(string, equalTo(
+            """
+                class Example {
+                    readonly first: string;
+                    readonly second: number;
+                    
+                    constructor(first: string, second: number) {
+                        this.first = first;
+                        this.second = second;
+                    }
+                }
+                """
+        ));
+    }
+
+    @Test
     public void propertiesAreCompiledToGetters() {
         var node = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "Example")
             .addProperty(Typed.property(

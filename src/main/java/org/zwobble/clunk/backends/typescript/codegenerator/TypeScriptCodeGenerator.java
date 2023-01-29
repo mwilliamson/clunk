@@ -613,7 +613,7 @@ public class TypeScriptCodeGenerator {
         var fields = new ArrayList<TypeScriptClassFieldNode>();
 
         var supertypes = node.supertypes();
-        if (!supertypes.isEmpty()) {
+        if (supertypes.stream().anyMatch(supertype -> Types.isSealedInterfaceType((Type) supertype.value()))) {
             fields.add(new TypeScriptClassFieldNode(
                 "type",
                 new TypeScriptStringLiteralNode(node.name()),

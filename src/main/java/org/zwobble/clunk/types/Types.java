@@ -80,6 +80,10 @@ public class Types {
         return new InterfaceType(namespaceName, name, false);
     }
 
+    public static InterfaceType unsealedInterfaceType(NamespaceName namespaceName, String name) {
+        return new InterfaceType(namespaceName, name, false);
+    }
+
     public static ConstructorType constructorType(
         List<TypeParameter> typeLevelParams,
         List<Type> positionalParams,

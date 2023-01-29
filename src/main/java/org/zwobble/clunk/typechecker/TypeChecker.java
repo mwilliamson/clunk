@@ -1098,7 +1098,7 @@ public class TypeChecker {
                                 var typedSupertypeNode = typeCheckTypeLevelExpressionNode(untypedSupertypeNode, context);
                                 // TODO: handle non-type type-level values
                                 if (typedSupertypeNode.value() instanceof InterfaceType supertype) {
-                                    if (!supertype.namespaceName().equals(recordType.namespaceName())) {
+                                    if (!supertype.namespaceName().equals(recordType.namespaceName()) && supertype.isSealed()) {
                                         throw new CannotExtendSealedInterfaceFromDifferentNamespaceError(untypedSupertypeNode.source());
                                     }
                                 } else {
@@ -1142,9 +1142,10 @@ public class TypeChecker {
                         for (var typedSupertypeNode : typedSupertypeNodes) {
                             // TODO: handle type-level values that aren't types
                             var interfaceType = (InterfaceType) typedSupertypeNode.value();
-                            newContext = newContext
-                                .addSubtypeRelation(recordType, interfaceType)
-                                .addSealedInterfaceCase(interfaceType, recordType);
+                            newContext = newContext.addSubtypeRelation(recordType, interfaceType);
+                            if (interfaceType.isSealed()) {
+                                newContext = newContext.addSealedInterfaceCase(interfaceType, recordType);
+                            }
                         }
                         return newContext;
                     }

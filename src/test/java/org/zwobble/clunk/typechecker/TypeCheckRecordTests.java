@@ -278,6 +278,10 @@ public class TypeCheckRecordTests {
         assertThat(result.typedNode(), has("supertypes", contains(
             has("value", isInterfaceType(NamespaceName.fromParts("a", "b"), "Person"))
         )));
+        var recordType = ((TypedRecordNode) result.typedNode()).type();
+        assertThat(result.context().subtypeRelations().extendedTypes(recordType), containsInAnyOrder(
+            equalTo(interfaceType)
+        ));
         assertThat(result.context().sealedInterfaceCases(interfaceType), containsInAnyOrder(
             isRecordType(NamespaceName.fromParts("a", "b"), "User")
         ));
@@ -311,6 +315,28 @@ public class TypeCheckRecordTests {
             CannotExtendSealedInterfaceFromDifferentNamespaceError.class,
             () -> typeCheckNamespaceStatementAllPhases(untypedNode, context)
         );
+    }
+
+    @Test
+    public void whenSupertypeIsUnsealedInterfaceFromDifferentNamespaceThenInterfaceIsAddedAsSupertype() {
+        var untypedNode = UntypedRecordNode.builder("User")
+            .addSupertype(Untyped.typeLevelReference("Person"))
+            .build();
+        var interfaceType = Types.unsealedInterfaceType(NamespaceName.fromParts("d", "e"), "Person");
+        var context = TypeCheckerContext.stub()
+            .enterNamespace(NamespaceName.fromParts("a", "b"))
+            .addLocal("Person", Types.metaType(interfaceType), NullSource.INSTANCE);
+
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
+
+        assertThat(result.typedNode(), has("supertypes", contains(
+            has("value", equalTo(interfaceType))
+        )));
+        var recordType = ((TypedRecordNode) result.typedNode()).type();
+        assertThat(result.context().subtypeRelations().extendedTypes(recordType), containsInAnyOrder(
+            equalTo(interfaceType)
+        ));
+        assertThat(result.context().sealedInterfaceCases(interfaceType), empty());
     }
 
     private Matcher<?> isInterfaceType(NamespaceName namespaceName, String name) {

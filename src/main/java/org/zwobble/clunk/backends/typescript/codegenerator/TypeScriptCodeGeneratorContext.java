@@ -1,5 +1,6 @@
 package org.zwobble.clunk.backends.typescript.codegenerator;
 
+import org.zwobble.clunk.backends.typescript.ast.TypeScriptImportNamedMemberNode;
 import org.zwobble.clunk.backends.typescript.ast.TypeScriptImportNamedNode;
 import org.zwobble.clunk.types.InterfaceType;
 import org.zwobble.clunk.types.RecordType;
@@ -31,7 +32,10 @@ public class TypeScriptCodeGeneratorContext {
 
     public List<TypeScriptImportNamedNode> imports() {
         return imports.stream()
-            .map(import_ -> new TypeScriptImportNamedNode(import_.module(), List.of(import_.export())))
+            .map(import_ -> new TypeScriptImportNamedNode(
+                import_.module(),
+                List.of(new TypeScriptImportNamedMemberNode(import_.export(), import_.export()))
+            ))
             .toList();
     }
 

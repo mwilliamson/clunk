@@ -333,9 +333,10 @@ public class TypeScriptCodeGenerator {
 
         var modulePath = namespaceNameToModulePath(import_.namespaceName(), importingNamespaceName);
         if (import_.fieldName().isPresent()) {
+            var exportName = import_.fieldName().get();
             return List.of(new TypeScriptImportNamedNode(
                 modulePath,
-                List.of(import_.fieldName().get())
+                List.of(new TypeScriptImportNamedMemberNode(exportName, exportName))
             ));
         } else {
             return List.of(new TypeScriptImportNamespaceNode(

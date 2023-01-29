@@ -102,8 +102,16 @@ public class TypeScript {
         return new TypeScriptIfStatementNode(conditionalBranches, elseBody);
     }
 
-    public static TypeScriptImportNamedNode import_(String module, List<String> exports) {
+    public static TypeScriptImportNamedNode import_(String module, List<TypeScriptImportNamedMemberNode> exports) {
         return new TypeScriptImportNamedNode(module, exports);
+    }
+
+    public static TypeScriptImportNamedMemberNode importNamedMember(String exportName, String importName) {
+        return new TypeScriptImportNamedMemberNode(exportName, importName);
+    }
+
+    public static TypeScriptImportNamedMemberNode importNamedMember(String name) {
+        return new TypeScriptImportNamedMemberNode(name, name);
     }
 
     public static TypeScriptImportNamespaceNode importNamespace(String module, String name) {

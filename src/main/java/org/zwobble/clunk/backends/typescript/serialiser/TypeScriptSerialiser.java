@@ -496,8 +496,14 @@ public class TypeScriptSerialiser {
         builder.append("import ");
         builder.append("{");
         forEachInterspersed(
-            node.exports(),
-            export -> builder.append(export),
+            node.members(),
+            member -> {
+                builder.append(member.exportName());
+                if (!member.exportName().equals(member.importName())) {
+                    builder.append(" as ");
+                    builder.append(member.importName());
+                }
+            },
             () -> builder.append(", ")
         );
         builder.append("}");

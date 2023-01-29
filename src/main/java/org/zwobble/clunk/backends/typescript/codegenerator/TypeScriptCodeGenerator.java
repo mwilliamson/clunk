@@ -58,7 +58,8 @@ public class TypeScriptCodeGenerator {
                 return macro.get().compileMethodCall(
                     compileExpression(receiver.get(), context),
                     node.methodName(),
-                    compileArgs(node.positionalArgs(), context)
+                    compileArgs(node.positionalArgs(), context),
+                    context
                 );
             }
         }

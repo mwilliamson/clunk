@@ -17,6 +17,7 @@ public interface TypeScriptClassMacro {
     TypeScriptExpressionNode compileMethodCall(
         TypeScriptExpressionNode receiver,
         String methodName,
-        List<TypeScriptExpressionNode> positionalArgs
+        List<TypeScriptExpressionNode> positionalArgs,
+        TypeScriptCodeGeneratorContext context
     );
 }

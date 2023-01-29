@@ -2,6 +2,7 @@ package org.zwobble.clunk.backends.typescript.codegenerator.macros;
 
 import org.zwobble.clunk.backends.typescript.ast.*;
 import org.zwobble.clunk.backends.typescript.codegenerator.TypeScriptClassMacro;
+import org.zwobble.clunk.backends.typescript.codegenerator.TypeScriptCodeGeneratorContext;
 import org.zwobble.clunk.types.Type;
 import org.zwobble.clunk.types.Types;
 
@@ -41,9 +42,10 @@ public class TypeScriptListMacro implements TypeScriptClassMacro {
     public TypeScriptExpressionNode compileMethodCall(
         TypeScriptExpressionNode receiver,
         String methodName,
-        List<TypeScriptExpressionNode> positionalArgs
+        List<TypeScriptExpressionNode> positionalArgs,
+        TypeScriptCodeGeneratorContext context
     ) {
-        var result = tryCompileMethodCall(receiver, methodName, positionalArgs);
+        var result = tryCompileMethodCall(receiver, methodName, positionalArgs, context);
 
         if (result.isPresent()) {
             return result.get();
@@ -55,7 +57,8 @@ public class TypeScriptListMacro implements TypeScriptClassMacro {
     public Optional<TypeScriptExpressionNode> tryCompileMethodCall(
         TypeScriptExpressionNode receiver,
         String methodName,
-        List<TypeScriptExpressionNode> positionalArgs
+        List<TypeScriptExpressionNode> positionalArgs,
+        TypeScriptCodeGeneratorContext context
     ) {
         switch (methodName) {
             case "contains" -> {
@@ -77,12 +80,13 @@ public class TypeScriptListMacro implements TypeScriptClassMacro {
                 return Optional.of(result);
             }
             case "last" -> {
-                var length = new TypeScriptPropertyAccessNode(
-                    receiver,
-                    "length"
+                context.addImport("lodash", "last", "lodash_last");
+                var result = new TypeScriptNonNullAssertionNode(
+                    new TypeScriptCallNode(
+                        new TypeScriptReferenceNode("lodash_last"),
+                        List.of(receiver)
+                    )
                 );
-                var index = new TypeScriptSubtractNode(length, new TypeScriptNumberLiteralNode(1));
-                var result = new TypeScriptIndexNode(receiver, index);
                 return Optional.of(result);
             }
             case "length" -> {

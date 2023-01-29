@@ -2,6 +2,7 @@ package org.zwobble.clunk.backends.typescript.codegenerator.macros;
 
 import org.zwobble.clunk.backends.typescript.ast.*;
 import org.zwobble.clunk.backends.typescript.codegenerator.TypeScriptClassMacro;
+import org.zwobble.clunk.backends.typescript.codegenerator.TypeScriptCodeGeneratorContext;
 import org.zwobble.clunk.types.Type;
 import org.zwobble.clunk.types.Types;
 
@@ -45,10 +46,11 @@ public class TypeScriptMutableListMacro implements TypeScriptClassMacro {
     public TypeScriptExpressionNode compileMethodCall(
         TypeScriptExpressionNode receiver,
         String methodName,
-        List<TypeScriptExpressionNode> positionalArgs
+        List<TypeScriptExpressionNode> positionalArgs,
+        TypeScriptCodeGeneratorContext context
     ) {
 
-        var listResult = TypeScriptListMacro.INSTANCE.tryCompileMethodCall(receiver, methodName, positionalArgs);
+        var listResult = TypeScriptListMacro.INSTANCE.tryCompileMethodCall(receiver, methodName, positionalArgs, context);
         if (listResult.isPresent()) {
             return listResult.get();
         }

@@ -2,6 +2,7 @@ package org.zwobble.clunk.backends.typescript.codegenerator.macros;
 
 import org.zwobble.clunk.backends.typescript.ast.*;
 import org.zwobble.clunk.backends.typescript.codegenerator.TypeScriptClassMacro;
+import org.zwobble.clunk.backends.typescript.codegenerator.TypeScriptCodeGeneratorContext;
 import org.zwobble.clunk.types.Type;
 import org.zwobble.clunk.types.Types;
 
@@ -41,7 +42,8 @@ public class TypeScriptMapMacro implements TypeScriptClassMacro {
     public TypeScriptExpressionNode compileMethodCall(
         TypeScriptExpressionNode receiver,
         String methodName,
-        List<TypeScriptExpressionNode> positionalArgs
+        List<TypeScriptExpressionNode> positionalArgs,
+        TypeScriptCodeGeneratorContext context
     ) {
         throw new UnsupportedOperationException("unexpected method: " + methodName);
     }

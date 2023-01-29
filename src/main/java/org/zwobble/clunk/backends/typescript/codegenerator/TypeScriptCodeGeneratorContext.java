@@ -15,7 +15,7 @@ public class TypeScriptCodeGeneratorContext {
         return new TypeScriptCodeGeneratorContext(SubtypeRelations.EMPTY);
     }
 
-    private record Import(String module, String export) {
+    private record Import(String module, String export, String importName) {
     }
 
     private final Set<Import> imports;
@@ -27,14 +27,18 @@ public class TypeScriptCodeGeneratorContext {
     }
 
     public void addImport(String module, String export) {
-        imports.add(new Import(module, export));
+        addImport(module, export, export);
+    }
+
+    public void addImport(String module, String export, String importName) {
+        imports.add(new Import(module, export, importName));
     }
 
     public List<TypeScriptImportNamedNode> imports() {
         return imports.stream()
             .map(import_ -> new TypeScriptImportNamedNode(
                 import_.module(),
-                List.of(new TypeScriptImportNamedMemberNode(import_.export(), import_.export()))
+                List.of(new TypeScriptImportNamedMemberNode(import_.export(), import_.importName()))
             ))
             .toList();
     }

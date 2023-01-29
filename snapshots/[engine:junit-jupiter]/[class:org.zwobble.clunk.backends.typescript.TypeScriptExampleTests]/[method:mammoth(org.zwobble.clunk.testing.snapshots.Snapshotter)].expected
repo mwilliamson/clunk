@@ -828,6 +828,7 @@ export {Bookmark, BreakColumn, BreakLine, BreakPage, Comment, CommentReference, 
 ==============
 
 Output path: mammoth/html.ts
+import {last as lodash_last} from "lodash";
 type HtmlNode = HtmlElement | HtmlForceWrite | HtmlText;
 
 function element(tagName: string, attributes: Map<string, string>, children: ReadonlyArray<HtmlNode>): HtmlElement {
@@ -1012,7 +1013,7 @@ function tryCollapse(collapsed: Array<HtmlNode>, node: HtmlNode): boolean {
         return false;
     }
 
-    let last = collapsed[collapsed.length - 1];
+    let last = lodash_last(collapsed)!;
 
     if (!(node.type === "HtmlElement")) {
         return false;

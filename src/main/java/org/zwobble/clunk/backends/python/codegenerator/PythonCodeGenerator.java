@@ -243,7 +243,7 @@ public class PythonCodeGenerator {
 
             @Override
             public PythonExpressionNode visit(TypedStructuredEqualsNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileStructuredEquals(node, context);
             }
         });
     }
@@ -692,6 +692,16 @@ public class PythonCodeGenerator {
 
     private static PythonExpressionNode compileStringNotEqual(TypedStringNotEqualNode node, PythonCodeGeneratorContext context) {
         return new PythonNotEqualNode(
+            compileExpression(node.left(), context),
+            compileExpression(node.right(), context)
+        );
+    }
+
+    private static PythonExpressionNode compileStructuredEquals(
+        TypedStructuredEqualsNode node,
+        PythonCodeGeneratorContext context
+    ) {
+        return new PythonEqualsNode(
             compileExpression(node.left(), context),
             compileExpression(node.right(), context)
         );

@@ -145,6 +145,10 @@ fun freshElement(tagName: String, attributes: Map[String, String], children: Lis
 }
 
 record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
+    property attributes: Map[String, String] {
+        return tag.attributes;
+    }
+
     property defaultTagName: String {
         return tag.defaultTagName;
     }
@@ -306,7 +310,7 @@ fun tryCollapse(collapsed: MutableList[HtmlNode], node: HtmlNode) -> Bool {
         return false;
     }
 
-    if (!node.isCollapsible || !node.tagNames.contains(last.defaultTagName)) {
+    if (!node.isCollapsible || !(node.tagNames.contains(last.defaultTagName) && node.attributes == last.attributes)) {
         return false;
     }
 
@@ -772,6 +776,10 @@ class HtmlElement:
     tag: HtmlTag
     children: typing.List[HtmlNode]
     @property
+    def attributes(self):
+        return self.tag.attributes
+
+    @property
     def default_tag_name(self):
         return self.tag.default_tag_name
 
@@ -906,7 +914,7 @@ def try_collapse(collapsed, node):
     if not isinstance(last, HtmlElement):
         return False
 
-    if not node.is_collapsible or not last.default_tag_name in node.tag_names:
+    if not node.is_collapsible or not (last.default_tag_name in node.tag_names and node.attributes == last.attributes):
         return False
 
     if node.separator != "":
@@ -1076,19 +1084,6 @@ class CollapseTests:
 rootdir: ROOTDIR, configfile: tox.ini
 collected 20 items
 
-mammoth/html_test.py ...........F........                                [100%]
+mammoth/html_test.py ....................                                [100%]
 
-=================================== FAILURES ===================================
-___ CollapseTests.test_elements_with_different_attributes_are_not_collapsed ____
-mammoth/html_test.py:91: in test_elements_with_different_attributes_are_not_collapsed
-    assert_that(result, equal_to([html.collapsible_element("p", {"id": "a"}, [html.text("One")]), html.collapsible_element("p", {}, [html.text("Two")])]))
-SITE-PACKAGES/precisely/__init__.py:50: in assert_that
-    raise AssertionError("\nExpected:{0}\nbut:{1}".format(
-E   AssertionError: 
-E   Expected:
-E     [HtmlElement(tag=HtmlTag(tag_names=['p'], attributes={'id': 'a'}, is_collapsible=True, separator=''), children=[HtmlText(value='One')]), HtmlElement(tag=HtmlTag(tag_names=['p'], attributes={}, is_collapsible=True, separator=''), children=[HtmlText(value='Two')])]
-E   but:
-E     was [HtmlElement(tag=HtmlTag(tag_names=['p'], attributes={'id': 'a'}, is_collapsible=True, separator=''), children=[HtmlText(value='One'), HtmlText(value='Two')])]
-=========================== short test summary info ============================
-FAILED mammoth/html_test.py::CollapseTests::test_elements_with_different_attributes_are_not_collapsed
-========================= 1 failed, 19 passed in TIME =========================
+============================== 20 passed in TIME ==============================

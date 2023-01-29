@@ -145,6 +145,10 @@ fun freshElement(tagName: String, attributes: Map[String, String], children: Lis
 }
 
 record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
+    property attributes: Map[String, String] {
+        return tag.attributes;
+    }
+
     property defaultTagName: String {
         return tag.defaultTagName;
     }
@@ -306,7 +310,7 @@ fun tryCollapse(collapsed: MutableList[HtmlNode], node: HtmlNode) -> Bool {
         return false;
     }
 
-    if (!node.isCollapsible || !node.tagNames.contains(last.defaultTagName)) {
+    if (!node.isCollapsible || !(node.tagNames.contains(last.defaultTagName) && node.attributes == last.attributes)) {
         return false;
     }
 
@@ -876,6 +880,10 @@ Output path: org/zwobble/mammoth/internal/mammoth/html/HtmlElement.java
 package org.zwobble.mammoth.internal.mammoth.html;
 
 public record HtmlElement(HtmlTag tag, java.util.List<? extends HtmlNode> children) implements org.zwobble.mammoth.internal.mammoth.html.HtmlNode {
+    public java.util.Map<String, String> attributes() {
+        return tag().attributes();
+    }
+
     public String defaultTagName() {
         return tag().defaultTagName();
     }
@@ -1077,7 +1085,7 @@ public class Html {
         }
         var last_HtmlElement = (org.zwobble.mammoth.internal.mammoth.html.HtmlElement) last;
 
-        if (!node_HtmlElement.isCollapsible() || !node_HtmlElement.tagNames().contains(last_HtmlElement.defaultTagName())) {
+        if (!node_HtmlElement.isCollapsible() || !(node_HtmlElement.tagNames().contains(last_HtmlElement.defaultTagName()) && node_HtmlElement.attributes().equals(last_HtmlElement.attributes()))) {
             return false;
         }
 
@@ -1316,9 +1324,7 @@ public class HtmlTests {
 │  └─ HtmlTests ✔
 │     ├─ Collapse ✔
 │     │  ├─ consecutive elements can collapse if second element has choice of tag names incl... ✔
-│     │  ├─ elements with different attributes are not collapsed ✘ 
-│     │  │        Expected: <[HtmlElement[tag=HtmlTag[tagNames=[p], attributes={id=a}, isCollapsible=true, separator=], children=[HtmlText[value=One]]], HtmlElement[tag=HtmlTag[tagNames=[p], attributes={}, isCollapsible=true, separator=], children=[HtmlText[value=Two]]]]>
-│     │  │             but: was <[HtmlElement[tag=HtmlTag[tagNames=[p], attributes={id=a}, isCollapsible=true, separator=], children=[HtmlText[value=One], HtmlText[value=Two]]]]>
+│     │  ├─ elements with different attributes are not collapsed ✔
 │     │  ├─ when separator is present then separator is prepended to collapsed element ✔
 │     │  ├─ collapsing does nothing to single text node ✔
 │     │  ├─ collapsible element can collapse into previous fresh element ✔
@@ -1340,24 +1346,6 @@ public class HtmlTests {
 │        └─ elements with only empty children are stripped ✔
 └─ JUnit Vintage ✔
 
-Failures (1):
-  JUnit Jupiter:HtmlTests:Collapse:elements with different attributes are not collapsed
-    MethodSource [className = 'org.zwobble.mammoth.internal.mammoth.html.HtmlTests$Collapse', methodName = 'elementsWithDifferentAttributesAreNotCollapsed', methodParameterTypes = '']
-    => java.lang.AssertionError: 
-Expected: <[HtmlElement[tag=HtmlTag[tagNames=[p], attributes={id=a}, isCollapsible=true, separator=], children=[HtmlText[value=One]]], HtmlElement[tag=HtmlTag[tagNames=[p], attributes={}, isCollapsible=true, separator=], children=[HtmlText[value=Two]]]]>
-     but: was <[HtmlElement[tag=HtmlTag[tagNames=[p], attributes={id=a}, isCollapsible=true, separator=], children=[HtmlText[value=One], HtmlText[value=Two]]]]>
-       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:20)
-       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:8)
-       org.zwobble.mammoth.internal.mammoth.html.HtmlTests$Collapse.elementsWithDifferentAttributesAreNotCollapsed(Unknown Source)
-       java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-       java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
-       java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-       java.base/java.lang.reflect.Method.invoke(Method.java:568)
-       org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:725)
-       org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
-       org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
-       [...]
-
 Test run finished after TIME ms
 [         5 containers found      ]
 [         0 containers skipped    ]
@@ -1369,5 +1357,5 @@ Test run finished after TIME ms
 [         0 tests skipped         ]
 [        20 tests started         ]
 [         0 tests aborted         ]
-[        19 tests successful      ]
-[         1 tests failed          ]
+[        20 tests successful      ]
+[         0 tests failed          ]

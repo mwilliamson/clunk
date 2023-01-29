@@ -16,6 +16,10 @@ fun freshElement(tagName: String, attributes: Map[String, String], children: Lis
 }
 
 record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
+    property attributes: Map[String, String] {
+        return tag.attributes;
+    }
+
     property defaultTagName: String {
         return tag.defaultTagName;
     }
@@ -177,7 +181,7 @@ fun tryCollapse(collapsed: MutableList[HtmlNode], node: HtmlNode) -> Bool {
         return false;
     }
 
-    if (!node.isCollapsible || !node.tagNames.contains(last.defaultTagName)) {
+    if (!node.isCollapsible || !(node.tagNames.contains(last.defaultTagName) && node.attributes == last.attributes)) {
         return false;
     }
 

@@ -2,6 +2,9 @@ Source path: src/mammoth/documents.clunk
 sealed interface DocumentElement {
 }
 
+interface HasChildren {
+}
+
 record Bookmark(name: String) <: DocumentElement
 
 record BreakLine() <: DocumentElement
@@ -598,6 +601,15 @@ public sealed interface DocumentElement permits Bookmark, BreakLine, BreakPage, 
         T visit(TableRow tableRow);
         T visit(Text text);
     }
+}
+
+
+==============
+
+Output path: org/zwobble/mammoth/internal/mammoth/documents/HasChildren.java
+package org.zwobble.mammoth.internal.mammoth.documents;
+
+public interface HasChildren {
 }
 
 

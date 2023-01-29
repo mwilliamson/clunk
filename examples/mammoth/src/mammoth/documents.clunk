@@ -1,6 +1,9 @@
 sealed interface DocumentElement {
 }
 
+interface HasChildren {
+}
+
 record Bookmark(name: String) <: DocumentElement
 
 record BreakLine() <: DocumentElement

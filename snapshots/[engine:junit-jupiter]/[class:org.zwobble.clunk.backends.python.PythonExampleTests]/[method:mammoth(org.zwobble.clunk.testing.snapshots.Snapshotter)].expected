@@ -2,6 +2,9 @@ Source path: src/mammoth/documents.clunk
 sealed interface DocumentElement {
 }
 
+interface HasChildren {
+}
+
 record Bookmark(name: String) <: DocumentElement
 
 record BreakLine() <: DocumentElement
@@ -583,6 +586,9 @@ import dataclasses
 import typing
 import enum
 class DocumentElement:
+    pass
+
+class HasChildren:
     pass
 
 @dataclasses.dataclass(frozen=True)

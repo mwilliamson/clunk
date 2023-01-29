@@ -2,6 +2,9 @@ Source path: src/mammoth/documents.clunk
 sealed interface DocumentElement {
 }
 
+interface HasChildren {
+}
+
 record Bookmark(name: String) <: DocumentElement
 
 record BreakLine() <: DocumentElement
@@ -579,6 +582,9 @@ testSuite "collapse" {
 Output path: mammoth/documents.ts
 type DocumentElement = Bookmark | BreakLine | BreakPage | BreakColumn | CommentReference | Hyperlink | Image | NoteReference | Paragraph | Run | Tab | Table | TableCell | TableRow | Text;
 
+interface HasChildren {
+}
+
 class Bookmark {
     readonly type: "Bookmark" = "Bookmark";
     readonly name: string;
@@ -822,7 +828,7 @@ enum VerticalAlignment {
     SUBSCRIPT,
     BASELINE,
 }
-export {Bookmark, BreakColumn, BreakLine, BreakPage, Comment, CommentReference, Document, DocumentElement, Hyperlink, Image, Note, NoteReference, NoteType, NumberingLevel, NumberingStyle, Paragraph, ParagraphIndent, Run, Style, Tab, Table, TableCell, TableRow, Text, VerticalAlignment};
+export {Bookmark, BreakColumn, BreakLine, BreakPage, Comment, CommentReference, Document, DocumentElement, HasChildren, Hyperlink, Image, Note, NoteReference, NoteType, NumberingLevel, NumberingStyle, Paragraph, ParagraphIndent, Run, Style, Tab, Table, TableCell, TableRow, Text, VerticalAlignment};
 
 
 ==============

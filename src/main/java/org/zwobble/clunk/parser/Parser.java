@@ -612,7 +612,7 @@ public class Parser {
     private UntypedNamespaceStatementNode parseInterface(TokenIterator<TokenType> tokens) {
         var source = source(tokens);
 
-        tokens.skip(TokenType.KEYWORD_SEALED);
+        var isSealed = tokens.trySkip(TokenType.KEYWORD_SEALED);
         tokens.skip(TokenType.KEYWORD_INTERFACE);
 
         var name = tokens.nextValue(TokenType.IDENTIFIER);
@@ -620,7 +620,7 @@ public class Parser {
         tokens.skip(TokenType.SYMBOL_BRACE_OPEN);
         tokens.skip(TokenType.SYMBOL_BRACE_CLOSE);
 
-        return new UntypedInterfaceNode(name, source);
+        return new UntypedInterfaceNode(name, isSealed, source);
     }
 
     public UntypedNamespaceStatementNode parseNamespaceStatement(TokenIterator<TokenType> tokens) {
@@ -630,6 +630,8 @@ public class Parser {
             return parseEnum(tokens);
         } else if (tokens.isNext(TokenType.KEYWORD_FUN)) {
             return parseFunction(tokens);
+        } else if (tokens.isNext(TokenType.KEYWORD_INTERFACE)) {
+            return parseInterface(tokens);
         } else if (tokens.isNext(TokenType.KEYWORD_SEALED)) {
             return parseInterface(tokens);
         } else if (tokens.isNext(TokenType.KEYWORD_RECORD)) {

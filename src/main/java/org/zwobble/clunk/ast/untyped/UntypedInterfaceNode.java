@@ -2,7 +2,11 @@ package org.zwobble.clunk.ast.untyped;
 
 import org.zwobble.clunk.sources.Source;
 
-public record UntypedInterfaceNode(String name, Source source) implements UntypedNamespaceStatementNode {
+public record UntypedInterfaceNode(
+    String name,
+    boolean isSealed,
+    Source source
+) implements UntypedNamespaceStatementNode {
     @Override
     public boolean isTypeDefinition() {
         return true;

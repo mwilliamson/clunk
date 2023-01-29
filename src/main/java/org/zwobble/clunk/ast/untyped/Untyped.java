@@ -111,7 +111,7 @@ public class Untyped {
     }
 
     public static UntypedInterfaceNode interface_(String name) {
-        return new UntypedInterfaceNode(name, NullSource.INSTANCE);
+        return new UntypedInterfaceNode(name, false, NullSource.INSTANCE);
     }
 
     public static UntypedIntLiteralNode intLiteral() {

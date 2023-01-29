@@ -11,11 +11,28 @@ import static org.zwobble.clunk.parser.Parsing.parseString;
 
 public class ParserInterfaceTests {
     @Test
+    public void canParseEmptyUnsealedInterface() {
+        var source = "interface HasChildren { }";
+
+        var node = parseString(source, Parser::parseNamespaceStatement);
+
+        assertThat(node, cast(
+            UntypedInterfaceNode.class,
+            has("name", equalTo("HasChildren")),
+            has("isSealed", equalTo(false))
+        ));
+    }
+
+    @Test
     public void canParseEmptySealedInterface() {
         var source = "sealed interface DocumentElement { }";
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
-        assertThat(node, cast(UntypedInterfaceNode.class, has("name", equalTo("DocumentElement"))));
+        assertThat(node, cast(
+            UntypedInterfaceNode.class,
+            has("name", equalTo("DocumentElement")),
+            has("isSealed", equalTo(true))
+        ));
     }
 }

@@ -105,11 +105,11 @@ public class JavaCodeGeneratorRecordTests {
             """
                 package example.project;
                 
-                public record Example() implements X, Y {
-                    public <T> T accept(X.Visitor<T> visitor) {
+                public record Example() implements a.b.X, a.b.Y {
+                    public <T> T accept(a.b.X.Visitor<T> visitor) {
                         return visitor.visit(this);
                     }
-                    public <T> T accept(Y.Visitor<T> visitor) {
+                    public <T> T accept(a.b.Y.Visitor<T> visitor) {
                         return visitor.visit(this);
                     }
                 }"""

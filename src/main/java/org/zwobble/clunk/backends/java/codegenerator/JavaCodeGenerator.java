@@ -656,7 +656,7 @@ public class JavaCodeGenerator {
         var extendedTypes = context.extendedTypes(node.type());
 
         var implements_ = extendedTypes.stream()
-            .map(supertype -> new JavaTypeVariableReferenceNode(supertype.name()))
+            .map(supertype -> typeLevelValueToTypeExpression(supertype, false, context))
             .toList();
 
         var body = new ArrayList<JavaClassBodyDeclarationNode>();
@@ -666,6 +666,13 @@ public class JavaCodeGenerator {
         }
 
         for (var supertype : extendedTypes) {
+            // TODO: don't rely on this being a JavaFullyQualifiedTypeReferenceNode
+            var supertypeTypeExpression = (JavaFullyQualifiedTypeReferenceNode) typeLevelValueToTypeExpression(supertype, false, context);
+            // TODO: make this an inner class reference
+            var visitorTypeExpression = new JavaFullyQualifiedTypeReferenceNode(
+                supertypeTypeExpression.packageName() + "." + supertypeTypeExpression.typeName(),
+                "Visitor"
+            );
             body.add(new JavaMethodDeclarationNode(
                 List.of(),
                 false,
@@ -675,8 +682,7 @@ public class JavaCodeGenerator {
                 List.of(
                     new JavaParamNode(
                         new JavaParameterizedType(
-                            // TODO: this isn't a full qualified reference
-                            new JavaFullyQualifiedTypeReferenceNode(supertype.name(), "Visitor"),
+                            visitorTypeExpression,
                             List.of(new JavaTypeVariableReferenceNode("T"))
                         ),
                         "visitor"

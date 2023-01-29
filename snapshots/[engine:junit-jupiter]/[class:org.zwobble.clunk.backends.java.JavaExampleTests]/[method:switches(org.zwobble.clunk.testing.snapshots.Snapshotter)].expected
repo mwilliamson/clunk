@@ -48,8 +48,8 @@ public sealed interface Node permits Add, Literal {
 Output path: switches/Add.java
 package switches;
 
-public record Add(Node left, Node right) implements Node {
-    public <T> T accept(Node.Visitor<T> visitor) {
+public record Add(Node left, Node right) implements switches.Node {
+    public <T> T accept(switches.Node.Visitor<T> visitor) {
         return visitor.visit(this);
     }
 }
@@ -59,8 +59,8 @@ public record Add(Node left, Node right) implements Node {
 Output path: switches/Literal.java
 package switches;
 
-public record Literal(int value) implements Node {
-    public <T> T accept(Node.Visitor<T> visitor) {
+public record Literal(int value) implements switches.Node {
+    public <T> T accept(switches.Node.Visitor<T> visitor) {
         return visitor.visit(this);
     }
 }

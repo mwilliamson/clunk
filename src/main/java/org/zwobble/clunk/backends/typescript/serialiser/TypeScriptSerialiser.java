@@ -492,7 +492,7 @@ public class TypeScriptSerialiser {
         builder.newLine();
     }
 
-    private static void serialiseImport(TypeScriptImportNode node, CodeBuilder builder) {
+    private static void serialiseImport(TypeScriptImportNamedNode node, CodeBuilder builder) {
         builder.append("import ");
         builder.append("{");
         forEachInterspersed(
@@ -624,7 +624,7 @@ public class TypeScriptSerialiser {
             }
 
             @Override
-            public Void visit(TypeScriptImportNode node) {
+            public Void visit(TypeScriptImportNamedNode node) {
                 serialiseImport(node, builder);
                 return null;
             }

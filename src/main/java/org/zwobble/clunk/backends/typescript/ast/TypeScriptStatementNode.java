@@ -12,7 +12,7 @@ public interface TypeScriptStatementNode extends TypeScriptNode {
         T visit(TypeScriptForOfNode node);
         T visit(TypeScriptFunctionDeclarationNode node);
         T visit(TypeScriptIfStatementNode node);
-        T visit(TypeScriptImportNode node);
+        T visit(TypeScriptImportNamedNode node);
         T visit(TypeScriptImportNamespaceNode node);
         T visit(TypeScriptInterfaceDeclarationNode node);
         T visit(TypeScriptLetNode node);

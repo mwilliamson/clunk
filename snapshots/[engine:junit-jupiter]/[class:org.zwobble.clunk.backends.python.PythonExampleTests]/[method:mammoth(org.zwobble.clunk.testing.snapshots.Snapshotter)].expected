@@ -26,13 +26,13 @@ record Document(
     children: List[DocumentElement],
     notes: List[Note],
     comments: List[Comment],
-)
+) <: HasChildren
 
 record Hyperlink(
     href: String,
     targetFrame: Option[String],
     children: List[DocumentElement],
-) <: DocumentElement
+) <: DocumentElement, HasChildren
 
 record Image(
     altText: Option[String],
@@ -69,7 +69,7 @@ record Paragraph(
     numbering: Option[NumberingLevel],
     indent: ParagraphIndent,
     children: List[DocumentElement],
-) <: DocumentElement
+) <: DocumentElement, HasChildren
 
 record ParagraphIndent(
     start: Option[String],
@@ -88,7 +88,7 @@ record Run(
     verticalAlignment: VerticalAlignment,
     style: Option[String],
     children: List[DocumentElement],
-) <: DocumentElement
+) <: DocumentElement, HasChildren
 
 record Style(
     styleId: String,
@@ -100,18 +100,18 @@ record Tab() <: DocumentElement
 record Table(
     style: Option[Style],
     children: List[DocumentElement],
-) <: DocumentElement
+) <: DocumentElement, HasChildren
 
 record TableCell(
     rowspan: Int,
     colspan: Int,
     children: List[DocumentElement],
-) <: DocumentElement
+) <: DocumentElement, HasChildren
 
 record TableRow(
     children: List[DocumentElement],
     isHeader: Bool,
-) <: DocumentElement
+) <: DocumentElement, HasChildren
 
 record Text(
     value: String,

@@ -90,12 +90,12 @@ public class JavaCodeGeneratorRecordTests {
     }
 
     @Test
-    public void whenRecordHasInterfaceAsSupertypeThenJavaRecordImplementsInterface() {
+    public void whenRecordHasSealedInterfaceAsSupertypeThenJavaRecordImplementsInterfaceIncludingAccept() {
         var node = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "Example")
             .build();
         var subtypeRelations = SubtypeRelations.EMPTY
-            .addExtendedType(node.type(), Types.interfaceType(NamespaceName.fromParts("a", "b"), "X"))
-            .addExtendedType(node.type(), Types.interfaceType(NamespaceName.fromParts("a", "b"), "Y"));
+            .addExtendedType(node.type(), Types.sealedInterfaceType(NamespaceName.fromParts("a", "b"), "X"))
+            .addExtendedType(node.type(), Types.sealedInterfaceType(NamespaceName.fromParts("a", "b"), "Y"));
         var context = JavaCodeGeneratorContext.stub(subtypeRelations);
 
         var result = JavaCodeGenerator.compileRecord(node, context);
@@ -112,6 +112,27 @@ public class JavaCodeGeneratorRecordTests {
                     public <T> T accept(a.b.Y.Visitor<T> visitor) {
                         return visitor.visit(this);
                     }
+                }"""
+        ));
+    }
+
+    @Test
+    public void whenRecordHasUnsealedInterfaceAsSupertypeThenJavaRecordImplementsInterface() {
+        var node = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "Example")
+            .build();
+        var subtypeRelations = SubtypeRelations.EMPTY
+            .addExtendedType(node.type(), Types.unsealedInterfaceType(NamespaceName.fromParts("a", "b"), "X"))
+            .addExtendedType(node.type(), Types.unsealedInterfaceType(NamespaceName.fromParts("c", "d"), "Y"));
+        var context = JavaCodeGeneratorContext.stub(subtypeRelations);
+
+        var result = JavaCodeGenerator.compileRecord(node, context);
+
+        var string = serialiseToString(result, JavaSerialiser::serialiseOrdinaryCompilationUnit);
+        assertThat(string, equalTo(
+            """
+                package example.project;
+                
+                public record Example() implements a.b.X, c.d.Y {
                 }"""
         ));
     }

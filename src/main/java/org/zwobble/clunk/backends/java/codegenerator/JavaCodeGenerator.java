@@ -666,40 +666,10 @@ public class JavaCodeGenerator {
         }
 
         for (var supertype : extendedTypes) {
-            // TODO: don't rely on this being a JavaFullyQualifiedTypeReferenceNode
-            var supertypeTypeExpression = (JavaFullyQualifiedTypeReferenceNode) typeLevelValueToTypeExpression(supertype, false, context);
-            // TODO: make this an inner class reference
-            var visitorTypeExpression = new JavaFullyQualifiedTypeReferenceNode(
-                supertypeTypeExpression.packageName() + "." + supertypeTypeExpression.typeName(),
-                "Visitor"
-            );
-            body.add(new JavaMethodDeclarationNode(
-                List.of(),
-                false,
-                List.of("T"),
-                new JavaTypeVariableReferenceNode("T"),
-                "accept",
-                List.of(
-                    new JavaParamNode(
-                        new JavaParameterizedType(
-                            visitorTypeExpression,
-                            List.of(new JavaTypeVariableReferenceNode("T"))
-                        ),
-                        "visitor"
-                    )
-                ),
-                List.of(
-                    new JavaReturnNode(
-                        new JavaCallNode(
-                            new JavaMemberAccessNode(
-                                new JavaReferenceNode("visitor"),
-                                "visit"
-                            ),
-                            List.of(new JavaReferenceNode("this"))
-                        )
-                    )
-                )
-            ));
+            if (Types.isSealedInterfaceType(supertype)) {
+                var acceptMethod = generateAcceptMethod(supertype, context);
+                body.add(acceptMethod);
+            }
         }
 
         return new JavaOrdinaryCompilationUnitNode(
@@ -710,6 +680,43 @@ public class JavaCodeGenerator {
                 components,
                 implements_,
                 body
+            )
+        );
+    }
+
+    private static JavaMethodDeclarationNode generateAcceptMethod(StructuredType supertype, JavaCodeGeneratorContext context) {
+        // TODO: don't rely on this being a JavaFullyQualifiedTypeReferenceNode
+        var supertypeTypeExpression = (JavaFullyQualifiedTypeReferenceNode) typeLevelValueToTypeExpression(supertype, false, context);
+        // TODO: make this an inner class reference
+        var visitorTypeExpression = new JavaFullyQualifiedTypeReferenceNode(
+            supertypeTypeExpression.packageName() + "." + supertypeTypeExpression.typeName(),
+            "Visitor"
+        );
+        return new JavaMethodDeclarationNode(
+            List.of(),
+            false,
+            List.of("T"),
+            new JavaTypeVariableReferenceNode("T"),
+            "accept",
+            List.of(
+                new JavaParamNode(
+                    new JavaParameterizedType(
+                        visitorTypeExpression,
+                        List.of(new JavaTypeVariableReferenceNode("T"))
+                    ),
+                    "visitor"
+                )
+            ),
+            List.of(
+                new JavaReturnNode(
+                    new JavaCallNode(
+                        new JavaMemberAccessNode(
+                            new JavaReferenceNode("visitor"),
+                            "visit"
+                        ),
+                        List.of(new JavaReferenceNode("this"))
+                    )
+                )
             )
         );
     }

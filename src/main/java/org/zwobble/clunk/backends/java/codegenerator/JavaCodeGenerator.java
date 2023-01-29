@@ -401,7 +401,7 @@ public class JavaCodeGenerator {
 
 
         return new JavaOrdinaryCompilationUnitNode(
-            namespaceToPackage(((InterfaceType) node.type()).namespaceName(), context),
+            namespaceToPackage(node.type().namespaceName(), context),
             List.of(),
             new JavaInterfaceDeclarationNode(
                 List.of(),

@@ -114,6 +114,14 @@ public class Untyped {
         return new UntypedInterfaceNode(name, false, NullSource.INSTANCE);
     }
 
+    public static UntypedInterfaceNode interfaceSealed(String name) {
+        return new UntypedInterfaceNode(name, true, NullSource.INSTANCE);
+    }
+
+    public static UntypedInterfaceNode interfaceUnsealed(String name) {
+        return new UntypedInterfaceNode(name, false, NullSource.INSTANCE);
+    }
+
     public static UntypedIntLiteralNode intLiteral() {
         return intLiteral(0);
     }

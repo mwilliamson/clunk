@@ -753,7 +753,7 @@ public class TypeChecker {
                 new PendingTypeCheck(
                     TypeCheckerPhase.DEFINE_TYPES,
                     context -> {
-                        var interfaceType = new InterfaceType(context.namespaceName(), node.name());
+                        var interfaceType = new InterfaceType(context.namespaceName(), node.name(), node.isSealed());
                         interfaceTypeBox.set(interfaceType);
                         return context.addLocal(node.name(), metaType(interfaceType), node.source());
                     }

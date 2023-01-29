@@ -39,8 +39,8 @@ public class TypeCheckInterfaceTests {
     }
 
     @Test
-    public void canTypeCheckedEmptyInterface() {
-        var untypedNode = Untyped.interface_("DocumentElement");
+    public void canTypeCheckEmptyUnsealedInterface() {
+        var untypedNode = Untyped.interfaceUnsealed("DocumentElement");
         var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
@@ -51,7 +51,27 @@ public class TypeCheckInterfaceTests {
             has("type", cast(
                 InterfaceType.class,
                 has("namespaceName", equalTo(NamespaceName.fromParts("a", "b"))),
-                has("name", equalTo("DocumentElement"))
+                has("name", equalTo("DocumentElement")),
+                has("isSealed", equalTo(false))
+            ))
+        ));
+    }
+
+    @Test
+    public void canTypeCheckEmptySealedInterface() {
+        var untypedNode = Untyped.interfaceSealed("DocumentElement");
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
+
+        assertThat(result.typedNode(), cast(
+            TypedInterfaceNode.class,
+            has("name", equalTo("DocumentElement")),
+            has("type", cast(
+                InterfaceType.class,
+                has("namespaceName", equalTo(NamespaceName.fromParts("a", "b"))),
+                has("name", equalTo("DocumentElement")),
+                has("isSealed", equalTo(true))
             ))
         ));
     }

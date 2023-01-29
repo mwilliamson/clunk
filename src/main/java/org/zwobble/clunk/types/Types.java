@@ -77,7 +77,7 @@ public class Types {
     }
 
     public static InterfaceType interfaceType(NamespaceName namespaceName, String name) {
-        return new InterfaceType(namespaceName, name);
+        return new InterfaceType(namespaceName, name, false);
     }
 
     public static ConstructorType constructorType(
@@ -174,7 +174,7 @@ public class Types {
     }
 
     public static InterfaceType sealedInterfaceType(NamespaceName namespaceName, String name) {
-        return new InterfaceType(namespaceName, name);
+        return new InterfaceType(namespaceName, name, true);
     }
 
     public static boolean isSealedInterfaceType(Type type) {

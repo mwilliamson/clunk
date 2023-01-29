@@ -5,9 +5,9 @@ import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedFunctionNode;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
-import org.zwobble.clunk.types.InterfaceType;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.SubtypeRelations;
+import org.zwobble.clunk.types.Types;
 
 import java.util.List;
 
@@ -94,8 +94,8 @@ public class JavaCodeGeneratorRecordTests {
         var node = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "Example")
             .build();
         var subtypeRelations = SubtypeRelations.EMPTY
-            .addExtendedType(node.type(), new InterfaceType(NamespaceName.fromParts("a", "b"), "X"))
-            .addExtendedType(node.type(), new InterfaceType(NamespaceName.fromParts("a", "b"), "Y"));
+            .addExtendedType(node.type(), Types.interfaceType(NamespaceName.fromParts("a", "b"), "X"))
+            .addExtendedType(node.type(), Types.interfaceType(NamespaceName.fromParts("a", "b"), "Y"));
         var context = JavaCodeGeneratorContext.stub(subtypeRelations);
 
         var result = JavaCodeGenerator.compileRecord(node, context);

@@ -906,7 +906,8 @@ public class JavaCodeGenerator {
                     node.args().stream()
                         .map(arg -> {
                             var argTypeExpression = compileTypeLevelExpression(arg.type(), context);
-                            if (arg.isCovariant() && context.isSealedInterfaceType((Type) arg.type().value())) {
+                            // TODO: should probably just check whether type is final or not
+                            if (arg.isCovariant() && context.isInterfaceType((Type) arg.type().value())) {
                                 return new JavaExtendsTypeNode(new JavaWildcardTypeNode(), argTypeExpression);
                             } else {
                                 return argTypeExpression;

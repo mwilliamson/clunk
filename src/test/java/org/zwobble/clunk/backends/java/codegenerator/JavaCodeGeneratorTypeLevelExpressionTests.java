@@ -110,7 +110,7 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void whenArgHasNoSubtypesAndIsCovariantThenArgIsWildcardExtends() {
-        var argType = Types.interfaceType(NamespaceName.fromParts(), "Node");
+        var argType = Types.recordType(NamespaceName.fromParts(), "Node");
         var node = Typed.constructedType(
             Typed.typeLevelReference("List", Types.LIST_CONSTRUCTOR),
             List.of(Typed.covariant(Typed.typeLevelReference("Node", argType))),

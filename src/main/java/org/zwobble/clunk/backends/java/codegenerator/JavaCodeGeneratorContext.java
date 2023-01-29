@@ -70,13 +70,8 @@ public class JavaCodeGeneratorContext {
         return subtypeRelations.sealedInterfaceCases(sealedInterfaceType);
     }
 
-    public boolean isSealedInterfaceType(Type type) {
-        if (type instanceof InterfaceType interfaceType) {
-            return !sealedInterfaceCases(interfaceType).isEmpty();
-        } else {
-            return false;
-        }
-
+    public boolean isInterfaceType(Type type) {
+        return type instanceof InterfaceType;
     }
 
     public List<StructuredType> extendedTypes(Type subtype) {

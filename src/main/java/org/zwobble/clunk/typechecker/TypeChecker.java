@@ -236,6 +236,7 @@ public class TypeChecker {
             return new TypedIntEqualsNode(left, right, node.source());
         }
 
+        // TODO: generalise structured equality
         if (left.type().equals(Types.map(Types.STRING, Types.STRING))) {
             expectExpressionType(right, Types.map(Types.STRING, Types.STRING));
             return new TypedStructuredEqualsNode(left, right, node.source());

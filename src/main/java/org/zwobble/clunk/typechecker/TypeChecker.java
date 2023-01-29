@@ -236,6 +236,11 @@ public class TypeChecker {
             return new TypedIntEqualsNode(left, right, node.source());
         }
 
+        if (left.type().equals(Types.map(Types.STRING, Types.STRING))) {
+            expectExpressionType(right, Types.map(Types.STRING, Types.STRING));
+            return new TypedStructuredEqualsNode(left, right, node.source());
+        }
+
         // TODO: don't assume strings if not ints
         expectExpressionType(left, Types.STRING);
         expectExpressionType(right, Types.STRING);

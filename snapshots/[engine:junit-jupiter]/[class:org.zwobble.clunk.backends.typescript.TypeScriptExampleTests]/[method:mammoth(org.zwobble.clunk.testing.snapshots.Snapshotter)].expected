@@ -130,17 +130,17 @@ Source path: src/mammoth/html.clunk
 sealed interface HtmlNode {
 }
 
-fun element(tagName: String, attributes: Map[String, String], children: List[HtmlNode]) -> HtmlElement {
-    return freshElement(tagName, attributes, children);
+fun element(tagNames: List[String], attributes: Map[String, String], children: List[HtmlNode]) -> HtmlElement {
+    return freshElement(tagNames, attributes, children);
 }
 
-fun collapsibleElement(tagName: String, attributes: Map[String, String], children: List[HtmlNode]) -> HtmlElement {
-    var tag = HtmlTag([tagName], attributes, true, "");
+fun collapsibleElement(tagNames: List[String], attributes: Map[String, String], children: List[HtmlNode]) -> HtmlElement {
+    var tag = HtmlTag(tagNames, attributes, true, "");
     return HtmlElement(tag, children);
 }
 
-fun freshElement(tagName: String, attributes: Map[String, String], children: List[HtmlNode]) -> HtmlElement {
-    var tag = HtmlTag([tagName], attributes, false, "");
+fun freshElement(tagNames: List[String], attributes: Map[String, String], children: List[HtmlNode]) -> HtmlElement {
+    var tag = HtmlTag(tagNames, attributes, false, "");
     return HtmlElement(tag, children);
 }
 
@@ -351,15 +351,15 @@ testSuite "stripEmpty" {
     }
 
     test "elements with non-empty children are not stripped" {
-        var nodes = [html.element("p", #[], [html.text("H")])];
+        var nodes = [html.element(["p"], #[], [html.text("H")])];
 
         var result = html.stripEmpty(nodes);
 
-        assertThat(result, equalTo([html.element("p", #[], [html.text("H")])]));
+        assertThat(result, equalTo([html.element(["p"], #[], [html.text("H")])]));
     }
 
     test "elements with no children are stripped" {
-        var nodes = [html.element("p", #[], [])];
+        var nodes = [html.element(["p"], #[], [])];
 
         var result = html.stripEmpty(nodes);
 
@@ -367,7 +367,7 @@ testSuite "stripEmpty" {
     }
 
     test "elements with only empty children are stripped" {
-        var nodes = [html.element("p", #[], [html.text("")])];
+        var nodes = [html.element(["p"], #[], [html.text("")])];
 
         var result = html.stripEmpty(nodes);
 
@@ -376,27 +376,27 @@ testSuite "stripEmpty" {
 
     test "empty children are removed" {
         var nodes = [
-            html.element("ul", #[], [
-                html.element("li", #[], [html.text("")]),
-                html.element("li", #[], [html.text("H")]),
+            html.element(["ul"], #[], [
+                html.element(["li"], #[], [html.text("")]),
+                html.element(["li"], #[], [html.text("H")]),
             ]),
         ];
 
         var result = html.stripEmpty(nodes);
 
         assertThat(result, equalTo([
-            html.element("ul", #[], [
-                html.element("li", #[], [html.text("H")]),
+            html.element(["ul"], #[], [
+                html.element(["li"], #[], [html.text("H")]),
             ]),
         ]));
     }
 
     test "self-closing elements are never empty" {
-        var nodes = [html.element("br", #[], [])];
+        var nodes = [html.element(["br"], #[], [])];
 
         var result = html.stripEmpty(nodes);
 
-        assertThat(result, equalTo([html.element("br", #[], [])]));
+        assertThat(result, equalTo([html.element(["br"], #[], [])]));
     }
 
     test "force writes are never empty" {
@@ -419,158 +419,158 @@ testSuite "collapse" {
 
     test "consecutive fresh elements are not collapsed" {
         var nodes = [
-            html.freshElement("p", #[], []),
-            html.freshElement("p", #[], []),
+            html.freshElement(["p"], #[], []),
+            html.freshElement(["p"], #[], []),
         ];
 
         var result = html.collapse(nodes);
 
         assertThat(result, equalTo([
-            html.freshElement("p", #[], []),
-            html.freshElement("p", #[], []),
+            html.freshElement(["p"], #[], []),
+            html.freshElement(["p"], #[], []),
         ]));
     }
 
     test "elements with different tag names are not collapsed" {
         var nodes = [
-            html.collapsibleElement("p", #[], [html.text("One")]),
-            html.collapsibleElement("div", #[], [html.text("Two")]),
+            html.collapsibleElement(["p"], #[], [html.text("One")]),
+            html.collapsibleElement(["div"], #[], [html.text("Two")]),
         ];
 
         var result = html.collapse(nodes);
 
         assertThat(result, equalTo([
-            html.collapsibleElement("p", #[], [html.text("One")]),
-            html.collapsibleElement("div", #[], [html.text("Two")]),
+            html.collapsibleElement(["p"], #[], [html.text("One")]),
+            html.collapsibleElement(["div"], #[], [html.text("Two")]),
         ]));
     }
 
     test "elements with different attributes are not collapsed" {
         var nodes = [
-            html.collapsibleElement("p", #[["id", "a"]], [html.text("One")]),
-            html.collapsibleElement("p", #[], [html.text("Two")]),
+            html.collapsibleElement(["p"], #[["id", "a"]], [html.text("One")]),
+            html.collapsibleElement(["p"], #[], [html.text("Two")]),
         ];
 
         var result = html.collapse(nodes);
 
         assertThat(result, equalTo([
-            html.collapsibleElement("p", #[["id", "a"]], [html.text("One")]),
-            html.collapsibleElement("p", #[], [html.text("Two")]),
+            html.collapsibleElement(["p"], #[["id", "a"]], [html.text("One")]),
+            html.collapsibleElement(["p"], #[], [html.text("Two")]),
         ]));
     }
 
     test "consecutive collapsible elements are collapsed if they have the same tag name and no attributes" {
         var nodes = [
-            html.collapsibleElement("p", #[], [html.text("One")]),
-            html.collapsibleElement("p", #[], [html.text("Two")]),
+            html.collapsibleElement(["p"], #[], [html.text("One")]),
+            html.collapsibleElement(["p"], #[], [html.text("Two")]),
         ];
 
         var result = html.collapse(nodes);
 
         assertThat(result, equalTo([
-            html.collapsibleElement("p", #[], [html.text("One"), html.text("Two")]),
+            html.collapsibleElement(["p"], #[], [html.text("One"), html.text("Two")]),
         ]));
     }
 
     test "consecutive collapsible elements are collapsed if they have the same tag name and same attributes" {
         var nodes = [
-            html.collapsibleElement("p", #[["a", "1"], ["b", "2"]], [html.text("One")]),
-            html.collapsibleElement("p", #[["b", "2"], ["a", "1"]], [html.text("Two")]),
+            html.collapsibleElement(["p"], #[["a", "1"], ["b", "2"]], [html.text("One")]),
+            html.collapsibleElement(["p"], #[["b", "2"], ["a", "1"]], [html.text("Two")]),
         ];
 
         var result = html.collapse(nodes);
 
         assertThat(result, equalTo([
-            html.collapsibleElement("p", #[["a", "1"], ["b", "2"]], [html.text("One"), html.text("Two")]),
+            html.collapsibleElement(["p"], #[["a", "1"], ["b", "2"]], [html.text("One"), html.text("Two")]),
         ]));
     }
 
     test "children of elements are collapsed" {
         var nodes = [
-            html.freshElement("div", #[], [
-                html.collapsibleElement("p", #[], [html.text("One")]),
-                html.collapsibleElement("p", #[], [html.text("Two")]),
+            html.freshElement(["div"], #[], [
+                html.collapsibleElement(["p"], #[], [html.text("One")]),
+                html.collapsibleElement(["p"], #[], [html.text("Two")]),
             ]),
         ];
 
         var result = html.collapse(nodes);
 
         assertThat(result, equalTo([
-            html.freshElement("div", #[], [
-                html.collapsibleElement("p", #[], [html.text("One"), html.text("Two")]),
+            html.freshElement(["div"], #[], [
+                html.collapsibleElement(["p"], #[], [html.text("One"), html.text("Two")]),
             ]),
         ]));
     }
 
     test "children of collapsed element can collapse with children of previous element" {
         var nodes = [
-            html.collapsibleElement("blockquote", #[], [
-                html.collapsibleElement("p", #[], [html.text("One")]),
+            html.collapsibleElement(["blockquote"], #[], [
+                html.collapsibleElement(["p"], #[], [html.text("One")]),
             ]),
-            html.collapsibleElement("blockquote", #[], [
-                html.collapsibleElement("p", #[], [html.text("Two")]),
+            html.collapsibleElement(["blockquote"], #[], [
+                html.collapsibleElement(["p"], #[], [html.text("Two")]),
             ]),
         ];
 
         var result = html.collapse(nodes);
 
         assertThat(result, equalTo([
-            html.collapsibleElement("blockquote", #[], [
-                html.collapsibleElement("p", #[], [html.text("One"), html.text("Two")]),
+            html.collapsibleElement(["blockquote"], #[], [
+                html.collapsibleElement(["p"], #[], [html.text("One"), html.text("Two")]),
             ]),
         ]));
     }
 
     test "collapsible element can collapse into previous fresh element" {
         var nodes = [
-            html.freshElement("p", #[], []),
-            html.collapsibleElement("p", #[], []),
+            html.freshElement(["p"], #[], []),
+            html.collapsibleElement(["p"], #[], []),
         ];
 
         var result = html.collapse(nodes);
 
         assertThat(result, equalTo([
-            html.freshElement("p", #[], []),
+            html.freshElement(["p"], #[], []),
         ]));
     }
 
     test "consecutive elements can collapse if second element has choice of tag names including main tag name of first element" {
         var nodes = [
-            html.collapsibleElement("ol", #[], []),
-            html.HtmlElement(html.HtmlTag(["ul", "ol"], #[], true, ""), []),
+            html.collapsibleElement(["ol"], #[], []),
+            html.collapsibleElement(["ul", "ol"], #[], []),
         ];
 
         var result = html.collapse(nodes);
 
         assertThat(result, equalTo([
-            html.collapsibleElement("ol", #[], []),
+            html.collapsibleElement(["ol"], #[], []),
         ]));
     }
 
     test "consecutive elements cannot collapse if second element has tag name as non-main tag name of first element" {
         var nodes = [
-            html.HtmlElement(html.HtmlTag(["ul", "ol"], #[], true, ""), []),
-            html.collapsibleElement("ol", #[], []),
+            html.collapsibleElement(["ul", "ol"], #[], []),
+            html.collapsibleElement(["ol"], #[], []),
         ];
 
         var result = html.collapse(nodes);
 
         assertThat(result, equalTo([
-            html.HtmlElement(html.HtmlTag(["ul", "ol"], #[], true, ""), []),
-            html.collapsibleElement("ol", #[], []),
+            html.collapsibleElement(["ul", "ol"], #[], []),
+            html.collapsibleElement(["ol"], #[], []),
         ]));
     }
 
     test "when separator is present then separator is prepended to collapsed element" {
         var nodes = [
-            html.tagBuilder("pre").fresh().element([html.text("Hello")]),
+            html.freshElement(["pre"], #[], [html.text("Hello")]),
             html.tagBuilder("pre").collapsible().withSeparator("\n").element([html.text(" the"), html.text("re")]),
         ];
 
         var result = html.collapse(nodes);
 
         assertThat(result, equalTo([
-            html.freshElement("pre", #[], [
+            html.freshElement(["pre"], #[], [
                 html.text("Hello"),
                 html.text("\n"),
                 html.text(" the"),
@@ -842,17 +842,17 @@ import {last as lodash_last} from "lodash";
 import {isEqual as lodash_isEqual} from "lodash";
 type HtmlNode = HtmlElement | HtmlForceWrite | HtmlText;
 
-function element(tagName: string, attributes: Map<string, string>, children: ReadonlyArray<HtmlNode>): HtmlElement {
-    return freshElement(tagName, attributes, children);
+function element(tagNames: ReadonlyArray<string>, attributes: Map<string, string>, children: ReadonlyArray<HtmlNode>): HtmlElement {
+    return freshElement(tagNames, attributes, children);
 }
 
-function collapsibleElement(tagName: string, attributes: Map<string, string>, children: ReadonlyArray<HtmlNode>): HtmlElement {
-    let tag = new HtmlTag([tagName], attributes, true, "");
+function collapsibleElement(tagNames: ReadonlyArray<string>, attributes: Map<string, string>, children: ReadonlyArray<HtmlNode>): HtmlElement {
+    let tag = new HtmlTag(tagNames, attributes, true, "");
     return new HtmlElement(tag, children);
 }
 
-function freshElement(tagName: string, attributes: Map<string, string>, children: ReadonlyArray<HtmlNode>): HtmlElement {
-    let tag = new HtmlTag([tagName], attributes, false, "");
+function freshElement(tagNames: ReadonlyArray<string>, attributes: Map<string, string>, children: ReadonlyArray<HtmlNode>): HtmlElement {
+    let tag = new HtmlTag(tagNames, attributes, false, "");
     return new HtmlElement(tag, children);
 }
 
@@ -1080,15 +1080,15 @@ suite("stripEmpty", function () {
     });
 
     test("elements with non-empty children are not stripped", function () {
-        let nodes = [html.element("p", new Map([]), [html.text("H")])];
+        let nodes = [html.element(["p"], new Map([]), [html.text("H")])];
 
         let result = html.stripEmpty(nodes);
 
-        assertThat(result, deepEqualTo([html.element("p", new Map([]), [html.text("H")])]));
+        assertThat(result, deepEqualTo([html.element(["p"], new Map([]), [html.text("H")])]));
     });
 
     test("elements with no children are stripped", function () {
-        let nodes = [html.element("p", new Map([]), [])];
+        let nodes = [html.element(["p"], new Map([]), [])];
 
         let result = html.stripEmpty(nodes);
 
@@ -1096,7 +1096,7 @@ suite("stripEmpty", function () {
     });
 
     test("elements with only empty children are stripped", function () {
-        let nodes = [html.element("p", new Map([]), [html.text("")])];
+        let nodes = [html.element(["p"], new Map([]), [html.text("")])];
 
         let result = html.stripEmpty(nodes);
 
@@ -1104,19 +1104,19 @@ suite("stripEmpty", function () {
     });
 
     test("empty children are removed", function () {
-        let nodes = [html.element("ul", new Map([]), [html.element("li", new Map([]), [html.text("")]), html.element("li", new Map([]), [html.text("H")])])];
+        let nodes = [html.element(["ul"], new Map([]), [html.element(["li"], new Map([]), [html.text("")]), html.element(["li"], new Map([]), [html.text("H")])])];
 
         let result = html.stripEmpty(nodes);
 
-        assertThat(result, deepEqualTo([html.element("ul", new Map([]), [html.element("li", new Map([]), [html.text("H")])])]));
+        assertThat(result, deepEqualTo([html.element(["ul"], new Map([]), [html.element(["li"], new Map([]), [html.text("H")])])]));
     });
 
     test("self-closing elements are never empty", function () {
-        let nodes = [html.element("br", new Map([]), [])];
+        let nodes = [html.element(["br"], new Map([]), [])];
 
         let result = html.stripEmpty(nodes);
 
-        assertThat(result, deepEqualTo([html.element("br", new Map([]), [])]));
+        assertThat(result, deepEqualTo([html.element(["br"], new Map([]), [])]));
     });
 
     test("force writes are never empty", function () {
@@ -1138,91 +1138,91 @@ suite("collapse", function () {
     });
 
     test("consecutive fresh elements are not collapsed", function () {
-        let nodes = [html.freshElement("p", new Map([]), []), html.freshElement("p", new Map([]), [])];
+        let nodes = [html.freshElement(["p"], new Map([]), []), html.freshElement(["p"], new Map([]), [])];
 
         let result = html.collapse(nodes);
 
-        assertThat(result, deepEqualTo([html.freshElement("p", new Map([]), []), html.freshElement("p", new Map([]), [])]));
+        assertThat(result, deepEqualTo([html.freshElement(["p"], new Map([]), []), html.freshElement(["p"], new Map([]), [])]));
     });
 
     test("elements with different tag names are not collapsed", function () {
-        let nodes = [html.collapsibleElement("p", new Map([]), [html.text("One")]), html.collapsibleElement("div", new Map([]), [html.text("Two")])];
+        let nodes = [html.collapsibleElement(["p"], new Map([]), [html.text("One")]), html.collapsibleElement(["div"], new Map([]), [html.text("Two")])];
 
         let result = html.collapse(nodes);
 
-        assertThat(result, deepEqualTo([html.collapsibleElement("p", new Map([]), [html.text("One")]), html.collapsibleElement("div", new Map([]), [html.text("Two")])]));
+        assertThat(result, deepEqualTo([html.collapsibleElement(["p"], new Map([]), [html.text("One")]), html.collapsibleElement(["div"], new Map([]), [html.text("Two")])]));
     });
 
     test("elements with different attributes are not collapsed", function () {
-        let nodes = [html.collapsibleElement("p", new Map([["id", "a"]]), [html.text("One")]), html.collapsibleElement("p", new Map([]), [html.text("Two")])];
+        let nodes = [html.collapsibleElement(["p"], new Map([["id", "a"]]), [html.text("One")]), html.collapsibleElement(["p"], new Map([]), [html.text("Two")])];
 
         let result = html.collapse(nodes);
 
-        assertThat(result, deepEqualTo([html.collapsibleElement("p", new Map([["id", "a"]]), [html.text("One")]), html.collapsibleElement("p", new Map([]), [html.text("Two")])]));
+        assertThat(result, deepEqualTo([html.collapsibleElement(["p"], new Map([["id", "a"]]), [html.text("One")]), html.collapsibleElement(["p"], new Map([]), [html.text("Two")])]));
     });
 
     test("consecutive collapsible elements are collapsed if they have the same tag name and no attributes", function () {
-        let nodes = [html.collapsibleElement("p", new Map([]), [html.text("One")]), html.collapsibleElement("p", new Map([]), [html.text("Two")])];
+        let nodes = [html.collapsibleElement(["p"], new Map([]), [html.text("One")]), html.collapsibleElement(["p"], new Map([]), [html.text("Two")])];
 
         let result = html.collapse(nodes);
 
-        assertThat(result, deepEqualTo([html.collapsibleElement("p", new Map([]), [html.text("One"), html.text("Two")])]));
+        assertThat(result, deepEqualTo([html.collapsibleElement(["p"], new Map([]), [html.text("One"), html.text("Two")])]));
     });
 
     test("consecutive collapsible elements are collapsed if they have the same tag name and same attributes", function () {
-        let nodes = [html.collapsibleElement("p", new Map([["a", "1"], ["b", "2"]]), [html.text("One")]), html.collapsibleElement("p", new Map([["b", "2"], ["a", "1"]]), [html.text("Two")])];
+        let nodes = [html.collapsibleElement(["p"], new Map([["a", "1"], ["b", "2"]]), [html.text("One")]), html.collapsibleElement(["p"], new Map([["b", "2"], ["a", "1"]]), [html.text("Two")])];
 
         let result = html.collapse(nodes);
 
-        assertThat(result, deepEqualTo([html.collapsibleElement("p", new Map([["a", "1"], ["b", "2"]]), [html.text("One"), html.text("Two")])]));
+        assertThat(result, deepEqualTo([html.collapsibleElement(["p"], new Map([["a", "1"], ["b", "2"]]), [html.text("One"), html.text("Two")])]));
     });
 
     test("children of elements are collapsed", function () {
-        let nodes = [html.freshElement("div", new Map([]), [html.collapsibleElement("p", new Map([]), [html.text("One")]), html.collapsibleElement("p", new Map([]), [html.text("Two")])])];
+        let nodes = [html.freshElement(["div"], new Map([]), [html.collapsibleElement(["p"], new Map([]), [html.text("One")]), html.collapsibleElement(["p"], new Map([]), [html.text("Two")])])];
 
         let result = html.collapse(nodes);
 
-        assertThat(result, deepEqualTo([html.freshElement("div", new Map([]), [html.collapsibleElement("p", new Map([]), [html.text("One"), html.text("Two")])])]));
+        assertThat(result, deepEqualTo([html.freshElement(["div"], new Map([]), [html.collapsibleElement(["p"], new Map([]), [html.text("One"), html.text("Two")])])]));
     });
 
     test("children of collapsed element can collapse with children of previous element", function () {
-        let nodes = [html.collapsibleElement("blockquote", new Map([]), [html.collapsibleElement("p", new Map([]), [html.text("One")])]), html.collapsibleElement("blockquote", new Map([]), [html.collapsibleElement("p", new Map([]), [html.text("Two")])])];
+        let nodes = [html.collapsibleElement(["blockquote"], new Map([]), [html.collapsibleElement(["p"], new Map([]), [html.text("One")])]), html.collapsibleElement(["blockquote"], new Map([]), [html.collapsibleElement(["p"], new Map([]), [html.text("Two")])])];
 
         let result = html.collapse(nodes);
 
-        assertThat(result, deepEqualTo([html.collapsibleElement("blockquote", new Map([]), [html.collapsibleElement("p", new Map([]), [html.text("One"), html.text("Two")])])]));
+        assertThat(result, deepEqualTo([html.collapsibleElement(["blockquote"], new Map([]), [html.collapsibleElement(["p"], new Map([]), [html.text("One"), html.text("Two")])])]));
     });
 
     test("collapsible element can collapse into previous fresh element", function () {
-        let nodes = [html.freshElement("p", new Map([]), []), html.collapsibleElement("p", new Map([]), [])];
+        let nodes = [html.freshElement(["p"], new Map([]), []), html.collapsibleElement(["p"], new Map([]), [])];
 
         let result = html.collapse(nodes);
 
-        assertThat(result, deepEqualTo([html.freshElement("p", new Map([]), [])]));
+        assertThat(result, deepEqualTo([html.freshElement(["p"], new Map([]), [])]));
     });
 
     test("consecutive elements can collapse if second element has choice of tag names including main tag name of first element", function () {
-        let nodes = [html.collapsibleElement("ol", new Map([]), []), new html.HtmlElement(new html.HtmlTag(["ul", "ol"], new Map([]), true, ""), [])];
+        let nodes = [html.collapsibleElement(["ol"], new Map([]), []), html.collapsibleElement(["ul", "ol"], new Map([]), [])];
 
         let result = html.collapse(nodes);
 
-        assertThat(result, deepEqualTo([html.collapsibleElement("ol", new Map([]), [])]));
+        assertThat(result, deepEqualTo([html.collapsibleElement(["ol"], new Map([]), [])]));
     });
 
     test("consecutive elements cannot collapse if second element has tag name as non-main tag name of first element", function () {
-        let nodes = [new html.HtmlElement(new html.HtmlTag(["ul", "ol"], new Map([]), true, ""), []), html.collapsibleElement("ol", new Map([]), [])];
+        let nodes = [html.collapsibleElement(["ul", "ol"], new Map([]), []), html.collapsibleElement(["ol"], new Map([]), [])];
 
         let result = html.collapse(nodes);
 
-        assertThat(result, deepEqualTo([new html.HtmlElement(new html.HtmlTag(["ul", "ol"], new Map([]), true, ""), []), html.collapsibleElement("ol", new Map([]), [])]));
+        assertThat(result, deepEqualTo([html.collapsibleElement(["ul", "ol"], new Map([]), []), html.collapsibleElement(["ol"], new Map([]), [])]));
     });
 
     test("when separator is present then separator is prepended to collapsed element", function () {
-        let nodes = [html.tagBuilder("pre").fresh().element([html.text("Hello")]), html.tagBuilder("pre").collapsible().withSeparator("\n").element([html.text(" the"), html.text("re")])];
+        let nodes = [html.freshElement(["pre"], new Map([]), [html.text("Hello")]), html.tagBuilder("pre").collapsible().withSeparator("\n").element([html.text(" the"), html.text("re")])];
 
         let result = html.collapse(nodes);
 
-        assertThat(result, deepEqualTo([html.freshElement("pre", new Map([]), [html.text("Hello"), html.text("\n"), html.text(" the"), html.text("re")])]));
+        assertThat(result, deepEqualTo([html.freshElement(["pre"], new Map([]), [html.text("Hello"), html.text("\n"), html.text(" the"), html.text("re")])]));
     });
 });
 

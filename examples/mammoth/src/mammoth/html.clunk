@@ -1,17 +1,17 @@
 sealed interface HtmlNode {
 }
 
-fun element(tagName: String, attributes: Map[String, String], children: List[HtmlNode]) -> HtmlElement {
-    return freshElement(tagName, attributes, children);
+fun element(tagNames: List[String], attributes: Map[String, String], children: List[HtmlNode]) -> HtmlElement {
+    return freshElement(tagNames, attributes, children);
 }
 
-fun collapsibleElement(tagName: String, attributes: Map[String, String], children: List[HtmlNode]) -> HtmlElement {
-    var tag = HtmlTag([tagName], attributes, true, "");
+fun collapsibleElement(tagNames: List[String], attributes: Map[String, String], children: List[HtmlNode]) -> HtmlElement {
+    var tag = HtmlTag(tagNames, attributes, true, "");
     return HtmlElement(tag, children);
 }
 
-fun freshElement(tagName: String, attributes: Map[String, String], children: List[HtmlNode]) -> HtmlElement {
-    var tag = HtmlTag([tagName], attributes, false, "");
+fun freshElement(tagNames: List[String], attributes: Map[String, String], children: List[HtmlNode]) -> HtmlElement {
+    var tag = HtmlTag(tagNames, attributes, false, "");
     return HtmlElement(tag, children);
 }
 

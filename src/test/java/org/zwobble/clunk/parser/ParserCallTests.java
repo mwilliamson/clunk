@@ -59,6 +59,39 @@ public class ParserCallTests {
     }
 
     @Test
+    public void canParseCallWithManyNamedArguments() {
+        var source = "f(.x = true, .y = false)";
+
+        var node = parseString(source, Parser::parseTopLevelExpression);
+
+        assertThat(node, isUntypedCallNode()
+            .withReceiver(isUntypedReferenceNode("f"))
+            .withPositionalArgs(empty())
+            .withNamedArgs(contains(
+                isUntypedNamedArg("x", isUntypedBoolLiteralNode(true)),
+                isUntypedNamedArg("y", isUntypedBoolLiteralNode(false))
+            ))
+        );
+    }
+
+    @Test
+    public void canParseNamedArgumentAfterPositionalArgument() {
+        var source = "f(true, .y = false)";
+
+        var node = parseString(source, Parser::parseTopLevelExpression);
+
+        assertThat(node, isUntypedCallNode()
+            .withReceiver(isUntypedReferenceNode("f"))
+            .withPositionalArgs(contains(
+                isUntypedBoolLiteralNode(true)
+            ))
+            .withNamedArgs(contains(
+                isUntypedNamedArg("y", isUntypedBoolLiteralNode(false))
+            ))
+        );
+    }
+
+    @Test
     public void argumentsMayHaveTrailingCommand() {
         var source = "f(true,)";
 

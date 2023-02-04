@@ -17,6 +17,10 @@ public record UntypedFunctionNode(
         return params.positional();
     }
 
+    public List<UntypedParamNode> namedParams() {
+        return params.named();
+    }
+
     @Override
     public boolean isTypeDefinition() {
         return false;
@@ -50,7 +54,13 @@ public record UntypedFunctionNode(
         Source source
     ) {
         public UntypedFunctionNode build() {
-            return new UntypedFunctionNode(name, new UntypedParamsNode(positionalParams, source), returnType, body, source);
+            return new UntypedFunctionNode(
+                name,
+                new UntypedParamsNode(positionalParams, List.of(), source),
+                returnType,
+                body,
+                source
+            );
         }
 
         public Builder addParam(UntypedParamNode param) {

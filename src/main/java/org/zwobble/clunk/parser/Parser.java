@@ -569,7 +569,7 @@ public class Parser {
             () -> tokens.trySkip(TokenType.SYMBOL_COMMA)
         );
 
-        return new UntypedParamsNode(positional, source);
+        return new UntypedParamsNode(positional, List.of(), source);
     }
 
     public UntypedFunctionStatementNode parseFunctionStatement(TokenIterator<TokenType> tokens) {

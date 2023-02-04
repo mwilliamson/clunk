@@ -6,6 +6,7 @@ import java.util.List;
 
 public record UntypedParamsNode(
     List<UntypedParamNode> positional,
+    List<UntypedParamNode> named,
     Source source
 ) implements UntypedNode {
 }

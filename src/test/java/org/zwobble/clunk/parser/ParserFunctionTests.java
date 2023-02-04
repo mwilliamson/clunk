@@ -27,7 +27,7 @@ public class ParserFunctionTests {
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
-        assertThat(node, isUntypedFunctionNode().withPositionalParams(empty()));
+        assertThat(node, isUntypedFunctionNode().withPositionalParams(empty()).withNamedParams(empty()));
     }
 
     @Test

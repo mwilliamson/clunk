@@ -572,8 +572,10 @@ public class Parser {
                 var paramSource = source(tokens);
                 if (tokens.trySkip(TokenType.SYMBOL_DOT)) {
                     named.add(parseParam(tokens, paramSource));
-                } else {
+                } else if (named.isEmpty()) {
                     positional.add(parseParam(tokens, paramSource));
+                } else {
+                    throw new PositionalParamAfterNamedParamError(paramSource);
                 }
                 return null;
             },

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.*;
 import static org.zwobble.clunk.parser.Parsing.parseString;
 
@@ -95,6 +96,16 @@ public class ParserFunctionTests {
             .withNamedParams(contains(
                 isUntypedParamNode().withName("y").withType(isUntypedTypeLevelReferenceNode("String"))
             ))
+        );
+    }
+
+    @Test
+    public void cannotParsePositionalParamAfterNamedParam() {
+        var source = "fun f(.y: String, x: Int) -> String { }";
+
+        assertThrows(
+            PositionalParamAfterNamedParamError.class,
+            () -> parseString(source, Parser::parseNamespaceStatement)
         );
     }
 

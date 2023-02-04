@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.*;
 import static org.zwobble.clunk.parser.Parsing.parseString;
 
@@ -88,6 +89,16 @@ public class ParserCallTests {
             .withNamedArgs(contains(
                 isUntypedNamedArg("y", isUntypedBoolLiteralNode(false))
             ))
+        );
+    }
+
+    @Test
+    public void cannotParsePositionalArgumentAfterNamedArgument() {
+        var source = "f(.y = false, true)";
+
+        assertThrows(
+            PositionalArgAfterNamedArgError.class,
+            () -> parseString(source, Parser::parseTopLevelExpression)
         );
     }
 

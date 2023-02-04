@@ -126,9 +126,11 @@ public class Parser {
                     tokens.skip(TokenType.SYMBOL_EQUALS);
                     var expression = parseTopLevelExpression(tokens);
                     named.add(new UntypedNamedArgNode(argName, expression, argSource));
-                } else {
+                } else if (named.isEmpty()) {
                     var expression = parseTopLevelExpression(tokens);
                     positional.add(expression);
+                } else {
+                    throw new PositionalArgAfterNamedArgError(argSource);
                 }
                 return null;
             },

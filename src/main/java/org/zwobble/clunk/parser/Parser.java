@@ -551,17 +551,25 @@ public class Parser {
         tokens.skip(TokenType.KEYWORD_FUN);
         var name = tokens.nextValue(TokenType.IDENTIFIER);
         tokens.skip(TokenType.SYMBOL_PAREN_OPEN);
-        var params = parseMany(
-            () -> tokens.isNext(TokenType.SYMBOL_PAREN_CLOSE),
-            () -> parseParam(tokens),
-            () -> tokens.trySkip(TokenType.SYMBOL_COMMA)
-        );
+        var params = parseParams(tokens);
         tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
         tokens.skip(TokenType.SYMBOL_ARROW);
         var returnType = parseTypeLevelExpression(tokens);
         var body = parseBlock(tokens);
 
         return new UntypedFunctionNode(name, params, returnType, body, source);
+    }
+
+    private UntypedParamsNode parseParams(TokenIterator<TokenType> tokens) {
+        var source = source(tokens);
+
+        var positional = parseMany(
+            () -> tokens.isNext(TokenType.SYMBOL_PAREN_CLOSE),
+            () -> parseParam(tokens),
+            () -> tokens.trySkip(TokenType.SYMBOL_COMMA)
+        );
+
+        return new UntypedParamsNode(positional, source);
     }
 
     public UntypedFunctionStatementNode parseFunctionStatement(TokenIterator<TokenType> tokens) {

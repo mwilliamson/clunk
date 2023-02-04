@@ -27,27 +27,27 @@ public class ParserFunctionTests {
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
-        assertThat(node, isUntypedFunctionNode().withParams(empty()));
+        assertThat(node, isUntypedFunctionNode().withPositionalParams(empty()));
     }
 
     @Test
-    public void canParseFunctionWithSingleParam() {
+    public void canParseFunctionWithSinglePositionalParam() {
         var source = "fun f(x: Int) -> String { }";
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
-        assertThat(node, isUntypedFunctionNode().withParams(contains(
+        assertThat(node, isUntypedFunctionNode().withPositionalParams(contains(
             isUntypedParamNode().withName("x").withType(isUntypedTypeLevelReferenceNode("Int"))
         )));
     }
 
     @Test
-    public void canParseFunctionWithMultipleParams() {
+    public void canParseFunctionWithMultiplePositionalParams() {
         var source = "fun f(x: Int, y: String) -> String { }";
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
-        assertThat(node, isUntypedFunctionNode().withParams(contains(
+        assertThat(node, isUntypedFunctionNode().withPositionalParams(contains(
             isUntypedParamNode().withName("x").withType(isUntypedTypeLevelReferenceNode("Int")),
             isUntypedParamNode().withName("y").withType(isUntypedTypeLevelReferenceNode("String"))
         )));

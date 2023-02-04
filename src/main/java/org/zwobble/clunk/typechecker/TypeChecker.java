@@ -424,7 +424,7 @@ public class TypeChecker {
         }
 
         public void defineFunctionType(TypeCheckerContext context) {
-            var typedParamNodes = node.params().stream().map(param -> typeCheckParam(param, context)).toList();
+            var typedParamNodes = node.params().positional().stream().map(param -> typeCheckParam(param, context)).toList();
             typedParamNodesBox.set(typedParamNodes);
             var paramTypes = typedParamNodes.stream()
                 .map(param -> typedTypeLevelExpressionToType(param.type()))

@@ -22,8 +22,8 @@ public class UntypedFunctionNodeMatcher extends CastMatcher<Object, UntypedFunct
         return addMatcher(has("name", equalTo(name)));
     }
 
-    public UntypedFunctionNodeMatcher withParams(Matcher<? extends Iterable<? extends UntypedParamNode>> params) {
-        return addMatcher(has("params", params));
+    public UntypedFunctionNodeMatcher withPositionalParams(Matcher<? extends Iterable<? extends UntypedParamNode>> params) {
+        return addMatcher(has("positionalParams", params));
     }
 
     public UntypedFunctionNodeMatcher withReturnType(Matcher<UntypedTypeLevelExpressionNode> returnType) {

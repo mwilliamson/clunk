@@ -8,11 +8,15 @@ import java.util.List;
 
 public record UntypedFunctionNode(
     String name,
-    List<UntypedParamNode> params,
+    UntypedParamsNode params,
     UntypedTypeLevelExpressionNode returnType,
     List<UntypedFunctionStatementNode> body,
     Source source
 ) implements UntypedNamespaceStatementNode, UntypedRecordBodyDeclarationNode {
+    public List<UntypedParamNode> positionalParams() {
+        return params.positional();
+    }
+
     @Override
     public boolean isTypeDefinition() {
         return false;
@@ -40,33 +44,33 @@ public record UntypedFunctionNode(
 
     public static record Builder(
         String name,
-        List<UntypedParamNode> params,
+        List<UntypedParamNode> positionalParams,
         UntypedTypeLevelExpressionNode returnType,
         List<UntypedFunctionStatementNode> body,
         Source source
     ) {
         public UntypedFunctionNode build() {
-            return new UntypedFunctionNode(name, params, returnType, body, source);
+            return new UntypedFunctionNode(name, new UntypedParamsNode(positionalParams, source), returnType, body, source);
         }
 
         public Builder addParam(UntypedParamNode param) {
-            var params = new ArrayList<>(this.params);
+            var params = new ArrayList<>(this.positionalParams);
             params.add(param);
             return new Builder(name, params, returnType, body, source);
         }
 
         public Builder name(String name) {
-            return new Builder(name, params, returnType, body, source);
+            return new Builder(name, positionalParams, returnType, body, source);
         }
 
         public Builder returnType(UntypedTypeLevelExpressionNode returnType) {
-            return new Builder(name, params, returnType, body, source);
+            return new Builder(name, positionalParams, returnType, body, source);
         }
 
         public Builder addBodyStatement(UntypedFunctionStatementNode statement) {
             var body = new ArrayList<>(this.body);
             body.add(statement);
-            return new Builder(name, params, returnType, body, source);
+            return new Builder(name, positionalParams, returnType, body, source);
         }
     }
 

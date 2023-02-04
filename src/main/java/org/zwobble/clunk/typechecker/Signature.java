@@ -23,7 +23,7 @@ record SignatureGeneric(CallableType type) implements Signature {
 
 record SignatureNonGeneric(CallableType type) implements Signature {
     public List<Type> positionalParams() {
-        return type.positionalParams();
+        return type.params().positional();
     }
 
     public Type returnType() {

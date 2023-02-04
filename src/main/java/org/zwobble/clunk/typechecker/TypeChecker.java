@@ -262,7 +262,7 @@ public class TypeChecker {
 
         if (expected instanceof FunctionType && typed.type() instanceof StaticFunctionType staticFunctionType) {
             var functionType = new FunctionType(
-                staticFunctionType.positionalParams(),
+                staticFunctionType.params(),
                 staticFunctionType.returnType()
             );
             typed = new TypedStaticMethodToFunctionNode(typed, functionType);
@@ -426,13 +426,15 @@ public class TypeChecker {
         public void defineFunctionType(TypeCheckerContext context) {
             var typedParamNodes = node.params().positional().stream().map(param -> typeCheckParam(param, context)).toList();
             typedParamNodesBox.set(typedParamNodes);
-            var paramTypes = typedParamNodes.stream()
+            var positionalParamTypes = typedParamNodes.stream()
                 .map(param -> typedTypeLevelExpressionToType(param.type()))
                 .toList();
+            var paramTypes = new ParamTypes(positionalParamTypes, List.of());
             var typedReturnTypeNode = typeCheckTypeLevelExpressionNode(node.returnType(), context);
             typedReturnTypeNodeBox.set(typedReturnTypeNode);
             var returnType = typedTypeLevelExpressionToType(typedReturnTypeNode);
 
+            // TODO: named params
             functionTypeBox.set(new FunctionType(paramTypes, returnType));
         }
 
@@ -488,7 +490,7 @@ public class TypeChecker {
                         var type = new StaticFunctionType(
                             context.namespaceName(),
                             node.name(),
-                            functionType.positionalParams(),
+                            functionType.params(),
                             functionType.returnType(),
                             Visibility.PUBLIC
                         );
@@ -893,7 +895,7 @@ public class TypeChecker {
         var type = new MethodType(
             context.namespaceName(),
             Optional.empty(),
-            functionType.positionalParams(),
+            functionType.params(),
             functionType.returnType(),
             Visibility.PUBLIC
         );
@@ -1132,13 +1134,14 @@ public class TypeChecker {
                             memberTypesBuilder.addAll(typeCheckDeclarationResult.memberTypes(), typeCheckDeclarationResult.source());
                         }
 
-                        var constructorArgs = typedRecordFieldNodes.stream()
+                        var constructorPositionalParams = typedRecordFieldNodes.stream()
                             .map(fieldNode -> typedTypeLevelExpressionToType(fieldNode.type()))
                             .toList();
+                        var constructorParams = new ParamTypes(constructorPositionalParams, List.of());
                         var newContext = context.addConstructorType(new ConstructorType(
                             recordType.namespaceName(),
                             Optional.empty(),
-                            constructorArgs,
+                            constructorParams,
                             recordType,
                             Visibility.PUBLIC
                         ));

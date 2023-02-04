@@ -11,7 +11,7 @@ import static org.hamcrest.Matchers.equalTo;
 public class FunctionTypeTests {
     @Test
     public void describeIncludesArgsAndReturnType() {
-        var type = new FunctionType(
+        var type = Types.functionType(
             List.of(Types.BOOL, Types.STRING),
             Types.INT
         );
@@ -24,7 +24,7 @@ public class FunctionTypeTests {
     @Test
     public void replaceReplacesPositionalParamTypes() {
         var typeParameter = TypeParameter.covariant(NamespaceName.fromParts(), "X", "T");
-        var type = new FunctionType(
+        var type = Types.functionType(
             List.of(typeParameter),
             Types.INT
         );
@@ -34,7 +34,7 @@ public class FunctionTypeTests {
 
         var result = type.replace(typeMap);
 
-        assertThat(result, equalTo(new FunctionType(
+        assertThat(result, equalTo(Types.functionType(
             List.of(Types.STRING),
             Types.INT
         )));
@@ -43,7 +43,7 @@ public class FunctionTypeTests {
     @Test
     public void replaceReplacesReturnType() {
         var typeParameter = TypeParameter.covariant(NamespaceName.fromParts(), "X", "T");
-        var type = new FunctionType(
+        var type = Types.functionType(
             List.of(Types.INT),
             typeParameter
         );
@@ -53,7 +53,7 @@ public class FunctionTypeTests {
 
         var result = type.replace(typeMap);
 
-        assertThat(result, equalTo(new FunctionType(
+        assertThat(result, equalTo(Types.functionType(
             List.of(Types.INT),
             Types.STRING
         )));

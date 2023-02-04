@@ -2,12 +2,11 @@ package org.zwobble.clunk.types;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public record StaticFunctionType(
     NamespaceName namespaceName,
     String functionName,
-    List<Type> positionalParams,
+    ParamTypes params,
     Type returnType,
     Visibility visibility
 ) implements CallableType {
@@ -23,9 +22,7 @@ public record StaticFunctionType(
 
     @Override
     public String describe() {
-        var paramsString = positionalParams.stream()
-            .map(param -> param.describe())
-            .collect(Collectors.joining(", "));
+        var paramsString = params.describe();
 
         return namespaceName + "." + functionName + ": (" + paramsString + ") -> " + returnType.describe();
     }

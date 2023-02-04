@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 public record MethodType(
     NamespaceName namespaceName,
     Optional<List<TypeParameter>> typeLevelParams,
-    List<Type> positionalParams,
+    ParamTypes params,
     Type returnType,
     Visibility visibility
 ) implements CallableType {
@@ -19,9 +19,7 @@ public record MethodType(
                 .map(param -> param.describe())
                 .collect(Collectors.joining(", ")) + "]";
 
-        var paramsString = positionalParams.stream()
-            .map(param -> param.describe())
-            .collect(Collectors.joining(", "));
+        var paramsString = params.describe();
 
         return "method " + typeLevelParamString + "(" + paramsString + ") -> " + returnType.describe();
     }
@@ -31,9 +29,7 @@ public record MethodType(
         return new MethodType(
             namespaceName,
             typeLevelParams,
-            positionalParams.stream()
-                .map(param -> param.replace(typeMap))
-                .toList(),
+            params.replace(typeMap),
             returnType.replace(typeMap),
             visibility
         );
@@ -44,7 +40,13 @@ public record MethodType(
         if (typeLevelParams.isEmpty()) {
             return this;
         } else {
-            return new MethodType(namespaceName, Optional.empty(), positionalParams, returnType, visibility);
+            return new MethodType(
+                namespaceName,
+                Optional.empty(),
+                params,
+                returnType,
+                visibility
+            );
         }
     }
 }

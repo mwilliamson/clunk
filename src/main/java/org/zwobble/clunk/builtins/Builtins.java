@@ -41,7 +41,7 @@ public class Builtins {
             Map.entry("assertThat", new StaticFunctionType(
                 NamespaceName.fromParts("stdlib", "assertions"),
                 "assertThat",
-                List.of(Types.OBJECT, Types.UNIT),
+                new ParamTypes(List.of(Types.OBJECT, Types.UNIT), List.of()),
                 Types.UNIT,
                 Visibility.PUBLIC
             ))
@@ -51,7 +51,7 @@ public class Builtins {
             Map.entry("equalTo", new StaticFunctionType(
                 NamespaceName.fromParts("stdlib", "matchers"),
                 "equalTo",
-                List.of(Types.OBJECT),
+                new ParamTypes(List.of(Types.OBJECT), List.of()),
                 Types.UNIT,
                 Visibility.PUBLIC
             ))

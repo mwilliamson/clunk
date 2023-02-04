@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 public record ConstructorType(
     NamespaceName namespaceName,
     Optional<List<TypeParameter>> typeLevelParams,
-    List<Type> positionalParams,
+    ParamTypes params,
     StructuredType returnType,
     Visibility visibility
 ) implements CallableType {
@@ -19,9 +19,7 @@ public record ConstructorType(
                 .map(param -> param.describe())
                 .collect(Collectors.joining(", ")) + "]";
 
-        var paramsString = positionalParams.stream()
-            .map(param -> param.describe())
-            .collect(Collectors.joining(", "));
+        var paramsString = params.describe();
 
         return "constructor " + typeLevelParamString + "(" + paramsString + ") -> " + returnType.describe();
     }
@@ -31,9 +29,7 @@ public record ConstructorType(
         return new ConstructorType(
             namespaceName,
             typeLevelParams,
-            positionalParams.stream()
-                .map(param -> param.replace(typeMap))
-                .toList(),
+            params.replace(typeMap),
             returnType.replace(typeMap),
             visibility
         );
@@ -44,15 +40,33 @@ public record ConstructorType(
         if (typeLevelParams.isEmpty()) {
             return this;
         } else {
-            return new ConstructorType(namespaceName, Optional.empty(), positionalParams, returnType, visibility);
+            return new ConstructorType(
+                namespaceName,
+                Optional.empty(),
+                params,
+                returnType,
+                visibility
+            );
         }
     }
 
     public ConstructorType withTypeParams(List<TypeParameter> typeParams) {
-        return new ConstructorType(namespaceName, Optional.of(typeParams), positionalParams, returnType, visibility);
+        return new ConstructorType(
+            namespaceName,
+            Optional.of(typeParams),
+            params,
+            returnType,
+            visibility
+        );
     }
 
     public ConstructorType withReturnType(StructuredType returnType) {
-        return new ConstructorType(namespaceName, typeLevelParams, positionalParams, returnType, visibility);
+        return new ConstructorType(
+            namespaceName,
+            typeLevelParams,
+            params,
+            returnType,
+            visibility
+        );
     }
 }

@@ -123,7 +123,7 @@ public class TypeCheckFunctionTests {
 
         assertThat(
             result.context().typeOf("f", NullSource.INSTANCE),
-            equalTo(new StaticFunctionType(
+            equalTo(Types.staticFunctionType(
                 NamespaceName.fromParts("a", "b"),
                 "f",
                 List.of(Types.INT),

@@ -58,13 +58,14 @@ public class SubtypeRelations {
             subtype instanceof FunctionType subtypeFunction &&
             supertype instanceof FunctionType supertypeFunction
         ) {
-            if (subtypeFunction.positionalParams().size() != supertypeFunction.positionalParams().size()) {
+            // TODO: handle named params
+            if (subtypeFunction.params().positional().size() != supertypeFunction.params().positional().size()) {
                 return false;
             }
 
-            for (var i = 0; i < subtypeFunction.positionalParams().size(); i++) {
-                var subtypeParam = subtypeFunction.positionalParams().get(i);
-                var supertypeParam = supertypeFunction.positionalParams().get(i);
+            for (var i = 0; i < subtypeFunction.params().positional().size(); i++) {
+                var subtypeParam = subtypeFunction.params().positional().get(i);
+                var supertypeParam = supertypeFunction.params().positional().get(i);
                 if (!isSubType(supertypeParam, subtypeParam)) {
                     return false;
                 }

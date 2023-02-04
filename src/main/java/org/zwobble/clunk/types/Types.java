@@ -73,7 +73,7 @@ public class Types {
     }
 
     public static FunctionType functionType(List<Type> positionalParams, Type returnType) {
-        return new FunctionType(positionalParams, returnType);
+        return new FunctionType(new ParamTypes(positionalParams, List.of()), returnType);
     }
 
     public static InterfaceType interfaceType(NamespaceName namespaceName, String name) {
@@ -92,7 +92,7 @@ public class Types {
         return new ConstructorType(
             returnType.namespaceName(),
             Optional.of(typeLevelParams),
-            positionalParams,
+            new ParamTypes(positionalParams, List.of()),
             returnType,
             Visibility.PUBLIC
         );
@@ -107,7 +107,7 @@ public class Types {
         return new ConstructorType(
             returnType.namespaceName(),
             Optional.of(typeLevelParams),
-            positionalParams,
+            new ParamTypes(positionalParams, List.of()),
             returnType,
             visibility
         );
@@ -120,7 +120,7 @@ public class Types {
         return new ConstructorType(
             returnType.namespaceName(),
             Optional.empty(),
-            positionalParams,
+            new ParamTypes(positionalParams, List.of()),
             returnType,
             Visibility.PUBLIC
         );
@@ -134,14 +134,20 @@ public class Types {
         return new ConstructorType(
             returnType.namespaceName(),
             Optional.empty(),
-            positionalParams,
+            new ParamTypes(positionalParams, List.of()),
             returnType,
             visibility
         );
     }
 
     public static MethodType methodType(NamespaceName namespaceName, List<TypeParameter> typeLevelParams, List<Type> positionalParams, Type returnType) {
-        return new MethodType(namespaceName, Optional.of(typeLevelParams), positionalParams, returnType, Visibility.PUBLIC);
+        return new MethodType(
+            namespaceName,
+            Optional.of(typeLevelParams),
+            new ParamTypes(positionalParams, List.of()),
+            returnType,
+            Visibility.PUBLIC
+        );
     }
 
     public static MethodType methodType(StructuredType type, List<TypeParameter> typeLevelParams, List<Type> positionalParams, Type returnType) {
@@ -153,7 +159,13 @@ public class Types {
     }
 
     public static MethodType methodType(NamespaceName namespaceName, List<Type> positionalParams, Type returnType) {
-        return new MethodType(namespaceName, Optional.empty(), positionalParams, returnType, Visibility.PUBLIC);
+        return new MethodType(
+            namespaceName,
+            Optional.empty(),
+            new ParamTypes(positionalParams, List.of()),
+            returnType,
+            Visibility.PUBLIC
+        );
     }
 
     public static MethodType methodType(StructuredType type, List<Type> positionalParams, Type returnType) {
@@ -170,7 +182,29 @@ public class Types {
         List<Type> positionalParams,
         Type returnType
     ) {
-        return new StaticFunctionType(namespaceName, functionName, positionalParams, returnType, Visibility.PUBLIC);
+        return staticFunctionType(
+            namespaceName,
+            functionName,
+            positionalParams,
+            returnType,
+            Visibility.PUBLIC
+        );
+    }
+
+    public static StaticFunctionType staticFunctionType(
+        NamespaceName namespaceName,
+        String functionName,
+        List<Type> positionalParams,
+        Type returnType,
+        Visibility visibility
+    ) {
+        return new StaticFunctionType(
+            namespaceName,
+            functionName,
+            new ParamTypes(positionalParams, List.of()),
+            returnType,
+            visibility
+        );
     }
 
     public static RecordType recordType(NamespaceName namespaceName, String name) {

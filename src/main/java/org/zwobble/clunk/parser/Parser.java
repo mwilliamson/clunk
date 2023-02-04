@@ -563,13 +563,24 @@ public class Parser {
     private UntypedParamsNode parseParams(TokenIterator<TokenType> tokens) {
         var source = source(tokens);
 
-        var positional = parseMany(
+        var positional = new ArrayList<UntypedParamNode>();
+        var named = new ArrayList<UntypedParamNode>();
+
+        parseMany(
             () -> tokens.isNext(TokenType.SYMBOL_PAREN_CLOSE),
-            () -> parseParam(tokens),
+            () -> {
+                var paramSource = source(tokens);
+                if (tokens.trySkip(TokenType.SYMBOL_DOT)) {
+                    named.add(parseParam(tokens, paramSource));
+                } else {
+                    positional.add(parseParam(tokens, paramSource));
+                }
+                return null;
+            },
             () -> tokens.trySkip(TokenType.SYMBOL_COMMA)
         );
 
-        return new UntypedParamsNode(positional, List.of(), source);
+        return new UntypedParamsNode(positional, named, source);
     }
 
     public UntypedFunctionStatementNode parseFunctionStatement(TokenIterator<TokenType> tokens) {
@@ -628,9 +639,7 @@ public class Parser {
         return new UntypedConditionalBranchNode(condition, body, source);
     }
 
-    private UntypedParamNode parseParam(TokenIterator<TokenType> tokens) {
-        var source = tokens.peek().source();
-
+    private UntypedParamNode parseParam(TokenIterator<TokenType> tokens, Source source) {
         var name = tokens.nextValue(TokenType.IDENTIFIER);
         tokens.skip(TokenType.SYMBOL_COLON);
         var type = parseTypeLevelExpression(tokens);

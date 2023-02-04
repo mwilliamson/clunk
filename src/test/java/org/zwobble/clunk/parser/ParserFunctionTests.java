@@ -54,6 +54,51 @@ public class ParserFunctionTests {
     }
 
     @Test
+    public void canParseFunctionWithSingleNamedParam() {
+        var source = "fun f(.x: Int) -> String { }";
+
+        var node = parseString(source, Parser::parseNamespaceStatement);
+
+        assertThat(node, isUntypedFunctionNode()
+            .withPositionalParams(empty())
+            .withNamedParams(contains(
+                isUntypedParamNode().withName("x").withType(isUntypedTypeLevelReferenceNode("Int"))
+            ))
+        );
+    }
+
+    @Test
+    public void canParseFunctionWithMultipleNamedParams() {
+        var source = "fun f(.x: Int, .y: String) -> String { }";
+
+        var node = parseString(source, Parser::parseNamespaceStatement);
+
+        assertThat(node, isUntypedFunctionNode()
+            .withPositionalParams(empty())
+            .withNamedParams(contains(
+                isUntypedParamNode().withName("x").withType(isUntypedTypeLevelReferenceNode("Int")),
+                isUntypedParamNode().withName("y").withType(isUntypedTypeLevelReferenceNode("String"))
+            ))
+        );
+    }
+
+    @Test
+    public void canParseNamedParamAfterPositionalParam() {
+        var source = "fun f(x: Int, .y: String) -> String { }";
+
+        var node = parseString(source, Parser::parseNamespaceStatement);
+
+        assertThat(node, isUntypedFunctionNode()
+            .withPositionalParams(contains(
+                isUntypedParamNode().withName("x").withType(isUntypedTypeLevelReferenceNode("Int"))
+            ))
+            .withNamedParams(contains(
+                isUntypedParamNode().withName("y").withType(isUntypedTypeLevelReferenceNode("String"))
+            ))
+        );
+    }
+
+    @Test
     public void canParseFunctionWithBody() {
         var source = "fun f() -> Bool { return true; return false; }";
 

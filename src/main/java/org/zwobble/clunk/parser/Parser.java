@@ -68,9 +68,9 @@ public class Parser {
             TokenIterator<TokenType> tokens,
             Source operatorSource
         ) {
-            var positionalArgs = parseCallArgs(tokens);
+            var args = parseCallArgs(tokens);
             tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
-            return new UntypedCallNode(left, List.of(), positionalArgs, left.source());
+            return new UntypedCallNode(left, List.of(), args, left.source());
         }
 
         @Override
@@ -111,12 +111,16 @@ public class Parser {
         }
     }
 
-    private List<UntypedExpressionNode> parseCallArgs(TokenIterator<TokenType> tokens) {
-        return parseMany(
+    private UntypedArgsNode parseCallArgs(TokenIterator<TokenType> tokens) {
+        var source = source(tokens);
+
+        var positional = parseMany(
             () -> tokens.isNext(TokenType.SYMBOL_PAREN_CLOSE),
             () -> parseTopLevelExpression(tokens),
             () -> tokens.trySkip(TokenType.SYMBOL_COMMA)
         );
+
+        return new UntypedArgsNode(positional, source);
     }
 
     private class ParseCast implements OperatorParselet {

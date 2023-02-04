@@ -24,14 +24,24 @@ public class Untyped {
         List<UntypedTypeLevelExpressionNode> typeLevelArgs,
         List<UntypedExpressionNode> positionalArgs
     ) {
-        return new UntypedCallNode(receiver, typeLevelArgs, positionalArgs, NullSource.INSTANCE);
+        return new UntypedCallNode(
+            receiver,
+            typeLevelArgs,
+            new UntypedArgsNode(positionalArgs, NullSource.INSTANCE),
+            NullSource.INSTANCE
+        );
     }
 
     public static UntypedCallNode call(
         UntypedExpressionNode receiver,
         List<UntypedExpressionNode> positionalArgs
     ) {
-        return new UntypedCallNode(receiver, List.of(), positionalArgs, NullSource.INSTANCE);
+        return new UntypedCallNode(
+            receiver,
+            List.of(),
+            new UntypedArgsNode(positionalArgs, NullSource.INSTANCE),
+            NullSource.INSTANCE
+        );
     }
 
     public static UntypedCastUnsafeNode castUnsafe(

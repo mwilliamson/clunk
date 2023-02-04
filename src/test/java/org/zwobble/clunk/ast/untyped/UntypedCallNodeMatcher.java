@@ -29,6 +29,10 @@ public class UntypedCallNodeMatcher extends CastMatcher<Object, UntypedCallNode>
         return addMatcher(has("positionalArgs", positionalArgs));
     }
 
+    public UntypedCallNodeMatcher withNamedArgs(Matcher<? extends Iterable<? extends UntypedNamedArgNode>> namedArgs) {
+        return addMatcher(has("namedArgs", namedArgs));
+    }
+
     private UntypedCallNodeMatcher addMatcher(Matcher<UntypedCallNode> matcher) {
         return new UntypedCallNodeMatcher(Lists.concatOne(matchers, matcher));
     }

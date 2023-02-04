@@ -18,4 +18,8 @@ public record UntypedCallNode(
     public List<UntypedExpressionNode> positionalArgs() {
         return args.positional();
     }
+
+    public List<UntypedNamedArgNode> namedArgs() {
+        return args.named();
+    }
 }

@@ -108,6 +108,16 @@ public class UntypedNodeMatchers {
         ));
     }
 
+    public static Matcher<UntypedNamedArgNode> isUntypedNamedArg(
+        String name,
+        Matcher<UntypedExpressionNode> expression
+    ) {
+        return allOf(
+            has("name", equalTo(name)),
+            has("expression", expression)
+        );
+    }
+
     public static UntypedNamespaceNodeMatcher isUntypedNamespaceNode() {
         return new UntypedNamespaceNodeMatcher(List.of());
     }

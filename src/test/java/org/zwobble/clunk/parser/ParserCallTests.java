@@ -22,7 +22,7 @@ public class ParserCallTests {
     }
 
     @Test
-    public void canParseCallWithOneArgument() {
+    public void canParseCallWithOnePositionalArgument() {
         var source = "f(true)";
 
         var node = parseString(source, Parser::parseTopLevelExpression);
@@ -34,7 +34,7 @@ public class ParserCallTests {
     }
 
     @Test
-    public void canParseCallWithManyArguments() {
+    public void canParseCallWithManyPositionalArguments() {
         var source = "f(true, false)";
 
         var node = parseString(source, Parser::parseTopLevelExpression);
@@ -42,6 +42,19 @@ public class ParserCallTests {
         assertThat(node, isUntypedCallNode()
             .withReceiver(isUntypedReferenceNode("f"))
             .withPositionalArgs(contains(isUntypedBoolLiteralNode(true), isUntypedBoolLiteralNode(false)))
+        );
+    }
+
+    @Test
+    public void canParseCallWithOneNamedArgument() {
+        var source = "f(.x = true)";
+
+        var node = parseString(source, Parser::parseTopLevelExpression);
+
+        assertThat(node, isUntypedCallNode()
+            .withReceiver(isUntypedReferenceNode("f"))
+            .withPositionalArgs(empty())
+            .withNamedArgs(contains(isUntypedNamedArg("x", isUntypedBoolLiteralNode(true))))
         );
     }
 

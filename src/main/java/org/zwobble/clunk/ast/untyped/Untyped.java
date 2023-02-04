@@ -27,7 +27,7 @@ public class Untyped {
         return new UntypedCallNode(
             receiver,
             typeLevelArgs,
-            new UntypedArgsNode(positionalArgs, NullSource.INSTANCE),
+            new UntypedArgsNode(positionalArgs, List.of(), NullSource.INSTANCE),
             NullSource.INSTANCE
         );
     }
@@ -39,7 +39,7 @@ public class Untyped {
         return new UntypedCallNode(
             receiver,
             List.of(),
-            new UntypedArgsNode(positionalArgs, NullSource.INSTANCE),
+            new UntypedArgsNode(positionalArgs, List.of(), NullSource.INSTANCE),
             NullSource.INSTANCE
         );
     }

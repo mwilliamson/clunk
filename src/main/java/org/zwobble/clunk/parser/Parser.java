@@ -114,13 +114,30 @@ public class Parser {
     private UntypedArgsNode parseCallArgs(TokenIterator<TokenType> tokens) {
         var source = source(tokens);
 
-        var positional = parseMany(
-            () -> tokens.isNext(TokenType.SYMBOL_PAREN_CLOSE),
-            () -> parseTopLevelExpression(tokens),
-            () -> tokens.trySkip(TokenType.SYMBOL_COMMA)
-        );
+        var positional = new ArrayList<UntypedExpressionNode>();
+        var named = new ArrayList<UntypedNamedArgNode>();
 
-        return new UntypedArgsNode(positional, source);
+        while (true) {
+            if (tokens.isNext(TokenType.SYMBOL_PAREN_CLOSE)) {
+                break;
+            }
+
+            var argSource = source(tokens);
+            if (tokens.trySkip(TokenType.SYMBOL_DOT)) {
+                var argName = tokens.nextValue(TokenType.IDENTIFIER);
+                tokens.skip(TokenType.SYMBOL_EQUALS);
+                var expression = parseTopLevelExpression(tokens);
+                named.add(new UntypedNamedArgNode(argName, expression, argSource));
+            } else {
+                var expression = parseTopLevelExpression(tokens);
+                positional.add(expression);
+            }
+            if (!tokens.trySkip(TokenType.SYMBOL_COMMA)) {
+                break;
+            }
+        }
+
+        return new UntypedArgsNode(positional, named, source);
     }
 
     private class ParseCast implements OperatorParselet {

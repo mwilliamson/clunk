@@ -6,6 +6,7 @@ import java.util.List;
 
 public record UntypedArgsNode(
     List<UntypedExpressionNode> positional,
+    List<UntypedNamedArgNode> named,
     Source source
 ) implements UntypedNode {
 }

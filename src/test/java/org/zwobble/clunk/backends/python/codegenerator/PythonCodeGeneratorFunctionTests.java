@@ -25,7 +25,7 @@ public class PythonCodeGeneratorFunctionTests {
         var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
         assertThat(string, equalTo(
             """
-                def f(x, y):
+                def f(x, y, /):
                     return False
                 """
         ));
@@ -61,7 +61,7 @@ public class PythonCodeGeneratorFunctionTests {
         var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
         assertThat(string, equalTo(
             """
-                def f(max_width, max_height):
+                def f(max_width, max_height, /):
                     pass
                 """
         ));

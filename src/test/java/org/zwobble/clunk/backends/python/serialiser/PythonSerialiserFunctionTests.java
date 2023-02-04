@@ -40,7 +40,7 @@ public class PythonSerialiserFunctionTests {
     }
 
     @Test
-    public void functionWithParams() {
+    public void positionalParamsArePositionalOnly() {
         var node = PythonFunctionNode.builder()
             .name("make_it_so")
             .addParam("x")
@@ -50,7 +50,39 @@ public class PythonSerialiserFunctionTests {
         var result = serialiseToString(node, PythonSerialiser::serialiseStatement);
 
         assertThat(result, equalTo("""
-            def make_it_so(x, y):
+            def make_it_so(x, y, /):
+                pass
+            """));
+    }
+
+    @Test
+    public void whenOnlyParamIsSelfThenParamIsNotPositionalOnly() {
+        var node = PythonFunctionNode.builder()
+            .name("make_it_so")
+            .addParam("self")
+            .build();
+
+        var result = serialiseToString(node, PythonSerialiser::serialiseStatement);
+
+        assertThat(result, equalTo("""
+            def make_it_so(self):
+                pass
+            """));
+    }
+
+    @Test
+    public void whenFunctionHasBothSelfAndOtherPositionalParamsThenParamsArePositionalOnly() {
+        var node = PythonFunctionNode.builder()
+            .name("make_it_so")
+            .addParam("self")
+            .addParam("x")
+            .addParam("y")
+            .build();
+
+        var result = serialiseToString(node, PythonSerialiser::serialiseStatement);
+
+        assertThat(result, equalTo("""
+            def make_it_so(self, x, y, /):
                 pass
             """));
     }

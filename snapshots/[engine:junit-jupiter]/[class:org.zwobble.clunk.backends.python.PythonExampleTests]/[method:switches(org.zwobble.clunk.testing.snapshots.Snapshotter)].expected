@@ -45,13 +45,13 @@ class Node:
 class Add:
     left: Node
     right: Node
-    def accept(self, visitor):
+    def accept(self, visitor, /):
         return visitor.visit_add(self)
 
 @dataclasses.dataclass(frozen=True)
 class Literal:
     value: int
-    def accept(self, visitor):
+    def accept(self, visitor, /):
         return visitor.visit_literal(self)
 
 def test_sum():
@@ -61,11 +61,11 @@ def test_sum():
 
     assert_that(result, equal_to(12))
 
-def evaluate(node):
+def evaluate(node, /):
     class Visitor:
-        def visit_add(self, node):
+        def visit_add(self, node, /):
             return evaluate(node.left) + evaluate(node.right)
-        def visit_literal(self, node):
+        def visit_literal(self, node, /):
             return node.value
     return node.accept(Visitor())
 

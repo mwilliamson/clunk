@@ -33,7 +33,7 @@ public class PythonCodeGeneratorSwitchTests {
         assertThat(string, equalTo(
             """
             class Visitor:
-                def visit_add(self, node):
+                def visit_add(self, node, /):
                     return node
             return node.accept(Visitor())
             """));
@@ -58,7 +58,7 @@ public class PythonCodeGeneratorSwitchTests {
         assertThat(string, equalTo(
             """
             class Visitor:
-                def visit_add(self, node):
+                def visit_add(self, node, /):
                     node
             node.accept(Visitor())
             """));
@@ -83,7 +83,7 @@ public class PythonCodeGeneratorSwitchTests {
         assertThat(string, equalTo(
             """
             class Visitor:
-                def visit_int_literal(self, first_node):
+                def visit_int_literal(self, first_node, /):
                     return first_node
             return first_node.accept(Visitor())
             """));

@@ -308,6 +308,9 @@ public class PythonSerialiser {
             param -> builder.append(param),
             () -> builder.append(", ")
         );
+        if (node.params().size() > 0 && !(node.params().size() == 1 && node.params().get(0).equals("self"))) {
+            builder.append(", /");
+        }
         builder.append("):");
         builder.newLine();
         serialiseBlock(node.body(), builder);

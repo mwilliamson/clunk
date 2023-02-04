@@ -73,7 +73,7 @@ public class PythonCodeGeneratorRecordTests {
                 class ExampleRecord:
                     first: str
                     second: int
-                    def accept(self, visitor):
+                    def accept(self, visitor, /):
                         return visitor.visit_example_record(self)
                 """
         ));

@@ -117,25 +117,23 @@ public class Parser {
         var positional = new ArrayList<UntypedExpressionNode>();
         var named = new ArrayList<UntypedNamedArgNode>();
 
-        while (true) {
-            if (tokens.isNext(TokenType.SYMBOL_PAREN_CLOSE)) {
-                break;
-            }
-
-            var argSource = source(tokens);
-            if (tokens.trySkip(TokenType.SYMBOL_DOT)) {
-                var argName = tokens.nextValue(TokenType.IDENTIFIER);
-                tokens.skip(TokenType.SYMBOL_EQUALS);
-                var expression = parseTopLevelExpression(tokens);
-                named.add(new UntypedNamedArgNode(argName, expression, argSource));
-            } else {
-                var expression = parseTopLevelExpression(tokens);
-                positional.add(expression);
-            }
-            if (!tokens.trySkip(TokenType.SYMBOL_COMMA)) {
-                break;
-            }
-        }
+        parseMany(
+            () -> tokens.isNext(TokenType.SYMBOL_PAREN_CLOSE),
+            () -> {
+                var argSource = source(tokens);
+                if (tokens.trySkip(TokenType.SYMBOL_DOT)) {
+                    var argName = tokens.nextValue(TokenType.IDENTIFIER);
+                    tokens.skip(TokenType.SYMBOL_EQUALS);
+                    var expression = parseTopLevelExpression(tokens);
+                    named.add(new UntypedNamedArgNode(argName, expression, argSource));
+                } else {
+                    var expression = parseTopLevelExpression(tokens);
+                    positional.add(expression);
+                }
+                return null;
+            },
+            () -> tokens.trySkip(TokenType.SYMBOL_COMMA)
+        );
 
         return new UntypedArgsNode(positional, named, source);
     }

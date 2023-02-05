@@ -245,6 +245,30 @@ public class TypeCheckCallTests {
     }
 
     @Test
+    public void whenNamedArgIsMissingThenErrorIsThrown() {
+        var untypedNode = Untyped.call(
+            Untyped.reference("abs"),
+            List.of()
+        );
+        var functionType = Types.staticFunctionType(
+            NamespaceName.fromParts("Stdlib", "Math"),
+            "abs",
+            List.of(),
+            List.of(Types.namedParam("x", Types.INT)),
+            Types.INT
+        );
+        var context = TypeCheckerContext.stub()
+            .addLocal("abs", functionType, NullSource.INSTANCE);
+
+        var error = assertThrows(
+            NamedArgIsMissingError.class,
+            () -> TypeChecker.typeCheckExpression(untypedNode, context)
+        );
+
+        assertThat(error.argName(), equalTo("x"));
+    }
+
+    @Test
     public void givenSignatureHasNoTypeParamsWhenTypeArgsArePassedThenErrorIsThrown() {
         var untypedNode = Untyped.call(
             Untyped.memberAccess(

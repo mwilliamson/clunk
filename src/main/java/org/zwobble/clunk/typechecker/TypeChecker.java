@@ -60,14 +60,22 @@ public class TypeChecker {
             typedPositionalArgs.add(typedArgNode);
         }
 
+        var namedParams = signature.namedParams().stream()
+            .collect(Collectors.toMap(param -> param.name(), param -> param));
+
         for (var untypedNamedArgNode : node.namedArgs()) {
-            var namedParam = signature.namedParam(untypedNamedArgNode.name()).orElseThrow();
+            var namedParam = namedParams.remove(untypedNamedArgNode.name());
             var typedExpression = typeCheckExpression(
                 untypedNamedArgNode.expression(),
                 namedParam.type(),
                 context
             );
         }
+
+        for (var missingParam : namedParams.values()) {
+            throw new NamedArgIsMissingError(missingParam.name(), node.source());
+        }
+
         return typedPositionalArgs;
     }
 

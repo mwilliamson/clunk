@@ -414,7 +414,7 @@ public class TypeChecker {
 
     private static class FunctionTypeChecker {
         private final Box<FunctionType> functionTypeBox = new Box<>();
-        private final Box<List<TypedParamNode>> typedParamNodesBox = new Box<>();
+        private final Box<List<TypedParamNode>> typedPositionalParamNodesBox = new Box<>();
         private final Box<TypedTypeLevelExpressionNode> typedReturnTypeNodeBox = new Box<>();
         private final Box<List<TypedFunctionStatementNode>> typedBodyBox = new Box<>();
         private final UntypedFunctionNode node;
@@ -424,23 +424,33 @@ public class TypeChecker {
         }
 
         public void defineFunctionType(TypeCheckerContext context) {
-            var typedParamNodes = node.params().positional().stream().map(param -> typeCheckParam(param, context)).toList();
-            typedParamNodesBox.set(typedParamNodes);
-            var positionalParamTypes = typedParamNodes.stream()
+            var typedPositionalParamNodes = node.params().positional().stream()
+                .map(param -> typeCheckParam(param, context))
+                .toList();
+            typedPositionalParamNodesBox.set(typedPositionalParamNodes);
+            var positionalParamTypes = typedPositionalParamNodes.stream()
                 .map(param -> typedTypeLevelExpressionToType(param.type()))
                 .toList();
-            var paramTypes = new ParamTypes(positionalParamTypes, List.of());
+
+            var typedNamedParamNodes = node.params().named().stream()
+                .map(param -> typeCheckParam(param, context))
+                .toList();
+            var namedParamTypes = typedNamedParamNodes.stream()
+                .map(param -> Types.namedParam(param.name(), typedTypeLevelExpressionToType(param.type())))
+                .toList();
+
+            var paramTypes = new ParamTypes(positionalParamTypes, namedParamTypes);
+
             var typedReturnTypeNode = typeCheckTypeLevelExpressionNode(node.returnType(), context);
             typedReturnTypeNodeBox.set(typedReturnTypeNode);
             var returnType = typedTypeLevelExpressionToType(typedReturnTypeNode);
 
-            // TODO: named params
             functionTypeBox.set(new FunctionType(paramTypes, returnType));
         }
 
         public void typeCheckBody(TypeCheckerContext context) {
             var functionType = functionTypeBox.get();
-            var typedParamNodes = typedParamNodesBox.get();
+            var typedParamNodes = typedPositionalParamNodesBox.get();
 
             var bodyContext = context.enterFunction(functionType.returnType());
             for (var typedParamNode : typedParamNodes) {
@@ -466,7 +476,7 @@ public class TypeChecker {
         public TypedFunctionNode typedNode() {
             return new TypedFunctionNode(
                 node.name(),
-                typedParamNodesBox.get(),
+                typedPositionalParamNodesBox.get(),
                 typedReturnTypeNodeBox.get(),
                 typedBodyBox.get(),
                 node.source()

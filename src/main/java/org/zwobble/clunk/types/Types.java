@@ -176,6 +176,10 @@ public class Types {
         return methodType(typeConstructor.genericType(), positionalParams, returnType);
     }
 
+    public static NamedParamType namedParam(String name, Type type) {
+        return new NamedParamType(name, type);
+    }
+
     public static StaticFunctionType staticFunctionType(
         NamespaceName namespaceName,
         String functionName,
@@ -202,6 +206,23 @@ public class Types {
             namespaceName,
             functionName,
             new ParamTypes(positionalParams, List.of()),
+            returnType,
+            visibility
+        );
+    }
+
+    public static StaticFunctionType staticFunctionType(
+        NamespaceName namespaceName,
+        String functionName,
+        List<Type> positionalParams,
+        List<NamedParamType> namedParams,
+        Type returnType,
+        Visibility visibility
+    ) {
+        return new StaticFunctionType(
+            namespaceName,
+            functionName,
+            new ParamTypes(positionalParams, namedParams),
             returnType,
             visibility
         );

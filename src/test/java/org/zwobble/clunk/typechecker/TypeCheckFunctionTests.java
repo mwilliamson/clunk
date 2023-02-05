@@ -113,6 +113,7 @@ public class TypeCheckFunctionTests {
         var untypedNode = UntypedFunctionNode.builder()
             .name("f")
             .addPositionalParam(Untyped.param("x", Untyped.typeLevelReference("Int")))
+            .addNamedParam(Untyped.param("y", Untyped.typeLevelReference("Bool")))
             .returnType(Untyped.typeLevelReference("String"))
             .addBodyStatement(Untyped.returnStatement(Untyped.string()))
             .build();
@@ -127,6 +128,7 @@ public class TypeCheckFunctionTests {
                 NamespaceName.fromParts("a", "b"),
                 "f",
                 List.of(Types.INT),
+                List.of(Types.namedParam("y", Types.BOOL)),
                 Types.STRING,
                 Visibility.PUBLIC
             ))

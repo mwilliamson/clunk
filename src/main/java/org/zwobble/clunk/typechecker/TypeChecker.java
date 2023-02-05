@@ -65,6 +65,9 @@ public class TypeChecker {
 
         for (var untypedNamedArgNode : node.namedArgs()) {
             var namedParam = namedParams.remove(untypedNamedArgNode.name());
+            if (namedParam == null) {
+                throw new ExtraNamedArgError(untypedNamedArgNode.name(), untypedNamedArgNode.source());
+            }
             var typedExpression = typeCheckExpression(
                 untypedNamedArgNode.expression(),
                 namedParam.type(),

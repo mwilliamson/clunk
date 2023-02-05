@@ -1,9 +1,10 @@
 package org.zwobble.clunk.ast.untyped;
 
+import org.pcollections.PVector;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.sources.Source;
+import org.zwobble.clunk.util.P;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public record UntypedFunctionNode(
@@ -39,18 +40,18 @@ public record UntypedFunctionNode(
     public static UntypedFunctionNode.Builder builder() {
         return new UntypedFunctionNode.Builder(
             "f",
-            List.of(),
+            P.vector(),
             Untyped.typeLevelReference("Unit"),
-            List.of(),
+            P.vector(),
             NullSource.INSTANCE
         );
     }
 
-    public static record Builder(
+    public record Builder(
         String name,
-        List<UntypedParamNode> positionalParams,
+        PVector<UntypedParamNode> positionalParams,
         UntypedTypeLevelExpressionNode returnType,
-        List<UntypedFunctionStatementNode> body,
+        PVector<UntypedFunctionStatementNode> body,
         Source source
     ) {
         public UntypedFunctionNode build() {
@@ -64,9 +65,7 @@ public record UntypedFunctionNode(
         }
 
         public Builder addPositionalParam(UntypedParamNode param) {
-            var params = new ArrayList<>(this.positionalParams);
-            params.add(param);
-            return new Builder(name, params, returnType, body, source);
+            return new Builder(name, positionalParams.plus(param), returnType, body, source);
         }
 
         public Builder name(String name) {
@@ -78,9 +77,7 @@ public record UntypedFunctionNode(
         }
 
         public Builder addBodyStatement(UntypedFunctionStatementNode statement) {
-            var body = new ArrayList<>(this.body);
-            body.add(statement);
-            return new Builder(name, positionalParams, returnType, body, source);
+            return new Builder(name, positionalParams, returnType, body.plus(statement), source);
         }
     }
 

@@ -171,6 +171,10 @@ public class Untyped {
         return new UntypedMapEntryLiteralNode(key, value, NullSource.INSTANCE);
     }
 
+    public static UntypedNamedArgNode namedArg(String name, UntypedExpressionNode expression) {
+        return new UntypedNamedArgNode(name, expression, NullSource.INSTANCE);
+    }
+
     public static UntypedNotEqualNode notEqual(
         UntypedExpressionNode left,
         UntypedExpressionNode right

@@ -59,6 +59,15 @@ public class TypeChecker {
 
             typedPositionalArgs.add(typedArgNode);
         }
+
+        for (var untypedNamedArgNode : node.namedArgs()) {
+            var namedParam = signature.namedParam(untypedNamedArgNode.name()).orElseThrow();
+            var typedExpression = typeCheckExpression(
+                untypedNamedArgNode.expression(),
+                namedParam.type(),
+                context
+            );
+        }
         return typedPositionalArgs;
     }
 

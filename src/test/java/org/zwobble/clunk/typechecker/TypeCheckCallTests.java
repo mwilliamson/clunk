@@ -2,6 +2,7 @@ package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.untyped.Untyped;
+import org.zwobble.clunk.ast.untyped.UntypedCallNode;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.*;
 
@@ -220,6 +221,27 @@ public class TypeCheckCallTests {
 
         assertThat(error.getExpected(), equalTo(1));
         assertThat(error.getActual(), equalTo(2));
+    }
+
+    @Test
+    public void whenNamedArgIsWrongTypeThenErrorIsThrown() {
+        var untypedNode = UntypedCallNode.builder(Untyped.reference("abs"))
+            .addNamedArg("x", Untyped.string("123"))
+            .build();
+        var functionType = Types.staticFunctionType(
+            NamespaceName.fromParts("Stdlib", "Math"),
+            "abs",
+            List.of(),
+            List.of(Types.namedParam("x", Types.INT)),
+            Types.INT
+        );
+        var context = TypeCheckerContext.stub()
+            .addLocal("abs", functionType, NullSource.INSTANCE);
+
+        var error = assertThrows(UnexpectedTypeError.class, () -> TypeChecker.typeCheckExpression(untypedNode, context));
+
+        assertThat(error.getExpected(), equalTo(IntType.INSTANCE));
+        assertThat(error.getActual(), equalTo(StringType.INSTANCE));
     }
 
     @Test

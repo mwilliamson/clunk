@@ -199,6 +199,23 @@ public class Types {
         NamespaceName namespaceName,
         String functionName,
         List<Type> positionalParams,
+        List<NamedParamType> namedParams,
+        Type returnType
+    ) {
+        return staticFunctionType(
+            namespaceName,
+            functionName,
+            positionalParams,
+            namedParams,
+            returnType,
+            Visibility.PUBLIC
+        );
+    }
+
+    public static StaticFunctionType staticFunctionType(
+        NamespaceName namespaceName,
+        String functionName,
+        List<Type> positionalParams,
         Type returnType,
         Visibility visibility
     ) {

@@ -3,6 +3,7 @@ package org.zwobble.clunk.typechecker;
 import org.zwobble.clunk.types.*;
 
 import java.util.List;
+import java.util.Optional;
 
 sealed interface Signature permits SignatureNonGeneric, SignatureGeneric {
 }
@@ -24,6 +25,13 @@ record SignatureGeneric(CallableType type) implements Signature {
 record SignatureNonGeneric(CallableType type) implements Signature {
     public List<Type> positionalParams() {
         return type.params().positional();
+    }
+
+    public Optional<NamedParamType> namedParam(String name) {
+        return type.params().named()
+            .stream()
+            .filter(param -> param.name().equals(name))
+            .findFirst();
     }
 
     public Type returnType() {

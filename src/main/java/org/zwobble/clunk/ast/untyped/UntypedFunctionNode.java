@@ -41,6 +41,7 @@ public record UntypedFunctionNode(
         return new UntypedFunctionNode.Builder(
             "f",
             P.vector(),
+            P.vector(),
             Untyped.typeLevelReference("Unit"),
             P.vector(),
             NullSource.INSTANCE
@@ -50,6 +51,7 @@ public record UntypedFunctionNode(
     public record Builder(
         String name,
         PVector<UntypedParamNode> positionalParams,
+        PVector<UntypedParamNode> namedParams,
         UntypedTypeLevelExpressionNode returnType,
         PVector<UntypedFunctionStatementNode> body,
         Source source
@@ -57,7 +59,7 @@ public record UntypedFunctionNode(
         public UntypedFunctionNode build() {
             return new UntypedFunctionNode(
                 name,
-                new UntypedParamsNode(positionalParams, List.of(), source),
+                new UntypedParamsNode(positionalParams, namedParams, source),
                 returnType,
                 body,
                 source
@@ -65,19 +67,23 @@ public record UntypedFunctionNode(
         }
 
         public Builder addPositionalParam(UntypedParamNode param) {
-            return new Builder(name, positionalParams.plus(param), returnType, body, source);
+            return new Builder(name, positionalParams.plus(param), namedParams, returnType, body, source);
+        }
+
+        public Builder addNamedParam(UntypedParamNode param) {
+            return new Builder(name, positionalParams, namedParams.plus(param), returnType, body, source);
         }
 
         public Builder name(String name) {
-            return new Builder(name, positionalParams, returnType, body, source);
+            return new Builder(name, positionalParams, namedParams, returnType, body, source);
         }
 
         public Builder returnType(UntypedTypeLevelExpressionNode returnType) {
-            return new Builder(name, positionalParams, returnType, body, source);
+            return new Builder(name, positionalParams, namedParams, returnType, body, source);
         }
 
         public Builder addBodyStatement(UntypedFunctionStatementNode statement) {
-            return new Builder(name, positionalParams, returnType, body.plus(statement), source);
+            return new Builder(name, positionalParams, namedParams, returnType, body.plus(statement), source);
         }
     }
 

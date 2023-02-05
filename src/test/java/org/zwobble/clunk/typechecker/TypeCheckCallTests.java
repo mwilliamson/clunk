@@ -269,6 +269,28 @@ public class TypeCheckCallTests {
     }
 
     @Test
+    public void whenNamedArgsAreNotInLexicographicalOrderThenErrorIsThrown() {
+        var untypedNode = UntypedCallNode.builder(Untyped.reference("f"))
+            .addNamedArg("y", Untyped.string("123"))
+            .addNamedArg("x", Untyped.string("123"))
+            .build();
+        var functionType = Types.staticFunctionType(
+            NamespaceName.fromParts(),
+            "f",
+            List.of(),
+            List.of(Types.namedParam("x", Types.STRING), Types.namedParam("y", Types.STRING)),
+            Types.INT
+        );
+        var context = TypeCheckerContext.stub()
+            .addLocal("f", functionType, NullSource.INSTANCE);
+
+        assertThrows(
+            NamedArgsNotInLexicographicalOrderError.class,
+            () -> TypeChecker.typeCheckExpression(untypedNode, context)
+        );
+    }
+
+    @Test
     public void whenNamedArgIsWrongTypeThenErrorIsThrown() {
         var untypedNode = UntypedCallNode.builder(Untyped.reference("abs"))
             .addNamedArg("x", Untyped.string("123"))

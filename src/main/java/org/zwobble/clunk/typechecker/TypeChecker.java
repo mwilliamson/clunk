@@ -87,6 +87,12 @@ public class TypeChecker {
             throw new NamedArgIsMissingError(missingParam.name(), node.source());
         }
 
+        for (var namedArgPair : slidingPairs(node.args().named())) {
+            if (namedArgPair.first().name().compareTo(namedArgPair.second().name()) > 0) {
+                throw new NamedArgsNotInLexicographicalOrderError(namedArgPair.second().source());
+            }
+        }
+
         return new TypedArgsNode(typedPositionalArgs, typedNamedArgs, node.args().source());
     }
 

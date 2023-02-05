@@ -32,7 +32,7 @@ public class TypeCheckFunctionTests {
     }
 
     @Test
-    public void paramsAreTyped() {
+    public void positionalParamsAreTyped() {
         var untypedNode = UntypedFunctionNode.builder()
             .addParam(Untyped.param("x", Untyped.typeLevelReference("Int")))
             .addParam(Untyped.param("y", Untyped.typeLevelReference("String")))

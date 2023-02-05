@@ -457,7 +457,7 @@ public class TypeChecker {
             var typedParamsNode = typedParamsNodeBox.get();
 
             var bodyContext = context.enterFunction(functionType.returnType());
-            for (var typedParamNode : typedParamsNode.positional()) {
+            for (var typedParamNode : typedParamsNode.all()) {
                 bodyContext = bodyContext.addLocal(
                     typedParamNode.name(),
                     typedTypeLevelExpressionToType(typedParamNode.type()),

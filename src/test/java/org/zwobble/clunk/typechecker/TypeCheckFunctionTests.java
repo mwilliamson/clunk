@@ -62,6 +62,19 @@ public class TypeCheckFunctionTests {
     }
 
     @Test
+    public void whenNamedParamsAreNotInLexicographicalOrderThenErrorIsThrown() {
+        var untypedNode = UntypedFunctionNode.builder()
+            .addNamedParam(Untyped.param("y", Untyped.typeLevelReference("String")))
+            .addNamedParam(Untyped.param("x", Untyped.typeLevelReference("Int")))
+            .build();
+
+        assertThrows(
+            NamedParamsNotInLexicographicalOrderError.class,
+            () -> typeCheckNamespaceStatementAllPhases(untypedNode, TypeCheckerContext.stub())
+        );
+    }
+
+    @Test
     public void returnTypeIsTyped() {
         var untypedNode = UntypedFunctionNode.builder()
             .returnType(Untyped.typeLevelReference("Int"))

@@ -1,5 +1,7 @@
 package org.zwobble.clunk.util;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class Iterables {
@@ -15,5 +17,23 @@ public class Iterables {
             onElement.accept(value);
             first = false;
         }
+    }
+
+    public static <T> List<Pair<T, T>> slidingPairs(Iterable<T> values) {
+        var iterator = values.iterator();
+        if (!iterator.hasNext()) {
+            return List.of();
+        }
+
+        var result = new ArrayList<Pair<T, T>>();
+
+        var previous = iterator.next();
+        while (iterator.hasNext()) {
+            var current = iterator.next();
+            result.add(new Pair<>(previous, current));
+            previous = current;
+        }
+
+        return result;
     }
 }

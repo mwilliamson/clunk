@@ -13,6 +13,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.zwobble.clunk.types.Types.metaType;
+import static org.zwobble.clunk.util.Iterables.slidingPairs;
 import static org.zwobble.clunk.util.Lists.last;
 
 public class TypeChecker {
@@ -464,6 +465,11 @@ public class TypeChecker {
             var namedParamTypes = typedNamedParamNodes.stream()
                 .map(param -> Types.namedParam(param.name(), typedTypeLevelExpressionToType(param.type())))
                 .toList();
+            for (var namedParamPair : slidingPairs(node.params().named())) {
+                if (namedParamPair.first().name().compareTo(namedParamPair.second().name()) > 0) {
+                    throw new NamedParamsNotInLexicographicalOrderError(namedParamPair.second().source());
+                }
+            }
 
             typedParamsNodeBox.set(new TypedParamsNode(
                 typedPositionalParamNodes,

@@ -251,7 +251,9 @@ public class TypeScriptCodeGenerator {
     private static TypeScriptFunctionDeclarationNode compileFunction(TypedFunctionNode node, TypeScriptCodeGeneratorContext context) {
         return new TypeScriptFunctionDeclarationNode(
             node.name(),
-            node.params().stream().map(param -> compileParam(param)).toList(),
+            node.params().positional().stream()
+                .map(param -> compileParam(param))
+                .toList(),
             compileTypeLevelExpression(node.returnType()),
             compileFunctionStatements(node.body(), context)
         );

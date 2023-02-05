@@ -122,7 +122,7 @@ public class TypeCheckNamespaceTests {
 
         var typedFunctionNode = (TypedFunctionNode) result.typedNode().statements().get(0);
         var typedRecordNode = (TypedRecordNode) result.typedNode().statements().get(1);
-        assertThat(typedFunctionNode.params().get(0).type().value(), equalTo(typedRecordNode.type()));
+        assertThat(typedFunctionNode.params().positional().get(0).type().value(), equalTo(typedRecordNode.type()));
     }
 
     @Test

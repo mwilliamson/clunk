@@ -40,7 +40,7 @@ public class TypeCheckFunctionTests {
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, TypeCheckerContext.stub());
 
-        assertThat(result.typedNode(), isTypedFunctionNode().withParams(contains(
+        assertThat(result.typedNode(), isTypedFunctionNode().withPositionalParams(contains(
             isTypedParamNode().withName("x").withType(IntType.INSTANCE),
             isTypedParamNode().withName("y").withType(StringType.INSTANCE)
         )));

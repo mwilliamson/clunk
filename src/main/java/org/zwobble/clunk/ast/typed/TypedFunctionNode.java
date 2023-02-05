@@ -9,11 +9,14 @@ import java.util.List;
 
 public record TypedFunctionNode(
     String name,
-    List<TypedParamNode> params,
+    TypedParamsNode params,
     TypedTypeLevelExpressionNode returnType,
     List<TypedFunctionStatementNode> body,
     Source source
 ) implements TypedNamespaceStatementNode, TypedRecordBodyDeclarationNode {
+    public List<TypedParamNode> positionalParams() {
+        return params.positional();
+    }
 
     @Override
     public <T> T accept(TypedNamespaceStatementNode.Visitor<T> visitor) {
@@ -36,7 +39,13 @@ public record TypedFunctionNode(
         List<TypedFunctionStatementNode> body
     ) {
         public TypedFunctionNode build() {
-            return new TypedFunctionNode(name, params, returnType, body, NullSource.INSTANCE);
+            return new TypedFunctionNode(
+                name,
+                new TypedParamsNode(params, NullSource.INSTANCE),
+                returnType,
+                body,
+                NullSource.INSTANCE
+            );
         }
 
         public Builder addParam(TypedParamNode param) {

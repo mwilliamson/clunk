@@ -568,8 +568,10 @@ public class PythonCodeGenerator {
         return pythonizeName(node.name());
     }
 
-    private static List<String> compileParams(List<TypedParamNode> nodes) {
-        return nodes.stream().map(param -> compileParam(param)).toList();
+    private static List<String> compileParams(TypedParamsNode nodes) {
+        return nodes.positional().stream()
+            .map(param -> compileParam(param))
+            .toList();
     }
 
     private static PythonStatementNode compileProperty(

@@ -20,8 +20,8 @@ public class TypedFunctionNodeMatcher extends CastMatcher<Object, TypedFunctionN
         this.matchers = matchers;
     }
 
-    public TypedFunctionNodeMatcher withParams(Matcher<? extends Iterable<? extends TypedParamNode>> params) {
-        return addMatcher(has("params", params));
+    public TypedFunctionNodeMatcher withPositionalParams(Matcher<? extends Iterable<? extends TypedParamNode>> positionalParams) {
+        return addMatcher(has("positionalParams", positionalParams));
     }
 
     public TypedFunctionNodeMatcher withName(String name) {

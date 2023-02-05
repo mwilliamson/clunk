@@ -268,7 +268,9 @@ public class JavaCodeGenerator {
             List.of(),
             compileTypeLevelExpression(node.returnType(), context),
             node.name(),
-            node.params().stream().map(param -> compileParam(param, context)).toList(),
+            node.params().positional().stream()
+                .map(param -> compileParam(param, context))
+                .toList(),
             compileBlock(node.body(), context)
         );
     }

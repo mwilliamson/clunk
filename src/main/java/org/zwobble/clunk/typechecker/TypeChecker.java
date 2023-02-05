@@ -476,7 +476,7 @@ public class TypeChecker {
         public TypedFunctionNode typedNode() {
             return new TypedFunctionNode(
                 node.name(),
-                typedPositionalParamNodesBox.get(),
+                new TypedParamsNode(typedPositionalParamNodesBox.get(), node.params().source()),
                 typedReturnTypeNodeBox.get(),
                 typedBodyBox.get(),
                 node.source()

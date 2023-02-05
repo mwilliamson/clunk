@@ -24,7 +24,7 @@ public class Typed {
         return new TypedCallConstructorNode(
             receiver,
             Optional.of(typeArgs),
-            args,
+            new TypedArgsNode(args, NullSource.INSTANCE),
             type,
             NullSource.INSTANCE
         );
@@ -35,7 +35,13 @@ public class Typed {
         List<TypedExpressionNode> args,
         Type type
     ) {
-        return new TypedCallConstructorNode(receiver, Optional.empty(), args, type, NullSource.INSTANCE);
+        return new TypedCallConstructorNode(
+            receiver,
+            Optional.empty(),
+            new TypedArgsNode(args, NullSource.INSTANCE),
+            type,
+            NullSource.INSTANCE
+        );
     }
 
     public static TypedCallMethodNode callMethod(
@@ -47,7 +53,7 @@ public class Typed {
         return new TypedCallMethodNode(
             Optional.of(receiver),
             methodName,
-            args,
+            new TypedArgsNode(args, NullSource.INSTANCE),
             type,
             NullSource.INSTANCE
         );
@@ -55,7 +61,12 @@ public class Typed {
 
     public static TypedCallStaticFunctionNode callStatic(TypedExpressionNode receiver, List<TypedExpressionNode> args) {
         var staticFunctionType = (StaticFunctionType) receiver.type();
-        return new TypedCallStaticFunctionNode(receiver, args, staticFunctionType, NullSource.INSTANCE);
+        return new TypedCallStaticFunctionNode(
+            receiver,
+            new TypedArgsNode(args, NullSource.INSTANCE),
+            staticFunctionType,
+            NullSource.INSTANCE
+        );
     }
 
     public static TypedCastUnsafeNode castUnsafe(

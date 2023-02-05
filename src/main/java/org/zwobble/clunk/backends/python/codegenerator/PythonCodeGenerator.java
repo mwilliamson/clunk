@@ -15,10 +15,10 @@ import static org.zwobble.clunk.backends.CaseConverter.camelCaseToSnakeCase;
 
 public class PythonCodeGenerator {
     private static List<PythonExpressionNode> compileArgs(
-        List<TypedExpressionNode> positionalArgs,
+        TypedArgsNode args,
         PythonCodeGeneratorContext context
     ) {
-        return positionalArgs.stream()
+        return args.positional().stream()
             .map(arg -> compileExpression(arg, context))
             .toList();
     }
@@ -34,12 +34,12 @@ public class PythonCodeGenerator {
     private static PythonExpressionNode compileCallConstructor(TypedCallConstructorNode node, PythonCodeGeneratorContext context) {
         var classMacro = PythonMacros.lookupClassMacro(node.type());
         if (classMacro.isPresent()) {
-            var pythonArgs = compileArgs(node.positionalArgs(), context);
+            var pythonArgs = compileArgs(node.args(), context);
             return classMacro.get().compileConstructorCall(pythonArgs);
         } else {
             return new PythonCallNode(
                 compileExpression(node.receiver(), context),
-                compileArgs(node.positionalArgs(), context),
+                compileArgs(node.args(), context),
                 List.of()
             );
         }
@@ -54,7 +54,7 @@ public class PythonCodeGenerator {
                 return classMacro.get().compileMethodCall(
                     pythonReceiver,
                     node.methodName(),
-                    compileArgs(node.positionalArgs(), context)
+                    compileArgs(node.args(), context)
                 );
             }
         }
@@ -64,7 +64,7 @@ public class PythonCodeGenerator {
                 receiver.map(r -> compileExpression(r, context)).orElse(new PythonReferenceNode("self")),
                 pythonizeName(node.methodName())
             ),
-            compileArgs(node.positionalArgs(), context),
+            compileArgs(node.args(), context),
             List.of()
         );
     }
@@ -78,13 +78,13 @@ public class PythonCodeGenerator {
         if (macro.isPresent()) {
             return new PythonCallNode(
                 macro.get().compileReceiver(context),
-                compileArgs(node.positionalArgs(), context),
+                compileArgs(node.args(), context),
                 List.of()
             );
         } else {
             return new PythonCallNode(
                 compileExpression(node.receiver(), context),
-                compileArgs(node.positionalArgs(), context),
+                compileArgs(node.args(), context),
                 List.of()
             );
         }

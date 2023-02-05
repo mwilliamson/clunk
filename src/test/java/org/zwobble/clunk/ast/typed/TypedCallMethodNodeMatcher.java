@@ -2,6 +2,7 @@ package org.zwobble.clunk.ast.typed;
 
 import org.hamcrest.Matcher;
 import org.zwobble.clunk.matchers.CastMatcher;
+import org.zwobble.clunk.matchers.HasMatcher;
 import org.zwobble.clunk.types.Type;
 import org.zwobble.clunk.util.Lists;
 
@@ -33,8 +34,12 @@ public class TypedCallMethodNodeMatcher extends CastMatcher<Object, TypedCallMet
         return addMatcher(has("methodName", equalTo(methodName)));
     }
 
-    public TypedCallMethodNodeMatcher withPositionalArgs(Matcher<? extends Iterable<? extends TypedExpressionNode>> positionalArgs) {
-        return addMatcher(has("positionalArgs", positionalArgs));
+    public TypedCallMethodNodeMatcher withPositionalArgs(Matcher<Iterable<? extends TypedExpressionNode>> positionalArgs) {
+        return addMatcher(HasMatcher.has(
+            "positionalArgs",
+            node -> node.args().positional(),
+            positionalArgs
+        ));
     }
 
     public TypedCallMethodNodeMatcher withType(Type type) {

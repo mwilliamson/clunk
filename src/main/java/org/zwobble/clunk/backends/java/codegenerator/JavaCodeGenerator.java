@@ -16,8 +16,8 @@ import static org.zwobble.clunk.backends.CaseConverter.upperCamelCaseToLowerCame
 import static org.zwobble.clunk.util.Lists.last;
 
 public class JavaCodeGenerator {
-    private static List<JavaExpressionNode> compileArgs(List<TypedExpressionNode> positionalArgs, JavaCodeGeneratorContext context) {
-        return positionalArgs.stream()
+    private static List<JavaExpressionNode> compileArgs(TypedArgsNode args, JavaCodeGeneratorContext context) {
+        return args.positional().stream()
             .map(arg -> compileExpression(arg, context))
             .toList();
     }
@@ -40,7 +40,7 @@ public class JavaCodeGenerator {
 
     private static JavaExpressionNode compileCallConstructor(TypedCallConstructorNode node, JavaCodeGeneratorContext context) {
         var javaReceiver = compileExpression(node.receiver(), context);
-        var javaArgs = compileArgs(node.positionalArgs(), context);
+        var javaArgs = compileArgs(node.args(), context);
 
         var macroResult = JavaMacros.compileConstructorCall(node.type(), javaArgs, context);
         if (macroResult.isPresent()) {
@@ -57,7 +57,7 @@ public class JavaCodeGenerator {
     private static JavaExpressionNode compileCallMethod(TypedCallMethodNode node, JavaCodeGeneratorContext context) {
         var receiver = node.receiver();
         var javaReceiver = receiver.map(r -> compileExpression(r, context));
-        var javaArgs = compileArgs(node.positionalArgs(), context);
+        var javaArgs = compileArgs(node.args(), context);
 
         if (receiver.isPresent()) {
             var macroResult = JavaMacros.compileMethodCall(
@@ -88,12 +88,12 @@ public class JavaCodeGenerator {
         if (macro.isPresent()) {
             return new JavaCallNode(
                 macro.get().compileReceiver(context),
-                compileArgs(node.positionalArgs(), context)
+                compileArgs(node.args(), context)
             );
         } else {
             return new JavaCallNode(
                 compileExpression(node.receiver(), context),
-                compileArgs(node.positionalArgs(), context)
+                compileArgs(node.args(), context)
             );
         }
     }

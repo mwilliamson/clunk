@@ -41,7 +41,7 @@ public class TypeChecker {
         );
     }
 
-    private static List<TypedExpressionNode> typeCheckArgs(SignatureNonGeneric signature, UntypedCallNode node, TypeCheckerContext context) {
+    private static TypedArgsNode typeCheckArgs(SignatureNonGeneric signature, UntypedCallNode node, TypeCheckerContext context) {
         if (node.positionalArgs().size() != signature.positionalParams().size()) {
             throw new WrongNumberOfArgumentsError(
                 signature.positionalParams().size(),
@@ -79,7 +79,7 @@ public class TypeChecker {
             throw new NamedArgIsMissingError(missingParam.name(), node.source());
         }
 
-        return typedPositionalArgs;
+        return new TypedArgsNode(typedPositionalArgs, node.args().source());
     }
 
     private static TypeCheckFunctionStatementResult<TypedFunctionStatementNode> typeCheckBlankLineInFunction(
@@ -110,13 +110,13 @@ public class TypeChecker {
         var typeCheckTypeArgsResult = typeCheckTypeArgs(signature, node, context);
         var signatureNonGeneric = typeCheckTypeArgsResult.signatureNonGeneric;
 
-        var typedPositionalArgs = typeCheckArgs(signatureNonGeneric, node, context);
+        var typedArgs = typeCheckArgs(signatureNonGeneric, node, context);
 
         return switch (signatureNonGeneric.type()) {
             case ConstructorType ignored -> new TypedCallConstructorNode(
                 receiver,
                 typeCheckTypeArgsResult.nodes,
-                typedPositionalArgs,
+                typedArgs,
                 signatureNonGeneric.returnType(),
                 node.source()
             );
@@ -125,7 +125,7 @@ public class TypeChecker {
                     yield new TypedCallMethodNode(
                         Optional.of(memberAccess.receiver()),
                         memberAccess.memberName(),
-                        typedPositionalArgs,
+                        typedArgs,
                         signatureNonGeneric.returnType(),
                         node.source()
                     );
@@ -133,7 +133,7 @@ public class TypeChecker {
                     yield new TypedCallMethodNode(
                         Optional.empty(),
                         memberReference.name(),
-                        typedPositionalArgs,
+                        typedArgs,
                         signatureNonGeneric.returnType(),
                         node.source()
                     );
@@ -144,7 +144,7 @@ public class TypeChecker {
             }
             case StaticFunctionType staticFunctionType -> new TypedCallStaticFunctionNode(
                 receiver,
-                typedPositionalArgs,
+                typedArgs,
                 staticFunctionType,
                 node.source()
             );

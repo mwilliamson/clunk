@@ -13,10 +13,10 @@ import static org.zwobble.clunk.util.Lists.last;
 
 public class TypeScriptCodeGenerator {
     private static List<TypeScriptExpressionNode> compileArgs(
-        List<TypedExpressionNode> positionalArgs,
+        TypedArgsNode args,
         TypeScriptCodeGeneratorContext context
     ) {
-        return positionalArgs.stream()
+        return args.positional().stream()
             .map(arg -> compileExpression(arg, context))
             .toList();
     }
@@ -38,13 +38,13 @@ public class TypeScriptCodeGenerator {
 
             return classMacro.get().compileConstructorCall(
                 typeArgs,
-                compileArgs(node.positionalArgs(), context)
+                compileArgs(node.args(), context)
             );
         } else {
             return new TypeScriptCallNewNode(
                 compileExpression(node.receiver(), context),
                 List.of(),
-                compileArgs(node.positionalArgs(), context)
+                compileArgs(node.args(), context)
             );
         }
     }
@@ -58,7 +58,7 @@ public class TypeScriptCodeGenerator {
                 return macro.get().compileMethodCall(
                     compileExpression(receiver.get(), context),
                     node.methodName(),
-                    compileArgs(node.positionalArgs(), context),
+                    compileArgs(node.args(), context),
                     context
                 );
             }
@@ -69,7 +69,7 @@ public class TypeScriptCodeGenerator {
                 receiver.map(r -> compileExpression(r, context)).orElse(new TypeScriptReferenceNode("this")),
                 node.methodName()
             ),
-            compileArgs(node.positionalArgs(), context)
+            compileArgs(node.args(), context)
         );
     }
 
@@ -79,12 +79,12 @@ public class TypeScriptCodeGenerator {
         if (macro.isPresent()) {
             return new TypeScriptCallNode(
                 macro.get().compileReceiver(context),
-                compileArgs(node.positionalArgs(), context)
+                compileArgs(node.args(), context)
             );
         } else {
             return new TypeScriptCallNode(
                 compileExpression(node.receiver(), context),
-                compileArgs(node.positionalArgs(), context)
+                compileArgs(node.args(), context)
             );
         }
     }

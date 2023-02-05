@@ -4,11 +4,9 @@ import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.types.StaticFunctionType;
 import org.zwobble.clunk.types.Type;
 
-import java.util.List;
-
 public record TypedCallStaticFunctionNode(
     TypedExpressionNode receiver,
-    List<TypedExpressionNode> positionalArgs,
+    TypedArgsNode args,
     StaticFunctionType receiverType,
     Source source
 ) implements TypedExpressionNode {

@@ -9,7 +9,7 @@ import java.util.Optional;
 public record TypedCallConstructorNode(
     TypedExpressionNode receiver,
     Optional<List<TypedTypeLevelExpressionNode>> typeArgs,
-    List<TypedExpressionNode> positionalArgs,
+    TypedArgsNode args,
     Type type,
     Source source
 ) implements TypedExpressionNode {

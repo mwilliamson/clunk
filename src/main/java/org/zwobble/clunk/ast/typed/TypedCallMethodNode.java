@@ -11,7 +11,7 @@ import java.util.Optional;
 public record TypedCallMethodNode(
     Optional<TypedExpressionNode> receiver,
     String methodName,
-    List<TypedExpressionNode> positionalArgs,
+    TypedArgsNode args,
     Type type,
     Source source
 ) implements TypedExpressionNode {
@@ -52,7 +52,13 @@ public record TypedCallMethodNode(
         }
 
         public TypedCallMethodNode build() {
-            return new TypedCallMethodNode(receiver, methodName, positionalArgs, type, NullSource.INSTANCE);
+            return new TypedCallMethodNode(
+                receiver,
+                methodName,
+                new TypedArgsNode(positionalArgs, NullSource.INSTANCE),
+                type,
+                NullSource.INSTANCE
+            );
         }
     }
 }

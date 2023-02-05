@@ -47,6 +47,21 @@ public class TypeCheckFunctionTests {
     }
 
     @Test
+    public void namedParamsAreTyped() {
+        var untypedNode = UntypedFunctionNode.builder()
+            .addNamedParam(Untyped.param("x", Untyped.typeLevelReference("Int")))
+            .addNamedParam(Untyped.param("y", Untyped.typeLevelReference("String")))
+            .build();
+
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, TypeCheckerContext.stub());
+
+        assertThat(result.typedNode(), isTypedFunctionNode().withNamedParams(contains(
+            isTypedParamNode().withName("x").withType(IntType.INSTANCE),
+            isTypedParamNode().withName("y").withType(StringType.INSTANCE)
+        )));
+    }
+
+    @Test
     public void returnTypeIsTyped() {
         var untypedNode = UntypedFunctionNode.builder()
             .returnType(Untyped.typeLevelReference("Int"))

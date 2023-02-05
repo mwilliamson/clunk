@@ -24,6 +24,10 @@ public class TypedFunctionNodeMatcher extends CastMatcher<Object, TypedFunctionN
         return addMatcher(has("positionalParams", positionalParams));
     }
 
+    public TypedFunctionNodeMatcher withNamedParams(Matcher<? extends Iterable<? extends TypedParamNode>> namedParams) {
+        return addMatcher(has("namedParams", namedParams));
+    }
+
     public TypedFunctionNodeMatcher withName(String name) {
         return addMatcher(has("name", equalTo(name)));
     }

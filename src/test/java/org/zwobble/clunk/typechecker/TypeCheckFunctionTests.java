@@ -34,8 +34,8 @@ public class TypeCheckFunctionTests {
     @Test
     public void positionalParamsAreTyped() {
         var untypedNode = UntypedFunctionNode.builder()
-            .addParam(Untyped.param("x", Untyped.typeLevelReference("Int")))
-            .addParam(Untyped.param("y", Untyped.typeLevelReference("String")))
+            .addPositionalParam(Untyped.param("x", Untyped.typeLevelReference("Int")))
+            .addPositionalParam(Untyped.param("y", Untyped.typeLevelReference("String")))
             .build();
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, TypeCheckerContext.stub());
@@ -75,7 +75,7 @@ public class TypeCheckFunctionTests {
     @Test
     public void bodyCanAccessParams() {
         var untypedNode = UntypedFunctionNode.builder()
-            .addParam(Untyped.param("x", Untyped.typeLevelReference("Bool")))
+            .addPositionalParam(Untyped.param("x", Untyped.typeLevelReference("Bool")))
             .returnType(Untyped.typeLevelReference("Bool"))
             .addBodyStatement(Untyped.returnStatement(Untyped.reference("x")))
             .build();
@@ -112,7 +112,7 @@ public class TypeCheckFunctionTests {
     public void functionTypeIsAddedToEnvironment() {
         var untypedNode = UntypedFunctionNode.builder()
             .name("f")
-            .addParam(Untyped.param("x", Untyped.typeLevelReference("Int")))
+            .addPositionalParam(Untyped.param("x", Untyped.typeLevelReference("Int")))
             .returnType(Untyped.typeLevelReference("String"))
             .addBodyStatement(Untyped.returnStatement(Untyped.string()))
             .build();

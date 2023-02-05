@@ -63,7 +63,7 @@ public record UntypedFunctionNode(
             );
         }
 
-        public Builder addParam(UntypedParamNode param) {
+        public Builder addPositionalParam(UntypedParamNode param) {
             var params = new ArrayList<>(this.positionalParams);
             params.add(param);
             return new Builder(name, params, returnType, body, source);

@@ -112,7 +112,7 @@ public class TypeCheckNamespaceTests {
     public void whenVariableShadowsBuiltinThenEarlierReferencesUsesVariable() {
         var untypedNode = UntypedNamespaceNode
             .builder(NamespaceName.fromParts("example", "project"))
-            .addStatement(UntypedFunctionNode.builder().addParam(Untyped.param("x", Untyped.typeLevelReference("X"))).build())
+            .addStatement(UntypedFunctionNode.builder().addPositionalParam(Untyped.param("x", Untyped.typeLevelReference("X"))).build())
             .addStatement(UntypedRecordNode.builder("X").build())
             .build();
         var context = TypeCheckerContext.stub()

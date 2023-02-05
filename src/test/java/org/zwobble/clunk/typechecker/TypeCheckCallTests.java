@@ -161,6 +161,27 @@ public class TypeCheckCallTests {
     }
 
     @Test
+    public void positionalArgsAreTypeChecked() {
+        var untypedNode = Untyped.call(
+            Untyped.reference("abs"),
+            List.of(Untyped.intLiteral(42))
+        );
+        var functionType = Types.staticFunctionType(
+            NamespaceName.fromParts("Stdlib", "Math"),
+            "abs",
+            List.of(Types.INT),
+            Types.INT
+        );
+        var context = TypeCheckerContext.stub()
+            .addLocal("abs", functionType, NullSource.INSTANCE);
+
+        var result = TypeChecker.typeCheckExpression(untypedNode, context);
+
+        assertThat(result, isTypedCallStaticFunctionNode()
+            .withPositionalArgs(contains(isTypedIntLiteralNode(42))));
+    }
+
+    @Test
     public void whenPositionalArgIsWrongTypeThenErrorIsThrown() {
         var untypedNode = Untyped.call(
             Untyped.reference("abs"),
@@ -221,6 +242,30 @@ public class TypeCheckCallTests {
 
         assertThat(error.getExpected(), equalTo(1));
         assertThat(error.getActual(), equalTo(2));
+    }
+
+    @Test
+    public void namedArgsAreTypeChecked() {
+        var untypedNode = UntypedCallNode.builder(Untyped.reference("abs"))
+            .addNamedArg("x", Untyped.intLiteral(42))
+            .build();
+        var functionType = Types.staticFunctionType(
+            NamespaceName.fromParts("Stdlib", "Math"),
+            "abs",
+            List.of(),
+            List.of(Types.namedParam("x", Types.INT)),
+            Types.INT
+        );
+        var context = TypeCheckerContext.stub()
+            .addLocal("abs", functionType, NullSource.INSTANCE);
+
+        var result = TypeChecker.typeCheckExpression(untypedNode, context);
+
+        assertThat(result, isTypedCallStaticFunctionNode()
+            .withNamedArgs(contains(
+                isTypedNamedArgNode("x", isTypedIntLiteralNode(42))
+            ))
+        );
     }
 
     @Test

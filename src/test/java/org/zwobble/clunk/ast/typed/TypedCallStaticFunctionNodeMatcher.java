@@ -32,6 +32,14 @@ public class TypedCallStaticFunctionNodeMatcher extends CastMatcher<Object, Type
         ));
     }
 
+    public TypedCallStaticFunctionNodeMatcher withNamedArgs(Matcher<Iterable<? extends TypedNamedArgNode>> namedArgs) {
+        return addMatcher(HasMatcher.has(
+            "namedArgs",
+            node -> node.args().named(),
+            namedArgs
+        ));
+    }
+
     public TypedCallStaticFunctionNodeMatcher withType(Type type) {
         return addMatcher(has("type", equalTo(type)));
     }

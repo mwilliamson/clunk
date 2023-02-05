@@ -55,7 +55,7 @@ public record TypedCallMethodNode(
             return new TypedCallMethodNode(
                 receiver,
                 methodName,
-                new TypedArgsNode(positionalArgs, NullSource.INSTANCE),
+                new TypedArgsNode(positionalArgs, List.of(), NullSource.INSTANCE),
                 type,
                 NullSource.INSTANCE
             );

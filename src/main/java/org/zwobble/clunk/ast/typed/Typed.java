@@ -24,7 +24,7 @@ public class Typed {
         return new TypedCallConstructorNode(
             receiver,
             Optional.of(typeArgs),
-            new TypedArgsNode(args, NullSource.INSTANCE),
+            new TypedArgsNode(args, List.of(), NullSource.INSTANCE),
             type,
             NullSource.INSTANCE
         );
@@ -38,7 +38,7 @@ public class Typed {
         return new TypedCallConstructorNode(
             receiver,
             Optional.empty(),
-            new TypedArgsNode(args, NullSource.INSTANCE),
+            new TypedArgsNode(args, List.of(), NullSource.INSTANCE),
             type,
             NullSource.INSTANCE
         );
@@ -53,7 +53,7 @@ public class Typed {
         return new TypedCallMethodNode(
             Optional.of(receiver),
             methodName,
-            new TypedArgsNode(args, NullSource.INSTANCE),
+            new TypedArgsNode(args, List.of(), NullSource.INSTANCE),
             type,
             NullSource.INSTANCE
         );
@@ -63,7 +63,7 @@ public class Typed {
         var staticFunctionType = (StaticFunctionType) receiver.type();
         return new TypedCallStaticFunctionNode(
             receiver,
-            new TypedArgsNode(args, NullSource.INSTANCE),
+            new TypedArgsNode(args, List.of(), NullSource.INSTANCE),
             staticFunctionType,
             NullSource.INSTANCE
         );

@@ -68,6 +68,16 @@ public class TypedNodeMatchers {
         return new TypedMemberReferenceNodeMatcher(List.of());
     }
 
+    public static Matcher<TypedNamedArgNode> isTypedNamedArgNode(
+        String name,
+        Matcher<TypedExpressionNode> expression
+    ) {
+        return allOf(
+            has("name", equalTo(name)),
+            has("expression", expression)
+        );
+    }
+
     public static TypedParamNodeMatcher isTypedParamNode() {
         return new TypedParamNodeMatcher(List.of());
     }

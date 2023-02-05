@@ -63,6 +63,8 @@ public class TypeChecker {
         var namedParams = signature.namedParams().stream()
             .collect(Collectors.toMap(param -> param.name(), param -> param));
 
+        var typedNamedArgs = new ArrayList<TypedNamedArgNode>();
+
         for (var untypedNamedArgNode : node.namedArgs()) {
             var namedParam = namedParams.remove(untypedNamedArgNode.name());
             if (namedParam == null) {
@@ -73,13 +75,18 @@ public class TypeChecker {
                 namedParam.type(),
                 context
             );
+            typedNamedArgs.add(new TypedNamedArgNode(
+                untypedNamedArgNode.name(),
+                typedExpression,
+                untypedNamedArgNode.source()
+            ));
         }
 
         for (var missingParam : namedParams.values()) {
             throw new NamedArgIsMissingError(missingParam.name(), node.source());
         }
 
-        return new TypedArgsNode(typedPositionalArgs, node.args().source());
+        return new TypedArgsNode(typedPositionalArgs, typedNamedArgs, node.args().source());
     }
 
     private static TypeCheckFunctionStatementResult<TypedFunctionStatementNode> typeCheckBlankLineInFunction(

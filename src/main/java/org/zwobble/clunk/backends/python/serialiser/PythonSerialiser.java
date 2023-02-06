@@ -3,6 +3,7 @@ package org.zwobble.clunk.backends.python.serialiser;
 import org.zwobble.clunk.backends.CodeBuilder;
 import org.zwobble.clunk.backends.python.ast.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -303,14 +304,18 @@ public class PythonSerialiser {
         builder.append("def ");
         builder.append(node.name());
         builder.append("(");
-        forEachInterspersed(
-            node.params(),
-            param -> builder.append(param),
-            () -> builder.append(", ")
-        );
-        if (node.params().size() > 0 && !(node.params().size() == 1 && node.params().get(0).equals("self"))) {
-            builder.append(", /");
+
+        var params = new ArrayList<String>();
+        params.addAll(node.positionalParams());
+        if (node.positionalParams().size() > 0 && !(node.positionalParams().size() == 1 && node.positionalParams().get(0).equals("self"))) {
+            params.add("/");
         }
+        if (node.keywordParams().size() > 0) {
+            params.add("*");
+        }
+        params.addAll(node.keywordParams());
+        builder.append(String.join(", ", params));
+
         builder.append("):");
         builder.newLine();
         serialiseBlock(node.body(), builder);

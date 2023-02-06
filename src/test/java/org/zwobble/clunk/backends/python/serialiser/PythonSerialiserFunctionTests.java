@@ -43,8 +43,8 @@ public class PythonSerialiserFunctionTests {
     public void positionalParamsArePositionalOnly() {
         var node = PythonFunctionNode.builder()
             .name("make_it_so")
-            .addParam("x")
-            .addParam("y")
+            .addPositionalParam("x")
+            .addPositionalParam("y")
             .build();
 
         var result = serialiseToString(node, PythonSerialiser::serialiseStatement);
@@ -59,7 +59,7 @@ public class PythonSerialiserFunctionTests {
     public void whenOnlyParamIsSelfThenParamIsNotPositionalOnly() {
         var node = PythonFunctionNode.builder()
             .name("make_it_so")
-            .addParam("self")
+            .addPositionalParam("self")
             .build();
 
         var result = serialiseToString(node, PythonSerialiser::serialiseStatement);
@@ -74,15 +74,31 @@ public class PythonSerialiserFunctionTests {
     public void whenFunctionHasBothSelfAndOtherPositionalParamsThenParamsArePositionalOnly() {
         var node = PythonFunctionNode.builder()
             .name("make_it_so")
-            .addParam("self")
-            .addParam("x")
-            .addParam("y")
+            .addPositionalParam("self")
+            .addPositionalParam("x")
+            .addPositionalParam("y")
             .build();
 
         var result = serialiseToString(node, PythonSerialiser::serialiseStatement);
 
         assertThat(result, equalTo("""
             def make_it_so(self, x, y, /):
+                pass
+            """));
+    }
+
+    @Test
+    public void keywordParamsAreKeywordOnly() {
+        var node = PythonFunctionNode.builder()
+            .name("make_it_so")
+            .addKeywordParam("x")
+            .addKeywordParam("y")
+            .build();
+
+        var result = serialiseToString(node, PythonSerialiser::serialiseStatement);
+
+        assertThat(result, equalTo("""
+            def make_it_so(*, x, y):
                 pass
             """));
     }

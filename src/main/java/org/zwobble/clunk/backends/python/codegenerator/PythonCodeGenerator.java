@@ -271,6 +271,7 @@ public class PythonCodeGenerator {
             pythonizeName(node.name()),
             List.of(),
             compileParams(node.params()),
+            List.of(),
             compileFunctionStatements(node.body(), context)
         );
     }
@@ -494,6 +495,7 @@ public class PythonCodeGenerator {
             pythonizeName(node.name()),
             List.of(),
             Lists.concatOne("self", compileParams(node.params())),
+            List.of(),
             compileFunctionStatements(node.body(), context)
         );
     }
@@ -582,6 +584,7 @@ public class PythonCodeGenerator {
             pythonizeName(node.name()),
             List.of(Python.reference("property")),
             List.of("self"),
+            List.of(),
             compileFunctionStatements(node.body(), context)
         );
     }
@@ -627,6 +630,7 @@ public class PythonCodeGenerator {
             "accept",
             List.of(),
             List.of("self", "visitor"),
+            List.of(),
             List.of(
                 new PythonReturnNode(
                     new PythonCallNode(
@@ -719,6 +723,7 @@ public class PythonCodeGenerator {
                     generateVisitMethodName((RecordType) switchCase.type().value()),
                     List.of(),
                     List.of("self", pythonizeName(node.expression().name())),
+                    List.of(),
                     compileFunctionStatements(switchCase.body(), context)
                 ))
                 .toList()
@@ -750,6 +755,7 @@ public class PythonCodeGenerator {
             PythonTestNames.generateTestFunctionName(node.name()),
             List.of(),
             context.isInClass() ? List.of("self") : List.of(),
+            List.of(),
             compileFunctionStatements(node.body(), context)
         );
     }

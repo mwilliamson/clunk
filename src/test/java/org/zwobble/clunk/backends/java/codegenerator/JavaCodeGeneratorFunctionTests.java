@@ -16,6 +16,7 @@ public class JavaCodeGeneratorFunctionTests {
             .name("f")
             .addPositionalParam(Typed.param("x", Typed.typeLevelString()))
             .addPositionalParam(Typed.param("y", Typed.typeLevelInt()))
+            .addNamedParam(Typed.param("z", Typed.typeLevelBool()))
             .returnType(Typed.typeLevelBool())
             .addBodyStatement(Typed.returnStatement(Typed.boolFalse()))
             .build();
@@ -25,7 +26,7 @@ public class JavaCodeGeneratorFunctionTests {
         var string = serialiseToString(result, JavaSerialiser::serialiseClassBodyDeclaration);
         assertThat(string, equalTo(
             """
-                public static boolean f(String x, int y) {
+                public static boolean f(String x, int y, boolean z) {
                     return false;
                 }
                 """

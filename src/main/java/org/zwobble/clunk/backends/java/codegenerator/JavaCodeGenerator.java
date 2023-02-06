@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.zwobble.clunk.backends.CaseConverter.lowerCamelCaseToUpperCamelCase;
 import static org.zwobble.clunk.backends.CaseConverter.upperCamelCaseToLowerCamelCase;
@@ -268,7 +269,7 @@ public class JavaCodeGenerator {
             List.of(),
             compileTypeLevelExpression(node.returnType(), context),
             node.name(),
-            node.params().positional().stream()
+            Stream.concat(node.params().positional().stream(), node.params().named().stream())
                 .map(param -> compileParam(param, context))
                 .toList(),
             compileBlock(node.body(), context)

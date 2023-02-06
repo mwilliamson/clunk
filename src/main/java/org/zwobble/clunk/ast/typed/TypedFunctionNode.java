@@ -6,7 +6,6 @@ import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.types.IntType;
 import org.zwobble.clunk.util.P;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public record TypedFunctionNode(
@@ -37,19 +36,19 @@ public record TypedFunctionNode(
     public static Builder builder() {
         return new Builder(
             "f",
-            List.of(),
+            P.vector(),
             P.vector(),
             Typed.typeLevelReference("Int", IntType.INSTANCE),
-            List.of()
+            P.vector()
         );
     }
 
-    public static record Builder(
+    public record Builder(
         String name,
-        List<TypedParamNode> positionalParams,
+        PVector<TypedParamNode> positionalParams,
         PVector<TypedParamNode> namedParams,
         TypedTypeLevelExpressionNode returnType,
-        List<TypedFunctionStatementNode> body
+        PVector<TypedFunctionStatementNode> body
     ) {
         public TypedFunctionNode build() {
             return new TypedFunctionNode(
@@ -62,9 +61,7 @@ public record TypedFunctionNode(
         }
 
         public Builder addParam(TypedParamNode param) {
-            var positionalParams = new ArrayList<>(this.positionalParams);
-            positionalParams.add(param);
-            return new Builder(name, positionalParams, namedParams, returnType, body);
+            return new Builder(name, positionalParams.plus(param), namedParams, returnType, body);
         }
 
         public Builder name(String name) {
@@ -76,9 +73,7 @@ public record TypedFunctionNode(
         }
 
         public Builder addBodyStatement(TypedFunctionStatementNode statement) {
-            var body = new ArrayList<>(this.body);
-            body.add(statement);
-            return new Builder(name, positionalParams, namedParams, returnType, body);
+            return new Builder(name, positionalParams, namedParams, returnType, body.plus(statement));
         }
     }
 }

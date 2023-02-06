@@ -13,13 +13,15 @@ import java.util.stream.Collectors;
 import static org.zwobble.clunk.backends.CaseConverter.camelCaseToSnakeCase;
 
 public class PythonCodeGenerator {
-    private static List<PythonExpressionNode> compileArgs(
+    private static PythonArgsNode compileArgs(
         TypedArgsNode args,
         PythonCodeGeneratorContext context
     ) {
-        return args.positional().stream()
+        var positional = args.positional().stream()
             .map(arg -> compileExpression(arg, context))
             .toList();
+
+        return new PythonArgsNode(positional, List.of());
     }
 
     private static PythonStatementNode compileBlankLine(TypedBlankLineNode node, PythonCodeGeneratorContext context) {
@@ -38,8 +40,7 @@ public class PythonCodeGenerator {
         } else {
             return new PythonCallNode(
                 compileExpression(node.receiver(), context),
-                compileArgs(node.args(), context),
-                List.of()
+                compileArgs(node.args(), context)
             );
         }
     }
@@ -63,8 +64,7 @@ public class PythonCodeGenerator {
                 receiver.map(r -> compileExpression(r, context)).orElse(new PythonReferenceNode("self")),
                 pythonizeName(node.methodName())
             ),
-            compileArgs(node.args(), context),
-            List.of()
+            compileArgs(node.args(), context)
         );
     }
 
@@ -77,14 +77,12 @@ public class PythonCodeGenerator {
         if (macro.isPresent()) {
             return new PythonCallNode(
                 macro.get().compileReceiver(context),
-                compileArgs(node.args(), context),
-                List.of()
+                compileArgs(node.args(), context)
             );
         } else {
             return new PythonCallNode(
                 compileExpression(node.receiver(), context),
-                compileArgs(node.args(), context),
-                List.of()
+                compileArgs(node.args(), context)
             );
         }
     }
@@ -112,8 +110,10 @@ public class PythonCodeGenerator {
                     Optional.empty(),
                     Optional.of(new PythonCallNode(
                         new PythonAttrAccessNode(new PythonReferenceNode("enum"), "auto"),
-                        List.of(),
-                        List.of()
+                        new PythonArgsNode(
+                            List.of(),
+                            List.of()
+                        )
                     ))
                 ))
                 .toList()
@@ -385,11 +385,13 @@ public class PythonCodeGenerator {
     ) {
         return new PythonCallNode(
             new PythonReferenceNode("isinstance"),
-            List.of(
-                compileExpression(node.expression(), context),
-                compileTypeLevelExpression(node.typeExpression(), context)
-            ),
-            List.of()
+            new PythonArgsNode(
+                List.of(
+                    compileExpression(node.expression(), context),
+                    compileTypeLevelExpression(node.typeExpression(), context)
+                ),
+                List.of()
+            )
         );
     }
 
@@ -646,8 +648,10 @@ public class PythonCodeGenerator {
                             new PythonReferenceNode("visitor"),
                             generateVisitMethodName(node.type())
                         ),
-                        List.of(new PythonReferenceNode("self")),
-                        List.of()
+                        new PythonArgsNode(
+                            List.of(new PythonReferenceNode("self")),
+                            List.of()
+                        )
                     )
                 )
             )
@@ -745,14 +749,18 @@ public class PythonCodeGenerator {
                 compileExpression(node.expression(), context),
                 "accept"
             ),
-            List.of(
-                new PythonCallNode(
-                    new PythonReferenceNode("Visitor"),
-                    List.of(),
-                    List.of()
-                )
-            ),
-            List.of()
+            new PythonArgsNode(
+                List.of(
+                    new PythonCallNode(
+                        new PythonReferenceNode("Visitor"),
+                        new PythonArgsNode(
+                            List.of(),
+                            List.of()
+                        )
+                    )
+                ),
+                List.of()
+            )
         );
 
         return List.of(

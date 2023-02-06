@@ -1,9 +1,6 @@
 package org.zwobble.clunk.backends.python.codegenerator.macros;
 
-import org.zwobble.clunk.backends.python.ast.PythonAttrAccessNode;
-import org.zwobble.clunk.backends.python.ast.PythonCallNode;
-import org.zwobble.clunk.backends.python.ast.PythonExpressionNode;
-import org.zwobble.clunk.backends.python.ast.PythonListNode;
+import org.zwobble.clunk.backends.python.ast.*;
 import org.zwobble.clunk.backends.python.codegenerator.PythonClassMacro;
 import org.zwobble.clunk.types.Type;
 import org.zwobble.clunk.types.Types;
@@ -22,13 +19,13 @@ public class PythonMutableListMacro implements PythonClassMacro {
     }
 
     @Override
-    public PythonExpressionNode compileConstructorCall(List<PythonExpressionNode> positionalArgs) {
+    public PythonExpressionNode compileConstructorCall(PythonArgsNode args) {
         return new PythonListNode(List.of());
     }
 
     @Override
-    public PythonExpressionNode compileMethodCall(PythonExpressionNode receiver, String methodName, List<PythonExpressionNode> positionalArgs) {
-        var listResult = PythonListMacro.INSTANCE.tryCompileMethodCall(receiver, methodName, positionalArgs);
+    public PythonExpressionNode compileMethodCall(PythonExpressionNode receiver, String methodName, PythonArgsNode args) {
+        var listResult = PythonListMacro.INSTANCE.tryCompileMethodCall(receiver, methodName, args);
         if (listResult.isPresent()) {
             return listResult.get();
         }
@@ -37,8 +34,7 @@ public class PythonMutableListMacro implements PythonClassMacro {
             case "add":
                 return new PythonCallNode(
                     new PythonAttrAccessNode(receiver, "append"),
-                    positionalArgs,
-                    List.of()
+                    args
                 );
             default:
                 throw new UnsupportedOperationException("unexpected method: " + methodName);

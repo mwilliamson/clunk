@@ -41,11 +41,11 @@ public class Python {
         List<PythonExpressionNode> args,
         List<PythonKeywordArgumentNode> kwargs
     ) {
-        return new PythonCallNode(receiver, args, kwargs);
+        return new PythonCallNode(receiver, new PythonArgsNode(args, kwargs));
     }
 
     public static PythonCallNode call(PythonExpressionNode receiver, List<PythonKeywordArgumentNode> kwargs) {
-        return new PythonCallNode(receiver, List.of(), kwargs);
+        return call(receiver, List.of(), kwargs);
     }
 
     public static PythonComprehensionForClauseNode comprehensionForClause(

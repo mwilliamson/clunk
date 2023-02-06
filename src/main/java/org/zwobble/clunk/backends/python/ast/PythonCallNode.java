@@ -1,11 +1,8 @@
 package org.zwobble.clunk.backends.python.ast;
 
-import java.util.List;
-
 public record PythonCallNode(
     PythonExpressionNode receiver,
-    List<PythonExpressionNode> args,
-    List<PythonKeywordArgumentNode> kwargs
+    PythonArgsNode args
 ) implements PythonExpressionNode {
     @Override
     public PythonPrecedence precedence() {

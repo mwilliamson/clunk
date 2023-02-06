@@ -19,18 +19,17 @@ public class PythonStringBuilderMacro implements PythonClassMacro {
     }
 
     @Override
-    public PythonExpressionNode compileConstructorCall(List<PythonExpressionNode> positionalArgs) {
+    public PythonExpressionNode compileConstructorCall(PythonArgsNode args) {
         return new PythonListNode(List.of());
     }
 
     @Override
-    public PythonExpressionNode compileMethodCall(PythonExpressionNode receiver, String methodName, List<PythonExpressionNode> positionalArgs) {
+    public PythonExpressionNode compileMethodCall(PythonExpressionNode receiver, String methodName, PythonArgsNode args) {
         switch (methodName) {
             case "append":
                 return new PythonCallNode(
                     new PythonAttrAccessNode(receiver, "append"),
-                    positionalArgs,
-                    List.of()
+                    args
                 );
             case "build":
                 return new PythonCallNode(
@@ -38,8 +37,10 @@ public class PythonStringBuilderMacro implements PythonClassMacro {
                         new PythonStringLiteralNode(""),
                         "join"
                     ),
-                    List.of(receiver),
-                    List.of()
+                    new PythonArgsNode(
+                        List.of(receiver),
+                        List.of()
+                    )
                 );
             default:
                 throw new UnsupportedOperationException("unexpected method: " + methodName);

@@ -21,13 +21,13 @@ public class PythonListMacro implements PythonClassMacro {
     }
 
     @Override
-    public PythonExpressionNode compileConstructorCall(List<PythonExpressionNode> positionalArgs) {
+    public PythonExpressionNode compileConstructorCall(PythonArgsNode args) {
         return new PythonListNode(List.of());
     }
 
     @Override
-    public PythonExpressionNode compileMethodCall(PythonExpressionNode receiver, String methodName, List<PythonExpressionNode> positionalArgs) {
-        var result = tryCompileMethodCall(receiver, methodName, positionalArgs);
+    public PythonExpressionNode compileMethodCall(PythonExpressionNode receiver, String methodName, PythonArgsNode args) {
+        var result = tryCompileMethodCall(receiver, methodName, args);
 
         if (result.isPresent()) {
             return result.get();
@@ -39,11 +39,11 @@ public class PythonListMacro implements PythonClassMacro {
     Optional<PythonExpressionNode> tryCompileMethodCall(
         PythonExpressionNode receiver,
         String methodName,
-        List<PythonExpressionNode> positionalArgs
+        PythonArgsNode args
     ) {
         switch (methodName) {
             case "contains" -> {
-                var result = new PythonInNode(positionalArgs.get(0), receiver);
+                var result = new PythonInNode(args.positional().get(0), receiver);
                 return Optional.of(result);
             }
             case "flatMap" -> {
@@ -55,7 +55,7 @@ public class PythonListMacro implements PythonClassMacro {
                 // TODO: avoid evaluating func multiple times
                 var inputElementName = "_element";
                 var outputElementName = "_result";
-                var func = positionalArgs.get(0);
+                var func = args.positional().get(0);
 
                 var result = new PythonListComprehensionNode(
                     new PythonReferenceNode(outputElementName),
@@ -68,8 +68,10 @@ public class PythonListMacro implements PythonClassMacro {
                             outputElementName,
                             new PythonCallNode(
                                 func,
-                                List.of(new PythonReferenceNode(inputElementName)),
-                                List.of()
+                                new PythonArgsNode(
+                                    List.of(new PythonReferenceNode(inputElementName)),
+                                    List.of()
+                                )
                             )
                         )
                     )
@@ -77,7 +79,7 @@ public class PythonListMacro implements PythonClassMacro {
                 return Optional.of(result);
             }
             case "get" -> {
-                var result = new PythonSubscriptionNode(receiver, positionalArgs);
+                var result = new PythonSubscriptionNode(receiver, args.positional());
                 return Optional.of(result);
             }
             case "last" -> {
@@ -90,8 +92,10 @@ public class PythonListMacro implements PythonClassMacro {
             case "length" -> {
                 var result = new PythonCallNode(
                     new PythonReferenceNode("len"),
-                    List.of(receiver),
-                    List.of()
+                    new PythonArgsNode(
+                        List.of(receiver),
+                        List.of()
+                    )
                 );
                 return Optional.of(result);
             }

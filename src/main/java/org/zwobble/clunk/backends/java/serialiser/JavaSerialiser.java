@@ -33,6 +33,15 @@ public class JavaSerialiser {
             }
         });
     }
+
+    public static void serialiseArgs(List<JavaExpressionNode> args, CodeBuilder builder) {
+        forEachInterspersed(
+            args,
+            arg -> serialiseExpression(arg, builder, Optional.empty()),
+            () -> builder.append(", ")
+        );
+    }
+
     private static void serialiseBinaryOperation(String operator, JavaBinaryOperationNode node, CodeBuilder builder) {
         serialiseExpression(node.left(), builder, Optional.of(node));
         builder.append(" ");
@@ -63,11 +72,7 @@ public class JavaSerialiser {
     private static void serialiseCall(JavaCallNode node, CodeBuilder builder) {
         serialiseExpression(node.receiver(), builder, Optional.of(node));
         builder.append("(");
-        forEachInterspersed(
-            node.args(),
-            arg -> serialiseExpression(arg, builder, Optional.empty()),
-            () -> builder.append(", ")
-        );
+        serialiseArgs(node.args(), builder);
         builder.append(")");
     }
 

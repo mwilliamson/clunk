@@ -17,8 +17,8 @@ import static org.zwobble.clunk.backends.CaseConverter.upperCamelCaseToLowerCame
 import static org.zwobble.clunk.util.Lists.last;
 
 public class JavaCodeGenerator {
-    private static List<JavaExpressionNode> compileArgs(TypedArgsNode args, JavaCodeGeneratorContext context) {
-        return args.positional().stream()
+    static List<JavaExpressionNode> compileArgs(TypedArgsNode args, JavaCodeGeneratorContext context) {
+        return Stream.concat(args.positional().stream(), args.named().stream().map(arg -> arg.expression()))
             .map(arg -> compileExpression(arg, context))
             .toList();
     }

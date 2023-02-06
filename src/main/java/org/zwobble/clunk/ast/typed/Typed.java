@@ -7,6 +7,10 @@ import java.util.List;
 import java.util.Optional;
 
 public class Typed {
+    public static TypedArgsNode args(List<TypedExpressionNode> positional, List<TypedNamedArgNode> named) {
+        return new TypedArgsNode(positional, named, NullSource.INSTANCE);
+    }
+
     public static TypedBoolLiteralNode boolFalse() {
         return new TypedBoolLiteralNode(false, NullSource.INSTANCE);
     }
@@ -222,6 +226,10 @@ public class Typed {
 
     public static TypedMemberReferenceNode memberReference(String name, Type type) {
         return new TypedMemberReferenceNode(name, type, NullSource.INSTANCE);
+    }
+
+    public static TypedNamedArgNode namedArg(String name, TypedExpressionNode expression) {
+        return new TypedNamedArgNode(name, expression, NullSource.INSTANCE);
     }
 
     public static TypedParamNode param(String name, TypedTypeLevelExpressionNode type) {

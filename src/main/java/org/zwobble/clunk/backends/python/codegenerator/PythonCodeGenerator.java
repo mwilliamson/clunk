@@ -266,10 +266,14 @@ public class PythonCodeGenerator {
     }
 
     private static PythonStatementNode compileFunction(TypedFunctionNode node, PythonCodeGeneratorContext context) {
+        return compileFunction(node, false, context);
+    }
+
+    private static PythonFunctionNode compileFunction(TypedFunctionNode node, boolean hasSelf, PythonCodeGeneratorContext context) {
         return new PythonFunctionNode(
             pythonizeName(node.name()),
             List.of(),
-            false,
+            hasSelf,
             compileParams(node.params()),
             List.of(),
             compileFunctionStatements(node.body(), context)
@@ -491,14 +495,7 @@ public class PythonCodeGenerator {
     }
 
     private static PythonStatementNode compileMethod(TypedFunctionNode node, PythonCodeGeneratorContext context) {
-        return new PythonFunctionNode(
-            pythonizeName(node.name()),
-            List.of(),
-            true,
-            compileParams(node.params()),
-            List.of(),
-            compileFunctionStatements(node.body(), context)
-        );
+        return compileFunction(node, true, context);
     }
 
     public static PythonModuleNode compileNamespace(TypedNamespaceNode node) {

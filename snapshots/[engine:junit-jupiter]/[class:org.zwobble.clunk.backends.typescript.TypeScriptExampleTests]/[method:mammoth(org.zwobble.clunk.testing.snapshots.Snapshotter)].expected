@@ -144,6 +144,26 @@ fun freshElement(tagNames: List[String], attributes: Map[String, String], childr
     return HtmlElement(tag, children);
 }
 
+fun collapsibleElementWithSeparator(
+    tagNames: List[String],
+    attributes: Map[String, String],
+    children: List[HtmlNode],
+    separator: String,
+) -> HtmlElement {
+    var tag = HtmlTag(tagNames, attributes, true, separator);
+    return HtmlElement(tag, children);
+}
+
+fun freshElementWithSeparator(
+    tagNames: List[String],
+    attributes: Map[String, String],
+    children: List[HtmlNode],
+    separator: String,
+) -> HtmlElement {
+    var tag = HtmlTag(tagNames, attributes, false, separator);
+    return HtmlElement(tag, children);
+}
+
 record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
     property attributes: Map[String, String] {
         return tag.attributes;
@@ -168,32 +188,6 @@ record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
     property separator: String {
         return tag.separator;
     }
-}
-
-record HtmlTagBuilder(tagName: String, isCollapsible: Bool, separator: String) {
-    fun collapsible() -> HtmlTagBuilder {
-        return HtmlTagBuilder(tagName, true, separator);
-    }
-
-    fun fresh() -> HtmlTagBuilder {
-        return HtmlTagBuilder(tagName, false, separator);
-    }
-
-    fun withSeparator(newSeparator: String) -> HtmlTagBuilder {
-        return HtmlTagBuilder(tagName, isCollapsible, newSeparator);
-    }
-
-    fun element(children: List[HtmlNode]) -> HtmlElement {
-        return HtmlElement(tag(), children);
-    }
-
-    fun tag() -> HtmlTag {
-        return HtmlTag([tagName], #[], isCollapsible, separator);
-    }
-}
-
-fun tagBuilder(tagName: String) -> HtmlTagBuilder {
-    return HtmlTagBuilder(tagName, false, "");
 }
 
 fun forceWrite() -> HtmlForceWrite {
@@ -564,7 +558,12 @@ testSuite "collapse" {
     test "when separator is present then separator is prepended to collapsed element" {
         var nodes = [
             html.freshElement(["pre"], #[], [html.text("Hello")]),
-            html.tagBuilder("pre").collapsible().withSeparator("\n").element([html.text(" the"), html.text("re")]),
+            html.collapsibleElementWithSeparator(
+                ["pre"],
+                #[],
+                [html.text(" the"), html.text("re")],
+                "\n"
+            ),
         ];
 
         var result = html.collapse(nodes);
@@ -856,6 +855,16 @@ function freshElement(tagNames: ReadonlyArray<string>, attributes: Map<string, s
     return new HtmlElement(tag, children);
 }
 
+function collapsibleElementWithSeparator(tagNames: ReadonlyArray<string>, attributes: Map<string, string>, children: ReadonlyArray<HtmlNode>, separator: string): HtmlElement {
+    let tag = new HtmlTag(tagNames, attributes, true, separator);
+    return new HtmlElement(tag, children);
+}
+
+function freshElementWithSeparator(tagNames: ReadonlyArray<string>, attributes: Map<string, string>, children: ReadonlyArray<HtmlNode>, separator: string): HtmlElement {
+    let tag = new HtmlTag(tagNames, attributes, false, separator);
+    return new HtmlElement(tag, children);
+}
+
 class HtmlElement {
     readonly type: "HtmlElement" = "HtmlElement";
     readonly tag: HtmlTag;
@@ -888,41 +897,6 @@ class HtmlElement {
     get separator(): string {
         return this.tag.separator;
     }
-}
-
-class HtmlTagBuilder {
-    readonly tagName: string;
-    readonly isCollapsible: boolean;
-    readonly separator: string;
-
-    constructor(tagName: string, isCollapsible: boolean, separator: string) {
-        this.tagName = tagName;
-        this.isCollapsible = isCollapsible;
-        this.separator = separator;
-    }
-    collapsible(): HtmlTagBuilder {
-        return new HtmlTagBuilder(this.tagName, true, this.separator);
-    }
-
-    fresh(): HtmlTagBuilder {
-        return new HtmlTagBuilder(this.tagName, false, this.separator);
-    }
-
-    withSeparator(newSeparator: string): HtmlTagBuilder {
-        return new HtmlTagBuilder(this.tagName, this.isCollapsible, newSeparator);
-    }
-
-    element(children: ReadonlyArray<HtmlNode>): HtmlElement {
-        return new HtmlElement(this.tag(), children);
-    }
-
-    tag(): HtmlTag {
-        return new HtmlTag([this.tagName], new Map([]), this.isCollapsible, this.separator);
-    }
-}
-
-function tagBuilder(tagName: string): HtmlTagBuilder {
-    return new HtmlTagBuilder(tagName, false, "");
 }
 
 function forceWrite(): HtmlForceWrite {
@@ -1052,7 +1026,7 @@ function tryCollapse(collapsed: Array<HtmlNode>, node: HtmlNode): boolean {
 
     return true;
 }
-export {HtmlElement, HtmlForceWrite, HtmlNode, HtmlTag, HtmlTagBuilder, HtmlText, collapse, collapseNode, collapsibleElement, collapsingAdd, element, forceWrite, freshElement, stripEmpty, stripEmptyNode, tagBuilder, text, tryCollapse};
+export {HtmlElement, HtmlForceWrite, HtmlNode, HtmlTag, HtmlText, collapse, collapseNode, collapsibleElement, collapsibleElementWithSeparator, collapsingAdd, element, forceWrite, freshElement, freshElementWithSeparator, stripEmpty, stripEmptyNode, text, tryCollapse};
 
 
 ==============
@@ -1218,7 +1192,7 @@ suite("collapse", function () {
     });
 
     test("when separator is present then separator is prepended to collapsed element", function () {
-        let nodes = [html.freshElement(["pre"], new Map([]), [html.text("Hello")]), html.tagBuilder("pre").collapsible().withSeparator("\n").element([html.text(" the"), html.text("re")])];
+        let nodes = [html.freshElement(["pre"], new Map([]), [html.text("Hello")]), html.collapsibleElementWithSeparator(["pre"], new Map([]), [html.text(" the"), html.text("re")], "\n")];
 
         let result = html.collapse(nodes);
 

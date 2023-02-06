@@ -233,7 +233,12 @@ testSuite "collapse" {
     test "when separator is present then separator is prepended to collapsed element" {
         var nodes = [
             html.freshElement(["pre"], #[], [html.text("Hello")]),
-            html.tagBuilder("pre").collapsible().withSeparator("\n").element([html.text(" the"), html.text("re")]),
+            html.collapsibleElementWithSeparator(
+                ["pre"],
+                #[],
+                [html.text(" the"), html.text("re")],
+                "\n"
+            ),
         ];
 
         var result = html.collapse(nodes);

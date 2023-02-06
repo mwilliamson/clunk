@@ -144,6 +144,26 @@ fun freshElement(tagNames: List[String], attributes: Map[String, String], childr
     return HtmlElement(tag, children);
 }
 
+fun collapsibleElementWithSeparator(
+    tagNames: List[String],
+    attributes: Map[String, String],
+    children: List[HtmlNode],
+    separator: String,
+) -> HtmlElement {
+    var tag = HtmlTag(tagNames, attributes, true, separator);
+    return HtmlElement(tag, children);
+}
+
+fun freshElementWithSeparator(
+    tagNames: List[String],
+    attributes: Map[String, String],
+    children: List[HtmlNode],
+    separator: String,
+) -> HtmlElement {
+    var tag = HtmlTag(tagNames, attributes, false, separator);
+    return HtmlElement(tag, children);
+}
+
 record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
     property attributes: Map[String, String] {
         return tag.attributes;
@@ -168,32 +188,6 @@ record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
     property separator: String {
         return tag.separator;
     }
-}
-
-record HtmlTagBuilder(tagName: String, isCollapsible: Bool, separator: String) {
-    fun collapsible() -> HtmlTagBuilder {
-        return HtmlTagBuilder(tagName, true, separator);
-    }
-
-    fun fresh() -> HtmlTagBuilder {
-        return HtmlTagBuilder(tagName, false, separator);
-    }
-
-    fun withSeparator(newSeparator: String) -> HtmlTagBuilder {
-        return HtmlTagBuilder(tagName, isCollapsible, newSeparator);
-    }
-
-    fun element(children: List[HtmlNode]) -> HtmlElement {
-        return HtmlElement(tag(), children);
-    }
-
-    fun tag() -> HtmlTag {
-        return HtmlTag([tagName], #[], isCollapsible, separator);
-    }
-}
-
-fun tagBuilder(tagName: String) -> HtmlTagBuilder {
-    return HtmlTagBuilder(tagName, false, "");
 }
 
 fun forceWrite() -> HtmlForceWrite {
@@ -564,7 +558,12 @@ testSuite "collapse" {
     test "when separator is present then separator is prepended to collapsed element" {
         var nodes = [
             html.freshElement(["pre"], #[], [html.text("Hello")]),
-            html.tagBuilder("pre").collapsible().withSeparator("\n").element([html.text(" the"), html.text("re")]),
+            html.collapsibleElementWithSeparator(
+                ["pre"],
+                #[],
+                [html.text(" the"), html.text("re")],
+                "\n"
+            ),
         ];
 
         var result = html.collapse(nodes);
@@ -910,33 +909,6 @@ public record HtmlElement(HtmlTag tag, java.util.List<? extends HtmlNode> childr
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/mammoth/html/HtmlTagBuilder.java
-package org.zwobble.mammoth.internal.mammoth.html;
-
-public record HtmlTagBuilder(String tagName, boolean isCollapsible, String separator) {
-    public HtmlTagBuilder collapsible() {
-        return new HtmlTagBuilder(tagName(), true, separator());
-    }
-
-    public HtmlTagBuilder fresh() {
-        return new HtmlTagBuilder(tagName(), false, separator());
-    }
-
-    public HtmlTagBuilder withSeparator(String newSeparator) {
-        return new HtmlTagBuilder(tagName(), isCollapsible(), newSeparator);
-    }
-
-    public HtmlElement element(java.util.List<? extends HtmlNode> children) {
-        return new HtmlElement(tag(), children);
-    }
-
-    public HtmlTag tag() {
-        return new HtmlTag(java.util.List.of(tagName()), java.util.Map.ofEntries(), isCollapsible(), separator());
-    }
-}
-
-==============
-
 Output path: org/zwobble/mammoth/internal/mammoth/html/HtmlForceWrite.java
 package org.zwobble.mammoth.internal.mammoth.html;
 
@@ -982,7 +954,6 @@ package org.zwobble.mammoth.internal.mammoth.html;
 
 import org.zwobble.mammoth.internal.mammoth.html.HtmlTag;
 import org.zwobble.mammoth.internal.mammoth.html.HtmlElement;
-import org.zwobble.mammoth.internal.mammoth.html.HtmlTagBuilder;
 import org.zwobble.mammoth.internal.mammoth.html.HtmlForceWrite;
 import org.zwobble.mammoth.internal.mammoth.html.HtmlText;
 import org.zwobble.mammoth.internal.mammoth.html.HtmlNode;
@@ -999,8 +970,13 @@ public class Html {
         var tag = new HtmlTag(tagNames, attributes, false, "");
         return new HtmlElement(tag, children);
     }
-    public static HtmlTagBuilder tagBuilder(String tagName) {
-        return new HtmlTagBuilder(tagName, false, "");
+    public static HtmlElement collapsibleElementWithSeparator(java.util.List<String> tagNames, java.util.Map<String, String> attributes, java.util.List<? extends HtmlNode> children, String separator) {
+        var tag = new HtmlTag(tagNames, attributes, true, separator);
+        return new HtmlElement(tag, children);
+    }
+    public static HtmlElement freshElementWithSeparator(java.util.List<String> tagNames, java.util.Map<String, String> attributes, java.util.List<? extends HtmlNode> children, String separator) {
+        var tag = new HtmlTag(tagNames, attributes, false, separator);
+        return new HtmlElement(tag, children);
     }
     public static HtmlForceWrite forceWrite() {
         // TODO: support top-level variables
@@ -1307,7 +1283,7 @@ public class HtmlTests {
         @org.junit.jupiter.api.Test
         @org.junit.jupiter.api.DisplayName("when separator is present then separator is prepended to collapsed element")
         public void whenSeparatorIsPresentThenSeparatorIsPrependedToCollapsedElement() {
-            var nodes = java.util.List.of(Html.freshElement(java.util.List.of("pre"), java.util.Map.ofEntries(), java.util.List.of(Html.text("Hello"))), Html.tagBuilder("pre").collapsible().withSeparator("\n").element(java.util.List.of(Html.text(" the"), Html.text("re"))));
+            var nodes = java.util.List.of(Html.freshElement(java.util.List.of("pre"), java.util.Map.ofEntries(), java.util.List.of(Html.text("Hello"))), Html.collapsibleElementWithSeparator(java.util.List.of("pre"), java.util.Map.ofEntries(), java.util.List.of(Html.text(" the"), Html.text("re")), "\n"));
 
             var result = Html.collapse(nodes);
 

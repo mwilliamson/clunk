@@ -15,6 +15,26 @@ fun freshElement(tagNames: List[String], attributes: Map[String, String], childr
     return HtmlElement(tag, children);
 }
 
+fun collapsibleElementWithSeparator(
+    tagNames: List[String],
+    attributes: Map[String, String],
+    children: List[HtmlNode],
+    separator: String,
+) -> HtmlElement {
+    var tag = HtmlTag(tagNames, attributes, true, separator);
+    return HtmlElement(tag, children);
+}
+
+fun freshElementWithSeparator(
+    tagNames: List[String],
+    attributes: Map[String, String],
+    children: List[HtmlNode],
+    separator: String,
+) -> HtmlElement {
+    var tag = HtmlTag(tagNames, attributes, false, separator);
+    return HtmlElement(tag, children);
+}
+
 record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
     property attributes: Map[String, String] {
         return tag.attributes;
@@ -39,32 +59,6 @@ record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
     property separator: String {
         return tag.separator;
     }
-}
-
-record HtmlTagBuilder(tagName: String, isCollapsible: Bool, separator: String) {
-    fun collapsible() -> HtmlTagBuilder {
-        return HtmlTagBuilder(tagName, true, separator);
-    }
-
-    fun fresh() -> HtmlTagBuilder {
-        return HtmlTagBuilder(tagName, false, separator);
-    }
-
-    fun withSeparator(newSeparator: String) -> HtmlTagBuilder {
-        return HtmlTagBuilder(tagName, isCollapsible, newSeparator);
-    }
-
-    fun element(children: List[HtmlNode]) -> HtmlElement {
-        return HtmlElement(tag(), children);
-    }
-
-    fun tag() -> HtmlTag {
-        return HtmlTag([tagName], #[], isCollapsible, separator);
-    }
-}
-
-fun tagBuilder(tagName: String) -> HtmlTagBuilder {
-    return HtmlTagBuilder(tagName, false, "");
 }
 
 fun forceWrite() -> HtmlForceWrite {

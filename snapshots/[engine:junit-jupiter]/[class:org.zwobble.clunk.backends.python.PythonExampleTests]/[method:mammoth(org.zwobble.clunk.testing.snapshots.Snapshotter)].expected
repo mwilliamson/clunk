@@ -144,6 +144,26 @@ fun freshElement(tagNames: List[String], attributes: Map[String, String], childr
     return HtmlElement(tag, children);
 }
 
+fun collapsibleElementWithSeparator(
+    tagNames: List[String],
+    attributes: Map[String, String],
+    children: List[HtmlNode],
+    separator: String,
+) -> HtmlElement {
+    var tag = HtmlTag(tagNames, attributes, true, separator);
+    return HtmlElement(tag, children);
+}
+
+fun freshElementWithSeparator(
+    tagNames: List[String],
+    attributes: Map[String, String],
+    children: List[HtmlNode],
+    separator: String,
+) -> HtmlElement {
+    var tag = HtmlTag(tagNames, attributes, false, separator);
+    return HtmlElement(tag, children);
+}
+
 record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
     property attributes: Map[String, String] {
         return tag.attributes;
@@ -168,32 +188,6 @@ record HtmlElement(tag: HtmlTag, children: List[HtmlNode]) <: HtmlNode {
     property separator: String {
         return tag.separator;
     }
-}
-
-record HtmlTagBuilder(tagName: String, isCollapsible: Bool, separator: String) {
-    fun collapsible() -> HtmlTagBuilder {
-        return HtmlTagBuilder(tagName, true, separator);
-    }
-
-    fun fresh() -> HtmlTagBuilder {
-        return HtmlTagBuilder(tagName, false, separator);
-    }
-
-    fun withSeparator(newSeparator: String) -> HtmlTagBuilder {
-        return HtmlTagBuilder(tagName, isCollapsible, newSeparator);
-    }
-
-    fun element(children: List[HtmlNode]) -> HtmlElement {
-        return HtmlElement(tag(), children);
-    }
-
-    fun tag() -> HtmlTag {
-        return HtmlTag([tagName], #[], isCollapsible, separator);
-    }
-}
-
-fun tagBuilder(tagName: String) -> HtmlTagBuilder {
-    return HtmlTagBuilder(tagName, false, "");
 }
 
 fun forceWrite() -> HtmlForceWrite {
@@ -564,7 +558,12 @@ testSuite "collapse" {
     test "when separator is present then separator is prepended to collapsed element" {
         var nodes = [
             html.freshElement(["pre"], #[], [html.text("Hello")]),
-            html.tagBuilder("pre").collapsible().withSeparator("\n").element([html.text(" the"), html.text("re")]),
+            html.collapsibleElementWithSeparator(
+                ["pre"],
+                #[],
+                [html.text(" the"), html.text("re")],
+                "\n"
+            ),
         ];
 
         var result = html.collapse(nodes);
@@ -771,6 +770,14 @@ def fresh_element(tag_names, attributes, children, /):
     tag = HtmlTag(tag_names, attributes, False, "")
     return HtmlElement(tag, children)
 
+def collapsible_element_with_separator(tag_names, attributes, children, separator, /):
+    tag = HtmlTag(tag_names, attributes, True, separator)
+    return HtmlElement(tag, children)
+
+def fresh_element_with_separator(tag_names, attributes, children, separator, /):
+    tag = HtmlTag(tag_names, attributes, False, separator)
+    return HtmlElement(tag, children)
+
 @dataclasses.dataclass(frozen=True)
 class HtmlElement:
     tag: HtmlTag
@@ -800,29 +807,6 @@ class HtmlElement:
         return self.tag.separator
     def accept(self, visitor, /):
         return visitor.visit_html_element(self)
-
-@dataclasses.dataclass(frozen=True)
-class HtmlTagBuilder:
-    tag_name: str
-    is_collapsible: bool
-    separator: str
-    def collapsible(self):
-        return HtmlTagBuilder(self.tag_name, True, self.separator)
-
-    def fresh(self):
-        return HtmlTagBuilder(self.tag_name, False, self.separator)
-
-    def with_separator(self, new_separator, /):
-        return HtmlTagBuilder(self.tag_name, self.is_collapsible, new_separator)
-
-    def element(self, children, /):
-        return HtmlElement(self.tag(), children)
-
-    def tag(self):
-        return HtmlTag([self.tag_name], {}, self.is_collapsible, self.separator)
-
-def tag_builder(tag_name, /):
-    return HtmlTagBuilder(tag_name, False, "")
 
 def force_write():
     # TODO: support top-level variables
@@ -1071,7 +1055,7 @@ class CollapseTests:
         assert_that(result, equal_to([html.collapsible_element(["ul", "ol"], {}, []), html.collapsible_element(["ol"], {}, [])]))
 
     def test_when_separator_is_present_then_separator_is_prepended_to_collapsed_element(self):
-        nodes = [html.fresh_element(["pre"], {}, [html.text("Hello")]), html.tag_builder("pre").collapsible().with_separator("\n").element([html.text(" the"), html.text("re")])]
+        nodes = [html.fresh_element(["pre"], {}, [html.text("Hello")]), html.collapsible_element_with_separator(["pre"], {}, [html.text(" the"), html.text("re")], "\n")]
 
         result = html.collapse(nodes)
 

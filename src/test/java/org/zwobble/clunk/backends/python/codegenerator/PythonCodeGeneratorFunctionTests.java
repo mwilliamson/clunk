@@ -14,8 +14,8 @@ public class PythonCodeGeneratorFunctionTests {
     public void functionIsCompiledToFunction() {
         var node = TypedFunctionNode.builder()
             .name("f")
-            .addParam(Typed.param("x", Typed.typeLevelString()))
-            .addParam(Typed.param("y", Typed.typeLevelInt()))
+            .addPositionalParam(Typed.param("x", Typed.typeLevelString()))
+            .addPositionalParam(Typed.param("y", Typed.typeLevelInt()))
             .returnType(Typed.typeLevelBool())
             .addBodyStatement(Typed.returnStatement(Typed.boolFalse()))
             .build();
@@ -52,8 +52,8 @@ public class PythonCodeGeneratorFunctionTests {
     public void paramNamesAreConvertedToSnakeCase() {
         var node = TypedFunctionNode.builder()
             .name("f")
-            .addParam(Typed.param("maxWidth", Typed.typeLevelInt()))
-            .addParam(Typed.param("maxHeight", Typed.typeLevelInt()))
+            .addPositionalParam(Typed.param("maxWidth", Typed.typeLevelInt()))
+            .addPositionalParam(Typed.param("maxHeight", Typed.typeLevelInt()))
             .build();
 
         var result = PythonCodeGenerator.compileNamespaceStatement(node, PythonCodeGeneratorContext.stub());

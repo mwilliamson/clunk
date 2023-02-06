@@ -60,7 +60,7 @@ public record TypedFunctionNode(
             );
         }
 
-        public Builder addParam(TypedParamNode param) {
+        public Builder addPositionalParam(TypedParamNode param) {
             return new Builder(name, positionalParams.plus(param), namedParams, returnType, body);
         }
 

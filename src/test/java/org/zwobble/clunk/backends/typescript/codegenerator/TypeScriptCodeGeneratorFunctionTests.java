@@ -14,8 +14,8 @@ public class TypeScriptCodeGeneratorFunctionTests {
     public void functionIsCompiledToTypeScriptFunctionDeclaration() {
         var node = TypedFunctionNode.builder()
             .name("f")
-            .addParam(Typed.param("x", Typed.typeLevelString()))
-            .addParam(Typed.param("y", Typed.typeLevelInt()))
+            .addPositionalParam(Typed.param("x", Typed.typeLevelString()))
+            .addPositionalParam(Typed.param("y", Typed.typeLevelInt()))
             .returnType(Typed.typeLevelBool())
             .addBodyStatement(Typed.returnStatement(Typed.boolFalse()))
             .build();

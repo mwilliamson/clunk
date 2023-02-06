@@ -3,7 +3,6 @@ package org.zwobble.clunk.backends.python.codegenerator;
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.python.ast.*;
 import org.zwobble.clunk.types.*;
-import org.zwobble.clunk.util.Lists;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -270,6 +269,7 @@ public class PythonCodeGenerator {
         return new PythonFunctionNode(
             pythonizeName(node.name()),
             List.of(),
+            false,
             compileParams(node.params()),
             List.of(),
             compileFunctionStatements(node.body(), context)
@@ -494,7 +494,8 @@ public class PythonCodeGenerator {
         return new PythonFunctionNode(
             pythonizeName(node.name()),
             List.of(),
-            Lists.concatOne("self", compileParams(node.params())),
+            true,
+            compileParams(node.params()),
             List.of(),
             compileFunctionStatements(node.body(), context)
         );
@@ -583,7 +584,8 @@ public class PythonCodeGenerator {
         return new PythonFunctionNode(
             pythonizeName(node.name()),
             List.of(Python.reference("property")),
-            List.of("self"),
+            true,
+            List.of(),
             List.of(),
             compileFunctionStatements(node.body(), context)
         );
@@ -629,7 +631,8 @@ public class PythonCodeGenerator {
         return new PythonFunctionNode(
             "accept",
             List.of(),
-            List.of("self", "visitor"),
+            true,
+            List.of("visitor"),
             List.of(),
             List.of(
                 new PythonReturnNode(
@@ -722,7 +725,8 @@ public class PythonCodeGenerator {
                 .map(switchCase -> new PythonFunctionNode(
                     generateVisitMethodName((RecordType) switchCase.type().value()),
                     List.of(),
-                    List.of("self", pythonizeName(node.expression().name())),
+                    true,
+                    List.of(pythonizeName(node.expression().name())),
                     List.of(),
                     compileFunctionStatements(switchCase.body(), context)
                 ))
@@ -754,7 +758,8 @@ public class PythonCodeGenerator {
         return new PythonFunctionNode(
             PythonTestNames.generateTestFunctionName(node.name()),
             List.of(),
-            context.isInClass() ? List.of("self") : List.of(),
+            context.isInClass(),
+            List.of(),
             List.of(),
             compileFunctionStatements(node.body(), context)
         );

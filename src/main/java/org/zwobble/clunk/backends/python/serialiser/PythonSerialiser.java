@@ -306,8 +306,11 @@ public class PythonSerialiser {
         builder.append("(");
 
         var params = new ArrayList<String>();
+        if (node.hasSelf()) {
+            params.add("self");
+        }
         params.addAll(node.positionalParams());
-        if (node.positionalParams().size() > 0 && !(node.positionalParams().size() == 1 && node.positionalParams().get(0).equals("self"))) {
+        if (node.positionalParams().size() > 0) {
             params.add("/");
         }
         if (node.keywordParams().size() > 0) {

@@ -8,9 +8,7 @@ import java.util.List;
 public record PythonFunctionNode(
     String name,
     List<PythonExpressionNode> decorators,
-    boolean hasSelf,
-    List<String> positionalParams,
-    List<String> keywordParams,
+    PythonParamsNode params,
     List<PythonStatementNode> body
 ) implements PythonStatementNode {
     @Override
@@ -31,7 +29,16 @@ public record PythonFunctionNode(
         PVector<PythonStatementNode> body
     ) {
         public PythonFunctionNode build() {
-            return new PythonFunctionNode(name, decorators, hasSelf, positionalParams, keywordParams, body);
+            return new PythonFunctionNode(
+                name,
+                decorators,
+                new PythonParamsNode(
+                    hasSelf,
+                    positionalParams,
+                    keywordParams
+                ),
+                body
+            );
         }
 
         public Builder name(String name) {

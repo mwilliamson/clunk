@@ -306,17 +306,17 @@ public class PythonSerialiser {
         builder.append("(");
 
         var params = new ArrayList<String>();
-        if (node.hasSelf()) {
+        if (node.params().hasSelf()) {
             params.add("self");
         }
-        params.addAll(node.positionalParams());
-        if (node.positionalParams().size() > 0) {
+        params.addAll(node.params().positional());
+        if (node.params().positional().size() > 0) {
             params.add("/");
         }
-        if (node.keywordParams().size() > 0) {
+        if (node.params().keyword().size() > 0) {
             params.add("*");
         }
-        params.addAll(node.keywordParams());
+        params.addAll(node.params().keyword());
         builder.append(String.join(", ", params));
 
         builder.append("):");

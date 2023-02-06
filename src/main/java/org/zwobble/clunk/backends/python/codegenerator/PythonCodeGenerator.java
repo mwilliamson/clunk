@@ -273,9 +273,7 @@ public class PythonCodeGenerator {
         return new PythonFunctionNode(
             pythonizeName(node.name()),
             List.of(),
-            hasSelf,
-            compileParams(node.params().positional()),
-            compileParams(node.params().named()),
+            compileParams(node.params(), hasSelf),
             compileFunctionStatements(node.body(), context)
         );
     }
@@ -568,10 +566,16 @@ public class PythonCodeGenerator {
         return pythonizeName(node.name());
     }
 
-    private static List<String> compileParams(List<TypedParamNode> paramNodes) {
-        return paramNodes.stream()
+    private static PythonParamsNode compileParams(TypedParamsNode node, boolean hasSelf) {
+        var positional = node.positional().stream()
             .map(param -> compileParam(param))
             .toList();
+
+        var keyword = node.named().stream()
+            .map(param -> compileParam(param))
+            .toList();
+
+        return new PythonParamsNode(hasSelf, positional, keyword);
     }
 
     private static PythonStatementNode compileProperty(
@@ -581,9 +585,11 @@ public class PythonCodeGenerator {
         return new PythonFunctionNode(
             pythonizeName(node.name()),
             List.of(Python.reference("property")),
-            true,
-            List.of(),
-            List.of(),
+            new PythonParamsNode(
+                true,
+                List.of(),
+                List.of()
+            ),
             compileFunctionStatements(node.body(), context)
         );
     }
@@ -628,9 +634,11 @@ public class PythonCodeGenerator {
         return new PythonFunctionNode(
             "accept",
             List.of(),
-            true,
-            List.of("visitor"),
-            List.of(),
+            new PythonParamsNode(
+                true,
+                List.of("visitor"),
+                List.of()
+            ),
             List.of(
                 new PythonReturnNode(
                     new PythonCallNode(
@@ -722,9 +730,11 @@ public class PythonCodeGenerator {
                 .map(switchCase -> new PythonFunctionNode(
                     generateVisitMethodName((RecordType) switchCase.type().value()),
                     List.of(),
-                    true,
-                    List.of(pythonizeName(node.expression().name())),
-                    List.of(),
+                    new PythonParamsNode(
+                        true,
+                        List.of(pythonizeName(node.expression().name())),
+                        List.of()
+                    ),
                     compileFunctionStatements(switchCase.body(), context)
                 ))
                 .toList()
@@ -755,9 +765,11 @@ public class PythonCodeGenerator {
         return new PythonFunctionNode(
             PythonTestNames.generateTestFunctionName(node.name()),
             List.of(),
-            context.isInClass(),
-            List.of(),
-            List.of(),
+            new PythonParamsNode(
+                context.isInClass(),
+                List.of(),
+                List.of()
+            ),
             compileFunctionStatements(node.body(), context)
         );
     }

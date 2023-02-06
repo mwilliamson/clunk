@@ -13,11 +13,11 @@ import java.util.stream.Stream;
 import static org.zwobble.clunk.util.Lists.last;
 
 public class TypeScriptCodeGenerator {
-    private static List<TypeScriptExpressionNode> compileArgs(
+    static List<TypeScriptExpressionNode> compileArgs(
         TypedArgsNode args,
         TypeScriptCodeGeneratorContext context
     ) {
-        return args.positional().stream()
+        return Stream.concat(args.positional().stream(), args.named().stream().map(arg -> arg.expression()))
             .map(arg -> compileExpression(arg, context))
             .toList();
     }

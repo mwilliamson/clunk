@@ -13,6 +13,14 @@ public class TypeScriptSerialiser {
         serialiseBinaryOperation("+", node, builder);
     }
 
+    public static void serialiseArgs(List<TypeScriptExpressionNode> args, CodeBuilder builder) {
+        forEachInterspersed(
+            args,
+            arg -> serialiseExpression(arg, builder, Optional.empty()),
+            () -> builder.append(", ")
+        );
+    }
+
     private static void serialiseArray(TypeScriptArrayNode node, CodeBuilder builder) {
         builder.append("[");
         forEachInterspersed(
@@ -54,11 +62,7 @@ public class TypeScriptSerialiser {
         serialiseExpression(node.receiver(), builder, Optional.of(node));
 
         builder.append("(");
-        forEachInterspersed(
-            node.args(),
-            arg -> serialiseExpression(arg, builder, Optional.empty()),
-            () -> builder.append(", ")
-        );
+        serialiseArgs(node.args(), builder);
         builder.append(")");
     }
 

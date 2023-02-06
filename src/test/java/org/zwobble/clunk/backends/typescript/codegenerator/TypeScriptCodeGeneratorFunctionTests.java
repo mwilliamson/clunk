@@ -16,6 +16,7 @@ public class TypeScriptCodeGeneratorFunctionTests {
             .name("f")
             .addPositionalParam(Typed.param("x", Typed.typeLevelString()))
             .addPositionalParam(Typed.param("y", Typed.typeLevelInt()))
+            .addNamedParam(Typed.param("z", Typed.typeLevelBool()))
             .returnType(Typed.typeLevelBool())
             .addBodyStatement(Typed.returnStatement(Typed.boolFalse()))
             .build();
@@ -25,7 +26,7 @@ public class TypeScriptCodeGeneratorFunctionTests {
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseStatement);
         assertThat(string, equalTo(
             """
-                function f(x: string, y: number): boolean {
+                function f(x: string, y: number, z: boolean): boolean {
                     return false;
                 }
                 """

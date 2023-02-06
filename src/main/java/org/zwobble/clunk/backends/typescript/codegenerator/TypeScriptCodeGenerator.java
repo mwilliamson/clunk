@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.zwobble.clunk.util.Lists.last;
 
@@ -251,7 +252,7 @@ public class TypeScriptCodeGenerator {
     private static TypeScriptFunctionDeclarationNode compileFunction(TypedFunctionNode node, TypeScriptCodeGeneratorContext context) {
         return new TypeScriptFunctionDeclarationNode(
             node.name(),
-            node.params().positional().stream()
+            Stream.concat(node.params().positional().stream(), node.params().named().stream())
                 .map(param -> compileParam(param))
                 .toList(),
             compileTypeLevelExpression(node.returnType()),

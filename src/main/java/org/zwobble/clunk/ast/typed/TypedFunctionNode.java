@@ -64,6 +64,10 @@ public record TypedFunctionNode(
             return new Builder(name, positionalParams.plus(param), namedParams, returnType, body);
         }
 
+        public Builder addNamedParam(TypedParamNode param) {
+            return new Builder(name, positionalParams, namedParams.plus(param), returnType, body);
+        }
+
         public Builder name(String name) {
             return new Builder(name, positionalParams, namedParams, returnType, body);
         }

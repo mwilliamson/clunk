@@ -274,8 +274,8 @@ public class PythonCodeGenerator {
             pythonizeName(node.name()),
             List.of(),
             hasSelf,
-            compileParams(node.params()),
-            List.of(),
+            compileParams(node.params().positional()),
+            compileParams(node.params().named()),
             compileFunctionStatements(node.body(), context)
         );
     }
@@ -568,8 +568,8 @@ public class PythonCodeGenerator {
         return pythonizeName(node.name());
     }
 
-    private static List<String> compileParams(TypedParamsNode nodes) {
-        return nodes.positional().stream()
+    private static List<String> compileParams(List<TypedParamNode> paramNodes) {
+        return paramNodes.stream()
             .map(param -> compileParam(param))
             .toList();
     }

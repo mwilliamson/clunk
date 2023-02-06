@@ -16,6 +16,7 @@ public class PythonCodeGeneratorFunctionTests {
             .name("f")
             .addPositionalParam(Typed.param("x", Typed.typeLevelString()))
             .addPositionalParam(Typed.param("y", Typed.typeLevelInt()))
+            .addNamedParam(Typed.param("z", Typed.typeLevelBool()))
             .returnType(Typed.typeLevelBool())
             .addBodyStatement(Typed.returnStatement(Typed.boolFalse()))
             .build();
@@ -25,7 +26,7 @@ public class PythonCodeGeneratorFunctionTests {
         var string = serialiseToString(result, PythonSerialiser::serialiseStatement);
         assertThat(string, equalTo(
             """
-                def f(x, y, /):
+                def f(x, y, /, *, z):
                     return False
                 """
         ));

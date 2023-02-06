@@ -14,6 +14,28 @@ public class PythonSerialiser {
         serialiseBinaryOperation("+", node, builder);
     }
 
+    public static void serialiseArgs(PythonArgsNode node, CodeBuilder builder) {
+        forEachInterspersed(
+            node.positional(),
+            arg -> serialiseExpression(arg, builder, Optional.empty()),
+            () -> builder.append(", ")
+        );
+
+        if (node.positional().size() > 0 && node.keyword().size() > 0) {
+            builder.append(", ");
+        }
+
+        forEachInterspersed(
+            node.keyword(),
+            kwarg -> {
+                builder.append(kwarg.name());
+                builder.append("=");
+                serialiseExpression(kwarg.expression(), builder, Optional.empty());
+            },
+            () -> builder.append(", ")
+        );
+    }
+
     private static void serialiseAssert(PythonAssertNode node, CodeBuilder builder) {
         builder.append("assert ");
         serialiseExpression(node.expression(), builder, Optional.empty());
@@ -85,26 +107,7 @@ public class PythonSerialiser {
     private static void serialiseCall(PythonCallNode node, CodeBuilder builder) {
         serialiseExpression(node.receiver(), builder, Optional.of(node));
         builder.append("(");
-
-        forEachInterspersed(
-            node.args().positional(),
-            arg -> serialiseExpression(arg, builder, Optional.empty()),
-            () -> builder.append(", ")
-        );
-
-        if (node.args().positional().size() > 0 && node.args().keyword().size() > 0) {
-            builder.append(", ");
-        }
-
-        forEachInterspersed(
-            node.args().keyword(),
-            kwarg -> {
-                builder.append(kwarg.name());
-                builder.append("=");
-                serialiseExpression(kwarg.expression(), builder, Optional.empty());
-            },
-            () -> builder.append(", ")
-        );
+        serialiseArgs(node.args(), builder);
         builder.append(")");
     }
 

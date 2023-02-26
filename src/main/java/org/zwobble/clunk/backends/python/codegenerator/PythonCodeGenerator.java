@@ -1,5 +1,6 @@
 package org.zwobble.clunk.backends.python.codegenerator;
 
+import org.zwobble.clunk.ast.SourceType;
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.python.ast.*;
 import org.zwobble.clunk.types.*;
@@ -860,7 +861,11 @@ public class PythonCodeGenerator {
     }
 
     private static List<String> namespaceIdToModuleName(NamespaceId id) {
-        return id.name().parts();
+        var moduleName = new ArrayList<>(id.name().parts());
+        if (id.sourceType().equals(SourceType.TEST)) {
+            moduleName.set(moduleName.size() - 1, moduleName.get(moduleName.size() - 1) + "_test");
+        }
+        return moduleName;
     }
 
     private static String pythonizeName(String name) {

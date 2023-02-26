@@ -2,6 +2,7 @@ package org.zwobble.clunk;
 
 import org.zwobble.clunk.ast.SourceType;
 import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
+import org.zwobble.clunk.ast.untyped.UntypedNamespaceNode;
 import org.zwobble.clunk.backends.Backend;
 import org.zwobble.clunk.builtins.Builtins;
 import org.zwobble.clunk.config.ProjectConfig;
@@ -105,13 +106,17 @@ public class Compiler {
         SourcePathInfo sourcePathInfo,
         TypeCheckerContext context
     ) throws IOException {
+        var untypedNamespaceNode = parseSourceFile(sourcePath, sourcePathInfo);
+
+        return TypeChecker.typeCheckNamespace(untypedNamespaceNode, context);
+    }
+
+    private UntypedNamespaceNode parseSourceFile(Path sourcePath, SourcePathInfo sourcePathInfo) throws IOException {
         var sourceContents = Files.readString(sourcePath);
         logger.sourceFile(sourcePath, sourceContents);
         var source = FileFragmentSource.create(sourcePath.toString(), sourceContents);
         var tokens = Tokeniser.tokenise(source);
         var parser = new Parser();
-        var untypedNamespaceNode = parser.parseNamespace(tokens, sourcePathInfo.namespaceName, sourcePathInfo.sourceType);
-
-        return TypeChecker.typeCheckNamespace(untypedNamespaceNode, context);
+        return parser.parseNamespace(tokens, sourcePathInfo.namespaceName, sourcePathInfo.sourceType);
     }
 }

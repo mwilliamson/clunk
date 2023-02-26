@@ -12,7 +12,6 @@ import org.zwobble.clunk.parser.Tokeniser;
 import org.zwobble.clunk.sources.FileFragmentSource;
 import org.zwobble.clunk.typechecker.TypeCheckResult;
 import org.zwobble.clunk.typechecker.TypeChecker;
-import org.zwobble.clunk.typechecker.TypeCheckerContext;
 import org.zwobble.clunk.types.NamespaceName;
 
 import java.io.IOException;
@@ -36,18 +35,28 @@ public class Compiler {
         var projectConfig = ProjectConfig.read(projectPath);
 
         var sourceRoot = projectPath.resolve("src");
-        var sourcePaths = collectSourceFiles(sourceRoot);
 
         var typedNamespaceNodes = new ArrayList<TypedNamespaceNode>();
         var typeCheckerContext = Builtins.TYPE_CHECKER_CONTEXT;
-        for (var sourcePath : sourcePaths) {
-            var sourcePathInfo = sourcePathInfo(sourceRoot.relativize(sourcePath));
-            var result = readFile(sourcePath, sourcePathInfo, typeCheckerContext);
+        for (var untypedNamespaceNode : parseSourceFiles(sourceRoot)) {
+            var result = TypeChecker.typeCheckNamespace(untypedNamespaceNode, typeCheckerContext);
             typedNamespaceNodes.add(result.typedNode());
             typeCheckerContext = result.context();
         }
 
         backend.compile(new TypeCheckResult<>(typedNamespaceNodes, typeCheckerContext), outputRoot, projectConfig);
+    }
+
+    private List<UntypedNamespaceNode> parseSourceFiles(Path sourceRoot) throws IOException {
+        var sourcePaths = collectSourceFiles(sourceRoot);
+
+        var untypedNamespaceNodes = new ArrayList<UntypedNamespaceNode>();
+        for (var sourcePath : sourcePaths) {
+            var sourcePathInfo = sourcePathInfo(sourceRoot.relativize(sourcePath));
+            var untypedNamespaceNode = parseSourceFile(sourcePath, sourcePathInfo);
+            untypedNamespaceNodes.add(untypedNamespaceNode);
+        }
+        return untypedNamespaceNodes;
     }
 
     private record SourcePathInfo(NamespaceName namespaceName, SourceType sourceType) {
@@ -99,16 +108,6 @@ public class Compiler {
         });
         paths.sort(Comparator.naturalOrder());
         return paths;
-    }
-
-    private TypeCheckResult<TypedNamespaceNode> readFile(
-        Path sourcePath,
-        SourcePathInfo sourcePathInfo,
-        TypeCheckerContext context
-    ) throws IOException {
-        var untypedNamespaceNode = parseSourceFile(sourcePath, sourcePathInfo);
-
-        return TypeChecker.typeCheckNamespace(untypedNamespaceNode, context);
     }
 
     private UntypedNamespaceNode parseSourceFile(Path sourcePath, SourcePathInfo sourcePathInfo) throws IOException {

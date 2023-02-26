@@ -14,7 +14,7 @@ public class TypeScriptSerialiserModuleTests {
     @Test
     public void includesStatementsInModule() {
         var node = TypeScript.module(
-            "example/project",
+            List.of("example", "project"),
             List.of(
                 TypeScriptInterfaceDeclarationNode.builder("First").build(),
                 TypeScriptInterfaceDeclarationNode.builder("Second").build()

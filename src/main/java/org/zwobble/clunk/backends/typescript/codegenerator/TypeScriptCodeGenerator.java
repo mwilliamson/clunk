@@ -1,5 +1,6 @@
 package org.zwobble.clunk.backends.typescript.codegenerator;
 
+import org.zwobble.clunk.ast.SourceType;
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.typescript.ast.*;
 import org.zwobble.clunk.types.*;
@@ -334,13 +335,13 @@ public class TypeScriptCodeGenerator {
         );
     }
 
-    private static List<TypeScriptStatementNode> compileImport(TypedImportNode import_, NamespaceName importingNamespaceName) {
+    private static List<TypeScriptStatementNode> compileImport(TypedImportNode import_, NamespaceId importingNamespaceId) {
         var macro = TypeScriptMacros.lookupStaticFunctionMacro(import_.type());
         if (macro.isPresent()) {
             return List.of();
         }
 
-        var modulePath = namespaceNameToModulePath(import_.namespaceName(), importingNamespaceName);
+        var modulePath = namespaceIdToRelativeModulePath(import_.namespaceId(), importingNamespaceId);
         if (import_.fieldName().isPresent()) {
             var exportName = import_.fieldName().get();
             return List.of(new TypeScriptImportNamedNode(
@@ -355,11 +356,13 @@ public class TypeScriptCodeGenerator {
         }
     }
 
-    private static String namespaceNameToModulePath(NamespaceName importedNamespace, NamespaceName importingNamespace) {
+    private static String namespaceIdToRelativeModulePath(NamespaceId importedNamespace, NamespaceId importingNamespace) {
+        var importedModuleName = namespaceIdToModulePath(importedNamespace);
+        var importingModuleName = namespaceIdToModulePath(importingNamespace);
         var path = new ArrayList<String>();
 
-        var currentNamespaceParts = importingNamespace.parts().subList(0, importingNamespace.parts().size() - 1);
-        while (!currentNamespaceParts.equals(importedNamespace.parts().subList(0, currentNamespaceParts.size()))) {
+        var currentNamespaceParts = importingModuleName.subList(0, importingModuleName.size() - 1);
+        while (!currentNamespaceParts.equals(importedModuleName.subList(0, currentNamespaceParts.size()))) {
             currentNamespaceParts = currentNamespaceParts.subList(0, currentNamespaceParts.size() - 1);
             path.add("..");
         }
@@ -368,12 +371,20 @@ public class TypeScriptCodeGenerator {
             path.add(".");
         }
 
-        path.addAll(importedNamespace.parts().subList(
+        path.addAll(importedModuleName.subList(
             currentNamespaceParts.size(),
-            importedNamespace.parts().size()
+            importedModuleName.size()
         ));
 
         return String.join("/", path);
+    }
+
+    private static List<String> namespaceIdToModulePath(NamespaceId id) {
+        var moduleName = new ArrayList<>(id.name().parts());
+        if (id.sourceType().equals(SourceType.TEST)) {
+            moduleName.set(moduleName.size() - 1, moduleName.get(moduleName.size() - 1) + ".test");
+        }
+        return moduleName;
     }
 
     private static TypeScriptExpressionNode compileIndex(
@@ -529,13 +540,13 @@ public class TypeScriptCodeGenerator {
     }
 
     public static TypeScriptModuleNode compileNamespace(TypedNamespaceNode node, SubtypeRelations subtypeRelations) {
-        var name = String.join("/", node.id().name().parts());
+        var name = namespaceIdToModulePath(node.id());
         var context = new TypeScriptCodeGeneratorContext(subtypeRelations);
 
         var statements = new ArrayList<TypeScriptStatementNode>();
 
         node.imports().stream()
-            .map(import_ -> compileImport(import_, node.id().name()))
+            .map(import_ -> compileImport(import_, node.id()))
             .forEachOrdered(statements::addAll);
 
         node.statements().stream()

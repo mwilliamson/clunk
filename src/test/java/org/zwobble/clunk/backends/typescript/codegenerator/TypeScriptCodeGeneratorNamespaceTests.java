@@ -32,7 +32,7 @@ public class TypeScriptCodeGeneratorNamespaceTests {
 
         var result = TypeScriptCodeGenerator.compileNamespace(node, SubtypeRelations.EMPTY);
 
-        assertThat(result.path(), equalTo("example/project"));
+        assertThat(result.path(), equalTo(List.of("example", "project")));
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseModule);
         assertThat(string, equalTo(
             """

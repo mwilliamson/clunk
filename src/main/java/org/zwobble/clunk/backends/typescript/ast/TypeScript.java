@@ -145,7 +145,7 @@ public class TypeScript {
         return new TypeScriptLogicalOrNode(left, right);
     }
 
-    public static TypeScriptModuleNode module(String name, List<TypeScriptStatementNode> statements) {
+    public static TypeScriptModuleNode module(List<String> name, List<TypeScriptStatementNode> statements) {
         return new TypeScriptModuleNode(name, statements);
     }
 

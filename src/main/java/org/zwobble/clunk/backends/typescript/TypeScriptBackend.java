@@ -1,9 +1,9 @@
 package org.zwobble.clunk.backends.typescript;
 
-import org.zwobble.clunk.ast.SourceType;
 import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
 import org.zwobble.clunk.backends.Backend;
 import org.zwobble.clunk.backends.CodeBuilder;
+import org.zwobble.clunk.backends.typescript.ast.TypeScriptModuleNode;
 import org.zwobble.clunk.backends.typescript.codegenerator.TypeScriptCodeGenerator;
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser;
 import org.zwobble.clunk.config.ProjectConfig;
@@ -42,7 +42,7 @@ public class TypeScriptBackend implements Backend {
         var codeBuilder = new CodeBuilder();
         TypeScriptSerialiser.serialiseModule(typeScriptModule, codeBuilder);
 
-        var outputPath = generateOutputPath(outputRoot, typedNamespaceNode);
+        var outputPath = generateOutputPath(outputRoot, typeScriptModule);
 
         Files.createDirectories(outputPath.getParent());
         var outputContents = codeBuilder.toString();
@@ -50,12 +50,11 @@ public class TypeScriptBackend implements Backend {
         Files.writeString(outputPath, outputContents, StandardCharsets.UTF_8);
     }
 
-    private Path generateOutputPath(Path outputRoot, TypedNamespaceNode namespaceNode) {
+    private Path generateOutputPath(Path outputRoot, TypeScriptModuleNode typeScriptModule) {
         var outputPath = outputRoot;
-        for (var part : namespaceNode.id().name().parts()) {
+        for (var part : typeScriptModule.path()) {
             outputPath = outputPath.resolve(part);
         }
-        var testSuffix = namespaceNode.id().sourceType() == SourceType.TEST ? ".test" : "";
-        return outputPath.resolveSibling(outputPath.getFileName().toString() + testSuffix + ".ts");
+        return outputPath.resolveSibling(outputPath.getFileName().toString() + ".ts");
     }
 }

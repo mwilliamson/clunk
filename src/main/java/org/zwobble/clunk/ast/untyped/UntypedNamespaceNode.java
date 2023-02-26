@@ -41,5 +41,9 @@ public record UntypedNamespaceNode(
             statements.add(statement);
             return new Builder(name, imports, statements, sourceType, source);
         }
+
+        public Builder sourceType(SourceType sourceType) {
+            return new Builder(name, imports, statements, sourceType, source);
+        }
     }
 }

@@ -1,6 +1,7 @@
 package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.ast.SourceType;
 import org.zwobble.clunk.ast.typed.TypedFunctionNode;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
@@ -59,6 +60,28 @@ public class TypeCheckNamespaceTests {
         assertThat(
             result.context().memberType(result.context().typeOfNamespace(namespaceName).get(), "X"),
             equalTo(Optional.of(Types.metaType(Types.recordType(namespaceName, "X"))))
+        );
+    }
+
+    @Test
+    public void testModuleDoesNotChangeNamespaceTypeOfSourceModule() {
+        var namespaceName = NamespaceName.fromParts("example", "project");
+        var untypedNode = UntypedNamespaceNode
+            .builder(namespaceName)
+            .sourceType(SourceType.TEST)
+            .addStatement(UntypedRecordNode.builder("X").build())
+            .build();
+        var context = TypeCheckerContext.stub()
+            .updateNamespaceType(new NamespaceType(namespaceName, Map.of()));
+
+        var result = TypeChecker.typeCheckNamespace(untypedNode, context);
+
+        assertThat(
+            result.context().typeOfNamespace(namespaceName),
+            equalTo(Optional.of(new NamespaceType(
+                namespaceName,
+                Map.of()
+            )))
         );
     }
 

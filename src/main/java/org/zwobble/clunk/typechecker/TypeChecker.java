@@ -1,5 +1,6 @@
 package org.zwobble.clunk.typechecker;
 
+import org.zwobble.clunk.ast.SourceType;
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.ast.untyped.*;
 import org.zwobble.clunk.errors.InternalCompilerError;
@@ -979,6 +980,7 @@ public class TypeChecker {
         var typeCheckBodyResult = typeCheckNamespaceStatements(node.statements(), context);
         context = typeCheckBodyResult.context;
 
+        // TODO: include source type in namespace type, include in notion of namespace ID
         var namespaceType = new NamespaceType(node.name(), typeCheckBodyResult.fieldTypes);
 
         var typedNode = new TypedNamespaceNode(
@@ -990,7 +992,11 @@ public class TypeChecker {
             node.source()
         );
 
-        return new TypeCheckResult<>(typedNode, context.updateNamespaceType(namespaceType).leave());
+        if (node.sourceType() == SourceType.SOURCE) {
+            context = context.updateNamespaceType(namespaceType);
+        }
+
+        return new TypeCheckResult<>(typedNode, context.leave());
     }
 
     private record TypeCheckNamespaceStatementsResult(

@@ -507,7 +507,8 @@ public class PythonCodeGenerator {
 
     public static PythonModuleNode compileNamespace(TypedNamespaceNode node) {
         var context = PythonCodeGeneratorContext.initial();
-        var moduleName = namespaceNameToModuleName(node.name());
+        // TODO: use ID
+        var moduleName = namespaceNameToModuleName(node.id().name());
 
         var statements = new ArrayList<PythonStatementNode>();
 

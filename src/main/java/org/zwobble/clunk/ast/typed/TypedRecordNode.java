@@ -3,7 +3,7 @@ package org.zwobble.clunk.ast.typed;
 import org.pcollections.PVector;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.sources.Source;
-import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.RecordType;
 import org.zwobble.clunk.util.P;
 
@@ -23,13 +23,13 @@ public record TypedRecordNode(
     }
 
     public static Builder builder(String name) {
-        return builder(NamespaceName.fromParts(), name);
+        return builder(NamespaceId.source(), name);
     }
 
-    public static Builder builder(NamespaceName namespaceName, String name) {
+    public static Builder builder(NamespaceId namespaceId, String name) {
         return new Builder(
             name,
-            new RecordType(namespaceName, name),
+            new RecordType(namespaceId, name),
             P.vector(),
             P.vector(),
             P.vector(),

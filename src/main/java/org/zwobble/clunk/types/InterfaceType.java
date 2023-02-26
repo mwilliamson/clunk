@@ -1,13 +1,13 @@
 package org.zwobble.clunk.types;
 
 public record InterfaceType(
-    NamespaceName namespaceName,
+    NamespaceId namespaceId,
     String name,
     boolean isSealed
 ) implements StructuredType {
     @Override
     public String describe() {
-        return namespaceName + "." + name;
+        return namespaceId + "." + name;
     }
 
     @Override

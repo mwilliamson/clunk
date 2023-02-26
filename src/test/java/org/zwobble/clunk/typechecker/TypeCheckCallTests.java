@@ -26,11 +26,11 @@ public class TypeCheckCallTests {
             ),
             List.of(Untyped.intLiteral(123))
         );
-        var namespaceName = NamespaceName.fromParts("example");
-        var recordType = Types.recordType(namespaceName, "X");
+        var namespaceId = NamespaceId.source("example");
+        var recordType = Types.recordType(namespaceId, "X");
         var context = TypeCheckerContext.stub()
             .addLocal("x", recordType, NullSource.INSTANCE)
-            .addMemberTypes(recordType, Map.of("y", Types.methodType(namespaceName, List.of(Types.INT), Types.INT)));
+            .addMemberTypes(recordType, Map.of("y", Types.methodType(namespaceId, List.of(Types.INT), Types.INT)));
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 
@@ -48,9 +48,9 @@ public class TypeCheckCallTests {
             Untyped.reference("y"),
             List.of(Untyped.intLiteral(123))
         );
-        var namespaceName = NamespaceName.fromParts("example");
+        var namespaceId = NamespaceId.source("example");
         var context = TypeCheckerContext.stub()
-            .enterRecordBody(Map.of("y", Types.methodType(namespaceName, List.of(Types.INT), Types.INT)));
+            .enterRecordBody(Map.of("y", Types.methodType(namespaceId, List.of(Types.INT), Types.INT)));
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 
@@ -72,10 +72,10 @@ public class TypeCheckCallTests {
             List.of(Untyped.typeLevelReference("String")),
             List.of(Untyped.string())
         );
-        var namespaceName = NamespaceName.fromParts("example");
-        var recordType = Types.recordType(namespaceName, "X");
-        var typeParameter = TypeParameter.function(namespaceName, "X", "f", "T");
-        var methodType = Types.methodType(namespaceName, List.of(typeParameter), List.of(typeParameter), typeParameter);
+        var namespaceId = NamespaceId.source("example");
+        var recordType = Types.recordType(namespaceId, "X");
+        var typeParameter = TypeParameter.function(namespaceId, "X", "f", "T");
+        var methodType = Types.methodType(namespaceId, List.of(typeParameter), List.of(typeParameter), typeParameter);
         var context = TypeCheckerContext.stub()
             .addLocal("x", recordType, NullSource.INSTANCE)
             .addMemberTypes(recordType, Map.of("y", methodType));
@@ -94,7 +94,7 @@ public class TypeCheckCallTests {
             List.of(Untyped.intLiteral(123))
         );
         var functionType = Types.staticFunctionType(
-            NamespaceName.fromParts("Stdlib", "Math"),
+            NamespaceId.source("Stdlib", "Math"),
             "abs",
             List.of(Types.INT),
             Types.INT
@@ -117,8 +117,8 @@ public class TypeCheckCallTests {
             Untyped.reference("Id"),
             List.of(Untyped.intLiteral(123))
         );
-        var namespaceName = NamespaceName.fromParts("example");
-        var recordType = Types.recordType(namespaceName, "Id");
+        var namespaceId = NamespaceId.source("example");
+        var recordType = Types.recordType(namespaceId, "Id");
         var context = TypeCheckerContext.stub()
             .addLocal("Id", Types.metaType(recordType), NullSource.INSTANCE)
             .addConstructorType(Types.constructorType(List.of(Types.INT), recordType, Visibility.PUBLIC));
@@ -139,9 +139,9 @@ public class TypeCheckCallTests {
             List.of(Untyped.typeLevelReference("String")),
             List.of(Untyped.string("Hello."))
         );
-        var namespaceName = NamespaceName.fromParts("example");
-        var recordType = Types.recordType(namespaceName, "Id");
-        var typeParameter = TypeParameter.invariant(namespaceName, "Id", "T");
+        var namespaceId = NamespaceId.source("example");
+        var recordType = Types.recordType(namespaceId, "Id");
+        var typeParameter = TypeParameter.invariant(namespaceId, "Id", "T");
         var typeConstructor = new TypeConstructor(List.of(typeParameter), recordType);
         var context = TypeCheckerContext.stub()
             .addLocal("Id", Types.typeConstructorType(typeConstructor), NullSource.INSTANCE)
@@ -167,7 +167,7 @@ public class TypeCheckCallTests {
             List.of(Untyped.intLiteral(42))
         );
         var functionType = Types.staticFunctionType(
-            NamespaceName.fromParts("Stdlib", "Math"),
+            NamespaceId.source("Stdlib", "Math"),
             "abs",
             List.of(Types.INT),
             Types.INT
@@ -188,7 +188,7 @@ public class TypeCheckCallTests {
             List.of(Untyped.string("123"))
         );
         var functionType = Types.staticFunctionType(
-            NamespaceName.fromParts("Stdlib", "Math"),
+            NamespaceId.source("Stdlib", "Math"),
             "abs",
             List.of(Types.INT),
             Types.INT
@@ -209,7 +209,7 @@ public class TypeCheckCallTests {
             List.of()
         );
         var functionType = Types.staticFunctionType(
-            NamespaceName.fromParts("Stdlib", "Math"),
+            NamespaceId.source("Stdlib", "Math"),
             "abs",
             List.of(Types.INT),
             Types.INT
@@ -230,7 +230,7 @@ public class TypeCheckCallTests {
             List.of(Untyped.intLiteral(123), Untyped.intLiteral(456))
         );
         var functionType = Types.staticFunctionType(
-            NamespaceName.fromParts("Stdlib", "Math"),
+            NamespaceId.source("Stdlib", "Math"),
             "abs",
             List.of(Types.INT),
             Types.INT
@@ -250,7 +250,7 @@ public class TypeCheckCallTests {
             .addNamedArg("x", Untyped.intLiteral(42))
             .build();
         var functionType = Types.staticFunctionType(
-            NamespaceName.fromParts("Stdlib", "Math"),
+            NamespaceId.source("Stdlib", "Math"),
             "abs",
             List.of(),
             List.of(Types.namedParam("x", Types.INT)),
@@ -275,7 +275,7 @@ public class TypeCheckCallTests {
             .addNamedArg("x", Untyped.string("123"))
             .build();
         var functionType = Types.staticFunctionType(
-            NamespaceName.fromParts(),
+            NamespaceId.source(),
             "f",
             List.of(),
             List.of(Types.namedParam("x", Types.STRING), Types.namedParam("y", Types.STRING)),
@@ -296,7 +296,7 @@ public class TypeCheckCallTests {
             .addNamedArg("x", Untyped.string("123"))
             .build();
         var functionType = Types.staticFunctionType(
-            NamespaceName.fromParts("Stdlib", "Math"),
+            NamespaceId.source("Stdlib", "Math"),
             "abs",
             List.of(),
             List.of(Types.namedParam("x", Types.INT)),
@@ -318,7 +318,7 @@ public class TypeCheckCallTests {
             List.of()
         );
         var functionType = Types.staticFunctionType(
-            NamespaceName.fromParts("Stdlib", "Math"),
+            NamespaceId.source("Stdlib", "Math"),
             "abs",
             List.of(),
             List.of(Types.namedParam("x", Types.INT)),
@@ -341,7 +341,7 @@ public class TypeCheckCallTests {
             .addNamedArg("x", Untyped.intLiteral())
             .build();
         var functionType = Types.staticFunctionType(
-            NamespaceName.fromParts("Stdlib", "Math"),
+            NamespaceId.source("Stdlib", "Math"),
             "abs",
             List.of(),
             Types.INT
@@ -364,7 +364,7 @@ public class TypeCheckCallTests {
             .addNamedArg("x", Untyped.intLiteral())
             .build();
         var functionType = Types.staticFunctionType(
-            NamespaceName.fromParts("Stdlib", "Math"),
+            NamespaceId.source("Stdlib", "Math"),
             "abs",
             List.of(),
             List.of(Types.namedParam("x", Types.INT)),
@@ -391,11 +391,11 @@ public class TypeCheckCallTests {
             List.of(Untyped.typeLevelReference("String")),
             List.of()
         );
-        var namespaceName = NamespaceName.fromParts("example");
-        var recordType = Types.recordType(namespaceName, "X");
+        var namespaceId = NamespaceId.source("example");
+        var recordType = Types.recordType(namespaceId, "X");
         var context = TypeCheckerContext.stub()
             .addLocal("x", recordType, NullSource.INSTANCE)
-            .addMemberTypes(recordType, Map.of("y", Types.methodType(namespaceName, List.of(), Types.INT)));
+            .addMemberTypes(recordType, Map.of("y", Types.methodType(namespaceId, List.of(), Types.INT)));
 
         assertThrows(
             CannotPassTypeLevelArgsToNonGenericValueError.class,
@@ -412,10 +412,10 @@ public class TypeCheckCallTests {
             ),
             List.of(Untyped.string())
         );
-        var namespaceName = NamespaceName.fromParts("example");
-        var recordType = Types.recordType(namespaceName, "X");
-        var typeParameter = TypeParameter.function(namespaceName, "X", "f", "T");
-        var methodType = Types.methodType(namespaceName, List.of(typeParameter), List.of(typeParameter), typeParameter);
+        var namespaceId = NamespaceId.source("example");
+        var recordType = Types.recordType(namespaceId, "X");
+        var typeParameter = TypeParameter.function(namespaceId, "X", "f", "T");
+        var methodType = Types.methodType(namespaceId, List.of(typeParameter), List.of(typeParameter), typeParameter);
         var context = TypeCheckerContext.stub()
             .addLocal("x", recordType, NullSource.INSTANCE)
             .addMemberTypes(recordType, Map.of("y", methodType));
@@ -436,12 +436,12 @@ public class TypeCheckCallTests {
             List.of(Untyped.typeLevelReference("String")),
             List.of(Untyped.string())
         );
-        var namespaceName = NamespaceName.fromParts("example");
-        var recordType = Types.recordType(namespaceName, "X");
-        var typeParameter1 = TypeParameter.function(namespaceName, "X", "f", "T1");
-        var typeParameter2 = TypeParameter.function(namespaceName, "X", "f", "T2");
+        var namespaceId = NamespaceId.source("example");
+        var recordType = Types.recordType(namespaceId, "X");
+        var typeParameter1 = TypeParameter.function(namespaceId, "X", "f", "T1");
+        var typeParameter2 = TypeParameter.function(namespaceId, "X", "f", "T2");
         var methodType = Types.methodType(
-            namespaceName,
+            namespaceId,
             List.of(typeParameter1, typeParameter2),
             List.of(typeParameter1, typeParameter2),
             typeParameter1
@@ -469,10 +469,10 @@ public class TypeCheckCallTests {
             List.of(Untyped.typeLevelReference("String"), Untyped.typeLevelReference("String")),
             List.of(Untyped.string())
         );
-        var namespaceName = NamespaceName.fromParts("example");
-        var recordType = Types.recordType(namespaceName, "X");
-        var typeParameter = TypeParameter.function(namespaceName, "X", "f", "T");
-        var methodType = Types.methodType(namespaceName, List.of(typeParameter), List.of(typeParameter), typeParameter);
+        var namespaceId = NamespaceId.source("example");
+        var recordType = Types.recordType(namespaceId, "X");
+        var typeParameter = TypeParameter.function(namespaceId, "X", "f", "T");
+        var methodType = Types.methodType(namespaceId, List.of(typeParameter), List.of(typeParameter), typeParameter);
         var context = TypeCheckerContext.stub()
             .addLocal("x", recordType, NullSource.INSTANCE)
             .addMemberTypes(recordType, Map.of("y", methodType));

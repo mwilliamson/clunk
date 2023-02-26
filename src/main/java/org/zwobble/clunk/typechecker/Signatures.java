@@ -30,7 +30,7 @@ public class Signatures {
     }
 
     private static Signature callableToSignature(CallableType callableType, TypeCheckerContext context, Source source) {
-        if (callableType.visibility().equals(Visibility.PRIVATE) && !callableType.namespaceName().equals(context.namespaceName())) {
+        if (callableType.visibility().equals(Visibility.PRIVATE) && !callableType.namespaceId().equals(context.namespaceId())) {
             throw new NotVisibleError(callableType.describe() + " is not visible from other namespaces", source);
         } else if (callableType.typeLevelParams().isEmpty()) {
             return new SignatureNonGeneric(callableType);

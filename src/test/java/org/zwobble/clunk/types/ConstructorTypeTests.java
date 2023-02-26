@@ -13,7 +13,7 @@ public class ConstructorTypeTests {
     public void describeIncludesArgsAndReturnType() {
         var type = Types.constructorType(
             List.of(Types.BOOL, Types.STRING),
-            Types.recordType(NamespaceName.fromParts(), "X")
+            Types.recordType(NamespaceId.source(), "X")
         );
 
         var result = type.describe();
@@ -25,11 +25,11 @@ public class ConstructorTypeTests {
     public void describeIncludesTypeLevelArgs() {
         var type = Types.constructorType(
             List.of(
-                TypeParameter.function(NamespaceName.fromParts(), "T", "f", "A"),
-                TypeParameter.function(NamespaceName.fromParts(), "T", "f", "B")
+                TypeParameter.function(NamespaceId.source(), "T", "f", "A"),
+                TypeParameter.function(NamespaceId.source(), "T", "f", "B")
             ),
             List.of(),
-            Types.recordType(NamespaceName.fromParts(), "X")
+            Types.recordType(NamespaceId.source(), "X")
         );
 
         var result = type.describe();
@@ -39,10 +39,10 @@ public class ConstructorTypeTests {
 
     @Test
     public void replaceReplacesPositionalParamTypes() {
-        var typeParameter = TypeParameter.covariant(NamespaceName.fromParts(), "X", "T");
+        var typeParameter = TypeParameter.covariant(NamespaceId.source(), "X", "T");
         var type = Types.constructorType(
             List.of(typeParameter),
-            Types.recordType(NamespaceName.fromParts(), "X")
+            Types.recordType(NamespaceId.source(), "X")
         );
         var typeMap = new TypeMap(Map.ofEntries(
             Map.entry(typeParameter, Types.STRING)
@@ -52,16 +52,16 @@ public class ConstructorTypeTests {
 
         assertThat(result, equalTo(Types.constructorType(
             List.of(Types.STRING),
-            Types.recordType(NamespaceName.fromParts(), "X")
+            Types.recordType(NamespaceId.source(), "X")
         )));
     }
 
     @Test
     public void replaceReplacesReturnType() {
-        var typeParameter = TypeParameter.covariant(NamespaceName.fromParts(), "X", "T");
+        var typeParameter = TypeParameter.covariant(NamespaceId.source(), "X", "T");
         var type = Types.constructorType(
             List.of(Types.INT),
-            Types.recordType(NamespaceName.fromParts(), "X")
+            Types.recordType(NamespaceId.source(), "X")
         );
         var typeMap = new TypeMap(Map.ofEntries(
             Map.entry(typeParameter, Types.STRING)
@@ -71,7 +71,7 @@ public class ConstructorTypeTests {
 
         assertThat(result, equalTo(Types.constructorType(
             List.of(Types.INT),
-            Types.recordType(NamespaceName.fromParts(), "X")
+            Types.recordType(NamespaceId.source(), "X")
         )));
     }
 }

@@ -11,10 +11,10 @@ import static org.hamcrest.Matchers.equalTo;
 public class ConstructedTypeTests {
     @Test
     public void describeIncludesConstructorAndArgs() {
-        var namespaceName = NamespaceName.fromParts();
+        var namespaceId = NamespaceId.source();
         var constructor = new TypeConstructor(
-            List.of(TypeParameter.invariant(namespaceName, "Map", "K"), TypeParameter.invariant(namespaceName, "Map", "V")),
-            Types.recordType(namespaceName, "Map")
+            List.of(TypeParameter.invariant(namespaceId, "Map", "K"), TypeParameter.invariant(namespaceId, "Map", "V")),
+            Types.recordType(namespaceId, "Map")
         );
         var type = Types.construct(constructor, List.of(Types.STRING, Types.INT));
 
@@ -25,12 +25,12 @@ public class ConstructedTypeTests {
 
     @Test
     public void replaceReplacesArgs() {
-        var namespaceName = NamespaceName.fromParts();
+        var namespaceId = NamespaceId.source();
         var constructor = new TypeConstructor(
-            List.of(TypeParameter.invariant(namespaceName, "Map", "K"), TypeParameter.invariant(namespaceName, "Map", "V")),
-            Types.recordType(namespaceName, "Map")
+            List.of(TypeParameter.invariant(namespaceId, "Map", "K"), TypeParameter.invariant(namespaceId, "Map", "V")),
+            Types.recordType(namespaceId, "Map")
         );
-        var typeParameter = TypeParameter.invariant(namespaceName, "Example", "T");
+        var typeParameter = TypeParameter.invariant(namespaceId, "Example", "T");
         var type = Types.construct(constructor, List.of(typeParameter));
         var typeMap = new TypeMap(Map.ofEntries(Map.entry(typeParameter, Types.STRING)));
 

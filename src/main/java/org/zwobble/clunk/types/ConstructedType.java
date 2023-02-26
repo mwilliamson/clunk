@@ -24,8 +24,8 @@ public record ConstructedType(TypeConstructor constructor, List<? extends Type> 
     }
 
     @Override
-    public NamespaceName namespaceName() {
-        return constructor.genericType().namespaceName();
+    public NamespaceId namespaceId() {
+        return constructor.genericType().namespaceId();
     }
 
     @Override

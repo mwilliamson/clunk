@@ -19,10 +19,10 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class JavaCodeGeneratorNamespaceTests {
     @Test
     public void recordsInNamespaceAreCompiledToSeparateJavaCompilationUnits() {
-        var record1 = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "First").build();
-        var record2 = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "Second").build();
+        var record1 = TypedRecordNode.builder(NamespaceId.source("example", "project"), "First").build();
+        var record2 = TypedRecordNode.builder(NamespaceId.source("example", "project"), "Second").build();
         var node = TypedNamespaceNode
-            .builder(NamespaceName.fromParts("example", "project"))
+            .builder(NamespaceId.source("example", "project"))
             .addStatement(record1)
             .addStatement(record2)
             .build();
@@ -50,7 +50,7 @@ public class JavaCodeGeneratorNamespaceTests {
     @Test
     public void functionsAreGroupedIntoSingleClassNamedAfterNamespace() {
         var node = TypedNamespaceNode
-            .builder(NamespaceName.fromParts("example", "project"))
+            .builder(NamespaceId.source("example", "project"))
             .addStatement(TypedFunctionNode.builder().name("f").returnType(Typed.typeLevelString()).build())
             .addStatement(TypedFunctionNode.builder().name("g").returnType(Typed.typeLevelString()).build())
             .build();
@@ -75,7 +75,7 @@ public class JavaCodeGeneratorNamespaceTests {
     @Test
     public void testsAreGroupedIntoSingleClassNamedAfterNamespace() {
         var node = TypedNamespaceNode
-            .builder(NamespaceName.fromParts("example", "project"))
+            .builder(NamespaceId.source("example", "project"))
             .addStatement(TypedTestNode.builder().name("f").build())
             .addStatement(TypedTestNode.builder().name("g").build())
             .build();
@@ -103,9 +103,9 @@ public class JavaCodeGeneratorNamespaceTests {
 
     @Test
     public void namespaceImportsAreCompiledAndRenamed() {
-        var namespaceType = new NamespaceType(NamespaceName.fromParts("b", "c"), Map.of());
+        var namespaceType = new NamespaceType(NamespaceId.source("b", "c"), Map.of());
         var node = TypedNamespaceNode
-            .builder(NamespaceName.fromParts("example", "project"))
+            .builder(NamespaceId.source("example", "project"))
             .addImport(Typed.import_(NamespaceName.fromParts("a"), Types.INT))
             .addImport(Typed.import_(NamespaceName.fromParts("b", "c"), namespaceType))
             .addImport(Typed.import_(NamespaceName.fromParts("d", "e", "f"), Types.INT))
@@ -144,19 +144,19 @@ public class JavaCodeGeneratorNamespaceTests {
     @Test
     public void macrosInTestsGenerateImports() {
         var assertThatType = Types.staticFunctionType(
-            NamespaceName.fromParts("stdlib", "assertions"),
+            NamespaceId.source("stdlib", "assertions"),
             "assertThat",
             List.of(),
             Types.UNIT
         );
         var equalToType = Types.staticFunctionType(
-            NamespaceName.fromParts("stdlib", "matchers"),
+            NamespaceId.source("stdlib", "matchers"),
             "equalTo",
             List.of(),
             Types.UNIT
         );
         var node = TypedNamespaceNode
-            .builder(NamespaceName.fromParts("example", "project"))
+            .builder(NamespaceId.source("example", "project"))
             .addImport(Typed.import_(
                 NamespaceName.fromParts("stdlib", "assertions"), "assertThat",
                 assertThatType

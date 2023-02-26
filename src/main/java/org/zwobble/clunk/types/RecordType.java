@@ -1,9 +1,9 @@
 package org.zwobble.clunk.types;
 
-public record RecordType(NamespaceName namespaceName, String name) implements StructuredType {
+public record RecordType(NamespaceId namespaceId, String name) implements StructuredType {
     @Override
     public String describe() {
-        return namespaceName + "." + name;
+        return namespaceId + "." + name;
     }
 
     @Override

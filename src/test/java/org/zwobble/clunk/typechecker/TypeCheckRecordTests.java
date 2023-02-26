@@ -26,7 +26,7 @@ public class TypeCheckRecordTests {
     @Test
     public void recordTypeIsAddedToEnvironment() {
         var untypedNode = UntypedRecordNode.builder("Example").build();
-        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceId.source("a", "b"));
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
@@ -36,7 +36,7 @@ public class TypeCheckRecordTests {
                 TypeLevelValueType.class,
                 has("value", cast(
                     RecordType.class,
-                    has("namespaceName", equalTo(NamespaceName.fromParts("a", "b"))),
+                    has("namespaceId", equalTo(NamespaceId.source("a", "b"))),
                     has("name", equalTo("Example"))
                 ))
             )
@@ -46,7 +46,7 @@ public class TypeCheckRecordTests {
     @Test
     public void addsNamespaceField() {
         var untypedNode = UntypedRecordNode.builder("Example").build();
-        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceId.source("a", "b"));
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
@@ -54,7 +54,7 @@ public class TypeCheckRecordTests {
             result.fieldType(),
             equalTo(Optional.of(Map.entry(
                 "Example",
-                Types.metaType(Types.recordType(NamespaceName.fromParts("a", "b"), "Example"))
+                Types.metaType(Types.recordType(NamespaceId.source("a", "b"), "Example"))
             )))
         );
     }
@@ -63,14 +63,14 @@ public class TypeCheckRecordTests {
     public void recordIsTypeChecked() {
         var untypedNode = UntypedRecordNode.builder("Example")
             .build();
-        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceId.source("a", "b"));
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
         var typedNode = (TypedRecordNode) result.typedNode();
         assertThat(typedNode, allOf(
             has("name", equalTo("Example")),
-            has("type", isRecordType(NamespaceName.fromParts("a", "b"), "Example"))
+            has("type", isRecordType(NamespaceId.source("a", "b"), "Example"))
         ));
     }
 
@@ -79,7 +79,7 @@ public class TypeCheckRecordTests {
         var untypedNode = UntypedRecordNode.builder("Example")
             .addField(Untyped.recordField("x", Untyped.typeLevelReference("String")))
             .build();
-        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceId.source("a", "b"));
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
@@ -97,7 +97,7 @@ public class TypeCheckRecordTests {
         var untypedNode = UntypedRecordNode.builder("Example")
             .addField(Untyped.recordField("x", Untyped.typeLevelReference("String")))
             .build();
-        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceId.source("a", "b"));
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
@@ -115,7 +115,7 @@ public class TypeCheckRecordTests {
         var untypedNode = UntypedRecordNode.builder("Example")
             .addField(Untyped.recordField("x", Untyped.typeLevelReference("String")))
             .build();
-        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceId.source("a", "b"));
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
@@ -132,7 +132,7 @@ public class TypeCheckRecordTests {
                 List.of(Untyped.returnStatement(Untyped.string("hello")))
             ))
             .build();
-        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceId.source("a", "b"));
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
@@ -157,7 +157,7 @@ public class TypeCheckRecordTests {
                 List.of(Untyped.returnStatement(Untyped.string()))
             ))
             .build();
-        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceId.source("a", "b"));
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
@@ -175,7 +175,7 @@ public class TypeCheckRecordTests {
                 List.of(Untyped.returnStatement(Untyped.reference("x")))
             ))
             .build();
-        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceId.source("a", "b"));
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
@@ -203,7 +203,7 @@ public class TypeCheckRecordTests {
                 List.of(Untyped.returnStatement(Untyped.reference("x")))
             ))
             .build();
-        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceId.source("a", "b"));
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
@@ -231,7 +231,7 @@ public class TypeCheckRecordTests {
                 .build()
             )
             .build();
-        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceId.source("a", "b"));
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
@@ -253,7 +253,7 @@ public class TypeCheckRecordTests {
             .addField(Untyped.recordField("x", Untyped.typeLevelReference("Int")))
             .build();
         var context = TypeCheckerContext.stub()
-            .enterNamespace(NamespaceName.fromParts("a", "b"));
+            .enterNamespace(NamespaceId.source("a", "b"));
 
         var result = assertThrows(
             FieldIsAlreadyDefinedError.class,
@@ -268,22 +268,22 @@ public class TypeCheckRecordTests {
         var untypedNode = UntypedRecordNode.builder("User")
             .addSupertype(Untyped.typeLevelReference("Person"))
             .build();
-        var interfaceType = Types.sealedInterfaceType(NamespaceName.fromParts("a", "b"), "Person");
+        var interfaceType = Types.sealedInterfaceType(NamespaceId.source("a", "b"), "Person");
         var context = TypeCheckerContext.stub()
-            .enterNamespace(NamespaceName.fromParts("a", "b"))
+            .enterNamespace(NamespaceId.source("a", "b"))
             .addLocal("Person", Types.metaType(interfaceType), NullSource.INSTANCE);
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
         assertThat(result.typedNode(), has("supertypes", contains(
-            has("value", isInterfaceType(NamespaceName.fromParts("a", "b"), "Person"))
+            has("value", isInterfaceType(NamespaceId.source("a", "b"), "Person"))
         )));
         var recordType = ((TypedRecordNode) result.typedNode()).type();
         assertThat(result.context().subtypeRelations().extendedTypes(recordType), containsInAnyOrder(
             equalTo(interfaceType)
         ));
         assertThat(result.context().sealedInterfaceCases(interfaceType), containsInAnyOrder(
-            isRecordType(NamespaceName.fromParts("a", "b"), "User")
+            isRecordType(NamespaceId.source("a", "b"), "User")
         ));
     }
 
@@ -293,7 +293,7 @@ public class TypeCheckRecordTests {
             .addSupertype(Untyped.typeLevelReference("Bool"))
             .build();
         var context = TypeCheckerContext.stub()
-            .enterNamespace(NamespaceName.fromParts("a", "b"))
+            .enterNamespace(NamespaceId.source("a", "b"))
             .addLocal("Bool", Types.metaType(Types.BOOL), NullSource.INSTANCE);
 
         assertThrows(
@@ -308,8 +308,8 @@ public class TypeCheckRecordTests {
             .addSupertype(Untyped.typeLevelReference("Person"))
             .build();
         var context = TypeCheckerContext.stub()
-            .enterNamespace(NamespaceName.fromParts("a", "b"))
-            .addLocal("Person", Types.metaType(Types.sealedInterfaceType(NamespaceName.fromParts("d", "e"), "Person")), NullSource.INSTANCE);
+            .enterNamespace(NamespaceId.source("a", "b"))
+            .addLocal("Person", Types.metaType(Types.sealedInterfaceType(NamespaceId.source("d", "e"), "Person")), NullSource.INSTANCE);
 
         assertThrows(
             CannotExtendSealedInterfaceFromDifferentNamespaceError.class,
@@ -322,9 +322,9 @@ public class TypeCheckRecordTests {
         var untypedNode = UntypedRecordNode.builder("User")
             .addSupertype(Untyped.typeLevelReference("Person"))
             .build();
-        var interfaceType = Types.unsealedInterfaceType(NamespaceName.fromParts("d", "e"), "Person");
+        var interfaceType = Types.unsealedInterfaceType(NamespaceId.source("d", "e"), "Person");
         var context = TypeCheckerContext.stub()
-            .enterNamespace(NamespaceName.fromParts("a", "b"))
+            .enterNamespace(NamespaceId.source("a", "b"))
             .addLocal("Person", Types.metaType(interfaceType), NullSource.INSTANCE);
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
@@ -339,11 +339,11 @@ public class TypeCheckRecordTests {
         assertThat(result.context().sealedInterfaceCases(interfaceType), empty());
     }
 
-    private Matcher<?> isInterfaceType(NamespaceName namespaceName, String name) {
-        return cast(InterfaceType.class, has("namespaceName", equalTo(namespaceName)), has("name", equalTo(name)));
+    private Matcher<?> isInterfaceType(NamespaceId namespaceId, String name) {
+        return cast(InterfaceType.class, has("namespaceId", equalTo(namespaceId)), has("name", equalTo(name)));
     }
 
-    private Matcher<Type> isRecordType(NamespaceName namespaceName, String name) {
-        return cast(RecordType.class, has("namespaceName", equalTo(namespaceName)), has("name", equalTo(name)));
+    private Matcher<Type> isRecordType(NamespaceId namespaceId, String name) {
+        return cast(RecordType.class, has("namespaceId", equalTo(namespaceId)), has("name", equalTo(name)));
     }
 }

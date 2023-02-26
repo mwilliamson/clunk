@@ -1,6 +1,7 @@
 package org.zwobble.clunk.ast.typed;
 
 import org.zwobble.clunk.sources.Source;
+import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.Type;
 
@@ -14,6 +15,10 @@ public record TypedImportNode(
     Type type,
     Source source
 ) implements TypedNode {
+    public NamespaceId namespaceId() {
+        return NamespaceId.source(namespaceName);
+    }
+
     public String variableName() {
         if (fieldName.isPresent()) {
             return fieldName.get();

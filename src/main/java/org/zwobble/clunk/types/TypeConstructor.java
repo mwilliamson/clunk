@@ -6,8 +6,8 @@ public record TypeConstructor(
     List<TypeParameter> params,
     StructuredType genericType
 ) implements TypeLevelValue {
-    public NamespaceName namespaceName() {
-        return genericType.namespaceName();
+    public NamespaceId namespaceId() {
+        return genericType.namespaceId();
     }
 
     public String name() {

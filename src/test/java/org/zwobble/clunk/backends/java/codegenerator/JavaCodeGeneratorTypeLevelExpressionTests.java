@@ -25,7 +25,7 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void enumTypeIsCompiledToReference() {
-        var node = Typed.typeLevelReference("C", Types.enumType(NamespaceName.fromParts("a", "b"), "C", List.of()));
+        var node = Typed.typeLevelReference("C", Types.enumType(NamespaceId.source("a", "b"), "C", List.of()));
         var context = JavaCodeGeneratorContext.stub();
 
         var result = JavaCodeGenerator.compileTypeLevelExpression(node, context);
@@ -47,7 +47,7 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void interfaceTypeIsCompiledToReference() {
-        var node = Typed.typeLevelReference("C", Types.interfaceType(NamespaceName.fromParts("a", "b"), "C"));
+        var node = Typed.typeLevelReference("C", Types.interfaceType(NamespaceId.source("a", "b"), "C"));
         var context = JavaCodeGeneratorContext.stub();
 
         var result = JavaCodeGenerator.compileTypeLevelExpression(node, context);
@@ -88,7 +88,7 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void recordTypeIsCompiledToReference() {
-        var node = Typed.typeLevelReference("C", Types.recordType(NamespaceName.fromParts("a", "b"), "C"));
+        var node = Typed.typeLevelReference("C", Types.recordType(NamespaceId.source("a", "b"), "C"));
         var context = JavaCodeGeneratorContext.stub();
 
         var result = JavaCodeGenerator.compileTypeLevelExpression(node, context);
@@ -110,7 +110,7 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void whenArgHasNoSubtypesAndIsCovariantThenArgIsWildcardExtends() {
-        var argType = Types.recordType(NamespaceName.fromParts(), "Node");
+        var argType = Types.recordType(NamespaceId.source(), "Node");
         var node = Typed.constructedType(
             Typed.typeLevelReference("List", Types.LIST_CONSTRUCTOR),
             List.of(Typed.covariant(Typed.typeLevelReference("Node", argType))),
@@ -126,7 +126,7 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void whenArgHasSubtypesAndIsCovariantThenArgIsWildcardExtends() {
-        var argType = Types.interfaceType(NamespaceName.fromParts(), "Node");
+        var argType = Types.interfaceType(NamespaceId.source(), "Node");
         var node = Typed.constructedType(
             Typed.typeLevelReference("List", Types.LIST_CONSTRUCTOR),
             List.of(Typed.covariant(Typed.typeLevelReference("Node", argType))),
@@ -134,7 +134,7 @@ public class JavaCodeGeneratorTypeLevelExpressionTests {
         );
         var context = JavaCodeGeneratorContext.stub(SubtypeRelations.EMPTY.addSealedInterfaceCase(
             argType,
-            Types.recordType(NamespaceName.fromParts(), "Record")
+            Types.recordType(NamespaceId.source(), "Record")
         ));
 
         var result = JavaCodeGenerator.compileTypeLevelExpression(node, context);

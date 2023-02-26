@@ -5,7 +5,7 @@ import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedFunctionNode;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.backends.python.serialiser.PythonSerialiser;
-import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
@@ -60,7 +60,7 @@ public class PythonCodeGeneratorRecordTests {
         var node = TypedRecordNode.builder("ExampleRecord")
             .addField(Typed.recordField("first", Typed.typeLevelString()))
             .addField(Typed.recordField("second", Typed.typeLevelInt()))
-            .addSupertype(Typed.typeLevelReference("Supertype", Types.sealedInterfaceType(NamespaceName.fromParts(), "Supertype")))
+            .addSupertype(Typed.typeLevelReference("Supertype", Types.sealedInterfaceType(NamespaceId.source(), "Supertype")))
             .build();
         var context = PythonCodeGeneratorContext.stub();
 
@@ -84,7 +84,7 @@ public class PythonCodeGeneratorRecordTests {
         var node = TypedRecordNode.builder("ExampleRecord")
             .addField(Typed.recordField("first", Typed.typeLevelString()))
             .addField(Typed.recordField("second", Typed.typeLevelInt()))
-            .addSupertype(Typed.typeLevelReference("Supertype", Types.unsealedInterfaceType(NamespaceName.fromParts(), "Supertype")))
+            .addSupertype(Typed.typeLevelReference("Supertype", Types.unsealedInterfaceType(NamespaceId.source(), "Supertype")))
             .build();
         var context = PythonCodeGeneratorContext.stub();
 
@@ -103,7 +103,7 @@ public class PythonCodeGeneratorRecordTests {
 
     @Test
     public void propertiesAreCompiledToProperties() {
-        var node = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "Example")
+        var node = TypedRecordNode.builder(NamespaceId.source("example", "project"), "Example")
             .addProperty(Typed.property(
                 "value",
                 Typed.typeLevelString(),
@@ -128,7 +128,7 @@ public class PythonCodeGeneratorRecordTests {
 
     @Test
     public void propertyNamesArePythonized() {
-        var node = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "User")
+        var node = TypedRecordNode.builder(NamespaceId.source("example", "project"), "User")
             .addProperty(Typed.property(
                 "fullName",
                 Typed.typeLevelString(),
@@ -153,7 +153,7 @@ public class PythonCodeGeneratorRecordTests {
 
     @Test
     public void functionsAreCompiledToMethods() {
-        var node = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "Example")
+        var node = TypedRecordNode.builder(NamespaceId.source("example", "project"), "Example")
             .addMethod(TypedFunctionNode.builder()
                 // Use a name that tests Pythonization of identifiers
                 .name("fullName")

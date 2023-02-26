@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public record MethodType(
-    NamespaceName namespaceName,
+    NamespaceId namespaceId,
     Optional<List<TypeParameter>> typeLevelParams,
     ParamTypes params,
     Type returnType,
@@ -27,7 +27,7 @@ public record MethodType(
     @Override
     public Type replace(TypeMap typeMap) {
         return new MethodType(
-            namespaceName,
+            namespaceId,
             typeLevelParams,
             params.replace(typeMap),
             returnType.replace(typeMap),
@@ -41,7 +41,7 @@ public record MethodType(
             return this;
         } else {
             return new MethodType(
-                namespaceName,
+                namespaceId,
                 Optional.empty(),
                 params,
                 returnType,

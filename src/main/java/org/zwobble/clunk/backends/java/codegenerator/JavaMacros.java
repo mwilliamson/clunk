@@ -13,9 +13,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class JavaMacros {
-    private static final Map<NamespaceName, Map<String, JavaStaticFunctionMacro>> STATIC_FUNCTION_MACROS = Map.ofEntries(
+    private static final Map<NamespaceId, Map<String, JavaStaticFunctionMacro>> STATIC_FUNCTION_MACROS = Map.ofEntries(
         Map.entry(
-            NamespaceName.fromParts("stdlib", "assertions"),
+            NamespaceId.source("stdlib", "assertions"),
             Map.ofEntries(
                 Map.entry("assertThat", new JavaStaticFunctionMacro() {
                     @Override
@@ -27,7 +27,7 @@ public class JavaMacros {
             )
         ),
         Map.entry(
-            NamespaceName.fromParts("stdlib", "matchers"),
+            NamespaceId.source("stdlib", "matchers"),
             Map.ofEntries(
                 Map.entry("equalTo", new JavaStaticFunctionMacro() {
                     @Override
@@ -49,7 +49,7 @@ public class JavaMacros {
     ).collect(Collectors.toMap(x -> x.receiverType(), x -> x));
 
     public static Optional<JavaStaticFunctionMacro> lookupStaticFunctionMacro(StaticFunctionType receiverType) {
-        var macro = STATIC_FUNCTION_MACROS.getOrDefault(receiverType.namespaceName(), Map.of())
+        var macro = STATIC_FUNCTION_MACROS.getOrDefault(receiverType.namespaceId(), Map.of())
             .get(receiverType.functionName());
         return Optional.ofNullable(macro);
     }

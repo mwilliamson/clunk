@@ -9,18 +9,18 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class TypesTests {
     private static final TypeConstructor TYPE_CONSTRUCTOR_COVARIANT = new TypeConstructor(
-        List.of(TypeParameter.covariant(NamespaceName.fromParts(), "TypeConstructorCovariant", "T")),
-        Types.recordType(NamespaceName.fromParts(), "TypeConstructorCovariant")
+        List.of(TypeParameter.covariant(NamespaceId.source(), "TypeConstructorCovariant", "T")),
+        Types.recordType(NamespaceId.source(), "TypeConstructorCovariant")
     );
 
     private static final TypeConstructor TYPE_CONSTRUCTOR_COVARIANT_OTHER = new TypeConstructor(
-        List.of(TypeParameter.covariant(NamespaceName.fromParts(), "TypeConstructorCovariantOther", "T")),
-        Types.recordType(NamespaceName.fromParts(), "TypeConstructorCovariantOther")
+        List.of(TypeParameter.covariant(NamespaceId.source(), "TypeConstructorCovariantOther", "T")),
+        Types.recordType(NamespaceId.source(), "TypeConstructorCovariantOther")
     );
 
     private static final TypeConstructor TYPE_CONSTRUCTOR_INVARIANT = new TypeConstructor(
-        List.of(TypeParameter.invariant(NamespaceName.fromParts(), "TypeConstructorInvariant", "T")),
-        Types.recordType(NamespaceName.fromParts(), "TypeConstructorInvariant")
+        List.of(TypeParameter.invariant(NamespaceId.source(), "TypeConstructorInvariant", "T")),
+        Types.recordType(NamespaceId.source(), "TypeConstructorInvariant")
     );
 
     @Test
@@ -61,8 +61,8 @@ public class TypesTests {
 
     @Test
     public void whenRecordIsExplicitSubtypeOfInterfaceThenRecordIsSubtypeOfInterface() {
-        var interfaceType = Types.interfaceType(NamespaceName.fromParts(), "Node");
-        var recordType = Types.recordType(NamespaceName.fromParts(), "Add");
+        var interfaceType = Types.interfaceType(NamespaceId.source(), "Node");
+        var recordType = Types.recordType(NamespaceId.source(), "Add");
         var subtypeRelations = SubtypeRelations.EMPTY
             .addExtendedType(recordType, interfaceType);
 
@@ -73,9 +73,9 @@ public class TypesTests {
 
     @Test
     public void subtypingIsTransitive() {
-        var type = Types.interfaceType(NamespaceName.fromParts(), "Type");
-        var superType = Types.interfaceType(NamespaceName.fromParts(), "SuperType");
-        var superSuperType = Types.interfaceType(NamespaceName.fromParts(), "SuperSuperType");
+        var type = Types.interfaceType(NamespaceId.source(), "Type");
+        var superType = Types.interfaceType(NamespaceId.source(), "SuperType");
+        var superSuperType = Types.interfaceType(NamespaceId.source(), "SuperSuperType");
         var subtypeRelations = SubtypeRelations.EMPTY
             .addExtendedType(type, superType)
             .addExtendedType(superType, superSuperType);
@@ -87,9 +87,9 @@ public class TypesTests {
 
     @Test
     public void whenRecordIsUnrelatedToInterfaceThenRecordIsNotSubtypeOfInterface() {
-        var unrelatedInterfaceType = Types.interfaceType(NamespaceName.fromParts(), "Node");
-        var unrelatedRecordType = Types.recordType(NamespaceName.fromParts(), "Add");
-        var recordType = Types.recordType(NamespaceName.fromParts(), "User");
+        var unrelatedInterfaceType = Types.interfaceType(NamespaceId.source(), "Node");
+        var unrelatedRecordType = Types.recordType(NamespaceId.source(), "Add");
+        var recordType = Types.recordType(NamespaceId.source(), "User");
         var subtypeRelations = SubtypeRelations.EMPTY
             .addExtendedType(unrelatedRecordType, unrelatedInterfaceType);
 

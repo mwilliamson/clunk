@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedFunctionStatementNode;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
-import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class JavaCodeGeneratorTypeNarrowTests {
     @Test
     public void typeNarrowingAssignsCastedValueToNewVariableWhichIsUsedInLaterStatements() {
-        var recordType = Types.recordType(NamespaceName.fromParts("example"), "AddNode");
+        var recordType = Types.recordType(NamespaceId.source("example"), "AddNode");
         var nodes = List.<TypedFunctionStatementNode>of(
             Typed.typeNarrow("x", recordType),
             Typed.expressionStatement(Typed.localReference("x", recordType))
@@ -33,7 +33,7 @@ public class JavaCodeGeneratorTypeNarrowTests {
 
     @Test
     public void renamedVariableIsOnlyUsedInScope() {
-        var recordType = Types.recordType(NamespaceName.fromParts("example"), "AddNode");
+        var recordType = Types.recordType(NamespaceId.source("example"), "AddNode");
         var node = Typed.ifStatement(
             List.of(Typed.conditionalBranch(Typed.boolFalse(), List.of(
                 Typed.typeNarrow("x", recordType)

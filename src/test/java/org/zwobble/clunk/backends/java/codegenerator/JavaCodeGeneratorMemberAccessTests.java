@@ -3,7 +3,7 @@ package org.zwobble.clunk.backends.java.codegenerator;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiserTesting;
-import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.NamespaceType;
 import org.zwobble.clunk.types.Types;
 
@@ -16,7 +16,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class JavaCodeGeneratorMemberAccessTests {
     @Test
     public void memberAccessOnRecordIsCompiledToMethodCall() {
-        var recordType = Types.recordType(NamespaceName.fromParts("example"), "Id");
+        var recordType = Types.recordType(NamespaceId.source("example"), "Id");
         var node = Typed.memberAccess(
             Typed.localReference("id", recordType),
             "value",
@@ -31,7 +31,7 @@ public class JavaCodeGeneratorMemberAccessTests {
 
     @Test
     public void memberAccessOnNamespaceIsCompiledToMemberAccess() {
-        var namespaceType = new NamespaceType(NamespaceName.fromParts("example"), Map.of());
+        var namespaceType = new NamespaceType(NamespaceId.source("example"), Map.of());
         var node = Typed.memberAccess(
             Typed.localReference("example", namespaceType),
             "value",

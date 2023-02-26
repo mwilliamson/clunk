@@ -5,7 +5,7 @@ import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedFunctionNode;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
-import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.SubtypeRelations;
 import org.zwobble.clunk.types.Types;
 
@@ -18,7 +18,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class JavaCodeGeneratorRecordTests {
     @Test
     public void recordIsCompiledToJavaRecord() {
-        var node = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "Example")
+        var node = TypedRecordNode.builder(NamespaceId.source("example", "project"), "Example")
             .addField(Typed.recordField("first", Typed.typeLevelString()))
             .addField(Typed.recordField("second", Typed.typeLevelInt()))
             .build();
@@ -38,7 +38,7 @@ public class JavaCodeGeneratorRecordTests {
 
     @Test
     public void propertiesAreCompiledToMethods() {
-        var node = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "Example")
+        var node = TypedRecordNode.builder(NamespaceId.source("example", "project"), "Example")
             .addProperty(Typed.property(
                 "value",
                 Typed.typeLevelString(),
@@ -64,7 +64,7 @@ public class JavaCodeGeneratorRecordTests {
 
     @Test
     public void functionsAreCompiledToMethods() {
-        var node = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "Example")
+        var node = TypedRecordNode.builder(NamespaceId.source("example", "project"), "Example")
             .addMethod(TypedFunctionNode.builder()
                 .name("fullName")
                 .returnType(Typed.typeLevelString())
@@ -91,11 +91,11 @@ public class JavaCodeGeneratorRecordTests {
 
     @Test
     public void whenRecordHasSealedInterfaceAsSupertypeThenJavaRecordImplementsInterfaceIncludingAccept() {
-        var node = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "Example")
+        var node = TypedRecordNode.builder(NamespaceId.source("example", "project"), "Example")
             .build();
         var subtypeRelations = SubtypeRelations.EMPTY
-            .addExtendedType(node.type(), Types.sealedInterfaceType(NamespaceName.fromParts("a", "b"), "X"))
-            .addExtendedType(node.type(), Types.sealedInterfaceType(NamespaceName.fromParts("a", "b"), "Y"));
+            .addExtendedType(node.type(), Types.sealedInterfaceType(NamespaceId.source("a", "b"), "X"))
+            .addExtendedType(node.type(), Types.sealedInterfaceType(NamespaceId.source("a", "b"), "Y"));
         var context = JavaCodeGeneratorContext.stub(subtypeRelations);
 
         var result = JavaCodeGenerator.compileRecord(node, context);
@@ -118,11 +118,11 @@ public class JavaCodeGeneratorRecordTests {
 
     @Test
     public void whenRecordHasUnsealedInterfaceAsSupertypeThenJavaRecordImplementsInterface() {
-        var node = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "Example")
+        var node = TypedRecordNode.builder(NamespaceId.source("example", "project"), "Example")
             .build();
         var subtypeRelations = SubtypeRelations.EMPTY
-            .addExtendedType(node.type(), Types.unsealedInterfaceType(NamespaceName.fromParts("a", "b"), "X"))
-            .addExtendedType(node.type(), Types.unsealedInterfaceType(NamespaceName.fromParts("c", "d"), "Y"));
+            .addExtendedType(node.type(), Types.unsealedInterfaceType(NamespaceId.source("a", "b"), "X"))
+            .addExtendedType(node.type(), Types.unsealedInterfaceType(NamespaceId.source("c", "d"), "Y"));
         var context = JavaCodeGeneratorContext.stub(subtypeRelations);
 
         var result = JavaCodeGenerator.compileRecord(node, context);

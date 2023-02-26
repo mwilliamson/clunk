@@ -12,7 +12,7 @@ public class MethodTypeTests {
     @Test
     public void describeIncludesArgsAndReturnType() {
         var type = Types.methodType(
-            NamespaceName.fromParts(),
+            NamespaceId.source(),
             List.of(Types.BOOL, Types.STRING),
             Types.INT
         );
@@ -25,10 +25,10 @@ public class MethodTypeTests {
     @Test
     public void describeIncludesTypeLevelArgs() {
         var type = Types.methodType(
-            NamespaceName.fromParts(),
+            NamespaceId.source(),
             List.of(
-                TypeParameter.function(NamespaceName.fromParts(), "T", "f", "A"),
-                TypeParameter.function(NamespaceName.fromParts(), "T", "f", "B")
+                TypeParameter.function(NamespaceId.source(), "T", "f", "A"),
+                TypeParameter.function(NamespaceId.source(), "T", "f", "B")
             ),
             List.of(),
             Types.INT
@@ -41,9 +41,9 @@ public class MethodTypeTests {
 
     @Test
     public void replaceReplacesPositionalParamTypes() {
-        var typeParameter = TypeParameter.covariant(NamespaceName.fromParts(), "X", "T");
+        var typeParameter = TypeParameter.covariant(NamespaceId.source(), "X", "T");
         var type = Types.methodType(
-            NamespaceName.fromParts(),
+            NamespaceId.source(),
             List.of(typeParameter),
             Types.INT
         );
@@ -54,7 +54,7 @@ public class MethodTypeTests {
         var result = type.replace(typeMap);
 
         assertThat(result, equalTo(Types.methodType(
-            NamespaceName.fromParts(),
+            NamespaceId.source(),
             List.of(Types.STRING),
             Types.INT
         )));
@@ -62,9 +62,9 @@ public class MethodTypeTests {
 
     @Test
     public void replaceReplacesReturnType() {
-        var typeParameter = TypeParameter.covariant(NamespaceName.fromParts(), "X", "T");
+        var typeParameter = TypeParameter.covariant(NamespaceId.source(), "X", "T");
         var type = Types.methodType(
-            NamespaceName.fromParts(),
+            NamespaceId.source(),
             List.of(Types.INT),
             typeParameter
         );
@@ -75,7 +75,7 @@ public class MethodTypeTests {
         var result = type.replace(typeMap);
 
         assertThat(result, equalTo(Types.methodType(
-            NamespaceName.fromParts(),
+            NamespaceId.source(),
             List.of(Types.INT),
             Types.STRING
         )));

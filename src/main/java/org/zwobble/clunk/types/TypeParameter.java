@@ -3,26 +3,26 @@ package org.zwobble.clunk.types;
 import java.util.Optional;
 
 public record TypeParameter(
-    NamespaceName namespaceName,
+    NamespaceId namespaceId,
     String typeName,
     Optional<String> functionName,
     String name,
     Variance variance
 ) implements Type {
-    public static TypeParameter covariant(NamespaceName namespaceName, String typeName, String name) {
-        return new TypeParameter(namespaceName, typeName, Optional.empty(), name, Variance.COVARIANT);
+    public static TypeParameter covariant(NamespaceId namespaceId, String typeName, String name) {
+        return new TypeParameter(namespaceId, typeName, Optional.empty(), name, Variance.COVARIANT);
     }
 
-    public static TypeParameter invariant(NamespaceName namespaceName, String typeName, String name) {
-        return new TypeParameter(namespaceName, typeName, Optional.empty(), name, Variance.INVARIANT);
+    public static TypeParameter invariant(NamespaceId namespaceId, String typeName, String name) {
+        return new TypeParameter(namespaceId, typeName, Optional.empty(), name, Variance.INVARIANT);
     }
 
-    public static TypeParameter function(NamespaceName namespaceName, String typeName, String functionName, String name) {
-        return new TypeParameter(namespaceName, typeName, Optional.of(functionName), name, Variance.INVARIANT);
+    public static TypeParameter function(NamespaceId namespaceId, String typeName, String functionName, String name) {
+        return new TypeParameter(namespaceId, typeName, Optional.of(functionName), name, Variance.INVARIANT);
     }
 
     public static TypeParameter function(StructuredType type, String functionName, String name) {
-        return new TypeParameter(type.namespaceName(), type.name(), Optional.of(functionName), name, Variance.INVARIANT);
+        return new TypeParameter(type.namespaceId(), type.name(), Optional.of(functionName), name, Variance.INVARIANT);
     }
 
     public static TypeParameter function(TypeConstructor typeConstructor, String functionName, String name) {

@@ -25,7 +25,7 @@ public class PythonCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void enumTypeIsCompiledToReference() {
-        var node = Typed.typeLevelReference("C", Types.enumType(NamespaceName.fromParts("a", "b"), "C", List.of()));
+        var node = Typed.typeLevelReference("C", Types.enumType(NamespaceId.source("a", "b"), "C", List.of()));
         var context = PythonCodeGeneratorContext.stub();
 
         var result = PythonCodeGenerator.compileTypeLevelExpression(node, context);
@@ -47,7 +47,7 @@ public class PythonCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void interfaceTypeIsCompiledToReference() {
-        var node = Typed.typeLevelReference("C", Types.interfaceType(NamespaceName.fromParts("a", "b"), "C"));
+        var node = Typed.typeLevelReference("C", Types.interfaceType(NamespaceId.source("a", "b"), "C"));
         var context = PythonCodeGeneratorContext.stub();
 
         var result = PythonCodeGenerator.compileTypeLevelExpression(node, context);
@@ -88,7 +88,7 @@ public class PythonCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void recordTypeIsCompiledToReference() {
-        var node = Typed.typeLevelReference("C", Types.recordType(NamespaceName.fromParts("a", "b"), "C"));
+        var node = Typed.typeLevelReference("C", Types.recordType(NamespaceId.source("a", "b"), "C"));
         var context = PythonCodeGeneratorContext.stub();
 
         var result = PythonCodeGenerator.compileTypeLevelExpression(node, context);

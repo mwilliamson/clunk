@@ -6,6 +6,7 @@ import org.zwobble.clunk.ast.typed.TypedNamespaceNode;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.ast.typed.TypedTestNode;
 import org.zwobble.clunk.backends.python.serialiser.PythonSerialiser;
+import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.Types;
 
@@ -21,7 +22,7 @@ public class PythonCodeGeneratorNamespaceTests {
         var record1 = TypedRecordNode.builder("First").build();
         var record2 = TypedRecordNode.builder("Second").build();
         var node = TypedNamespaceNode
-            .builder(NamespaceName.fromParts("example", "project"))
+            .builder(NamespaceId.source("example", "project"))
             .addStatement(record1)
             .addStatement(record2)
             .build();
@@ -45,7 +46,7 @@ public class PythonCodeGeneratorNamespaceTests {
     @Test
     public void fieldImportsAreCompiled() {
         var node = TypedNamespaceNode
-            .builder(NamespaceName.fromParts("example", "project"))
+            .builder(NamespaceId.source("example", "project"))
             .addImport(Typed.import_(NamespaceName.fromParts("a", "b"), "C", Types.INT))
             .build();
 
@@ -62,7 +63,7 @@ public class PythonCodeGeneratorNamespaceTests {
     @Test
     public void namespaceImportsAreCompiled() {
         var node = TypedNamespaceNode
-            .builder(NamespaceName.fromParts("example", "project"))
+            .builder(NamespaceId.source("example", "project"))
             .addImport(Typed.import_(NamespaceName.fromParts("a"), Types.INT))
             .addImport(Typed.import_(NamespaceName.fromParts("b", "c"), Types.INT))
             .addImport(Typed.import_(NamespaceName.fromParts("d", "e", "f"), Types.INT))
@@ -83,11 +84,11 @@ public class PythonCodeGeneratorNamespaceTests {
     @Test
     public void macroImportsDoNotImmediatelyGenerateImports() {
         var node = TypedNamespaceNode
-            .builder(NamespaceName.fromParts("example", "project"))
+            .builder(NamespaceId.source("example", "project"))
             .addImport(Typed.import_(
                 NamespaceName.fromParts("stdlib", "assertions"), "assertThat",
                 Types.staticFunctionType(
-                    NamespaceName.fromParts("stdlib", "assertions"),
+                    NamespaceId.source("stdlib", "assertions"),
                     "assertThat",
                     List.of(),
                     Types.UNIT
@@ -105,19 +106,19 @@ public class PythonCodeGeneratorNamespaceTests {
     @Test
     public void macrosGenerateImports() {
         var assertThatType = Types.staticFunctionType(
-            NamespaceName.fromParts("stdlib", "assertions"),
+            NamespaceId.source("stdlib", "assertions"),
             "assertThat",
             List.of(),
             Types.UNIT
         );
         var equalToType = Types.staticFunctionType(
-            NamespaceName.fromParts("stdlib", "matchers"),
+            NamespaceId.source("stdlib", "matchers"),
             "equalTo",
             List.of(),
             Types.UNIT
         );
         var node = TypedNamespaceNode
-            .builder(NamespaceName.fromParts("example", "project"))
+            .builder(NamespaceId.source("example", "project"))
             .addImport(Typed.import_(
                 NamespaceName.fromParts("stdlib", "assertions"), "assertThat",
                 assertThatType

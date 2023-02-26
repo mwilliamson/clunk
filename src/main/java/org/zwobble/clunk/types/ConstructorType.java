@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public record ConstructorType(
-    NamespaceName namespaceName,
+    NamespaceId namespaceId,
     Optional<List<TypeParameter>> typeLevelParams,
     ParamTypes params,
     StructuredType returnType,
@@ -27,7 +27,7 @@ public record ConstructorType(
     @Override
     public Type replace(TypeMap typeMap) {
         return new ConstructorType(
-            namespaceName,
+            namespaceId,
             typeLevelParams,
             params.replace(typeMap),
             returnType.replace(typeMap),
@@ -41,7 +41,7 @@ public record ConstructorType(
             return this;
         } else {
             return new ConstructorType(
-                namespaceName,
+                namespaceId,
                 Optional.empty(),
                 params,
                 returnType,
@@ -52,7 +52,7 @@ public record ConstructorType(
 
     public ConstructorType withTypeParams(List<TypeParameter> typeParams) {
         return new ConstructorType(
-            namespaceName,
+            namespaceId,
             Optional.of(typeParams),
             params,
             returnType,
@@ -62,7 +62,7 @@ public record ConstructorType(
 
     public ConstructorType withReturnType(StructuredType returnType) {
         return new ConstructorType(
-            namespaceName,
+            namespaceId,
             typeLevelParams,
             params,
             returnType,

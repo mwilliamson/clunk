@@ -5,6 +5,7 @@ import org.zwobble.clunk.ast.untyped.*;
 import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.tokeniser.TokenIterator;
 import org.zwobble.clunk.tokeniser.UnexpectedTokenException;
+import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.NamespaceName;
 
 import java.util.ArrayList;
@@ -514,7 +515,9 @@ public class Parser {
             () -> true
         );
 
-        return new UntypedNamespaceNode(name, imports, statements, sourceType, source);
+        var id = new NamespaceId(name, sourceType);
+
+        return new UntypedNamespaceNode(id, imports, statements, source);
     }
 
     private UntypedImportNode parseImport(TokenIterator<TokenType> tokens) {

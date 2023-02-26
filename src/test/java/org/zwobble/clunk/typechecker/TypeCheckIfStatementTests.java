@@ -5,7 +5,7 @@ import org.zwobble.clunk.ast.typed.TypedIfStatementNode;
 import org.zwobble.clunk.ast.typed.TypedTypeNarrowNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.sources.NullSource;
-import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
@@ -148,9 +148,9 @@ public class TypeCheckIfStatementTests {
 
     @Test
     public void whenConditionIsInstanceOfCheckThenConditionalBodyHasNarrowedTypeForVariable() {
-        var namespaceName = NamespaceName.fromParts("example");
-        var interfaceType = Types.interfaceType(namespaceName, "Interface");
-        var recordType = Types.recordType(namespaceName, "Record");
+        var namespaceId = NamespaceId.source("example");
+        var interfaceType = Types.interfaceType(namespaceId, "Interface");
+        var recordType = Types.recordType(namespaceId, "Record");
         var untypedNode = Untyped.ifStatement(
             List.of(
                 Untyped.conditionalBranch(
@@ -187,9 +187,9 @@ public class TypeCheckIfStatementTests {
 
     @Test
     public void whenConditionIsNegatedInstanceOfCheckThenFollowingBranchesHaveNarrowedTypeForVariable() {
-        var namespaceName = NamespaceName.fromParts("example");
-        var interfaceType = Types.interfaceType(namespaceName, "Interface");
-        var recordType = Types.recordType(namespaceName, "Record");
+        var namespaceId = NamespaceId.source("example");
+        var interfaceType = Types.interfaceType(namespaceId, "Interface");
+        var recordType = Types.recordType(namespaceId, "Record");
         var untypedNode = Untyped.ifStatement(
             List.of(
                 Untyped.conditionalBranch(
@@ -239,9 +239,9 @@ public class TypeCheckIfStatementTests {
 
     @Test
     public void whenBodyIsEmptyThenNoTypeNarrowIsInserted() {
-        var namespaceName = NamespaceName.fromParts("example");
-        var interfaceType = Types.interfaceType(namespaceName, "Interface");
-        var recordType = Types.recordType(namespaceName, "Record");
+        var namespaceId = NamespaceId.source("example");
+        var interfaceType = Types.interfaceType(namespaceId, "Interface");
+        var recordType = Types.recordType(namespaceId, "Record");
         var untypedNode = Untyped.ifStatement(
             List.of(
                 Untyped.conditionalBranch(
@@ -280,9 +280,9 @@ public class TypeCheckIfStatementTests {
 
     @Test
     public void whenConditionIsNegatedInstanceOfCheckWithNonReturningBodyThenFollowingStatementsHaveUnchangedTypeForVariable() {
-        var namespaceName = NamespaceName.fromParts("example");
-        var interfaceType = Types.interfaceType(namespaceName, "Interface");
-        var recordType = Types.recordType(namespaceName, "Record");
+        var namespaceId = NamespaceId.source("example");
+        var interfaceType = Types.interfaceType(namespaceId, "Interface");
+        var recordType = Types.recordType(namespaceId, "Record");
         var untypedNode = Untyped.ifStatement(
             List.of(
                 Untyped.conditionalBranch(
@@ -320,9 +320,9 @@ public class TypeCheckIfStatementTests {
 
     @Test
     public void whenConditionIsNegatedInstanceOfCheckWithReturningBodyThenFollowingStatementsHaveNarrowedTypeForVariable() {
-        var namespaceName = NamespaceName.fromParts("example");
-        var interfaceType = Types.interfaceType(namespaceName, "Interface");
-        var recordType = Types.recordType(namespaceName, "Record");
+        var namespaceId = NamespaceId.source("example");
+        var interfaceType = Types.interfaceType(namespaceId, "Interface");
+        var recordType = Types.recordType(namespaceId, "Record");
         var untypedNode = Untyped.ifStatement(
             List.of(
                 Untyped.conditionalBranch(

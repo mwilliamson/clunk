@@ -2,7 +2,7 @@ package org.zwobble.clunk.typechecker;
 
 import org.pcollections.PMap;
 import org.zwobble.clunk.sources.Source;
-import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.Type;
 import org.zwobble.clunk.util.P;
 
@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public record StackFrame(
-    Optional<NamespaceName> namespaceName,
+    Optional<NamespaceId> namespaceId,
     Optional<Type> returnType,
     PMap<String, Variable> environment
 ) {
@@ -38,13 +38,13 @@ public record StackFrame(
         );
     }
 
-    public static StackFrame namespace(NamespaceName namespaceName) {
-        return namespace(namespaceName, Map.of());
+    public static StackFrame namespace(NamespaceId namespaceId) {
+        return namespace(namespaceId, Map.of());
     }
 
-    public static StackFrame namespace(NamespaceName namespaceName, Map<String, Variable> environment) {
+    public static StackFrame namespace(NamespaceId namespaceId, Map<String, Variable> environment) {
         return new StackFrame(
-            Optional.of(namespaceName),
+            Optional.of(namespaceId),
             Optional.empty(),
             P.copyOf(environment)
         );
@@ -71,10 +71,10 @@ public record StackFrame(
             throw new VariableAlreadyDefinedError(name, source);
         }
 
-        return new StackFrame(namespaceName, returnType, environment.plus(name, variable));
+        return new StackFrame(namespaceId, returnType, environment.plus(name, variable));
     }
 
     public StackFrame updateVariable(String name, Variable variable, Source source) {
-        return new StackFrame(namespaceName, returnType, environment.plus(name, variable));
+        return new StackFrame(namespaceId, returnType, environment.plus(name, variable));
     }
 }

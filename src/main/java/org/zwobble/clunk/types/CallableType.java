@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 public sealed interface CallableType extends Type permits ConstructorType, MethodType, StaticFunctionType {
-    NamespaceName namespaceName();
+    NamespaceId namespaceId();
     Optional<List<TypeParameter>> typeLevelParams();
     ParamTypes params();
     Type returnType();

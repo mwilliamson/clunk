@@ -5,7 +5,7 @@ import org.zwobble.clunk.ast.typed.TypedInterfaceNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.InterfaceType;
-import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.TypeLevelValueType;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -21,7 +21,7 @@ public class TypeCheckInterfaceTests {
     @Test
     public void interfaceTypeIsAddedToEnvironment() {
         var untypedNode = Untyped.interface_("DocumentElement");
-        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceId.source("a", "b"));
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
@@ -31,7 +31,7 @@ public class TypeCheckInterfaceTests {
                 TypeLevelValueType.class,
                 has("value", cast(
                     InterfaceType.class,
-                    has("namespaceName", equalTo(NamespaceName.fromParts("a", "b"))),
+                    has("namespaceId", equalTo(NamespaceId.source("a", "b"))),
                     has("name", equalTo("DocumentElement"))
                 ))
             )
@@ -41,7 +41,7 @@ public class TypeCheckInterfaceTests {
     @Test
     public void canTypeCheckEmptyUnsealedInterface() {
         var untypedNode = Untyped.interfaceUnsealed("DocumentElement");
-        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceId.source("a", "b"));
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
@@ -50,7 +50,7 @@ public class TypeCheckInterfaceTests {
             has("name", equalTo("DocumentElement")),
             has("type", cast(
                 InterfaceType.class,
-                has("namespaceName", equalTo(NamespaceName.fromParts("a", "b"))),
+                has("namespaceId", equalTo(NamespaceId.source("a", "b"))),
                 has("name", equalTo("DocumentElement")),
                 has("isSealed", equalTo(false))
             ))
@@ -60,7 +60,7 @@ public class TypeCheckInterfaceTests {
     @Test
     public void canTypeCheckEmptySealedInterface() {
         var untypedNode = Untyped.interfaceSealed("DocumentElement");
-        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceId.source("a", "b"));
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
@@ -69,7 +69,7 @@ public class TypeCheckInterfaceTests {
             has("name", equalTo("DocumentElement")),
             has("type", cast(
                 InterfaceType.class,
-                has("namespaceName", equalTo(NamespaceName.fromParts("a", "b"))),
+                has("namespaceId", equalTo(NamespaceId.source("a", "b"))),
                 has("name", equalTo("DocumentElement")),
                 has("isSealed", equalTo(true))
             ))
@@ -79,7 +79,7 @@ public class TypeCheckInterfaceTests {
     @Test
     public void addsNamespaceField() {
         var untypedNode = Untyped.interface_("DocumentElement");
-        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceId.source("a", "b"));
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 

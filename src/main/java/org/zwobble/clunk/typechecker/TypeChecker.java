@@ -1,6 +1,5 @@
 package org.zwobble.clunk.typechecker;
 
-import org.zwobble.clunk.ast.SourceType;
 import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.ast.untyped.*;
 import org.zwobble.clunk.errors.InternalCompilerError;
@@ -251,7 +250,7 @@ public class TypeChecker {
                 new PendingTypeCheck(
                     TypeCheckerPhase.DEFINE_TYPES,
                     context -> {
-                        var type = new EnumType(context.namespaceName(), node.name(), node.members());
+                        var type = new EnumType(context.namespaceId(), node.name(), node.members());
                         typeBox.set(type);
                         return context.addLocal(node.name(), Types.metaType(type), node.source());
                     }
@@ -542,7 +541,7 @@ public class TypeChecker {
                         functionTypeChecker.defineFunctionType(context);
                         var functionType = functionTypeChecker.type();
                         var type = new StaticFunctionType(
-                            context.namespaceName(),
+                            context.namespaceId(),
                             node.name(),
                             functionType.params(),
                             functionType.returnType(),
@@ -732,7 +731,7 @@ public class TypeChecker {
         TypeCheckerContext context
     ) {
 
-        var type = context.typeOfNamespace(import_.namespaceName());
+        var type = context.typeOfNamespace(import_.namespaceId());
         if (type.isEmpty()) {
             throw new SourceError("unknown namespace: " + import_.namespaceName(), import_.source());
         }
@@ -815,7 +814,7 @@ public class TypeChecker {
                 new PendingTypeCheck(
                     TypeCheckerPhase.DEFINE_TYPES,
                     context -> {
-                        var interfaceType = new InterfaceType(context.namespaceName(), node.name(), node.isSealed());
+                        var interfaceType = new InterfaceType(context.namespaceId(), node.name(), node.isSealed());
                         interfaceTypeBox.set(interfaceType);
                         return context.addLocal(node.name(), metaType(interfaceType), node.source());
                     }
@@ -947,7 +946,7 @@ public class TypeChecker {
 
         var functionType = functionTypeChecker.type();
         var type = new MethodType(
-            context.namespaceName(),
+            context.namespaceId(),
             Optional.empty(),
             functionType.params(),
             functionType.returnType(),
@@ -968,7 +967,7 @@ public class TypeChecker {
         UntypedNamespaceNode node,
         TypeCheckerContext context
     ) {
-        context = context.enterNamespace(node.name());
+        context = context.enterNamespace(node.id());
 
         var typedImports = new ArrayList<TypedImportNode>();
         for (var import_ : node.imports()) {
@@ -980,23 +979,17 @@ public class TypeChecker {
         var typeCheckBodyResult = typeCheckNamespaceStatements(node.statements(), context);
         context = typeCheckBodyResult.context;
 
-        // TODO: include source type in namespace type, include in notion of namespace ID
-        var namespaceType = new NamespaceType(node.name(), typeCheckBodyResult.fieldTypes);
+        var namespaceType = new NamespaceType(node.id(), typeCheckBodyResult.fieldTypes);
 
         var typedNode = new TypedNamespaceNode(
-            node.name(),
+            node.id(),
             typedImports,
             typeCheckBodyResult.typedBody,
             namespaceType,
-            node.sourceType(),
             node.source()
         );
 
-        if (node.sourceType() == SourceType.SOURCE) {
-            context = context.updateNamespaceType(namespaceType);
-        }
-
-        return new TypeCheckResult<>(typedNode, context.leave());
+        return new TypeCheckResult<>(typedNode, context.updateNamespaceType(namespaceType).leave());
     }
 
     private record TypeCheckNamespaceStatementsResult(
@@ -1145,7 +1138,7 @@ public class TypeChecker {
                 new PendingTypeCheck(
                     TypeCheckerPhase.DEFINE_TYPES,
                     context -> {
-                        var recordType = new RecordType(context.namespaceName(), node.name());
+                        var recordType = new RecordType(context.namespaceId(), node.name());
                         recordTypeBox.set(recordType);
                         return context.addLocal(node.name(), metaType(recordType), node.source());
                     }
@@ -1165,7 +1158,7 @@ public class TypeChecker {
                                 var typedSupertypeNode = typeCheckTypeLevelExpressionNode(untypedSupertypeNode, context);
                                 // TODO: handle non-type type-level values
                                 if (typedSupertypeNode.value() instanceof InterfaceType supertype) {
-                                    if (!supertype.namespaceName().equals(recordType.namespaceName()) && supertype.isSealed()) {
+                                    if (!supertype.namespaceId().equals(recordType.namespaceId()) && supertype.isSealed()) {
                                         throw new CannotExtendSealedInterfaceFromDifferentNamespaceError(untypedSupertypeNode.source());
                                     }
                                 } else {
@@ -1198,7 +1191,7 @@ public class TypeChecker {
                             .toList();
                         var constructorParams = new ParamTypes(constructorPositionalParams, List.of());
                         var newContext = context.addConstructorType(new ConstructorType(
-                            recordType.namespaceName(),
+                            recordType.namespaceId(),
                             Optional.empty(),
                             constructorParams,
                             recordType,

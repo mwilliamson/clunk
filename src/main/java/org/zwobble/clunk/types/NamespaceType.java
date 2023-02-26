@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public record NamespaceType(NamespaceName name, Map<String, Type> fields) implements Type {
+public record NamespaceType(NamespaceId id, Map<String, Type> fields) implements Type {
     @Override
     public String describe() {
-        return name.toString();
+        return id.toString();
     }
 
     @Override
@@ -16,14 +16,14 @@ public record NamespaceType(NamespaceName name, Map<String, Type> fields) implem
         return this;
     }
 
-    public static Builder builder(NamespaceName name) {
-        return new Builder(name, List.of());
+    public static Builder builder(NamespaceId id) {
+        return new Builder(id, List.of());
     }
 
-    public static record Builder(NamespaceName name, List<Map.Entry<String, Type>> fields) {
+    public static record Builder(NamespaceId id, List<Map.Entry<String, Type>> fields) {
         public NamespaceType build() {
             return new NamespaceType(
-                name,
+                id,
                 fields.stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
             );
         }
@@ -31,15 +31,15 @@ public record NamespaceType(NamespaceName name, Map<String, Type> fields) implem
         public Builder addFunction(String functionName, List<Type> positionalParams, Type returnType) {
             var fields = new ArrayList<>(this.fields);
             var params = new ParamTypes(positionalParams, List.of());
-            var type = new StaticFunctionType(name, functionName, params, returnType, Visibility.PUBLIC);
+            var type = new StaticFunctionType(id, functionName, params, returnType, Visibility.PUBLIC);
             fields.add(Map.entry(functionName, type));
-            return new Builder(name, fields);
+            return new Builder(id, fields);
         }
 
         public Builder addField(String fieldName, Type fieldType) {
             var fields = new ArrayList<>(this.fields);
             fields.add(Map.entry(fieldName, fieldType));
-            return new Builder(name, fields);
+            return new Builder(id, fields);
         }
     }
 }

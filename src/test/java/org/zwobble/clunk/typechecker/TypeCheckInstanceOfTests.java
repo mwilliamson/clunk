@@ -15,10 +15,10 @@ import static org.zwobble.clunk.matchers.CastMatcher.cast;
 import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 
 public class TypeCheckInstanceOfTests {
-    private final NamespaceName namespaceName = NamespaceName.fromParts("example");
-    private final InterfaceType interfaceType = Types.sealedInterfaceType(namespaceName, "X");
-    private final RecordType recordType1 = Types.recordType(namespaceName, "A");
-    private final RecordType recordType2 = Types.recordType(namespaceName, "B");
+    private final NamespaceId namespaceId = NamespaceId.source("example");
+    private final InterfaceType interfaceType = Types.sealedInterfaceType(namespaceId, "X");
+    private final RecordType recordType1 = Types.recordType(namespaceId, "A");
+    private final RecordType recordType2 = Types.recordType(namespaceId, "B");
 
     @Test
     public void givenExpressionIsSealedInterfaceThenCanTestExpressionIsInstanceOfSubtype() {

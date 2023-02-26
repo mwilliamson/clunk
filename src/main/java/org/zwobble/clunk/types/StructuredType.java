@@ -1,7 +1,7 @@
 package org.zwobble.clunk.types;
 
 public interface StructuredType extends Type {
-    NamespaceName namespaceName();
+    NamespaceId namespaceId();
     String name();
     StructuredType replace(TypeMap typeMap);
 }

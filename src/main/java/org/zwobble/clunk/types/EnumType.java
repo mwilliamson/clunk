@@ -3,7 +3,7 @@ package org.zwobble.clunk.types;
 import java.util.List;
 
 public record EnumType(
-    NamespaceName namespaceName,
+    NamespaceId namespaceId,
     String name,
     List<String> members
 ) implements Type {

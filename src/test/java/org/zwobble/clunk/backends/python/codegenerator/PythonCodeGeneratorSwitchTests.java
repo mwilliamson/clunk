@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedSwitchNode;
 import org.zwobble.clunk.backends.python.serialiser.PythonSerialiser;
-import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
@@ -16,8 +16,8 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class PythonCodeGeneratorSwitchTests {
     @Test
     public void whenAllBranchesReturnThenSwitchStatementIsCompiledToReturnOfVisitorCall() {
-        var interfaceType = Types.sealedInterfaceType(NamespaceName.fromParts("example"), "Node");
-        var recordType = Types.recordType(NamespaceName.fromParts("example"), "Add");
+        var interfaceType = Types.sealedInterfaceType(NamespaceId.source("example"), "Node");
+        var recordType = Types.recordType(NamespaceId.source("example"), "Add");
 
         var node = TypedSwitchNode.builder(Typed.localReference("node", interfaceType))
             .addCase(Typed.switchCase(
@@ -41,8 +41,8 @@ public class PythonCodeGeneratorSwitchTests {
 
     @Test
     public void whenNoBranchesReturnThenSwitchStatementIsCompiledToVisitorCallExpressionStatement() {
-        var interfaceType = Types.sealedInterfaceType(NamespaceName.fromParts("example"), "Node");
-        var recordType = Types.recordType(NamespaceName.fromParts("example"), "Add");
+        var interfaceType = Types.sealedInterfaceType(NamespaceId.source("example"), "Node");
+        var recordType = Types.recordType(NamespaceId.source("example"), "Add");
 
         var node = TypedSwitchNode.builder(Typed.localReference("node", interfaceType))
             .addCase(Typed.switchCase(
@@ -66,8 +66,8 @@ public class PythonCodeGeneratorSwitchTests {
 
     @Test
     public void visitArgsHavePythonizedNames() {
-        var interfaceType = Types.sealedInterfaceType(NamespaceName.fromParts("example"), "Node");
-        var recordType = Types.recordType(NamespaceName.fromParts("example"), "IntLiteral");
+        var interfaceType = Types.sealedInterfaceType(NamespaceId.source("example"), "Node");
+        var recordType = Types.recordType(NamespaceId.source("example"), "IntLiteral");
 
         var node = TypedSwitchNode.builder(Typed.localReference("firstNode", interfaceType))
             .addCase(Typed.switchCase(

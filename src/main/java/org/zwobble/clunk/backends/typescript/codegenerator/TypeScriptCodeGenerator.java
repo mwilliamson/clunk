@@ -529,13 +529,13 @@ public class TypeScriptCodeGenerator {
     }
 
     public static TypeScriptModuleNode compileNamespace(TypedNamespaceNode node, SubtypeRelations subtypeRelations) {
-        var name = String.join("/", node.name().parts());
+        var name = String.join("/", node.id().name().parts());
         var context = new TypeScriptCodeGeneratorContext(subtypeRelations);
 
         var statements = new ArrayList<TypeScriptStatementNode>();
 
         node.imports().stream()
-            .map(import_ -> compileImport(import_, node.name()))
+            .map(import_ -> compileImport(import_, node.id().name()))
             .forEachOrdered(statements::addAll);
 
         node.statements().stream()

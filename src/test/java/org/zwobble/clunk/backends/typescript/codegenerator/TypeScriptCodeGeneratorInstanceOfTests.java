@@ -3,7 +3,7 @@ package org.zwobble.clunk.backends.typescript.codegenerator;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiserTesting;
-import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.Types;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -13,8 +13,8 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class TypeScriptCodeGeneratorInstanceOfTests {
     @Test
     public void instanceOfIsCompiledToEqualityOnTypeField() {
-        var interfaceType = Types.sealedInterfaceType(NamespaceName.fromParts("example"), "Node");
-        var recordType = Types.recordType(NamespaceName.fromParts("example"), "Add");
+        var interfaceType = Types.sealedInterfaceType(NamespaceId.source("example"), "Node");
+        var recordType = Types.recordType(NamespaceId.source("example"), "Add");
         var node = Typed.instanceOf(
             Typed.localReference("node", interfaceType),
             Typed.typeLevelReference("Add", recordType)

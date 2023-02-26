@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedCallMethodNode;
 import org.zwobble.clunk.backends.python.serialiser.PythonSerialiserTesting;
-import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public class PythonCodeGeneratorCallMethodTests {
         var node = TypedCallMethodNode.builder()
             .receiver(Typed.localReference(
                 "x",
-                Types.recordType(NamespaceName.fromParts("example"), "X")
+                Types.recordType(NamespaceId.source("example"), "X")
             ))
             .methodName("y")
             .positionalArgs(List.of(Typed.intLiteral(123)))
@@ -51,7 +51,7 @@ public class PythonCodeGeneratorCallMethodTests {
         var node = TypedCallMethodNode.builder()
             .receiver(Typed.localReference(
                 "x",
-                Types.recordType(NamespaceName.fromParts("example"), "X")
+                Types.recordType(NamespaceId.source("example"), "X")
             ))
             .methodName("isValid")
             .positionalArgs(List.of())

@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.backends.java.ast.Java;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiserTesting;
-import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.NamespaceType;
 import org.zwobble.clunk.types.Types;
 
@@ -18,7 +18,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class JavaCodeGeneratorCallConstructorTests {
     @Test
     public void callToRecordConstructorsAreCompiledToConstructorCalls() {
-        var recordType = Types.recordType(NamespaceName.fromParts("example"), "Id");
+        var recordType = Types.recordType(NamespaceId.source("example"), "Id");
         var node = Typed.callConstructor(
             Typed.localReference("Id", Types.metaType(recordType)),
             List.of(Typed.intLiteral(123)),
@@ -35,11 +35,11 @@ public class JavaCodeGeneratorCallConstructorTests {
 
     @Test
     public void whenReceiverIsMemberAccessThenTypeIsImportedDirectly() {
-        var namespaceName = NamespaceName.fromParts("example");
-        var recordType = Types.recordType(namespaceName, "Id");
+        var namespaceId = NamespaceId.source("example");
+        var recordType = Types.recordType(namespaceId, "Id");
         var node = Typed.callConstructor(
             Typed.memberAccess(
-                Typed.localReference("ids", new NamespaceType(namespaceName, Map.of())),
+                Typed.localReference("ids", new NamespaceType(namespaceId, Map.of())),
                 "Id",
                 Types.metaType(recordType)
             ),

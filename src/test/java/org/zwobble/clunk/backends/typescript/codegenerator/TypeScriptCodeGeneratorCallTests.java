@@ -3,7 +3,7 @@ package org.zwobble.clunk.backends.typescript.codegenerator;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiserTesting;
-import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public class TypeScriptCodeGeneratorCallTests {
             Typed.localReference(
                 "abs",
                 Types.staticFunctionType(
-                    NamespaceName.fromParts("Math"),
+                    NamespaceId.source("Math"),
                     "abs",
                     List.of(Types.INT),
                     Types.INT

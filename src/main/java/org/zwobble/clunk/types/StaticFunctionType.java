@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 public record StaticFunctionType(
-    NamespaceName namespaceName,
+    NamespaceId namespaceId,
     String functionName,
     ParamTypes params,
     Type returnType,
@@ -24,7 +24,7 @@ public record StaticFunctionType(
     public String describe() {
         var paramsString = params.describe();
 
-        return namespaceName + "." + functionName + ": (" + paramsString + ") -> " + returnType.describe();
+        return namespaceId + "." + functionName + ": (" + paramsString + ") -> " + returnType.describe();
     }
 
     @Override

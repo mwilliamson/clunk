@@ -52,10 +52,10 @@ public class TypeScriptBackend implements Backend {
 
     private Path generateOutputPath(Path outputRoot, TypedNamespaceNode namespaceNode) {
         var outputPath = outputRoot;
-        for (var part : namespaceNode.name().parts()) {
+        for (var part : namespaceNode.id().name().parts()) {
             outputPath = outputPath.resolve(part);
         }
-        var testSuffix = namespaceNode.sourceType() == SourceType.TEST ? ".test" : "";
+        var testSuffix = namespaceNode.id().sourceType() == SourceType.TEST ? ".test" : "";
         return outputPath.resolveSibling(outputPath.getFileName().toString() + testSuffix + ".ts");
     }
 }

@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.TypedStaticMethodToFunctionNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.sources.NullSource;
-import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public class TypeCheckExpressionTests {
     public void whenExpectedTypeIsFunctionAndActualTypeIsStaticFunctionThenStaticFunctionIsConverted() {
         var untypedNode = Untyped.reference("f");
         var methodType = Types.staticFunctionType(
-            NamespaceName.fromParts(),
+            NamespaceId.source(),
             "f",
             List.of(Types.STRING),
             Types.INT

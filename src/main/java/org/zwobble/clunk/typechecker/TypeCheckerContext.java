@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 public record TypeCheckerContext(
     PStack<StackFrame> stack,
-    PMap<NamespaceName, NamespaceType> namespaceTypes,
+    PMap<NamespaceId, NamespaceType> namespaceTypes,
     PMap<StructuredType, ConstructorType> constructorTypes,
     PMap<Type, Map<String, Type>> memberTypes,
     SubtypeRelations subtypeRelations
@@ -32,7 +32,7 @@ public record TypeCheckerContext(
 
     public static TypeCheckerContext stub() {
         return new TypeCheckerContext(
-            P.stack(StackFrame.namespace(NamespaceName.fromParts(), Builtins.ENVIRONMENT)),
+            P.stack(StackFrame.namespace(NamespaceId.source(), Builtins.ENVIRONMENT)),
             P.map(),
             P.map(),
             P.map(),
@@ -40,8 +40,8 @@ public record TypeCheckerContext(
         );
     }
 
-    public TypeCheckerContext enterNamespace(NamespaceName namespaceName) {
-        return enter(StackFrame.namespace(namespaceName));
+    public TypeCheckerContext enterNamespace(NamespaceId namespaceId) {
+        return enter(StackFrame.namespace(namespaceId));
     }
 
     public TypeCheckerContext enterFunction(Type returnType) {
@@ -96,15 +96,15 @@ public record TypeCheckerContext(
     public TypeCheckerContext updateNamespaceType(NamespaceType namespaceType) {
         return new TypeCheckerContext(
             stack,
-            this.namespaceTypes.plus(namespaceType.name(), namespaceType),
+            this.namespaceTypes.plus(namespaceType.id(), namespaceType),
             constructorTypes,
             memberTypes.plus(namespaceType, namespaceType.fields()),
             subtypeRelations
         );
     }
 
-    public Optional<NamespaceType> typeOfNamespace(NamespaceName name) {
-        return Optional.ofNullable(namespaceTypes.get(name));
+    public Optional<NamespaceType> typeOfNamespace(NamespaceId id) {
+        return Optional.ofNullable(namespaceTypes.get(id));
     }
 
     public TypeCheckerContext withBuiltins(Map<String, Variable> environment) {
@@ -234,11 +234,11 @@ public record TypeCheckerContext(
         return subtypeRelations.isSubType(subtype, supertype);
     }
 
-    public NamespaceName namespaceName() {
+    public NamespaceId namespaceId() {
         for (var frame : stack) {
-            var namespaceName = frame.namespaceName();
-            if (namespaceName.isPresent()) {
-                return namespaceName.get();
+            var namespaceId = frame.namespaceId();
+            if (namespaceId.isPresent()) {
+                return namespaceId.get();
             }
         }
         // TODO: throw a better exception

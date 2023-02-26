@@ -110,7 +110,7 @@ public class JavaCodeGenerator {
     }
 
     public static JavaOrdinaryCompilationUnitNode compileEnum(TypedEnumNode node, JavaCodeGeneratorContext context) {
-        var packageDeclaration = namespaceToPackage(node.type().namespaceName(), context);
+        var packageDeclaration = namespaceToPackage(node.type().namespaceId(), context);
         var typeDeclaration = new JavaEnumDeclarationNode(
             node.type().name(),
             node.type().members()
@@ -417,7 +417,7 @@ public class JavaCodeGenerator {
 
 
         return new JavaOrdinaryCompilationUnitNode(
-            namespaceToPackage(node.type().namespaceName(), context),
+            namespaceToPackage(node.type().namespaceId(), context),
             List.of(),
             new JavaInterfaceDeclarationNode(
                 List.of(),
@@ -430,7 +430,7 @@ public class JavaCodeGenerator {
 
     private static JavaOrdinaryCompilationUnitNode compileInterfaceUnsealed(TypedInterfaceNode node, JavaCodeGeneratorContext context) {
         return new JavaOrdinaryCompilationUnitNode(
-            namespaceToPackage(node.type().namespaceName(), context),
+            namespaceToPackage(node.type().namespaceId(), context),
             List.of(),
             new JavaInterfaceDeclarationNode(
                 List.of(),
@@ -561,8 +561,8 @@ public class JavaCodeGenerator {
 
         for (var import_ : node.imports()) {
             if (import_.fieldName().isEmpty()) {
-                var packageName = namespaceToPackage(import_.namespaceName(), context);
-                var className = namespaceNameToClassName(import_.namespaceName(), SourceType.SOURCE);
+                var packageName = namespaceToPackage(import_.namespaceId(), context);
+                var className = namespaceIdToClassName(import_.namespaceId());
                 imports.add(new JavaImportTypeNode(packageName + "." + className));
                 context.renameVariable(import_.variableName(), className);
             }
@@ -622,10 +622,10 @@ public class JavaCodeGenerator {
         imports.addAll(context.imports());
 
         if (!classBody.isEmpty()) {
-            var className = namespaceNameToClassName(node.name(), node.sourceType());
+            var className = namespaceIdToClassName(node.id());
 
             compilationUnits.add(new JavaOrdinaryCompilationUnitNode(
-                namespaceToPackage(node.name(), context),
+                namespaceToPackage(node.id(), context),
                 imports,
                 new JavaClassDeclarationNode(List.of(), className, classBody)
             ));
@@ -681,7 +681,7 @@ public class JavaCodeGenerator {
         }
 
         return new JavaOrdinaryCompilationUnitNode(
-            namespaceToPackage(node.type().namespaceName(), context),
+            namespaceToPackage(node.type().namespaceId(), context),
             List.of(),
             new JavaRecordDeclarationNode(
                 node.name(),
@@ -770,9 +770,8 @@ public class JavaCodeGenerator {
     ) {
         // TODO: test this
         var staticFunctionType = (StaticFunctionType) node.method().type();
-        var packageName = namespaceToPackage(staticFunctionType.namespaceName(), context);
-        // TODO: sourceType will not always be SOURCE
-        var className = namespaceNameToClassName(staticFunctionType.namespaceName(), SourceType.SOURCE);
+        var packageName = namespaceToPackage(staticFunctionType.namespaceId(), context);
+        var className = namespaceIdToClassName(staticFunctionType.namespaceId());
 
         return new JavaMethodReferenceStaticNode(
             new JavaFullyQualifiedTypeReferenceNode(packageName, className),
@@ -986,8 +985,8 @@ public class JavaCodeGenerator {
         return new JavaVariableDeclarationNode(node.name(), compileExpression(node.expression(), context));
     }
 
-    private static String namespaceToPackage(NamespaceName namespaceName, JavaCodeGeneratorContext context) {
-        return context.packagePrefix() + String.join(".", namespaceName.parts());
+    private static String namespaceToPackage(NamespaceId namespaceId, JavaCodeGeneratorContext context) {
+        return context.packagePrefix() + String.join(".", namespaceId.name().parts());
     }
 
     public static JavaTypeExpressionNode typeLevelValueToTypeExpression(
@@ -1001,12 +1000,12 @@ public class JavaCodeGenerator {
             return builtinReference.get();
         } else if (value instanceof InterfaceType interfaceType) {
             return new JavaFullyQualifiedTypeReferenceNode(
-                namespaceToPackage(interfaceType.namespaceName(), context),
+                namespaceToPackage(interfaceType.namespaceId(), context),
                 interfaceType.name()
             );
         } else if (value instanceof RecordType recordType) {
             return new JavaFullyQualifiedTypeReferenceNode(
-                namespaceToPackage(recordType.namespaceName(), context),
+                namespaceToPackage(recordType.namespaceId(), context),
                 recordType.name()
             );
         } else if (value instanceof ConstructedType constructedType) {
@@ -1040,19 +1039,19 @@ public class JavaCodeGenerator {
     }
 
     private static String typeToJavaTypeName(InterfaceType interfaceType, JavaCodeGeneratorContext context) {
-        return typeToJavaTypeName(interfaceType.namespaceName(), interfaceType.name(), context);
+        return typeToJavaTypeName(interfaceType.namespaceId(), interfaceType.name(), context);
     }
 
     private static String typeToJavaTypeName(RecordType recordType, JavaCodeGeneratorContext context) {
-        return typeToJavaTypeName(recordType.namespaceName(), recordType.name(), context);
+        return typeToJavaTypeName(recordType.namespaceId(), recordType.name(), context);
     }
 
-    private static String typeToJavaTypeName(NamespaceName namespaceName, String name, JavaCodeGeneratorContext context) {
-        return namespaceToPackage(namespaceName, context) + "." + name;
+    private static String typeToJavaTypeName(NamespaceId namespaceId, String name, JavaCodeGeneratorContext context) {
+        return namespaceToPackage(namespaceId, context) + "." + name;
     }
 
-    private static String namespaceNameToClassName(NamespaceName name, SourceType sourceType) {
-        var classNameSuffix = sourceType.equals(SourceType.TEST) ? "Tests" : "";
-        return lowerCamelCaseToUpperCamelCase(last(name.parts())) + classNameSuffix;
+    private static String namespaceIdToClassName(NamespaceId id) {
+        var classNameSuffix = id.sourceType().equals(SourceType.TEST) ? "Tests" : "";
+        return lowerCamelCaseToUpperCamelCase(last(id.name().parts())) + classNameSuffix;
     }
 }

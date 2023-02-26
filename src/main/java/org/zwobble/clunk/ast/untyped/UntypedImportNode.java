@@ -1,6 +1,7 @@
 package org.zwobble.clunk.ast.untyped;
 
 import org.zwobble.clunk.sources.Source;
+import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.NamespaceName;
 
 import java.util.Optional;
@@ -10,4 +11,7 @@ public record UntypedImportNode(
     Optional<String> fieldName,
     Source source
 ) implements UntypedNode {
+    public NamespaceId namespaceId() {
+        return NamespaceId.source(namespaceName);
+    }
 }

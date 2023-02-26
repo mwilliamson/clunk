@@ -37,9 +37,9 @@ public class Builtins {
     private static TypeCheckerContext createContext() {
         var context = TypeCheckerContext.EMPTY;
 
-        context = context.updateNamespaceType(new NamespaceType(NamespaceName.fromParts("stdlib", "assertions"), Map.ofEntries(
+        context = context.updateNamespaceType(new NamespaceType(NamespaceId.source("stdlib", "assertions"), Map.ofEntries(
             Map.entry("assertThat", new StaticFunctionType(
-                NamespaceName.fromParts("stdlib", "assertions"),
+                NamespaceId.source("stdlib", "assertions"),
                 "assertThat",
                 new ParamTypes(List.of(Types.OBJECT, Types.UNIT), List.of()),
                 Types.UNIT,
@@ -47,9 +47,9 @@ public class Builtins {
             ))
         )));
 
-        context = context.updateNamespaceType(new NamespaceType(NamespaceName.fromParts("stdlib", "matchers"), Map.ofEntries(
+        context = context.updateNamespaceType(new NamespaceType(NamespaceId.source("stdlib", "matchers"), Map.ofEntries(
             Map.entry("equalTo", new StaticFunctionType(
-                NamespaceName.fromParts("stdlib", "matchers"),
+                NamespaceId.source("stdlib", "matchers"),
                 "equalTo",
                 new ParamTypes(List.of(Types.OBJECT), List.of()),
                 Types.UNIT,

@@ -50,9 +50,9 @@ public class TypeScriptMacros {
         return Optional.ofNullable(CLASS_MACROS.get(type));
     }
 
-    private static final Map<NamespaceName, Map<String, TypeScriptStaticFunctionMacro>> STATIC_FUNCTION_MACROS = Map.ofEntries(
+    private static final Map<NamespaceId, Map<String, TypeScriptStaticFunctionMacro>> STATIC_FUNCTION_MACROS = Map.ofEntries(
         Map.entry(
-            NamespaceName.fromParts("stdlib", "assertions"),
+            NamespaceId.source("stdlib", "assertions"),
             Map.ofEntries(
                 Map.entry("assertThat", new TypeScriptStaticFunctionMacro() {
                     @Override
@@ -64,7 +64,7 @@ public class TypeScriptMacros {
             )
         ),
         Map.entry(
-            NamespaceName.fromParts("stdlib", "matchers"),
+            NamespaceId.source("stdlib", "matchers"),
             Map.ofEntries(
                 Map.entry("equalTo", new TypeScriptStaticFunctionMacro() {
                     @Override
@@ -79,7 +79,7 @@ public class TypeScriptMacros {
 
     public static Optional<TypeScriptStaticFunctionMacro> lookupStaticFunctionMacro(Type type) {
         if (type instanceof StaticFunctionType staticFunctionType) {
-            var macro = STATIC_FUNCTION_MACROS.getOrDefault(staticFunctionType.namespaceName(), Map.of())
+            var macro = STATIC_FUNCTION_MACROS.getOrDefault(staticFunctionType.namespaceId(), Map.of())
                 .get(staticFunctionType.functionName());
             return Optional.ofNullable(macro);
         } else {

@@ -24,7 +24,7 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void enumTypeIsCompiledToReference() {
-        var node = Typed.typeLevelReference("C", Types.enumType(NamespaceName.fromParts("a", "b"), "C", List.of()));
+        var node = Typed.typeLevelReference("C", Types.enumType(NamespaceId.source("a", "b"), "C", List.of()));
 
         var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
 
@@ -44,7 +44,7 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void interfaceTypeIsCompiledToReference() {
-        var node = Typed.typeLevelReference("C", Types.interfaceType(NamespaceName.fromParts("a", "b"), "C"));
+        var node = Typed.typeLevelReference("C", Types.interfaceType(NamespaceId.source("a", "b"), "C"));
 
         var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
 
@@ -68,7 +68,7 @@ public class TypeScriptCodeGeneratorTypeLevelExpressionTests {
 
     @Test
     public void recordTypeIsCompiledToReference() {
-        var node = Typed.typeLevelReference("C", Types.recordType(NamespaceName.fromParts("a", "b"), "C"));
+        var node = Typed.typeLevelReference("C", Types.recordType(NamespaceId.source("a", "b"), "C"));
 
         var result = TypeScriptCodeGenerator.compileTypeLevelExpression(node);
 

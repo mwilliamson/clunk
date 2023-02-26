@@ -8,36 +8,37 @@ public class Types {
 
     }
 
+    private static final NamespaceId BUILTIN_NAMESPACE_ID = NamespaceId.source();
     public static final Type BOOL = BoolType.INSTANCE;
     public static final TypeSet CALLABLE = CallableTypeSet.INSTANCE;
     public static final Type INT = IntType.INSTANCE;
     public static final Type NOTHING = NothingType.INSTANCE;
     public static final Type OBJECT = ObjectType.INSTANCE;
     public static final Type STRING = StringType.INSTANCE;
-    public static final RecordType STRING_BUILDER = recordType(NamespaceName.fromParts(), "StringBuilder");
+    public static final RecordType STRING_BUILDER = recordType(BUILTIN_NAMESPACE_ID, "StringBuilder");
     public static final Type UNIT = UnitType.INSTANCE;
 
     public static final TypeConstructor LIST_CONSTRUCTOR = new TypeConstructor(
-        List.of(TypeParameter.covariant(NamespaceName.fromParts(), "List", "T")),
-        Types.interfaceType(NamespaceName.fromParts(), "List")
+        List.of(TypeParameter.covariant(BUILTIN_NAMESPACE_ID, "List", "T")),
+        Types.interfaceType(BUILTIN_NAMESPACE_ID, "List")
     );
 
     public static final TypeConstructor MAP_CONSTRUCTOR = new TypeConstructor(
         List.of(
-            TypeParameter.covariant(NamespaceName.fromParts(), "Map", "K"),
-            TypeParameter.covariant(NamespaceName.fromParts(), "Map", "V")
+            TypeParameter.covariant(NamespaceId.source(), "Map", "K"),
+            TypeParameter.covariant(NamespaceId.source(), "Map", "V")
         ),
-        Types.interfaceType(NamespaceName.fromParts(), "Map")
+        Types.interfaceType(BUILTIN_NAMESPACE_ID, "Map")
     );
 
     public static final TypeConstructor MUTABLE_LIST_CONSTRUCTOR = new TypeConstructor(
-        List.of(TypeParameter.invariant(NamespaceName.fromParts(), "MutableList", "T")),
-        Types.recordType(NamespaceName.fromParts(), "MutableList")
+        List.of(TypeParameter.invariant(BUILTIN_NAMESPACE_ID, "MutableList", "T")),
+        Types.recordType(BUILTIN_NAMESPACE_ID, "MutableList")
     );
 
     public static final TypeConstructor OPTION_CONSTRUCTOR = new TypeConstructor(
-        List.of(TypeParameter.covariant(NamespaceName.fromParts(), "Option", "T")),
-        Types.recordType(NamespaceName.fromParts(), "Option")
+        List.of(TypeParameter.covariant(BUILTIN_NAMESPACE_ID, "Option", "T")),
+        Types.recordType(BUILTIN_NAMESPACE_ID, "Option")
     );
 
     public static StructuredType list(Type elementType) {
@@ -68,20 +69,20 @@ public class Types {
         return new TypeLevelValueType(typeConstructor);
     }
 
-    public static Type enumType(NamespaceName namespaceName, String name, List<String> members) {
-        return new EnumType(namespaceName, name, members);
+    public static Type enumType(NamespaceId namespaceId, String name, List<String> members) {
+        return new EnumType(namespaceId, name, members);
     }
 
     public static FunctionType functionType(List<Type> positionalParams, Type returnType) {
         return new FunctionType(new ParamTypes(positionalParams, List.of()), returnType);
     }
 
-    public static InterfaceType interfaceType(NamespaceName namespaceName, String name) {
-        return new InterfaceType(namespaceName, name, false);
+    public static InterfaceType interfaceType(NamespaceId namespaceId, String name) {
+        return new InterfaceType(namespaceId, name, false);
     }
 
-    public static InterfaceType unsealedInterfaceType(NamespaceName namespaceName, String name) {
-        return new InterfaceType(namespaceName, name, false);
+    public static InterfaceType unsealedInterfaceType(NamespaceId namespaceId, String name) {
+        return new InterfaceType(namespaceId, name, false);
     }
 
     public static ConstructorType constructorType(
@@ -90,7 +91,7 @@ public class Types {
         StructuredType returnType
     ) {
         return new ConstructorType(
-            returnType.namespaceName(),
+            returnType.namespaceId(),
             Optional.of(typeLevelParams),
             new ParamTypes(positionalParams, List.of()),
             returnType,
@@ -105,7 +106,7 @@ public class Types {
         Visibility visibility
     ) {
         return new ConstructorType(
-            returnType.namespaceName(),
+            returnType.namespaceId(),
             Optional.of(typeLevelParams),
             new ParamTypes(positionalParams, List.of()),
             returnType,
@@ -118,7 +119,7 @@ public class Types {
         StructuredType returnType
     ) {
         return new ConstructorType(
-            returnType.namespaceName(),
+            returnType.namespaceId(),
             Optional.empty(),
             new ParamTypes(positionalParams, List.of()),
             returnType,
@@ -132,7 +133,7 @@ public class Types {
         Visibility visibility
     ) {
         return new ConstructorType(
-            returnType.namespaceName(),
+            returnType.namespaceId(),
             Optional.empty(),
             new ParamTypes(positionalParams, List.of()),
             returnType,
@@ -140,9 +141,9 @@ public class Types {
         );
     }
 
-    public static MethodType methodType(NamespaceName namespaceName, List<TypeParameter> typeLevelParams, List<Type> positionalParams, Type returnType) {
+    public static MethodType methodType(NamespaceId namespaceId, List<TypeParameter> typeLevelParams, List<Type> positionalParams, Type returnType) {
         return new MethodType(
-            namespaceName,
+            namespaceId,
             Optional.of(typeLevelParams),
             new ParamTypes(positionalParams, List.of()),
             returnType,
@@ -151,16 +152,16 @@ public class Types {
     }
 
     public static MethodType methodType(StructuredType type, List<TypeParameter> typeLevelParams, List<Type> positionalParams, Type returnType) {
-        return methodType(type.namespaceName(), typeLevelParams, positionalParams, returnType);
+        return methodType(type.namespaceId(), typeLevelParams, positionalParams, returnType);
     }
 
     public static MethodType methodType(TypeConstructor typeConstructor, List<TypeParameter> typeLevelParams, List<Type> positionalParams, Type returnType) {
         return methodType(typeConstructor.genericType(), typeLevelParams, positionalParams, returnType);
     }
 
-    public static MethodType methodType(NamespaceName namespaceName, List<Type> positionalParams, Type returnType) {
+    public static MethodType methodType(NamespaceId namespaceId, List<Type> positionalParams, Type returnType) {
         return new MethodType(
-            namespaceName,
+            namespaceId,
             Optional.empty(),
             new ParamTypes(positionalParams, List.of()),
             returnType,
@@ -169,7 +170,7 @@ public class Types {
     }
 
     public static MethodType methodType(StructuredType type, List<Type> positionalParams, Type returnType) {
-        return methodType(type.namespaceName(), positionalParams, returnType);
+        return methodType(type.namespaceId(), positionalParams, returnType);
     }
 
     public static MethodType methodType(TypeConstructor typeConstructor, List<Type> positionalParams, Type returnType) {
@@ -181,13 +182,13 @@ public class Types {
     }
 
     public static StaticFunctionType staticFunctionType(
-        NamespaceName namespaceName,
+        NamespaceId namespaceId,
         String functionName,
         List<Type> positionalParams,
         Type returnType
     ) {
         return staticFunctionType(
-            namespaceName,
+            namespaceId,
             functionName,
             positionalParams,
             returnType,
@@ -196,14 +197,14 @@ public class Types {
     }
 
     public static StaticFunctionType staticFunctionType(
-        NamespaceName namespaceName,
+        NamespaceId namespaceId,
         String functionName,
         List<Type> positionalParams,
         List<NamedParamType> namedParams,
         Type returnType
     ) {
         return staticFunctionType(
-            namespaceName,
+            namespaceId,
             functionName,
             positionalParams,
             namedParams,
@@ -213,14 +214,14 @@ public class Types {
     }
 
     public static StaticFunctionType staticFunctionType(
-        NamespaceName namespaceName,
+        NamespaceId namespaceId,
         String functionName,
         List<Type> positionalParams,
         Type returnType,
         Visibility visibility
     ) {
         return new StaticFunctionType(
-            namespaceName,
+            namespaceId,
             functionName,
             new ParamTypes(positionalParams, List.of()),
             returnType,
@@ -229,7 +230,7 @@ public class Types {
     }
 
     public static StaticFunctionType staticFunctionType(
-        NamespaceName namespaceName,
+        NamespaceId namespaceId,
         String functionName,
         List<Type> positionalParams,
         List<NamedParamType> namedParams,
@@ -237,7 +238,7 @@ public class Types {
         Visibility visibility
     ) {
         return new StaticFunctionType(
-            namespaceName,
+            namespaceId,
             functionName,
             new ParamTypes(positionalParams, namedParams),
             returnType,
@@ -245,12 +246,12 @@ public class Types {
         );
     }
 
-    public static RecordType recordType(NamespaceName namespaceName, String name) {
-        return new RecordType(namespaceName, name);
+    public static RecordType recordType(NamespaceId namespaceId, String name) {
+        return new RecordType(namespaceId, name);
     }
 
-    public static InterfaceType sealedInterfaceType(NamespaceName namespaceName, String name) {
-        return new InterfaceType(namespaceName, name, true);
+    public static InterfaceType sealedInterfaceType(NamespaceId namespaceId, String name) {
+        return new InterfaceType(namespaceId, name, true);
     }
 
     public static boolean isSealedInterfaceType(Type type) {

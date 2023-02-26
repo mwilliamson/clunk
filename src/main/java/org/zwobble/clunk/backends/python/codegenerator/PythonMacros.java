@@ -6,7 +6,7 @@ import org.zwobble.clunk.backends.python.codegenerator.macros.PythonListMacro;
 import org.zwobble.clunk.backends.python.codegenerator.macros.PythonMutableListMacro;
 import org.zwobble.clunk.backends.python.codegenerator.macros.PythonStringBuilderMacro;
 import org.zwobble.clunk.types.ConstructedType;
-import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.StaticFunctionType;
 import org.zwobble.clunk.types.Type;
 
@@ -34,9 +34,9 @@ public class PythonMacros {
         return Optional.ofNullable(CLASS_MACROS.get(type));
     }
 
-    private static final Map<NamespaceName, Map<String, PythonStaticFunctionMacro>> STATIC_FUNCTION_MACROS = Map.ofEntries(
+    private static final Map<NamespaceId, Map<String, PythonStaticFunctionMacro>> STATIC_FUNCTION_MACROS = Map.ofEntries(
         Map.entry(
-            NamespaceName.fromParts("stdlib", "assertions"),
+            NamespaceId.source("stdlib", "assertions"),
             Map.ofEntries(
                 Map.entry("assertThat", new PythonStaticFunctionMacro() {
                     @Override
@@ -48,7 +48,7 @@ public class PythonMacros {
             )
         ),
         Map.entry(
-            NamespaceName.fromParts("stdlib", "matchers"),
+            NamespaceId.source("stdlib", "matchers"),
             Map.ofEntries(
                 Map.entry("equalTo", new PythonStaticFunctionMacro() {
                     @Override
@@ -63,7 +63,7 @@ public class PythonMacros {
 
     public static Optional<PythonStaticFunctionMacro> lookupStaticFunctionMacro(Type type) {
         if (type instanceof StaticFunctionType staticFunctionType) {
-            var macro = STATIC_FUNCTION_MACROS.getOrDefault(staticFunctionType.namespaceName(), Map.of())
+            var macro = STATIC_FUNCTION_MACROS.getOrDefault(staticFunctionType.namespaceId(), Map.of())
                 .get(staticFunctionType.functionName());
             return Optional.ofNullable(macro);
         } else {

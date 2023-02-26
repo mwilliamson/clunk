@@ -161,14 +161,14 @@ public class TypeCheckFunctionTests {
             .addBodyStatement(Untyped.returnStatement(Untyped.string()))
             .build();
         var context = TypeCheckerContext.stub()
-            .enterNamespace(NamespaceName.fromParts("a", "b"));
+            .enterNamespace(NamespaceId.source("a", "b"));
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
         assertThat(
             result.context().typeOf("f", NullSource.INSTANCE),
             equalTo(Types.staticFunctionType(
-                NamespaceName.fromParts("a", "b"),
+                NamespaceId.source("a", "b"),
                 "f",
                 List.of(Types.INT),
                 List.of(Types.namedParam("y", Types.BOOL)),
@@ -194,7 +194,7 @@ public class TypeCheckFunctionTests {
         var untypedNode = UntypedFunctionNode.builder()
             .name("f")
             .build();
-        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceId.source("a", "b"));
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.errors.SourceError;
 import org.zwobble.clunk.sources.NullSource;
+import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.types.NamespaceType;
 import org.zwobble.clunk.types.Types;
@@ -24,7 +25,7 @@ public class TypeCheckImportTests {
     public void importedNamespaceIsTypeChecked() {
         var untypedNode = Untyped.import_(NamespaceName.fromParts("x", "y"));
         var namespaceType = new NamespaceType(
-            NamespaceName.fromParts("x", "y"),
+            NamespaceId.source("x", "y"),
             Map.of("IntAlias", Types.metaType(Types.INT))
         );
         var context = TypeCheckerContext.stub()
@@ -43,7 +44,7 @@ public class TypeCheckImportTests {
     public void importedNamespaceIsAddedToEnvironment() {
         var untypedNode = Untyped.import_(NamespaceName.fromParts("x", "y"));
         var namespaceType = new NamespaceType(
-            NamespaceName.fromParts("x", "y"),
+            NamespaceId.source("x", "y"),
             Map.of("IntAlias", Types.metaType(Types.INT))
         );
         var context = TypeCheckerContext.stub()
@@ -58,7 +59,7 @@ public class TypeCheckImportTests {
     public void importedFieldIsTypeChecked() {
         var untypedNode = Untyped.import_(NamespaceName.fromParts("x", "y"), "IntAlias");
         var namespaceType = new NamespaceType(
-            NamespaceName.fromParts("x", "y"),
+            NamespaceId.source("x", "y"),
             Map.of("IntAlias", Types.metaType(Types.INT))
         );
         var context = TypeCheckerContext.stub()
@@ -77,7 +78,7 @@ public class TypeCheckImportTests {
     public void importedFieldIsAddedToEnvironment() {
         var untypedNode = Untyped.import_(NamespaceName.fromParts("x", "y"), "IntAlias");
         var namespaceType = new NamespaceType(
-            NamespaceName.fromParts("x", "y"),
+            NamespaceId.source("x", "y"),
             Map.of("IntAlias", Types.metaType(Types.INT))
         );
         var context = TypeCheckerContext.stub()
@@ -92,7 +93,7 @@ public class TypeCheckImportTests {
     public void whenFieldIsUnknownThenErrorIsThrown() {
         var untypedNode = Untyped.import_(NamespaceName.fromParts("x", "y"), "IntAlias");
         var namespaceType = new NamespaceType(
-            NamespaceName.fromParts("x", "y"),
+            NamespaceId.source("x", "y"),
             Map.of("Int", Types.metaType(Types.INT))
         );
         var context = TypeCheckerContext.stub()

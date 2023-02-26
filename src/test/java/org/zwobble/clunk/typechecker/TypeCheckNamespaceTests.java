@@ -1,7 +1,6 @@
 package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
-import org.zwobble.clunk.ast.SourceType;
 import org.zwobble.clunk.ast.typed.TypedFunctionNode;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
@@ -17,7 +16,8 @@ import java.util.Optional;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
+import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedImportNode;
+import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedRecordNode;
 import static org.zwobble.clunk.matchers.CastMatcher.cast;
 import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 import static org.zwobble.clunk.matchers.OptionalMatcher.present;
@@ -26,14 +26,14 @@ public class TypeCheckNamespaceTests {
     @Test
     public void namespaceIsTypeChecked() {
         var untypedNode = UntypedNamespaceNode
-            .builder(NamespaceName.fromParts("example", "project"))
+            .builder(NamespaceId.source("example", "project"))
             .addStatement(UntypedRecordNode.builder("X").build())
             .build();
 
         var result = TypeChecker.typeCheckNamespace(untypedNode, TypeCheckerContext.stub());
 
         assertThat(result.typedNode(), allOf(
-            has("name", equalTo(NamespaceName.fromParts("example", "project"))),
+            has("id", equalTo(NamespaceId.source("example", "project"))),
             has("statements", contains(
                 isTypedRecordNode(has("name", equalTo("X")))
             ))
@@ -42,52 +42,30 @@ public class TypeCheckNamespaceTests {
 
     @Test
     public void namespaceTypeIsUpdatedInContext() {
-        var namespaceName = NamespaceName.fromParts("example", "project");
+        var namespaceId = NamespaceId.source("example", "project");
         var untypedNode = UntypedNamespaceNode
-            .builder(namespaceName)
+            .builder(namespaceId)
             .addStatement(UntypedRecordNode.builder("X").build())
             .build();
 
         var result = TypeChecker.typeCheckNamespace(untypedNode, TypeCheckerContext.stub());
 
         assertThat(
-            result.context().typeOfNamespace(namespaceName),
+            result.context().typeOfNamespace(namespaceId),
             equalTo(Optional.of(new NamespaceType(
-                namespaceName,
-                Map.of("X", Types.metaType(Types.recordType(namespaceName, "X")))
+                namespaceId,
+                Map.of("X", Types.metaType(Types.recordType(namespaceId, "X")))
             )))
         );
         assertThat(
-            result.context().memberType(result.context().typeOfNamespace(namespaceName).get(), "X"),
-            equalTo(Optional.of(Types.metaType(Types.recordType(namespaceName, "X"))))
-        );
-    }
-
-    @Test
-    public void testModuleDoesNotChangeNamespaceTypeOfSourceModule() {
-        var namespaceName = NamespaceName.fromParts("example", "project");
-        var untypedNode = UntypedNamespaceNode
-            .builder(namespaceName)
-            .sourceType(SourceType.TEST)
-            .addStatement(UntypedRecordNode.builder("X").build())
-            .build();
-        var context = TypeCheckerContext.stub()
-            .updateNamespaceType(new NamespaceType(namespaceName, Map.of()));
-
-        var result = TypeChecker.typeCheckNamespace(untypedNode, context);
-
-        assertThat(
-            result.context().typeOfNamespace(namespaceName),
-            equalTo(Optional.of(new NamespaceType(
-                namespaceName,
-                Map.of()
-            )))
+            result.context().memberType(result.context().typeOfNamespace(namespaceId).get(), "X"),
+            equalTo(Optional.of(Types.metaType(Types.recordType(namespaceId, "X"))))
         );
     }
 
     @Test
     public void importedFieldIsAddedToEnvironment() {
-        var untypedNode = UntypedNamespaceNode.builder(NamespaceName.fromParts("example", "project"))
+        var untypedNode = UntypedNamespaceNode.builder(NamespaceId.source("example", "project"))
             .addImport(Untyped.import_(NamespaceName.fromParts("x", "y"), "IntAlias"))
             .addStatement(
                 UntypedRecordNode.builder("X")
@@ -95,7 +73,7 @@ public class TypeCheckNamespaceTests {
             )
             .build();
         var namespaceType = new NamespaceType(
-            NamespaceName.fromParts("x", "y"),
+            NamespaceId.source("x", "y"),
             Map.of("IntAlias", Types.metaType(Types.INT))
         );
         var context = TypeCheckerContext.stub()
@@ -121,7 +99,7 @@ public class TypeCheckNamespaceTests {
     @Test
     public void cannotDefineMultipleTypesWithSameName() {
         var untypedNode = UntypedNamespaceNode
-            .builder(NamespaceName.fromParts("example", "project"))
+            .builder(NamespaceId.source("example", "project"))
             .addStatement(UntypedRecordNode.builder("X").build())
             .addStatement(UntypedRecordNode.builder("X").build())
             .build();
@@ -134,7 +112,7 @@ public class TypeCheckNamespaceTests {
     @Test
     public void whenVariableShadowsBuiltinThenEarlierReferencesUsesVariable() {
         var untypedNode = UntypedNamespaceNode
-            .builder(NamespaceName.fromParts("example", "project"))
+            .builder(NamespaceId.source("example", "project"))
             .addStatement(UntypedFunctionNode.builder().addPositionalParam(Untyped.param("x", Untyped.typeLevelReference("X"))).build())
             .addStatement(UntypedRecordNode.builder("X").build())
             .build();
@@ -151,7 +129,7 @@ public class TypeCheckNamespaceTests {
     @Test
     public void returnedContextLeavesBodyEnvironment() {
         var untypedNode = UntypedNamespaceNode
-            .builder(NamespaceName.fromParts("example", "project"))
+            .builder(NamespaceId.source("example", "project"))
             .addStatement(UntypedRecordNode.builder("X").build())
             .build();
         var context = TypeCheckerContext.stub();

@@ -10,7 +10,7 @@ import static org.hamcrest.Matchers.equalTo;
 public class NamespaceTypeTests {
     @Test
     public void describeReturnsNameOfNamespace() {
-        var type = new NamespaceType(NamespaceName.fromParts("Stdlib", "Assert"), Map.of());
+        var type = new NamespaceType(NamespaceId.source("Stdlib", "Assert"), Map.of());
 
         var result = type.describe();
 

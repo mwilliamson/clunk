@@ -3,7 +3,7 @@ package org.zwobble.clunk.backends.python.codegenerator;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.backends.python.serialiser.PythonSerialiserTesting;
-import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class PythonCodeGeneratorCallConstructorTests {
     @Test
     public void recordConstructorCallsAreCompiledToCalls() {
-        var recordType = Types.recordType(NamespaceName.fromParts("example"), "Id");
+        var recordType = Types.recordType(NamespaceId.source("example"), "Id");
         var node = Typed.callConstructor(
             Typed.localReference(
                 "Id",

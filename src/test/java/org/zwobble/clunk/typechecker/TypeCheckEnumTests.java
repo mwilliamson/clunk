@@ -5,10 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.TypedEnumNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.sources.NullSource;
-import org.zwobble.clunk.types.EnumType;
-import org.zwobble.clunk.types.NamespaceName;
-import org.zwobble.clunk.types.Type;
-import org.zwobble.clunk.types.TypeLevelValueType;
+import org.zwobble.clunk.types.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
@@ -24,7 +21,7 @@ public class TypeCheckEnumTests {
     @Test
     public void enumTypeIsAddedToEnvironment() {
         var untypedNode = Untyped.enum_("NoteType");
-        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceId.source("a", "b"));
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
@@ -32,7 +29,7 @@ public class TypeCheckEnumTests {
             result.context().typeOf("NoteType", NullSource.INSTANCE),
             cast(
                 TypeLevelValueType.class,
-                has("value", isEnumType(NamespaceName.fromParts("a", "b"), "NoteType"))
+                has("value", isEnumType(NamespaceId.source("a", "b"), "NoteType"))
             )
         );
     }
@@ -40,7 +37,7 @@ public class TypeCheckEnumTests {
     @Test
     public void addsNamespaceField() {
         var untypedNode = Untyped.enum_("NoteType");
-        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceId.source("a", "b"));
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
@@ -48,7 +45,7 @@ public class TypeCheckEnumTests {
             result.fieldType(),
             present(isMapEntry(
                 equalTo("NoteType"),
-                isMetaType(isEnumType(NamespaceName.fromParts("a", "b"), "NoteType"))
+                isMetaType(isEnumType(NamespaceId.source("a", "b"), "NoteType"))
             ))
         );
     }
@@ -56,17 +53,17 @@ public class TypeCheckEnumTests {
     @Test
     public void enumIsTypeChecked() {
         var untypedNode = Untyped.enum_("NoteType");
-        var context = TypeCheckerContext.stub().enterNamespace(NamespaceName.fromParts("a", "b"));
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceId.source("a", "b"));
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
         var typedNode = (TypedEnumNode) result.typedNode();
         assertThat(typedNode, allOf(
-            has("type", isEnumType(NamespaceName.fromParts("a", "b"), "NoteType"))
+            has("type", isEnumType(NamespaceId.source("a", "b"), "NoteType"))
         ));
     }
 
-    private Matcher<Type> isEnumType(NamespaceName namespaceName, String name) {
-        return cast(EnumType.class, has("namespaceName", equalTo(namespaceName)), has("name", equalTo(name)));
+    private Matcher<Type> isEnumType(NamespaceId namespaceId, String name) {
+        return cast(EnumType.class, has("namespaceId", equalTo(namespaceId)), has("name", equalTo(name)));
     }
 }

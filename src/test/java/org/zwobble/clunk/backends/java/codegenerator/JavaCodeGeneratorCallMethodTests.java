@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedCallMethodNode;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiserTesting;
-import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public class JavaCodeGeneratorCallMethodTests {
         var node = TypedCallMethodNode.builder()
             .receiver(Typed.localReference(
                 "x",
-                Types.recordType(NamespaceName.fromParts("example"), "X")
+                Types.recordType(NamespaceId.source("example"), "X")
             ))
             .methodName("y")
             .positionalArgs(List.of(Typed.intLiteral(123)))

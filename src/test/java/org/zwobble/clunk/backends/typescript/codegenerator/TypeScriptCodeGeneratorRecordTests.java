@@ -5,7 +5,7 @@ import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.ast.typed.TypedFunctionNode;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser;
-import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
@@ -46,7 +46,7 @@ public class TypeScriptCodeGeneratorRecordTests {
         var node = TypedRecordNode.builder("Example")
             .addField(Typed.recordField("first", Typed.typeLevelString()))
             .addField(Typed.recordField("second", Typed.typeLevelInt()))
-            .addSupertype(Typed.typeLevelReference("Supertype", Types.sealedInterfaceType(NamespaceName.fromParts(), "Supertype")))
+            .addSupertype(Typed.typeLevelReference("Supertype", Types.sealedInterfaceType(NamespaceId.source(), "Supertype")))
             .build();
         var context = TypeScriptCodeGeneratorContext.stub();
 
@@ -74,7 +74,7 @@ public class TypeScriptCodeGeneratorRecordTests {
         var node = TypedRecordNode.builder("Example")
             .addField(Typed.recordField("first", Typed.typeLevelString()))
             .addField(Typed.recordField("second", Typed.typeLevelInt()))
-            .addSupertype(Typed.typeLevelReference("Supertype", Types.unsealedInterfaceType(NamespaceName.fromParts(), "Supertype")))
+            .addSupertype(Typed.typeLevelReference("Supertype", Types.unsealedInterfaceType(NamespaceId.source(), "Supertype")))
             .build();
         var context = TypeScriptCodeGeneratorContext.stub();
 
@@ -98,7 +98,7 @@ public class TypeScriptCodeGeneratorRecordTests {
 
     @Test
     public void propertiesAreCompiledToGetters() {
-        var node = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "Example")
+        var node = TypedRecordNode.builder(NamespaceId.source("example", "project"), "Example")
             .addProperty(Typed.property(
                 "value",
                 Typed.typeLevelString(),
@@ -123,7 +123,7 @@ public class TypeScriptCodeGeneratorRecordTests {
 
     @Test
     public void functionsAreCompiledToMethods() {
-        var node = TypedRecordNode.builder(NamespaceName.fromParts("example", "project"), "Example")
+        var node = TypedRecordNode.builder(NamespaceId.source("example", "project"), "Example")
             .addMethod(TypedFunctionNode.builder()
                 .name("fullName")
                 .returnType(Typed.typeLevelString())

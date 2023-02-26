@@ -2,7 +2,7 @@ package org.zwobble.clunk.backends.java.codegenerator;
 
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiser;
-import org.zwobble.clunk.types.NamespaceName;
+import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public class JavaCodeGeneratorTypeLevelValueToTypeExpressionTests {
 
     @Test
     public void interfaceTypesAreCompiledToFullyQualifiedReferences() {
-        var value = Types.interfaceType(NamespaceName.fromParts("example", "project"), "Interface");
+        var value = Types.interfaceType(NamespaceId.source("example", "project"), "Interface");
         var context = JavaCodeGeneratorContext.stub();
 
         var result = JavaCodeGenerator.typeLevelValueToTypeExpression(value, false, context);
@@ -36,7 +36,7 @@ public class JavaCodeGeneratorTypeLevelValueToTypeExpressionTests {
 
     @Test
     public void recordTypesAreCompiledToFullyQualifiedReferences() {
-        var value = Types.recordType(NamespaceName.fromParts("example", "project"), "Record");
+        var value = Types.recordType(NamespaceId.source("example", "project"), "Record");
         var context = JavaCodeGeneratorContext.stub();
 
         var result = JavaCodeGenerator.typeLevelValueToTypeExpression(value, false, context);

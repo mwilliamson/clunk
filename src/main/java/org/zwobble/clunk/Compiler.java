@@ -12,6 +12,7 @@ import org.zwobble.clunk.parser.Tokeniser;
 import org.zwobble.clunk.sources.FileFragmentSource;
 import org.zwobble.clunk.typechecker.TypeCheckResult;
 import org.zwobble.clunk.typechecker.TypeChecker;
+import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.NamespaceName;
 
 import java.io.IOException;
@@ -20,9 +21,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Compiler {
     private final Logger logger;
@@ -37,8 +37,9 @@ public class Compiler {
         var sourceRoot = projectPath.resolve("src");
 
         var typedNamespaceNodes = new ArrayList<TypedNamespaceNode>();
+        var untypedNamespaceNodes = dependencyOrder(parseSourceFiles(sourceRoot));
         var typeCheckerContext = Builtins.TYPE_CHECKER_CONTEXT;
-        for (var untypedNamespaceNode : parseSourceFiles(sourceRoot)) {
+        for (var untypedNamespaceNode : untypedNamespaceNodes) {
             var result = TypeChecker.typeCheckNamespace(untypedNamespaceNode, typeCheckerContext);
             typedNamespaceNodes.add(result.typedNode());
             typeCheckerContext = result.context();
@@ -117,5 +118,35 @@ public class Compiler {
         var tokens = Tokeniser.tokenise(source);
         var parser = new Parser();
         return parser.parseNamespace(tokens, sourcePathInfo.namespaceName, sourcePathInfo.sourceType);
+    }
+
+    private List<UntypedNamespaceNode> dependencyOrder(List<UntypedNamespaceNode> untypedNamespaceNodes) {
+        // TODO: test this!
+        var ordered = new LinkedHashMap<NamespaceId, UntypedNamespaceNode>();
+        var untypedNamespaceNodesById = untypedNamespaceNodes.stream()
+            .collect(Collectors.toMap(node -> node.id(), node -> node));
+
+        insertInDependencyOrder(untypedNamespaceNodes, ordered, untypedNamespaceNodesById);
+
+        return ordered.values().stream().toList();
+    }
+
+    private void insertInDependencyOrder(
+        Collection<UntypedNamespaceNode> untypedNamespaceNodes,
+        LinkedHashMap<NamespaceId, UntypedNamespaceNode> ordered,
+        Map<NamespaceId, UntypedNamespaceNode> untypedNamespaceNodesById
+    ) {
+        for (var untypedNamespaceNode : untypedNamespaceNodes) {
+            if (!ordered.containsKey(untypedNamespaceNode.id())) {
+                var dependencies = untypedNamespaceNode.imports().stream()
+                    .map(import_ -> import_.namespaceId())
+                    .distinct()
+                    .map(id -> untypedNamespaceNodesById.get(id))
+                    .filter(node -> node != null)
+                    .toList();
+                insertInDependencyOrder(dependencies, ordered, untypedNamespaceNodesById);
+                ordered.put(untypedNamespaceNode.id(), untypedNamespaceNode);
+            }
+        }
     }
 }

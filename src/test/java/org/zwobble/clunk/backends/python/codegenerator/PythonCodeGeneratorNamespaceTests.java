@@ -29,7 +29,7 @@ public class PythonCodeGeneratorNamespaceTests {
 
         var result = PythonCodeGenerator.compileNamespace(node);
 
-        assertThat(result.name(), equalTo("example.project"));
+        assertThat(result.name(), equalTo(List.of("example", "project")));
         var string = serialiseToString(result, PythonSerialiser::serialiseModule);
         assertThat(string, equalTo("""
             import dataclasses
@@ -52,7 +52,7 @@ public class PythonCodeGeneratorNamespaceTests {
 
         var result = PythonCodeGenerator.compileNamespace(node);
 
-        assertThat(result.name(), equalTo("example.project"));
+        assertThat(result.name(), equalTo(List.of("example", "project")));
         var string = serialiseToString(result, PythonSerialiser::serialiseModule);
         assertThat(string, equalTo("""
             from a.b import C
@@ -71,7 +71,7 @@ public class PythonCodeGeneratorNamespaceTests {
 
         var result = PythonCodeGenerator.compileNamespace(node);
 
-        assertThat(result.name(), equalTo("example.project"));
+        assertThat(result.name(), equalTo(List.of("example", "project")));
         var string = serialiseToString(result, PythonSerialiser::serialiseModule);
         assertThat(string, equalTo("""
             import a
@@ -98,7 +98,7 @@ public class PythonCodeGeneratorNamespaceTests {
 
         var result = PythonCodeGenerator.compileNamespace(node);
 
-        assertThat(result.name(), equalTo("example.project"));
+        assertThat(result.name(), equalTo(List.of("example", "project")));
         var string = serialiseToString(result, PythonSerialiser::serialiseModule);
         assertThat(string, equalTo(""));
     }
@@ -148,7 +148,7 @@ public class PythonCodeGeneratorNamespaceTests {
 
         var result = PythonCodeGenerator.compileNamespace(node);
 
-        assertThat(result.name(), equalTo("example.project"));
+        assertThat(result.name(), equalTo(List.of("example", "project")));
         var string = serialiseToString(result, PythonSerialiser::serialiseModule);
         assertThat(string, equalTo("""
             from precisely import assert_that

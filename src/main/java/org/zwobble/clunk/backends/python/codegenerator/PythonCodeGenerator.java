@@ -359,19 +359,19 @@ public class PythonCodeGenerator {
             return List.of();
         } else if (import_.fieldName().isPresent()) {
             return List.of(new PythonImportFromNode(
-                namespaceNameToModuleName(import_.namespaceName()),
+                namespaceIdToModuleName(import_.namespaceId()),
                 List.of(import_.fieldName().get())
             ));
         } else if (import_.namespaceName().parts().size() == 1) {
             return List.of(new PythonImportNode(
-                namespaceNameToModuleName(import_.namespaceName())
+                namespaceIdToModuleName(import_.namespaceId())
             ));
         } else {
-            var parts = import_.namespaceName().parts();
+            var moduleName = namespaceIdToModuleName(import_.namespaceId());
 
             return List.of(new PythonImportFromNode(
-                namespaceNameToModuleName(parts.subList(0, parts.size() - 1)),
-                List.of(parts.get(parts.size() - 1))
+                moduleName.subList(0, moduleName.size() - 1),
+                List.of(moduleName.get(moduleName.size() - 1))
             ));
         }
     }
@@ -507,8 +507,7 @@ public class PythonCodeGenerator {
 
     public static PythonModuleNode compileNamespace(TypedNamespaceNode node) {
         var context = PythonCodeGeneratorContext.initial();
-        // TODO: use ID
-        var moduleName = namespaceNameToModuleName(node.id().name());
+        var moduleName = namespaceIdToModuleName(node.id());
 
         var statements = new ArrayList<PythonStatementNode>();
 
@@ -860,12 +859,8 @@ public class PythonCodeGenerator {
         );
     }
 
-    private static String namespaceNameToModuleName(NamespaceName name) {
-        return namespaceNameToModuleName(name.parts());
-    }
-
-    private static String namespaceNameToModuleName(List<String> parts) {
-        return String.join(".", parts);
+    private static List<String> namespaceIdToModuleName(NamespaceId id) {
+        return id.name().parts();
     }
 
     private static String pythonizeName(String name) {

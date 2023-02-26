@@ -353,13 +353,13 @@ public class PythonSerialiser {
 
     private static void serialiseImport(PythonImportNode node, CodeBuilder builder) {
         builder.append("import ");
-        builder.append(node.moduleName());
+        serialiseModuleName(node.moduleName(), builder);
         builder.newLine();
     }
 
     private static void serialiseImportFrom(PythonImportFromNode node, CodeBuilder builder) {
         builder.append("from ");
-        builder.append(node.moduleName());
+        serialiseModuleName(node.moduleName(), builder);
         builder.append(" import ");
         forEachInterspersed(
             node.names(),
@@ -406,6 +406,10 @@ public class PythonSerialiser {
         for (var statement : node.statements()) {
             serialiseStatement(statement, builder);
         }
+    }
+
+    private static void serialiseModuleName(List<String> moduleName, CodeBuilder builder) {
+        builder.append(String.join(".", moduleName));
     }
 
     private static void serialiseNotEqual(PythonNotEqualNode node, CodeBuilder builder) {

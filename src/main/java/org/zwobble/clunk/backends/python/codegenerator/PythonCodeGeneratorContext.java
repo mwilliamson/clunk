@@ -41,10 +41,10 @@ public class PythonCodeGeneratorContext {
 
     private PythonStatementNode generateImport(List<String> import_) {
         if (import_.size() == 1) {
-            return new PythonImportNode(String.join(".", import_));
+            return new PythonImportNode(import_);
         } else {
             return new PythonImportFromNode(
-                String.join(".", import_.subList(0, import_.size() - 1)),
+                import_.subList(0, import_.size() - 1),
                 List.of(import_.get(import_.size() - 1))
             );
         }

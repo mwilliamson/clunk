@@ -13,7 +13,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 public class PythonSerialiserModuleTests {
     @Test
     public void moduleContainsStatements() {
-        var node = new PythonModuleNode("example.project", List.of(
+        var node = new PythonModuleNode(List.of("example", "project"), List.of(
             Python.variableType("first", Python.reference("str")),
             Python.variableType("second", Python.reference("int"))
         ));

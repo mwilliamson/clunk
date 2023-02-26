@@ -31,6 +31,6 @@ public class PythonCodeGeneratorEnumTests {
                     FOOTNOTE = enum.auto()
                 """
         ));
-        assertThat(context.imports(), contains(new PythonImportNode("enum")));
+        assertThat(context.imports(), contains(new PythonImportNode(List.of("enum"))));
     }
 }

@@ -582,6 +582,23 @@ testSuite "collapse" {
 
 ==============
 
+Source path: src/mammoth/xml.clunk
+sealed interface XmlNode {
+}
+
+record XmlElement(
+    name: String,
+    attributes: Map[String, String],
+    children: List[XmlNode],
+) <: XmlNode
+
+record XmlTextNode(
+    value: String,
+) <: XmlNode
+
+
+==============
+
 Output path: mammoth/documents.ts
 type DocumentElement = Bookmark | BreakLine | BreakPage | BreakColumn | CommentReference | Hyperlink | Image | NoteReference | Paragraph | Run | Tab | Table | TableCell | TableRow | Text;
 
@@ -1199,6 +1216,35 @@ suite("collapse", function () {
         assertThat(result, deepEqualTo([html.freshElement(["pre"], new Map([]), [html.text("Hello"), html.text("\n"), html.text(" the"), html.text("re")])]));
     });
 });
+
+
+==============
+
+Output path: mammoth/xml.ts
+type XmlNode = XmlElement | XmlTextNode;
+
+class XmlElement {
+    readonly type: "XmlElement" = "XmlElement";
+    readonly name: string;
+    readonly attributes: Map<string, string>;
+    readonly children: ReadonlyArray<XmlNode>;
+
+    constructor(name: string, attributes: Map<string, string>, children: ReadonlyArray<XmlNode>) {
+        this.name = name;
+        this.attributes = attributes;
+        this.children = children;
+    }
+}
+
+class XmlTextNode {
+    readonly type: "XmlTextNode" = "XmlTextNode";
+    readonly value: string;
+
+    constructor(value: string) {
+        this.value = value;
+    }
+}
+export {XmlElement, XmlNode, XmlTextNode};
 
 
 ==============

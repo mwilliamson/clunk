@@ -582,6 +582,23 @@ testSuite "collapse" {
 
 ==============
 
+Source path: src/mammoth/xml.clunk
+sealed interface XmlNode {
+}
+
+record XmlElement(
+    name: String,
+    attributes: Map[String, String],
+    children: List[XmlNode],
+) <: XmlNode
+
+record XmlTextNode(
+    value: String,
+) <: XmlNode
+
+
+==============
+
 Output path: mammoth/documents.py
 from __future__ import annotations
 
@@ -1060,6 +1077,31 @@ class CollapseTests:
         result = html.collapse(nodes)
 
         assert_that(result, equal_to([html.fresh_element(["pre"], {}, [html.text("Hello"), html.text("\n"), html.text(" the"), html.text("re")])]))
+
+
+==============
+
+Output path: mammoth/xml.py
+from __future__ import annotations
+
+import dataclasses
+import typing
+class XmlNode:
+    pass
+
+@dataclasses.dataclass(frozen=True)
+class XmlElement:
+    name: str
+    attributes: Map[str, str]
+    children: typing.List[XmlNode]
+    def accept(self, visitor, /):
+        return visitor.visit_xml_element(self)
+
+@dataclasses.dataclass(frozen=True)
+class XmlTextNode:
+    value: str
+    def accept(self, visitor, /):
+        return visitor.visit_xml_text_node(self)
 
 
 ==============

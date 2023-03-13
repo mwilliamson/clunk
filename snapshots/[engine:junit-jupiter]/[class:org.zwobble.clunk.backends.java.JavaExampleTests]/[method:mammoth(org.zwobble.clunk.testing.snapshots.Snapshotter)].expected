@@ -582,6 +582,23 @@ testSuite "collapse" {
 
 ==============
 
+Source path: src/mammoth/xml.clunk
+sealed interface XmlNode {
+}
+
+record XmlElement(
+    name: String,
+    attributes: Map[String, String],
+    children: List[XmlNode],
+) <: XmlNode
+
+record XmlTextNode(
+    value: String,
+) <: XmlNode
+
+
+==============
+
 Output path: org/zwobble/mammoth/internal/mammoth/documents/DocumentElement.java
 package org.zwobble.mammoth.internal.mammoth.documents;
 
@@ -1290,6 +1307,42 @@ public class HtmlTests {
             assertThat(result, equalTo(java.util.List.of(Html.freshElement(java.util.List.of("pre"), java.util.Map.ofEntries(), java.util.List.of(Html.text("Hello"), Html.text("\n"), Html.text(" the"), Html.text("re"))))));
         }
     }}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/mammoth/xml/XmlNode.java
+package org.zwobble.mammoth.internal.mammoth.xml;
+
+public sealed interface XmlNode permits XmlElement, XmlTextNode {
+    <T> T accept(Visitor<T> visitor);
+    public interface Visitor<T> {
+        T visit(XmlElement xmlElement);
+        T visit(XmlTextNode xmlTextNode);
+    }
+}
+
+
+==============
+
+Output path: org/zwobble/mammoth/internal/mammoth/xml/XmlElement.java
+package org.zwobble.mammoth.internal.mammoth.xml;
+
+public record XmlElement(String name, java.util.Map<String, String> attributes, java.util.List<? extends XmlNode> children) implements org.zwobble.mammoth.internal.mammoth.xml.XmlNode {
+    public <T> T accept(org.zwobble.mammoth.internal.mammoth.xml.XmlNode.Visitor<T> visitor) {
+        return visitor.visit(this);
+    }
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/mammoth/xml/XmlTextNode.java
+package org.zwobble.mammoth.internal.mammoth.xml;
+
+public record XmlTextNode(String value) implements org.zwobble.mammoth.internal.mammoth.xml.XmlNode {
+    public <T> T accept(org.zwobble.mammoth.internal.mammoth.xml.XmlNode.Visitor<T> visitor) {
+        return visitor.visit(this);
+    }
+}
 
 ==============
 

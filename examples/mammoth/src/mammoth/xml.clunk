@@ -1,0 +1,12 @@
+sealed interface XmlNode {
+}
+
+record XmlElement(
+    name: String,
+    attributes: Map[String, String],
+    children: List[XmlNode],
+) <: XmlNode
+
+record XmlTextNode(
+    value: String,
+) <: XmlNode

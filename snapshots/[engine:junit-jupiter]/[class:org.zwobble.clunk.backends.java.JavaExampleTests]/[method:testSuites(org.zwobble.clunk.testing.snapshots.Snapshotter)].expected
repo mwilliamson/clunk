@@ -40,8 +40,8 @@ testSuite "ints" {
 Output path: testSuites/TestSuitesTests.java
 package testSuites;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.equalTo;
 
 public class TestSuitesTests {
     @org.junit.jupiter.api.Nested
@@ -96,16 +96,22 @@ public class TestSuitesTests {
 │     ├─ Ints ✔
 │     │  ├─ assert 42 == 42 ✔
 │     │  └─ assert 42 == 47 ✘ 
-│     │           Expected: <47>
-│     │                but: was <42>
+│     │           Expected:
+│     │             47
+│     │           but:
+│     │             was 42
 │     └─ Bools ✔
 │        ├─ Failing ✔
 │        │  ├─ assert False ✘ 
-│        │  │        Expected: <true>
-│        │  │             but: was <false>
+│        │  │        Expected:
+│        │  │          true
+│        │  │        but:
+│        │  │          was false
 │        │  └─ assert True ✘ 
-│        │           Expected: <false>
-│        │                but: was <true>
+│        │           Expected:
+│        │             false
+│        │           but:
+│        │             was true
 │        └─ Passing ✔
 │           ├─ assert False ✔
 │           └─ assert True ✔
@@ -115,10 +121,11 @@ Failures (3):
   JUnit Jupiter:TestSuitesTests:Ints:assert 42 == 47
     MethodSource [className = 'testSuites.TestSuitesTests$Ints', methodName = 'assert42Equals47', methodParameterTypes = '']
     => java.lang.AssertionError: 
-Expected: <47>
-     but: was <42>
-       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:20)
-       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:8)
+Expected:
+  47
+but:
+  was 42
+       org.zwobble.precisely.AssertThat.assertThat(AssertThat.java:12)
        testSuites.TestSuitesTests$Ints.assert42Equals47(Unknown Source)
        java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
        java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
@@ -127,14 +134,16 @@ Expected: <47>
        org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:725)
        org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
        org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+       org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:149)
        [...]
   JUnit Jupiter:TestSuitesTests:Bools:Failing:assert False
     MethodSource [className = 'testSuites.TestSuitesTests$Bools$Failing', methodName = 'assertFalse', methodParameterTypes = '']
     => java.lang.AssertionError: 
-Expected: <true>
-     but: was <false>
-       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:20)
-       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:8)
+Expected:
+  true
+but:
+  was false
+       org.zwobble.precisely.AssertThat.assertThat(AssertThat.java:12)
        testSuites.TestSuitesTests$Bools$Failing.assertFalse(Unknown Source)
        java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
        java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
@@ -143,14 +152,16 @@ Expected: <true>
        org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:725)
        org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
        org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+       org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:149)
        [...]
   JUnit Jupiter:TestSuitesTests:Bools:Failing:assert True
     MethodSource [className = 'testSuites.TestSuitesTests$Bools$Failing', methodName = 'assertTrue', methodParameterTypes = '']
     => java.lang.AssertionError: 
-Expected: <false>
-     but: was <true>
-       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:20)
-       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:8)
+Expected:
+  false
+but:
+  was true
+       org.zwobble.precisely.AssertThat.assertThat(AssertThat.java:12)
        testSuites.TestSuitesTests$Bools$Failing.assertTrue(Unknown Source)
        java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
        java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
@@ -159,6 +170,7 @@ Expected: <false>
        org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:725)
        org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
        org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+       org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:149)
        [...]
 
 Test run finished after TIME ms

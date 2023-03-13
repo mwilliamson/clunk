@@ -1100,8 +1100,8 @@ Output path: org/zwobble/mammoth/internal/mammoth/html/HtmlTests.java
 package org.zwobble.mammoth.internal.mammoth.html;
 
 import org.zwobble.mammoth.internal.mammoth.html.Html;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.equalTo;
 
 public class HtmlTests {
     @org.junit.jupiter.api.Nested

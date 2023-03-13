@@ -12,8 +12,8 @@ test "assert False" {
 Output path: com/example/prefix/simple/SimpleTests.java
 package com.example.prefix.simple;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.equalTo;
 
 public class SimpleTests {
     @org.junit.jupiter.api.Test
@@ -29,18 +29,21 @@ public class SimpleTests {
 ├─ JUnit Jupiter ✔
 │  └─ SimpleTests ✔
 │     └─ assert False ✘ 
-│              Expected: <true>
-│                   but: was <false>
+│              Expected:
+│                true
+│              but:
+│                was false
 └─ JUnit Vintage ✔
 
 Failures (1):
   JUnit Jupiter:SimpleTests:assert False
     MethodSource [className = 'com.example.prefix.simple.SimpleTests', methodName = 'assertFalse', methodParameterTypes = '']
     => java.lang.AssertionError: 
-Expected: <true>
-     but: was <false>
-       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:20)
-       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:8)
+Expected:
+  true
+but:
+  was false
+       org.zwobble.precisely.AssertThat.assertThat(AssertThat.java:12)
        com.example.prefix.simple.SimpleTests.assertFalse(Unknown Source)
        java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
        java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
@@ -49,6 +52,7 @@ Expected: <true>
        org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:725)
        org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
        org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+       org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:149)
        [...]
 
 Test run finished after TIME ms

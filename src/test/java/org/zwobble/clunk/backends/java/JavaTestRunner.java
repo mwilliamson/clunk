@@ -49,7 +49,7 @@ public class JavaTestRunner implements TargetTestRunner {
             "java",
             "-jar", javaTestingRoot.resolve("lib/junit-platform-console-standalone-1.8.2.jar").toString(),
             "--disable-ansi-colors", "--disable-banner",
-            "--class-path", javaTestingRoot.resolve("lib/hamcrest-2.2.jar").toString(),
+            "--class-path", javaTestingRoot.resolve("lib/precisely-0.1.1.jar").toString(),
             "--class-path", binPath.toString(),
             "--scan-classpath", binPath.toString()
         )

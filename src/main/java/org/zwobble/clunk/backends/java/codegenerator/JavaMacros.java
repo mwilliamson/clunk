@@ -20,7 +20,7 @@ public class JavaMacros {
                 Map.entry("assertThat", new JavaStaticFunctionMacro() {
                     @Override
                     public JavaExpressionNode compileReceiver(JavaCodeGeneratorContext context) {
-                        context.addImportStatic("org.hamcrest.MatcherAssert", "assertThat");
+                        context.addImportStatic("org.zwobble.precisely.AssertThat", "assertThat");
                         return new JavaReferenceNode("assertThat");
                     }
                 })
@@ -32,7 +32,7 @@ public class JavaMacros {
                 Map.entry("equalTo", new JavaStaticFunctionMacro() {
                     @Override
                     public JavaExpressionNode compileReceiver(JavaCodeGeneratorContext context) {
-                        context.addImportStatic("org.hamcrest.Matchers", "equalTo");
+                        context.addImportStatic("org.zwobble.precisely.Matchers", "equalTo");
                         return new JavaReferenceNode("equalTo");
                     }
                 })

@@ -24,8 +24,8 @@ test "assert 42 == 42" {
 Output path: simple/SimpleTests.java
 package simple;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.equalTo;
 
 public class SimpleTests {
     @org.junit.jupiter.api.Test
@@ -57,24 +57,31 @@ public class SimpleTests {
 │  └─ SimpleTests ✔
 │     ├─ assert 42 == 42 ✔
 │     ├─ assert 42 == 47 ✘ 
-│     │        Expected: <47>
-│     │             but: was <42>
+│     │        Expected:
+│     │          47
+│     │        but:
+│     │          was 42
 │     ├─ assert False ✘ 
-│     │        Expected: <true>
-│     │             but: was <false>
+│     │        Expected:
+│     │          true
+│     │        but:
+│     │          was false
 │     └─ assert True ✘ 
-│              Expected: <false>
-│                   but: was <true>
+│              Expected:
+│                false
+│              but:
+│                was true
 └─ JUnit Vintage ✔
 
 Failures (3):
   JUnit Jupiter:SimpleTests:assert 42 == 47
     MethodSource [className = 'simple.SimpleTests', methodName = 'assert42Equals47', methodParameterTypes = '']
     => java.lang.AssertionError: 
-Expected: <47>
-     but: was <42>
-       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:20)
-       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:8)
+Expected:
+  47
+but:
+  was 42
+       org.zwobble.precisely.AssertThat.assertThat(AssertThat.java:12)
        simple.SimpleTests.assert42Equals47(Unknown Source)
        java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
        java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
@@ -83,14 +90,16 @@ Expected: <47>
        org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:725)
        org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
        org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+       org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:149)
        [...]
   JUnit Jupiter:SimpleTests:assert False
     MethodSource [className = 'simple.SimpleTests', methodName = 'assertFalse', methodParameterTypes = '']
     => java.lang.AssertionError: 
-Expected: <true>
-     but: was <false>
-       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:20)
-       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:8)
+Expected:
+  true
+but:
+  was false
+       org.zwobble.precisely.AssertThat.assertThat(AssertThat.java:12)
        simple.SimpleTests.assertFalse(Unknown Source)
        java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
        java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
@@ -99,14 +108,16 @@ Expected: <true>
        org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:725)
        org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
        org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+       org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:149)
        [...]
   JUnit Jupiter:SimpleTests:assert True
     MethodSource [className = 'simple.SimpleTests', methodName = 'assertTrue', methodParameterTypes = '']
     => java.lang.AssertionError: 
-Expected: <false>
-     but: was <true>
-       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:20)
-       org.hamcrest.MatcherAssert.assertThat(MatcherAssert.java:8)
+Expected:
+  false
+but:
+  was true
+       org.zwobble.precisely.AssertThat.assertThat(AssertThat.java:12)
        simple.SimpleTests.assertTrue(Unknown Source)
        java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
        java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
@@ -115,6 +126,7 @@ Expected: <false>
        org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:725)
        org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
        org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+       org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:149)
        [...]
 
 Test run finished after TIME ms

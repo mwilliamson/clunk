@@ -10,10 +10,10 @@ import org.zwobble.clunk.types.Types;
 
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.equalTo;
 import static org.zwobble.clunk.util.Serialisation.serialiseToString;
+import static org.zwobble.precisely.Matchers.isSequence;
 
 public class TypeScriptStringBuilderMacroTests {
     @Test
@@ -29,7 +29,7 @@ public class TypeScriptStringBuilderMacroTests {
 
         var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("[]"));
-        assertThat(context.imports(), empty());
+        assertThat(context.imports(), isSequence());
     }
 
     @Test

@@ -9,11 +9,11 @@ import org.zwobble.clunk.types.Types;
 
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.equalTo;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedReferenceNode;
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.precisely.Matchers.instanceOf;
+import static org.zwobble.precisely.Matchers.has;
 
 public class TypeCheckExpressionTests {
     @Test
@@ -34,10 +34,10 @@ public class TypeCheckExpressionTests {
 
         var result = TypeChecker.typeCheckExpression(untypedNode, expectedType, context);
 
-        assertThat(result, cast(
+        assertThat(result, instanceOf(
             TypedStaticMethodToFunctionNode.class,
-            has("method", isTypedReferenceNode().withName("f").withType(methodType)),
-            has("type", equalTo(Types.functionType(
+            has("method", x -> x.method(), isTypedReferenceNode().withName("f").withType(methodType)),
+            has("type", x -> x.type(), equalTo(Types.functionType(
                 List.of(Types.STRING),
                 Types.INT
             )))

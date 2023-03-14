@@ -1,26 +1,25 @@
 package org.zwobble.clunk.typechecker;
 
-import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.ast.typed.TypedPropertyNode;
 import org.zwobble.clunk.ast.typed.TypedRecordNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.ast.untyped.UntypedFunctionNode;
 import org.zwobble.clunk.ast.untyped.UntypedRecordNode;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.*;
+import org.zwobble.precisely.Matcher;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 import static org.zwobble.clunk.matchers.OptionalMatcher.present;
 import static org.zwobble.clunk.typechecker.TypeCheckNamespaceStatementTesting.typeCheckNamespaceStatementAllPhases;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.*;
 
 public class TypeCheckRecordTests {
     @Test
@@ -32,12 +31,12 @@ public class TypeCheckRecordTests {
 
         assertThat(
             result.context().typeOf("Example", NullSource.INSTANCE),
-            cast(
+            instanceOf(
                 TypeLevelValueType.class,
-                has("value", cast(
+                has("value", x -> x.value(), instanceOf(
                     RecordType.class,
-                    has("namespaceId", equalTo(NamespaceId.source("a", "b"))),
-                    has("name", equalTo("Example"))
+                    has("namespaceId", x -> x.namespaceId(), equalTo(NamespaceId.source("a", "b"))),
+                    has("name", x -> x.name(), equalTo("Example"))
                 ))
             )
         );
@@ -69,8 +68,8 @@ public class TypeCheckRecordTests {
 
         var typedNode = (TypedRecordNode) result.typedNode();
         assertThat(typedNode, allOf(
-            has("name", equalTo("Example")),
-            has("type", isRecordType(NamespaceId.source("a", "b"), "Example"))
+            has("name", x -> x.name(), equalTo("Example")),
+            has("type", x -> x.type(), isRecordType(NamespaceId.source("a", "b"), "Example"))
         ));
     }
 
@@ -84,10 +83,10 @@ public class TypeCheckRecordTests {
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
         var typedNode = (TypedRecordNode) result.typedNode();
-        assertThat(typedNode.fields(), contains(
+        assertThat(typedNode.fields(), isSequence(
             allOf(
-                has("name", equalTo("x")),
-                has("type", has("value", equalTo(Types.STRING)))
+                has("name", x -> x.name(), equalTo("x")),
+                has("type", x -> x.type(), has("value", x -> x.value(), equalTo(Types.STRING)))
             )
         ));
     }
@@ -102,11 +101,11 @@ public class TypeCheckRecordTests {
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
         var typedNode = (TypedRecordNode) result.typedNode();
-        assertThat(result.context().constructorType(typedNode.type()), present(cast(
+        assertThat(result.context().constructorType(typedNode.type()), present(instanceOf(
             ConstructorType.class,
-            has("typeLevelParams", equalTo(Optional.empty())),
-            has("positionalParams", contains(equalTo(Types.STRING))),
-            has("returnType", equalTo(typedNode.type()))
+            has("typeLevelParams", x -> x.typeLevelParams(), equalTo(Optional.empty())),
+            has("positionalParams", x -> x.positionalParams(), isSequence(equalTo(Types.STRING))),
+            has("returnType", x -> x.returnType(), equalTo(typedNode.type()))
         )));
     }
 
@@ -137,11 +136,12 @@ public class TypeCheckRecordTests {
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
         var typedNode = (TypedRecordNode) result.typedNode();
-        assertThat(typedNode.body(), contains(
-            allOf(
-                has("name", equalTo("x")),
-                has("type", has("value", equalTo(Types.STRING))),
-                has("body", contains(
+        assertThat(typedNode.body(), isSequence(
+            instanceOf(
+                TypedPropertyNode.class,
+                has("name", x -> x.name(), equalTo("x")),
+                has("type", x -> x.type(), has("value", x -> x.value(), equalTo(Types.STRING))),
+                has("body", x -> x.body(), isSequence(
                     isTypedReturnNode().withExpression(isTypedStringLiteralNode("hello"))
                 ))
             )
@@ -180,9 +180,10 @@ public class TypeCheckRecordTests {
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
         var typedNode = (TypedRecordNode) result.typedNode();
-        assertThat(typedNode.body(), contains(
-            allOf(
-                has("body", contains(
+        assertThat(typedNode.body(), isSequence(
+            instanceOf(
+                TypedPropertyNode.class,
+                has("body", x -> x.body(), isSequence(
                     isTypedReturnNode().withExpression(isTypedMemberReferenceNode().withName("x").withType(Types.STRING))
                 ))
             )
@@ -208,11 +209,12 @@ public class TypeCheckRecordTests {
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
         var typedNode = (TypedRecordNode) result.typedNode();
-        assertThat(typedNode.body(), contains(
-            has("name", equalTo("x")),
-            allOf(
-                has("name", equalTo("y")),
-                has("body", contains(
+        assertThat(typedNode.body(), isSequence(
+            instanceOf(TypedPropertyNode.class, has("name", x -> x.name(), equalTo("x"))),
+            instanceOf(
+                TypedPropertyNode.class,
+                has("name", x -> x.name(), equalTo("y")),
+                has("body", x -> x.body(), isSequence(
                     isTypedReturnNode().withExpression(isTypedMemberReferenceNode().withName("x").withType(Types.STRING))
                 ))
             )
@@ -236,11 +238,11 @@ public class TypeCheckRecordTests {
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
         var typedNode = (TypedRecordNode) result.typedNode();
-        assertThat(typedNode.body(), contains(
+        assertThat(typedNode.body(), isSequence(
             isTypedFunctionNode()
                 .withName("x")
                 .withReturnType(Types.STRING)
-                .withBody(contains(
+                .withBody(isSequence(
                     isTypedReturnNode().withExpression(isTypedStringLiteralNode("hello"))
                 ))
         ));
@@ -275,14 +277,20 @@ public class TypeCheckRecordTests {
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
-        assertThat(result.typedNode(), has("supertypes", contains(
-            has("value", isInterfaceType(NamespaceId.source("a", "b"), "Person"))
-        )));
+        assertThat(result.typedNode(), instanceOf(
+            TypedRecordNode.class,
+            has("supertypes", x -> x.supertypes(), isSequence(
+                has("value", x -> x.value(), instanceOf(
+                    Type.class,
+                    isInterfaceType(NamespaceId.source("a", "b"), "Person"))
+                )
+            ))
+        ));
         var recordType = ((TypedRecordNode) result.typedNode()).type();
-        assertThat(result.context().subtypeRelations().extendedTypes(recordType), containsInAnyOrder(
+        assertThat(result.context().subtypeRelations().extendedTypes(recordType), containsExactly(
             equalTo(interfaceType)
         ));
-        assertThat(result.context().sealedInterfaceCases(interfaceType), containsInAnyOrder(
+        assertThat(result.context().sealedInterfaceCases(interfaceType), containsExactly(
             isRecordType(NamespaceId.source("a", "b"), "User")
         ));
     }
@@ -329,21 +337,32 @@ public class TypeCheckRecordTests {
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
-        assertThat(result.typedNode(), has("supertypes", contains(
-            has("value", equalTo(interfaceType))
-        )));
+        assertThat(result.typedNode(), instanceOf(
+            TypedRecordNode.class,
+            has("supertypes", x -> x.supertypes(), isSequence(
+                has("value", x -> x.value(), equalTo(interfaceType))
+            ))
+        ));
         var recordType = ((TypedRecordNode) result.typedNode()).type();
-        assertThat(result.context().subtypeRelations().extendedTypes(recordType), containsInAnyOrder(
+        assertThat(result.context().subtypeRelations().extendedTypes(recordType), containsExactly(
             equalTo(interfaceType)
         ));
-        assertThat(result.context().sealedInterfaceCases(interfaceType), empty());
+        assertThat(result.context().sealedInterfaceCases(interfaceType), containsExactly());
     }
 
-    private Matcher<?> isInterfaceType(NamespaceId namespaceId, String name) {
-        return cast(InterfaceType.class, has("namespaceId", equalTo(namespaceId)), has("name", equalTo(name)));
+    private Matcher<Type> isInterfaceType(NamespaceId namespaceId, String name) {
+        return instanceOf(
+            InterfaceType.class,
+            has("namespaceId", x -> x.namespaceId(), equalTo(namespaceId)),
+            has("name", x -> x.name(), equalTo(name))
+        );
     }
 
     private Matcher<Type> isRecordType(NamespaceId namespaceId, String name) {
-        return cast(RecordType.class, has("namespaceId", equalTo(namespaceId)), has("name", equalTo(name)));
+        return instanceOf(
+            RecordType.class,
+            has("namespaceId", x -> x.namespaceId(), equalTo(namespaceId)),
+            has("name", x -> x.name(), equalTo(name))
+        );
     }
 }

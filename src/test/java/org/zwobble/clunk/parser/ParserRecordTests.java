@@ -3,12 +3,10 @@ package org.zwobble.clunk.parser;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.untyped.UntypedPropertyNode;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.*;
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 import static org.zwobble.clunk.parser.Parsing.parseString;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.*;
 
 public class ParserRecordTests {
     @Test
@@ -26,7 +24,7 @@ public class ParserRecordTests {
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
-        assertThat(node, isUntypedRecordNode().withFields(contains(
+        assertThat(node, isUntypedRecordNode().withFields(isSequence(
             allOf(
                 isUntypedRecordFieldNode().withName("name"),
                 isUntypedRecordFieldNode().withType(isUntypedTypeLevelReferenceNode("String"))
@@ -40,7 +38,7 @@ public class ParserRecordTests {
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
-        assertThat(node, isUntypedRecordNode().withFields(contains(
+        assertThat(node, isUntypedRecordNode().withFields(isSequence(
             isUntypedRecordFieldNode().withName("name"),
             isUntypedRecordFieldNode().withName("emailAddress")
         )));
@@ -52,7 +50,7 @@ public class ParserRecordTests {
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
-        assertThat(node, isUntypedRecordNode().withFields(contains(
+        assertThat(node, isUntypedRecordNode().withFields(isSequence(
             isUntypedRecordFieldNode().withName("name"),
             isUntypedRecordFieldNode().withName("emailAddress")
         )));
@@ -64,7 +62,7 @@ public class ParserRecordTests {
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
-        assertThat(node, isUntypedRecordNode().withSupertypes(empty()));
+        assertThat(node, isUntypedRecordNode().withSupertypes(isSequence()));
     }
 
     @Test
@@ -73,7 +71,7 @@ public class ParserRecordTests {
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
-        assertThat(node, isUntypedRecordNode().withSupertypes(contains(isUntypedTypeLevelReferenceNode("Person"))));
+        assertThat(node, isUntypedRecordNode().withSupertypes(isSequence(isUntypedTypeLevelReferenceNode("Person"))));
     }
 
     @Test
@@ -82,7 +80,7 @@ public class ParserRecordTests {
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
-        assertThat(node, isUntypedRecordNode().withSupertypes(contains(
+        assertThat(node, isUntypedRecordNode().withSupertypes(isSequence(
             isUntypedTypeLevelReferenceNode("Person"),
             isUntypedTypeLevelReferenceNode("Principal")
         )));
@@ -100,11 +98,11 @@ public class ParserRecordTests {
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
-        assertThat(node, isUntypedRecordNode().withBody(contains(
+        assertThat(node, isUntypedRecordNode().withBody(isSequence(
             isUntypedFunctionNode()
                 .withName("active")
                 .withReturnType(isUntypedTypeLevelReferenceNode("Bool"))
-                .withBody(contains(isUntypedReturnNode().withExpression(isUntypedBoolLiteralNode(true))))
+                .withBody(isSequence(isUntypedReturnNode().withExpression(isUntypedBoolLiteralNode(true))))
         )));
     }
 
@@ -120,12 +118,12 @@ public class ParserRecordTests {
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
-        assertThat(node, isUntypedRecordNode().withBody(contains(
-            cast(
+        assertThat(node, isUntypedRecordNode().withBody(isSequence(
+            instanceOf(
                 UntypedPropertyNode.class,
-                has("name", equalTo("active")),
-                has("type", isUntypedTypeLevelReferenceNode("Bool")),
-                has("body", contains(isUntypedReturnNode().withExpression(isUntypedBoolLiteralNode(true))))
+                has("name", x -> x.name(), equalTo("active")),
+                has("type", x -> x.type(), isUntypedTypeLevelReferenceNode("Bool")),
+                has("body", x -> x.body(), isSequence(isUntypedReturnNode().withExpression(isUntypedBoolLiteralNode(true))))
             )
         )));
     }
@@ -145,15 +143,15 @@ public class ParserRecordTests {
         var node = parseString(source, Parser::parseNamespaceStatement);
 
         assertThat(node, isUntypedRecordNode()
-            .withBody(contains(
-                cast(
+            .withBody(isSequence(
+                instanceOf(
                     UntypedPropertyNode.class,
-                    has("name", equalTo("active"))
+                    has("name", x -> x.name(), equalTo("active"))
                 ),
                 isUntypedBlankLineNode(),
-                cast(
+                instanceOf(
                     UntypedPropertyNode.class,
-                    has("name", equalTo("isAdmin"))
+                    has("name", x -> x.name(), equalTo("isAdmin"))
                 )
         )));
     }

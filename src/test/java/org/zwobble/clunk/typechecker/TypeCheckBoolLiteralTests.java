@@ -4,9 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.TypedBoolLiteralNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.*;
 
 public class TypeCheckBoolLiteralTests {
     @Test
@@ -15,9 +14,9 @@ public class TypeCheckBoolLiteralTests {
 
         var result = TypeChecker.typeCheckExpression(untypedNode, TypeCheckerContext.stub());
 
-        assertThat(result, allOf(
-            isA(TypedBoolLiteralNode.class),
-            has("value", equalTo(false))
+        assertThat(result, instanceOf(
+            TypedBoolLiteralNode.class,
+            has("value", x -> x.value(), equalTo(false))
         ));
     }
 
@@ -27,9 +26,9 @@ public class TypeCheckBoolLiteralTests {
 
         var result = TypeChecker.typeCheckExpression(untypedNode, TypeCheckerContext.stub());
 
-        assertThat(result, allOf(
-            isA(TypedBoolLiteralNode.class),
-            has("value", equalTo(true))
+        assertThat(result, instanceOf(
+            TypedBoolLiteralNode.class,
+            has("value", x -> x.value(), equalTo(true))
         ));
     }
 }

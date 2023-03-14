@@ -1,21 +1,21 @@
 package org.zwobble.clunk.matchers;
 
-import org.hamcrest.Matcher;
+import org.zwobble.precisely.Matcher;
 
 import java.util.Map;
 
-import static org.hamcrest.Matchers.hasProperty;
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
+import static org.zwobble.precisely.Matchers.has;
+import static org.zwobble.precisely.Matchers.instanceOf;
 
 public class MapEntryMatcher {
     public static <K, V> Matcher<Map.Entry<K, V>> isMapEntry(
-        Matcher<K> key,
-        Matcher<V> value
+        Matcher<? super K> key,
+        Matcher<? super V> value
     ) {
-        return cast(
+        return instanceOf(
             Map.Entry.class,
-            hasProperty("key", key),
-            hasProperty("value", value)
+            has("key", x -> (K)x.getKey(), key),
+            has("value", x -> (V)x.getValue(), value)
         );
     }
 }

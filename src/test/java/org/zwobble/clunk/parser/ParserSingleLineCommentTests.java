@@ -3,11 +3,9 @@ package org.zwobble.clunk.parser;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.untyped.UntypedSingleLineCommentNode;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 import static org.zwobble.clunk.parser.Parsing.parseString;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.*;
 
 public class ParserSingleLineCommentTests {
     @Test
@@ -16,7 +14,10 @@ public class ParserSingleLineCommentTests {
 
         var node = parseString(source, Parser::parseFunctionStatement);
 
-        assertThat(node, cast(UntypedSingleLineCommentNode.class, has("value", equalTo(" Beware."))));
+        assertThat(node, instanceOf(
+            UntypedSingleLineCommentNode.class,
+            has("value", x -> x.value(), equalTo(" Beware."))
+        ));
     }
 
     @Test
@@ -25,7 +26,10 @@ public class ParserSingleLineCommentTests {
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
-        assertThat(node, cast(UntypedSingleLineCommentNode.class, has("value", equalTo(" Beware."))));
+        assertThat(node, instanceOf(
+            UntypedSingleLineCommentNode.class,
+            has("value", x -> x.value(), equalTo(" Beware."))
+        ));
     }
 
     @Test
@@ -34,6 +38,9 @@ public class ParserSingleLineCommentTests {
 
         var node = parseString(source, Parser::parseRecordBodyDeclaration);
 
-        assertThat(node, cast(UntypedSingleLineCommentNode.class, has("value", equalTo(" Beware."))));
+        assertThat(node, instanceOf(
+            UntypedSingleLineCommentNode.class,
+            has("value", x -> x.value(), equalTo(" Beware."))
+        ));
     }
 }

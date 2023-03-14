@@ -2,10 +2,11 @@ package org.zwobble.clunk.parser;
 
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.isUntypedEnumNode;
 import static org.zwobble.clunk.parser.Parsing.parseString;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.equalTo;
+import static org.zwobble.precisely.Matchers.isSequence;
 
 public class ParserEnumTests {
     @Test
@@ -14,7 +15,7 @@ public class ParserEnumTests {
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
-        assertThat(node, isUntypedEnumNode(equalTo("NoteType"), empty()));
+        assertThat(node, isUntypedEnumNode(equalTo("NoteType"), isSequence()));
     }
 
     @Test
@@ -23,7 +24,7 @@ public class ParserEnumTests {
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
-        assertThat(node, isUntypedEnumNode(equalTo("NoteType"), contains(equalTo("FOOTNOTE"))));
+        assertThat(node, isUntypedEnumNode(equalTo("NoteType"), isSequence(equalTo("FOOTNOTE"))));
     }
 
     @Test
@@ -32,7 +33,7 @@ public class ParserEnumTests {
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
-        assertThat(node, isUntypedEnumNode(equalTo("NoteType"), contains(equalTo("FOOTNOTE"), equalTo("ENDNOTE"))));
+        assertThat(node, isUntypedEnumNode(equalTo("NoteType"), isSequence(equalTo("FOOTNOTE"), equalTo("ENDNOTE"))));
     }
 
     @Test
@@ -41,6 +42,6 @@ public class ParserEnumTests {
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
-        assertThat(node, isUntypedEnumNode(equalTo("NoteType"), contains(equalTo("FOOTNOTE"))));
+        assertThat(node, isUntypedEnumNode(equalTo("NoteType"), isSequence(equalTo("FOOTNOTE"))));
     }
 }

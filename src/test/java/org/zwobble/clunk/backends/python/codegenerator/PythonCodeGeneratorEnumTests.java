@@ -10,9 +10,9 @@ import org.zwobble.clunk.types.NamespaceId;
 
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.isSequence;
+import static org.zwobble.precisely.Matchers.equalTo;
 import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class PythonCodeGeneratorEnumTests {
@@ -31,6 +31,6 @@ public class PythonCodeGeneratorEnumTests {
                     FOOTNOTE = enum.auto()
                 """
         ));
-        assertThat(context.imports(), contains(new PythonImportNode(List.of("enum"))));
+        assertThat(context.imports(), isSequence(equalTo(new PythonImportNode(List.of("enum")))));
     }
 }

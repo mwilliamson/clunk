@@ -2,8 +2,8 @@ package org.zwobble.clunk.types;
 
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.equalTo;
 
 public class TypeUnifierTests {
     @Test

@@ -5,12 +5,10 @@ import org.zwobble.clunk.ast.typed.TypedIntAddNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.types.Types;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedIntLiteralNode;
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.precisely.Matchers.*;
 
 public class TypeCheckAddTests {
     @Test
@@ -20,10 +18,10 @@ public class TypeCheckAddTests {
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 
-        assertThat(result, cast(
+        assertThat(result, instanceOf(
             TypedIntAddNode.class,
-            has("left", isTypedIntLiteralNode(1)),
-            has("right", isTypedIntLiteralNode(2))
+            has("left", x -> x.left(), isTypedIntLiteralNode(1)),
+            has("right", x -> x.right(), isTypedIntLiteralNode(2))
         ));
     }
 

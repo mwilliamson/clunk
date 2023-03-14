@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.isSequence;
+import static org.zwobble.precisely.Matchers.equalTo;
 import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class JavaCodeGeneratorNamespaceTests {
@@ -29,7 +29,7 @@ public class JavaCodeGeneratorNamespaceTests {
 
         var result = JavaCodeGenerator.compileNamespace(node, JavaTargetConfig.stub(), SubtypeRelations.EMPTY);
 
-        assertThat(serialise(result), contains(
+        assertThat(serialise(result), isSequence(
             equalTo(
                 """
                     package example.project;
@@ -57,7 +57,7 @@ public class JavaCodeGeneratorNamespaceTests {
 
         var result = JavaCodeGenerator.compileNamespace(node, JavaTargetConfig.stub(), SubtypeRelations.EMPTY);
 
-        assertThat(serialise(result), contains(
+        assertThat(serialise(result), isSequence(
             equalTo(
                 """
                     package example.project;
@@ -82,7 +82,7 @@ public class JavaCodeGeneratorNamespaceTests {
 
         var result = JavaCodeGenerator.compileNamespace(node, JavaTargetConfig.stub(), SubtypeRelations.EMPTY);
 
-        assertThat(serialise(result), contains(
+        assertThat(serialise(result), isSequence(
             equalTo(
                 """
                     package example.project;
@@ -123,7 +123,7 @@ public class JavaCodeGeneratorNamespaceTests {
 
         var result = JavaCodeGenerator.compileNamespace(node, JavaTargetConfig.stub(), SubtypeRelations.EMPTY);
 
-        assertThat(serialise(result), contains(
+        assertThat(serialise(result), isSequence(
             equalTo(
                 """
                     package example.project;
@@ -186,13 +186,13 @@ public class JavaCodeGeneratorNamespaceTests {
 
         var result = JavaCodeGenerator.compileNamespace(node, JavaTargetConfig.stub(), SubtypeRelations.EMPTY);
 
-        assertThat(serialise(result), contains(
+        assertThat(serialise(result), isSequence(
             equalTo(
                 """
                     package example.project;
                     
-                    import static org.hamcrest.MatcherAssert.assertThat;
-                    import static org.hamcrest.Matchers.equalTo;
+                    import static org.zwobble.precisely.AssertThat.assertThat;
+                    import static org.zwobble.precisely.Matchers.equalTo;
 
                     public class Project {
                         @org.junit.jupiter.api.Test

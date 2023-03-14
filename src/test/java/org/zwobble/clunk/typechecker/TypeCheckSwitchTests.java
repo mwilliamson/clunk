@@ -9,12 +9,10 @@ import org.zwobble.clunk.types.*;
 
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 
 public class TypeCheckSwitchTests {
     private final NamespaceId namespaceId = NamespaceId.source("example");
@@ -46,18 +44,18 @@ public class TypeCheckSwitchTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
-        assertThat(result.value(), contains(
-            cast(
+        assertThat(result.value(), isSequence(
+            instanceOf(
                 TypedSwitchNode.class,
-                has("expression", isTypedReferenceNode().withName("x").withType(interfaceType)),
-                has("cases", contains(
-                    cast(
+                has("expression", x -> x.expression(), isTypedReferenceNode().withName("x").withType(interfaceType)),
+                has("cases", x -> x.cases(), isSequence(
+                    instanceOf(
                         TypedSwitchCaseNode.class,
-                        has("type", isTypedTypeLevelReferenceNode("A", recordType1))
+                        has("type", x -> x.type(), isTypedTypeLevelReferenceNode("A", recordType1))
                     ),
-                    cast(
+                    instanceOf(
                         TypedSwitchCaseNode.class,
-                        has("type", isTypedTypeLevelReferenceNode("B", recordType2))
+                        has("type", x -> x.type(), isTypedTypeLevelReferenceNode("B", recordType2))
                     )
                 ))
             )
@@ -111,7 +109,7 @@ public class TypeCheckSwitchTests {
             () -> TypeChecker.typeCheckFunctionStatement(untypedNode, context)
         );
 
-        assertThat(result.getUnhandledTypes(), contains(recordType2));
+        assertThat(result.getUnhandledTypes(), isSequence(equalTo(recordType2)));
     }
 
     @Test
@@ -200,19 +198,19 @@ public class TypeCheckSwitchTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
-        assertThat(result.value(), contains(
-            cast(
+        assertThat(result.value(), isSequence(
+            instanceOf(
                 TypedSwitchNode.class,
-                has("cases", contains(
-                    cast(
+                has("cases", x -> x.cases(), isSequence(
+                    instanceOf(
                         TypedSwitchCaseNode.class,
-                        has("body", contains(
+                        has("body", x -> x.body(), isSequence(
                             isTypedExpressionStatementNode(isTypedReferenceNode().withName("x").withType(recordType1))
                         ))
                     ),
-                    cast(
+                    instanceOf(
                         TypedSwitchCaseNode.class,
-                        has("body", contains(
+                        has("body", x -> x.body(), isSequence(
                             isTypedExpressionStatementNode(isTypedReferenceNode().withName("x").withType(recordType2))
                         ))
                     )
@@ -250,10 +248,10 @@ public class TypeCheckSwitchTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
-        assertThat(result.value(), contains(
-            cast(
+        assertThat(result.value(), isSequence(
+            instanceOf(
                 TypedSwitchNode.class,
-                has("returns", equalTo(true))
+                has("returns", x -> x.returns(), equalTo(true))
             )
         ));
     }
@@ -285,10 +283,10 @@ public class TypeCheckSwitchTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
-        assertThat(result.value(), contains(
-            cast(
+        assertThat(result.value(), isSequence(
+            instanceOf(
                 TypedSwitchNode.class,
-                has("returns", equalTo(false))
+                has("returns", x -> x.returns(), equalTo(false))
             )
         ));
     }

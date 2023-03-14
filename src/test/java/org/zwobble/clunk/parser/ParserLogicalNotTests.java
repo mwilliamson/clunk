@@ -3,11 +3,11 @@ package org.zwobble.clunk.parser;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.untyped.UntypedLogicalNotNode;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.isUntypedReferenceNode;
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 import static org.zwobble.clunk.parser.Parsing.parseString;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.has;
+import static org.zwobble.precisely.Matchers.instanceOf;
 
 public class ParserLogicalNotTests {
     @Test
@@ -16,9 +16,9 @@ public class ParserLogicalNotTests {
 
         var result = parseString(source, Parser::parseTopLevelExpression);
 
-        assertThat(result, cast(
+        assertThat(result, instanceOf(
             UntypedLogicalNotNode.class,
-            has("operand", isUntypedReferenceNode("a"))
+            has("operand", x -> x.operand(), isUntypedReferenceNode("a"))
         ));
     }
 }

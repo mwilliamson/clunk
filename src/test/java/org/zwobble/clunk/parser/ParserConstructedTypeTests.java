@@ -2,11 +2,11 @@ package org.zwobble.clunk.parser;
 
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.isUntypedConstructedTypeNode;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.isUntypedTypeLevelReferenceNode;
 import static org.zwobble.clunk.parser.Parsing.parseString;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.isSequence;
 
 public class ParserConstructedTypeTests {
     @Test
@@ -17,7 +17,7 @@ public class ParserConstructedTypeTests {
 
         assertThat(node, isUntypedConstructedTypeNode(
             isUntypedTypeLevelReferenceNode("List"),
-            contains(isUntypedTypeLevelReferenceNode("String"))
+            isSequence(isUntypedTypeLevelReferenceNode("String"))
         ));
     }
 
@@ -29,7 +29,7 @@ public class ParserConstructedTypeTests {
 
         assertThat(node, isUntypedConstructedTypeNode(
             isUntypedTypeLevelReferenceNode("A"),
-            contains(
+            isSequence(
                 isUntypedTypeLevelReferenceNode("B"),
                 isUntypedTypeLevelReferenceNode("C"),
                 isUntypedTypeLevelReferenceNode("D")

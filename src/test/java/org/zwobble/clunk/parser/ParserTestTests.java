@@ -2,11 +2,10 @@ package org.zwobble.clunk.parser;
 
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.empty;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.*;
 import static org.zwobble.clunk.parser.Parsing.parseString;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.isSequence;
 
 public class ParserTestTests {
     @Test
@@ -17,7 +16,7 @@ public class ParserTestTests {
 
         assertThat(node, isUntypedTestNode()
             .withName("f")
-            .withBody(empty())
+            .withBody(isSequence())
         );
     }
 
@@ -27,7 +26,7 @@ public class ParserTestTests {
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
-        assertThat(node, isUntypedTestNode().withBody(contains(
+        assertThat(node, isUntypedTestNode().withBody(isSequence(
             isUntypedVarNode().withName("x"),
             isUntypedVarNode().withName("y")
         )));

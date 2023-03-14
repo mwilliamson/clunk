@@ -4,9 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.untyped.UntypedFunctionNode;
 import org.zwobble.clunk.ast.untyped.UntypedTestSuiteNode;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.isSequence;
+import static org.zwobble.precisely.Matchers.equalTo;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedFunctionNode;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedTestSuiteNode;
 import static org.zwobble.clunk.typechecker.TypeCheckNamespaceStatementTesting.typeCheckNamespaceStatementAllPhases;
@@ -24,7 +24,7 @@ public class TypeCheckTestSuiteTests {
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
-        assertThat(result.typedNode(), isTypedTestSuiteNode().withBody(contains(
+        assertThat(result.typedNode(), isTypedTestSuiteNode().withBody(isSequence(
             isTypedFunctionNode().withName("f")
         )));
     }

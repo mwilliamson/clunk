@@ -13,6 +13,12 @@
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
 
     <dependencyManagement>
         <dependencies>
@@ -48,9 +54,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest</artifactId>
-            <version>2.2</version>
+            <groupId>com.github.mwilliamson</groupId>
+            <artifactId>java-precisely</artifactId>
+            <version>7158b6324d20b5b177be3f3a60681998c2d0c67f</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

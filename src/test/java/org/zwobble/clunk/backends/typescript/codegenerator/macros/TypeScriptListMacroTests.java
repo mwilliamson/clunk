@@ -10,9 +10,9 @@ import org.zwobble.clunk.types.Types;
 
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.isSequence;
+import static org.zwobble.precisely.Matchers.equalTo;
 import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class TypeScriptListMacroTests {
@@ -88,8 +88,8 @@ public class TypeScriptListMacroTests {
 
         var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("lodash_last(xs)!"));
-        assertThat(context.imports(), contains(
-            TypeScript.import_("lodash", List.of(TypeScript.importNamedMember("last", "lodash_last")))
+        assertThat(context.imports(), isSequence(
+            equalTo(TypeScript.import_("lodash", List.of(TypeScript.importNamedMember("last", "lodash_last"))))
         ));
     }
 

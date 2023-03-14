@@ -4,11 +4,11 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.TypedSingleLineCommentNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.isSequence;
+import static org.zwobble.precisely.Matchers.equalTo;
+import static org.zwobble.precisely.Matchers.instanceOf;
+import static org.zwobble.precisely.Matchers.has;
 import static org.zwobble.clunk.typechecker.TypeCheckNamespaceStatementTesting.typeCheckNamespaceStatementAllPhases;
 
 public class TypeCheckSingleLineCommentTests {
@@ -18,10 +18,10 @@ public class TypeCheckSingleLineCommentTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, TypeCheckerContext.stub());
 
-        assertThat(result.value(), contains(
-            cast(
+        assertThat(result.value(), isSequence(
+            instanceOf(
                 TypedSingleLineCommentNode.class,
-                has("value", equalTo(" Beware."))
+                has("value", x -> x.value(), equalTo(" Beware."))
             )
         ));
     }
@@ -32,9 +32,9 @@ public class TypeCheckSingleLineCommentTests {
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, TypeCheckerContext.stub());
 
-        assertThat(result.typedNode(), cast(
+        assertThat(result.typedNode(), instanceOf(
             TypedSingleLineCommentNode.class,
-            has("value", equalTo(" Beware."))
+            has("value", x -> x.value(), equalTo(" Beware."))
         ));
     }
 }

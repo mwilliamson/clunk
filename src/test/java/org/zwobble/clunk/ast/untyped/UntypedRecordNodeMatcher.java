@@ -1,41 +1,40 @@
 package org.zwobble.clunk.ast.untyped;
 
-import org.hamcrest.Matcher;
 import org.zwobble.clunk.matchers.CastMatcher;
 import org.zwobble.clunk.util.Lists;
+import org.zwobble.precisely.Matcher;
 
 import java.util.List;
 
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.equalTo;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.precisely.Matchers.equalTo;
+import static org.zwobble.precisely.Matchers.has;
 
 public class UntypedRecordNodeMatcher extends CastMatcher<Object, UntypedRecordNode> {
     private final List<Matcher<? super UntypedRecordNode>> matchers;
 
     public UntypedRecordNodeMatcher(List<Matcher<? super UntypedRecordNode>> matchers) {
-        super(UntypedRecordNode.class, allOf(matchers));
+        super(UntypedRecordNode.class, matchers);
         this.matchers = matchers;
     }
 
     public UntypedRecordNodeMatcher withName(String name) {
-        return addMatcher(has("name", equalTo(name)));
+        return addMatcher(has("name", x -> x.name(), equalTo(name)));
     }
 
     public UntypedRecordNodeMatcher withFields(
-        Matcher<Iterable<? extends UntypedRecordFieldNode>> matcher
+        Matcher<Iterable<UntypedRecordFieldNode>> matcher
     ) {
-        return addMatcher(has("fields", matcher));
+        return addMatcher(has("fields", x -> x.fields(), matcher));
     }
 
-    public UntypedRecordNodeMatcher withSupertypes(Matcher<? extends Iterable<? extends UntypedTypeLevelExpressionNode>> matcher) {
-        return addMatcher(has("supertypes", matcher));
+    public UntypedRecordNodeMatcher withSupertypes(Matcher<Iterable<UntypedTypeLevelExpressionNode>> matcher) {
+        return addMatcher(has("supertypes", x -> x.supertypes(), matcher));
     }
 
     public UntypedRecordNodeMatcher withBody(
-        Matcher<Iterable<? extends UntypedRecordBodyDeclarationNode>> matcher
+        Matcher<Iterable<UntypedRecordBodyDeclarationNode>> matcher
     ) {
-        return addMatcher(has("body", matcher));
+        return addMatcher(has("body", x -> x.body(), matcher));
     }
 
     private UntypedRecordNodeMatcher addMatcher(Matcher<UntypedRecordNode> matcher) {

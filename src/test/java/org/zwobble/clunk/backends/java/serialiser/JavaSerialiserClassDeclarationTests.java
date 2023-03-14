@@ -5,8 +5,8 @@ import org.zwobble.clunk.backends.java.ast.Java;
 import org.zwobble.clunk.backends.java.ast.JavaClassDeclarationNode;
 import org.zwobble.clunk.backends.java.ast.JavaMethodDeclarationNode;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.equalTo;
 import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class JavaSerialiserClassDeclarationTests {

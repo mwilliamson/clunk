@@ -5,9 +5,9 @@ import org.zwobble.clunk.ast.typed.TypedBoolLiteralNode;
 import org.zwobble.clunk.ast.typed.TypedExpressionStatementNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.*;
+import static org.zwobble.precisely.Matchers.has;
 
 public class TypeCheckExpressionStatementTests {
     @Test
@@ -16,12 +16,12 @@ public class TypeCheckExpressionStatementTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, TypeCheckerContext.stub());
 
-        assertThat(result.value(), contains(
-            allOf(
-                isA(TypedExpressionStatementNode.class),
-                has("expression", allOf(
-                    isA(TypedBoolLiteralNode.class),
-                    has("value", equalTo(false))
+        assertThat(result.value(), isSequence(
+            instanceOf(
+                TypedExpressionStatementNode.class,
+                has("expression", x -> x.expression(), instanceOf(
+                    TypedBoolLiteralNode.class,
+                    has("value", x -> x.value(), equalTo(false))
                 ))
             )
         ));

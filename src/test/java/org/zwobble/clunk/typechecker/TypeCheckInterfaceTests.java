@@ -8,10 +8,10 @@ import org.zwobble.clunk.types.InterfaceType;
 import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.TypeLevelValueType;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.equalTo;
+import static org.zwobble.precisely.Matchers.instanceOf;
+import static org.zwobble.precisely.Matchers.has;
 import static org.zwobble.clunk.matchers.MapEntryMatcher.isMapEntry;
 import static org.zwobble.clunk.matchers.OptionalMatcher.present;
 import static org.zwobble.clunk.matchers.TypeMatchers.isMetaType;
@@ -27,12 +27,12 @@ public class TypeCheckInterfaceTests {
 
         assertThat(
             result.context().typeOf("DocumentElement", NullSource.INSTANCE),
-            cast(
+            instanceOf(
                 TypeLevelValueType.class,
-                has("value", cast(
+                has("value", x -> x.value(), instanceOf(
                     InterfaceType.class,
-                    has("namespaceId", equalTo(NamespaceId.source("a", "b"))),
-                    has("name", equalTo("DocumentElement"))
+                    has("namespaceId", x -> x.namespaceId(), equalTo(NamespaceId.source("a", "b"))),
+                    has("name", x -> x.name(), equalTo("DocumentElement"))
                 ))
             )
         );
@@ -45,14 +45,14 @@ public class TypeCheckInterfaceTests {
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
-        assertThat(result.typedNode(), cast(
+        assertThat(result.typedNode(), instanceOf(
             TypedInterfaceNode.class,
-            has("name", equalTo("DocumentElement")),
-            has("type", cast(
+            has("name", x -> x.name(), equalTo("DocumentElement")),
+            has("type", x -> x.type(), instanceOf(
                 InterfaceType.class,
-                has("namespaceId", equalTo(NamespaceId.source("a", "b"))),
-                has("name", equalTo("DocumentElement")),
-                has("isSealed", equalTo(false))
+                has("namespaceId", x -> x.namespaceId(), equalTo(NamespaceId.source("a", "b"))),
+                has("name", x -> x.name(), equalTo("DocumentElement")),
+                has("isSealed", x -> x.isSealed(), equalTo(false))
             ))
         ));
     }
@@ -64,14 +64,14 @@ public class TypeCheckInterfaceTests {
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
-        assertThat(result.typedNode(), cast(
+        assertThat(result.typedNode(), instanceOf(
             TypedInterfaceNode.class,
-            has("name", equalTo("DocumentElement")),
-            has("type", cast(
+            has("name", x -> x.name(), equalTo("DocumentElement")),
+            has("type", x -> x.type(), instanceOf(
                 InterfaceType.class,
-                has("namespaceId", equalTo(NamespaceId.source("a", "b"))),
-                has("name", equalTo("DocumentElement")),
-                has("isSealed", equalTo(true))
+                has("namespaceId", x -> x.namespaceId(), equalTo(NamespaceId.source("a", "b"))),
+                has("name", x -> x.name(), equalTo("DocumentElement")),
+                has("isSealed", x -> x.isSealed(), equalTo(true))
             ))
         ));
     }
@@ -87,9 +87,9 @@ public class TypeCheckInterfaceTests {
             result.fieldType(),
             present(isMapEntry(
                 equalTo("DocumentElement"),
-                isMetaType(cast(
+                isMetaType(instanceOf(
                     InterfaceType.class,
-                    has("name", equalTo("DocumentElement"))
+                    has("name", x -> x.name(), equalTo("DocumentElement"))
                 ))
             ))
         );

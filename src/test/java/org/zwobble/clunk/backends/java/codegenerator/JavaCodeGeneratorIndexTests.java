@@ -7,9 +7,9 @@ import org.zwobble.clunk.backends.java.serialiser.JavaSerialiserTesting;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.Types;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.isSequence;
+import static org.zwobble.precisely.Matchers.equalTo;
 import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class JavaCodeGeneratorIndexTests {

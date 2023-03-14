@@ -4,9 +4,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.empty;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.containsExactly;
+import static org.zwobble.precisely.Matchers.equalTo;
 
 public class SubtypeRelationsTests {
     private static final NamespaceId NAMESPACE_ID = NamespaceId.source("Example");
@@ -22,7 +22,7 @@ public class SubtypeRelationsTests {
 
         var result = relations.sealedInterfaceCases(sealedInterfaceTypeTwo);
 
-        assertThat(result, empty());
+        assertThat(result, containsExactly());
     }
 
     @Test
@@ -33,7 +33,7 @@ public class SubtypeRelationsTests {
 
         var result = relations.sealedInterfaceCases(sealedInterfaceTypeOne);
 
-        assertThat(result, containsInAnyOrder(recordTypeOne, recordTypeTwo));
+        assertThat(result, containsExactly(equalTo(recordTypeOne), equalTo(recordTypeTwo)));
     }
 
     @Test
@@ -43,7 +43,7 @@ public class SubtypeRelationsTests {
 
         var result = relations.extendedTypes(recordTypeTwo);
 
-        assertThat(result, empty());
+        assertThat(result, containsExactly());
     }
 
     @Test
@@ -54,7 +54,7 @@ public class SubtypeRelationsTests {
 
         var result = relations.extendedTypes(recordTypeOne);
 
-        assertThat(result, containsInAnyOrder(sealedInterfaceTypeOne, sealedInterfaceTypeTwo));
+        assertThat(result, containsExactly(equalTo(sealedInterfaceTypeOne), equalTo(sealedInterfaceTypeTwo)));
     }
 
     @Test
@@ -69,7 +69,7 @@ public class SubtypeRelationsTests {
 
         var result = relations.extendedTypes(Types.construct(recordTypeConstructor, List.of(Types.STRING)));
 
-        assertThat(result, containsInAnyOrder(sealedInterfaceTypeOne));
+        assertThat(result, containsExactly(equalTo(sealedInterfaceTypeOne)));
     }
 
     @Test
@@ -90,6 +90,6 @@ public class SubtypeRelationsTests {
 
         var result = relations.extendedTypes(Types.construct(recordTypeConstructor, List.of(Types.STRING)));
 
-        assertThat(result, containsInAnyOrder(Types.construct(interfaceTypeConstructor, List.of(Types.STRING))));
+        assertThat(result, containsExactly(equalTo(Types.construct(interfaceTypeConstructor, List.of(Types.STRING)))));
     }
 }

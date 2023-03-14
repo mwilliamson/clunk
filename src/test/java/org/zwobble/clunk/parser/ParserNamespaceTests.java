@@ -6,10 +6,10 @@ import org.zwobble.clunk.types.NamespaceName;
 
 import java.util.Optional;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.*;
 import static org.zwobble.clunk.parser.Parsing.parseString;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.isSequence;
 
 public class ParserNamespaceTests {
     @Test
@@ -25,7 +25,7 @@ public class ParserNamespaceTests {
             )
         );
 
-        assertThat(node, isUntypedNamespaceNode().withImports(contains(
+        assertThat(node, isUntypedNamespaceNode().withImports(isSequence(
             isUntypedImportNode(NamespaceName.fromParts("Example"), Optional.empty()),
             isUntypedImportNode(NamespaceName.fromParts("Stdlib", "Assert"), Optional.empty()),
             isUntypedImportNode(NamespaceName.fromParts("Stdlib", "Matchers"), Optional.empty())
@@ -45,7 +45,7 @@ public class ParserNamespaceTests {
             )
         );
 
-        assertThat(node, isUntypedNamespaceNode().withImports(contains(
+        assertThat(node, isUntypedNamespaceNode().withImports(isSequence(
             isUntypedImportNode(NamespaceName.fromParts("a"), Optional.of("B")),
             isUntypedImportNode(NamespaceName.fromParts("a", "b"), Optional.of("C")),
             isUntypedImportNode(NamespaceName.fromParts("a", "b", "c"), Optional.of("D"))
@@ -65,7 +65,7 @@ public class ParserNamespaceTests {
             )
         );
 
-        assertThat(node, isUntypedNamespaceNode().withStatements(contains(
+        assertThat(node, isUntypedNamespaceNode().withStatements(isSequence(
             isUntypedRecordNode().withName("First"),
             isUntypedRecordNode().withName("Second")
         )));
@@ -84,7 +84,7 @@ public class ParserNamespaceTests {
             )
         );
 
-        assertThat(node, isUntypedNamespaceNode().withStatements(contains(
+        assertThat(node, isUntypedNamespaceNode().withStatements(isSequence(
             isUntypedRecordNode().withName("First"),
             isUntypedBlankLineNode(),
             isUntypedRecordNode().withName("Second")

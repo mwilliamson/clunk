@@ -8,8 +8,8 @@ import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.equalTo;
 import static org.zwobble.clunk.testing.ProjectRoot.findRoot;
 import static org.zwobble.clunk.util.DeleteRecursive.deleteRecursive;
 

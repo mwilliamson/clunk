@@ -1,36 +1,35 @@
 package org.zwobble.clunk.ast.untyped;
 
-import org.hamcrest.Matcher;
 import org.zwobble.clunk.matchers.CastMatcher;
 import org.zwobble.clunk.util.Lists;
+import org.zwobble.precisely.Matcher;
 
 import java.util.List;
 
-import static org.hamcrest.Matchers.allOf;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.precisely.Matchers.has;
 
 public class UntypedCallNodeMatcher extends CastMatcher<Object, UntypedCallNode> {
     private final List<Matcher<? super UntypedCallNode>> matchers;
 
     public UntypedCallNodeMatcher(List<Matcher<? super UntypedCallNode>> matchers) {
-        super(UntypedCallNode.class, allOf(matchers));
+        super(UntypedCallNode.class, matchers);
         this.matchers = matchers;
     }
 
     public UntypedCallNodeMatcher withReceiver(Matcher<? super UntypedExpressionNode> receiver) {
-        return addMatcher(has("receiver", receiver));
+        return addMatcher(has("receiver", x -> x.receiver(), receiver));
     }
 
-    public UntypedCallNodeMatcher withTypeLevelArgs(Matcher<? extends Iterable<? extends UntypedTypeLevelExpressionNode>> typeLevelArgs) {
-        return addMatcher(has("typeLevelArgs", typeLevelArgs));
+    public UntypedCallNodeMatcher withTypeLevelArgs(Matcher<Iterable<UntypedTypeLevelExpressionNode>> typeLevelArgs) {
+        return addMatcher(has("typeLevelArgs", x -> x.typeLevelArgs(), typeLevelArgs));
     }
 
-    public UntypedCallNodeMatcher withPositionalArgs(Matcher<? extends Iterable<? extends UntypedExpressionNode>> positionalArgs) {
-        return addMatcher(has("positionalArgs", positionalArgs));
+    public UntypedCallNodeMatcher withPositionalArgs(Matcher<Iterable<UntypedExpressionNode>> positionalArgs) {
+        return addMatcher(has("positionalArgs", x -> x.positionalArgs(), positionalArgs));
     }
 
-    public UntypedCallNodeMatcher withNamedArgs(Matcher<? extends Iterable<? extends UntypedNamedArgNode>> namedArgs) {
-        return addMatcher(has("namedArgs", namedArgs));
+    public UntypedCallNodeMatcher withNamedArgs(Matcher<Iterable<UntypedNamedArgNode>> namedArgs) {
+        return addMatcher(has("namedArgs", x -> x.namedArgs(), namedArgs));
     }
 
     private UntypedCallNodeMatcher addMatcher(Matcher<UntypedCallNode> matcher) {

@@ -10,12 +10,12 @@ import org.zwobble.clunk.types.Types;
 
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.precisely.Matchers.instanceOf;
+import static org.zwobble.precisely.Matchers.has;
 
 public class TypeCheckIfStatementTests {
     @Test
@@ -29,11 +29,11 @@ public class TypeCheckIfStatementTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, TypeCheckerContext.stub());
 
-        assertThat(result.value(), contains(
-            allOf(
-                isA(TypedIfStatementNode.class),
-                has("conditionalBranches", contains(
-                    has("condition", isTypedBoolLiteralNode(false))
+        assertThat(result.value(), isSequence(
+            instanceOf(
+                TypedIfStatementNode.class,
+                has("conditionalBranches", x -> x.conditionalBranches(), isSequence(
+                    has("condition", x -> x.condition(), isTypedBoolLiteralNode(false))
                 ))
             )
         ));
@@ -70,11 +70,11 @@ public class TypeCheckIfStatementTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, TypeCheckerContext.stub());
 
-        assertThat(result.value(), contains(
-            allOf(
-                isA(TypedIfStatementNode.class),
-                has("conditionalBranches", contains(
-                    has("body", contains(isTypedExpressionStatementNode(isTypedIntLiteralNode(42))))
+        assertThat(result.value(), isSequence(
+            instanceOf(
+                TypedIfStatementNode.class,
+                has("conditionalBranches", x -> x.conditionalBranches(), isSequence(
+                    has("body", x -> x.body(), isSequence(isTypedExpressionStatementNode(isTypedIntLiteralNode(42))))
                 ))
             )
         ));
@@ -91,10 +91,10 @@ public class TypeCheckIfStatementTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, TypeCheckerContext.stub());
 
-        assertThat(result.value(), contains(
-            allOf(
-                isA(TypedIfStatementNode.class),
-                has("elseBody", contains(isTypedExpressionStatementNode(isTypedIntLiteralNode(42))))
+        assertThat(result.value(), isSequence(
+            instanceOf(
+                TypedIfStatementNode.class,
+                has("elseBody", x -> x.elseBody(), isSequence(isTypedExpressionStatementNode(isTypedIntLiteralNode(42))))
             )
         ));
     }
@@ -171,16 +171,18 @@ public class TypeCheckIfStatementTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
-        assertThat(result.value(), contains(
-            allOf(
-                isA(TypedIfStatementNode.class),
-                has("conditionalBranches", contains(
-                    has("body", contains(
+        assertThat(result.value(), isSequence(
+            instanceOf(
+                TypedIfStatementNode.class,
+                has("conditionalBranches", x -> x.conditionalBranches(), isSequence(
+                    has("body", x -> x.body(), isSequence(
                         isTypedTypeNarrowNode("x", equalTo(recordType)),
                         isTypedReturnNode().withExpression(isTypedReferenceNode().withType(recordType))
                     ))
                 )),
-                has("elseBody", contains(isTypedReturnNode().withExpression(isTypedReferenceNode().withType(interfaceType))))
+                has("elseBody", x -> x.elseBody(), isSequence(
+                    isTypedReturnNode().withExpression(isTypedReferenceNode().withType(interfaceType)))
+                )
             )
         ));
     }
@@ -218,18 +220,18 @@ public class TypeCheckIfStatementTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
-        assertThat(result.value(), contains(
-            allOf(
-                isA(TypedIfStatementNode.class),
-                has("conditionalBranches", contains(
-                    has("body", contains(isTypedExpressionStatementNode(isTypedReferenceNode().withType(interfaceType)))),
-                    has("body", contains(isTypedExpressionStatementNode(isTypedReferenceNode().withType(interfaceType)))),
-                    has("body", contains(
+        assertThat(result.value(), isSequence(
+            instanceOf(
+                TypedIfStatementNode.class,
+                has("conditionalBranches", x -> x.conditionalBranches(), isSequence(
+                    has("body", x -> x.body(), isSequence(isTypedExpressionStatementNode(isTypedReferenceNode().withType(interfaceType)))),
+                    has("body", x -> x.body(), isSequence(isTypedExpressionStatementNode(isTypedReferenceNode().withType(interfaceType)))),
+                    has("body", x -> x.body(), isSequence(
                         isTypedTypeNarrowNode("x", equalTo(recordType)),
                         isTypedExpressionStatementNode(isTypedReferenceNode().withType(recordType))
                     ))
                 )),
-                has("elseBody", contains(
+                has("elseBody", x -> x.elseBody(), isSequence(
                     isTypedTypeNarrowNode("x", equalTo(recordType)),
                     isTypedExpressionStatementNode(isTypedReferenceNode().withType(recordType))
                 ))
@@ -266,14 +268,14 @@ public class TypeCheckIfStatementTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
-        assertThat(result.value(), contains(
-            allOf(
-                isA(TypedIfStatementNode.class),
-                has("conditionalBranches", contains(
-                    has("body", contains(isTypedExpressionStatementNode(isTypedReferenceNode().withType(interfaceType)))),
-                    has("body", empty())
+        assertThat(result.value(), isSequence(
+            instanceOf(
+                TypedIfStatementNode.class,
+                has("conditionalBranches", x -> x.conditionalBranches(), isSequence(
+                    has("body", x -> x.body(), isSequence(isTypedExpressionStatementNode(isTypedReferenceNode().withType(interfaceType)))),
+                    has("body", x -> x.body(), isSequence())
                 )),
-                has("elseBody", empty())
+                has("elseBody", x -> x.elseBody(), isSequence())
             )
         ));
     }
@@ -313,8 +315,8 @@ public class TypeCheckIfStatementTests {
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
         assertThat(result.context().typeOf("x", NullSource.INSTANCE), equalTo(interfaceType));
-        assertThat(result.value(), contains(
-            isA(TypedIfStatementNode.class)
+        assertThat(result.value(), isSequence(
+            instanceOf(TypedIfStatementNode.class)
         ));
     }
 
@@ -343,9 +345,9 @@ public class TypeCheckIfStatementTests {
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
         assertThat(result.context().typeOf("x", NullSource.INSTANCE), equalTo(recordType));
-        assertThat(result.value(), contains(
-            isA(TypedIfStatementNode.class),
-            cast(TypedTypeNarrowNode.class, isTypedTypeNarrowNode("x", equalTo(recordType)))
+        assertThat(result.value(), isSequence(
+            instanceOf(TypedIfStatementNode.class),
+            instanceOf(TypedTypeNarrowNode.class, isTypedTypeNarrowNode("x", equalTo(recordType)))
         ));
     }
 }

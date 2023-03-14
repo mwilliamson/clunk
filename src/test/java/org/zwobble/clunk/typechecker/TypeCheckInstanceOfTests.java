@@ -6,13 +6,11 @@ import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.*;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedReferenceNode;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedTypeLevelReferenceNode;
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.precisely.Matchers.*;
 
 public class TypeCheckInstanceOfTests {
     private final NamespaceId namespaceId = NamespaceId.source("example");
@@ -34,10 +32,10 @@ public class TypeCheckInstanceOfTests {
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 
-        assertThat(result, cast(
+        assertThat(result, instanceOf(
             TypedInstanceOfNode.class,
-            has("expression", isTypedReferenceNode().withName("x").withType(interfaceType)),
-            has("typeExpression", isTypedTypeLevelReferenceNode("A", recordType1))
+            has("expression", x -> x.expression(), isTypedReferenceNode().withName("x").withType(interfaceType)),
+            has("typeExpression", x -> x.typeExpression(), isTypedTypeLevelReferenceNode("A", recordType1))
         ));
     }
 

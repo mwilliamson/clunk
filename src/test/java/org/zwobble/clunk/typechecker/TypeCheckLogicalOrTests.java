@@ -5,12 +5,12 @@ import org.zwobble.clunk.ast.typed.TypedLogicalOrNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.types.Types;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedBoolLiteralNode;
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.precisely.Matchers.instanceOf;
+import static org.zwobble.precisely.Matchers.has;
 
 public class TypeCheckLogicalOrTests {
     @Test
@@ -20,10 +20,10 @@ public class TypeCheckLogicalOrTests {
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 
-        assertThat(result, cast(
+        assertThat(result, instanceOf(
             TypedLogicalOrNode.class,
-            has("left", isTypedBoolLiteralNode(false)),
-            has("right", isTypedBoolLiteralNode(true))
+            has("left", x -> x.left(), isTypedBoolLiteralNode(false)),
+            has("right", x -> x.right(), isTypedBoolLiteralNode(true))
         ));
     }
 

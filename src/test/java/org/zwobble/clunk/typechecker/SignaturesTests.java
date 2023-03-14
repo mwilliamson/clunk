@@ -6,12 +6,9 @@ import org.zwobble.clunk.types.*;
 
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.precisely.Matchers.*;
 
 public class SignaturesTests {
     @Test
@@ -38,10 +35,10 @@ public class SignaturesTests {
 
         var result = Signatures.toSignature(methodType, context, NullSource.INSTANCE);
 
-        assertThat(result, cast(
+        assertThat(result, instanceOf(
             SignatureNonGeneric.class,
-            has("positionalParams", contains(equalTo(Types.INT))),
-            has("returnType", equalTo(Types.INT))
+            has("positionalParams", x -> x.positionalParams(), isSequence(equalTo(Types.INT))),
+            has("returnType", x -> x.returnType(), equalTo(Types.INT))
         ));
     }
 
@@ -59,9 +56,9 @@ public class SignaturesTests {
 
         var result = Signatures.toSignature(methodType, context, NullSource.INSTANCE);
 
-        assertThat(result, cast(
+        assertThat(result, instanceOf(
             SignatureGeneric.class,
-            has("typeParams", contains(equalTo(typeParameter)))
+            has("typeParams", x -> x.typeParams(), isSequence(equalTo(typeParameter)))
         ));
     }
 
@@ -89,7 +86,7 @@ public class SignaturesTests {
 
         var result = Signatures.toSignature(Types.metaType(recordType), context, NullSource.INSTANCE);
 
-        assertThat(result, cast(SignatureNonGeneric.class));
+        assertThat(result, instanceOf(SignatureNonGeneric.class));
     }
 
     @Test
@@ -102,7 +99,7 @@ public class SignaturesTests {
 
         var result = Signatures.toSignature(Types.metaType(recordType), context, NullSource.INSTANCE);
 
-        assertThat(result, cast(SignatureNonGeneric.class));
+        assertThat(result, instanceOf(SignatureNonGeneric.class));
     }
 
     @Test
@@ -130,10 +127,10 @@ public class SignaturesTests {
 
         var result = Signatures.toSignature(Types.metaType(recordType), context, NullSource.INSTANCE);
 
-        assertThat(result, cast(
+        assertThat(result, instanceOf(
             SignatureNonGeneric.class,
-            has("positionalParams", contains(equalTo(Types.INT))),
-            has("returnType", equalTo(recordType))
+            has("positionalParams", x -> x.positionalParams(), isSequence(equalTo(Types.INT))),
+            has("returnType", x -> x.returnType(), equalTo(recordType))
         ));
     }
 
@@ -149,9 +146,9 @@ public class SignaturesTests {
 
         var result = Signatures.toSignature(Types.typeConstructorType(typeConstructor), context, NullSource.INSTANCE);
 
-        assertThat(result, cast(
+        assertThat(result, instanceOf(
             SignatureGeneric.class,
-            has("type", equalTo(Types.constructorType(
+            has("type", x -> x.type(), equalTo(Types.constructorType(
                 List.of(typeParameter),
                 List.of(typeParameter),
                 Types.construct(typeConstructor, List.of(typeParameter)),

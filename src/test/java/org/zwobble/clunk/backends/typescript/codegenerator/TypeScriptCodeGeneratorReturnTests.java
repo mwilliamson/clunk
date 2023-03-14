@@ -6,8 +6,8 @@ import org.zwobble.clunk.backends.python.codegenerator.PythonCodeGenerator;
 import org.zwobble.clunk.backends.python.serialiser.PythonSerialiser;
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.equalTo;
 import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class TypeScriptCodeGeneratorReturnTests {

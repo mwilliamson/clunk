@@ -5,7 +5,7 @@ import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.IntType;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.zwobble.precisely.AssertThat.assertThat;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedReferenceNode;
 
 public class TypeCheckReferenceTests {

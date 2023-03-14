@@ -4,12 +4,10 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.untyped.UntypedSwitchCaseNode;
 import org.zwobble.clunk.ast.untyped.UntypedSwitchNode;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.*;
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 import static org.zwobble.clunk.parser.Parsing.parseString;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.*;
 
 public class ParserSwitchTests {
     @Test
@@ -27,21 +25,21 @@ public class ParserSwitchTests {
 
         var node = parseString(source, Parser::parseFunctionStatement);
 
-        assertThat(node, cast(
+        assertThat(node, instanceOf(
             UntypedSwitchNode.class,
-            has("expression", isUntypedReferenceNode("x")),
-            has("cases", contains(
-                cast(
+            has("expression", x -> x.expression(), isUntypedReferenceNode("x")),
+            has("cases", x -> x.cases(), isSequence(
+                instanceOf(
                     UntypedSwitchCaseNode.class,
-                    has("type", isUntypedTypeLevelReferenceNode("A")),
-                    has("body", contains(
+                    has("type", x -> x.type(), isUntypedTypeLevelReferenceNode("A")),
+                    has("body", x -> x.body(), isSequence(
                         isUntypedReturnNode().withExpression(isUntypedIntLiteralNode(1))
                     ))
                 ),
-                cast(
+                instanceOf(
                     UntypedSwitchCaseNode.class,
-                    has("type", isUntypedTypeLevelReferenceNode("B")),
-                    has("body", contains(
+                    has("type", x -> x.type(), isUntypedTypeLevelReferenceNode("B")),
+                    has("body", x -> x.body(), isSequence(
                         isUntypedReturnNode().withExpression(isUntypedIntLiteralNode(2))
                     ))
                 )
@@ -67,16 +65,16 @@ public class ParserSwitchTests {
 
         var node = parseString(source, Parser::parseFunctionStatement);
 
-        assertThat(node, cast(
+        assertThat(node, instanceOf(
             UntypedSwitchNode.class,
-            has("cases", contains(
-                cast(
+            has("cases", x -> x.cases(), isSequence(
+                instanceOf(
                     UntypedSwitchCaseNode.class,
-                    has("type", isUntypedTypeLevelReferenceNode("A"))
+                    has("type", x -> x.type(), isUntypedTypeLevelReferenceNode("A"))
                 ),
-                cast(
+                instanceOf(
                     UntypedSwitchCaseNode.class,
-                    has("type", isUntypedTypeLevelReferenceNode("B"))
+                    has("type", x -> x.type(), isUntypedTypeLevelReferenceNode("B"))
                 )
             ))
         ));

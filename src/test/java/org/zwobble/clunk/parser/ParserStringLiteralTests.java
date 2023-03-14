@@ -2,14 +2,12 @@ package org.zwobble.clunk.parser;
 
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.isUntypedStringLiteralNode;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 import static org.zwobble.clunk.parser.Parsing.parseString;
 import static org.zwobble.clunk.sources.SourceMatchers.isFileFragmentSource;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.*;
 
 public class ParserStringLiteralTests {
     @Test
@@ -50,8 +48,8 @@ public class ParserStringLiteralTests {
 
         assertThat(error.getMessage(), equalTo("Unrecognised escape sequence: \\a"));
         assertThat(error.getSource(), isFileFragmentSource(allOf(
-            has("characterIndexStart", equalTo(1)),
-            has("characterIndexEnd", equalTo(3))
+            has("characterIndexStart", x -> x.characterIndexStart(), equalTo(1)),
+            has("characterIndexEnd", x -> x.characterIndexEnd(), equalTo(3))
         )));
     }
 }

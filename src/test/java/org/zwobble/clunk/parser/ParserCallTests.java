@@ -2,12 +2,11 @@ package org.zwobble.clunk.parser;
 
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.empty;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.*;
 import static org.zwobble.clunk.parser.Parsing.parseString;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.isSequence;
 
 public class ParserCallTests {
     @Test
@@ -18,7 +17,7 @@ public class ParserCallTests {
 
         assertThat(node, isUntypedCallNode()
             .withReceiver(isUntypedReferenceNode("f"))
-            .withPositionalArgs(empty())
+            .withPositionalArgs(isSequence())
         );
     }
 
@@ -30,7 +29,7 @@ public class ParserCallTests {
 
         assertThat(node, isUntypedCallNode()
             .withReceiver(isUntypedReferenceNode("f"))
-            .withPositionalArgs(contains(isUntypedBoolLiteralNode(true)))
+            .withPositionalArgs(isSequence(isUntypedBoolLiteralNode(true)))
         );
     }
 
@@ -42,7 +41,7 @@ public class ParserCallTests {
 
         assertThat(node, isUntypedCallNode()
             .withReceiver(isUntypedReferenceNode("f"))
-            .withPositionalArgs(contains(isUntypedBoolLiteralNode(true), isUntypedBoolLiteralNode(false)))
+            .withPositionalArgs(isSequence(isUntypedBoolLiteralNode(true), isUntypedBoolLiteralNode(false)))
         );
     }
 
@@ -54,8 +53,8 @@ public class ParserCallTests {
 
         assertThat(node, isUntypedCallNode()
             .withReceiver(isUntypedReferenceNode("f"))
-            .withPositionalArgs(empty())
-            .withNamedArgs(contains(isUntypedNamedArg("x", isUntypedBoolLiteralNode(true))))
+            .withPositionalArgs(isSequence())
+            .withNamedArgs(isSequence(isUntypedNamedArg("x", isUntypedBoolLiteralNode(true))))
         );
     }
 
@@ -67,8 +66,8 @@ public class ParserCallTests {
 
         assertThat(node, isUntypedCallNode()
             .withReceiver(isUntypedReferenceNode("f"))
-            .withPositionalArgs(empty())
-            .withNamedArgs(contains(
+            .withPositionalArgs(isSequence())
+            .withNamedArgs(isSequence(
                 isUntypedNamedArg("x", isUntypedBoolLiteralNode(true)),
                 isUntypedNamedArg("y", isUntypedBoolLiteralNode(false))
             ))
@@ -83,10 +82,10 @@ public class ParserCallTests {
 
         assertThat(node, isUntypedCallNode()
             .withReceiver(isUntypedReferenceNode("f"))
-            .withPositionalArgs(contains(
+            .withPositionalArgs(isSequence(
                 isUntypedBoolLiteralNode(true)
             ))
-            .withNamedArgs(contains(
+            .withNamedArgs(isSequence(
                 isUntypedNamedArg("y", isUntypedBoolLiteralNode(false))
             ))
         );
@@ -110,7 +109,7 @@ public class ParserCallTests {
 
         assertThat(node, isUntypedCallNode()
             .withReceiver(isUntypedReferenceNode("f"))
-            .withPositionalArgs(contains(isUntypedBoolLiteralNode(true)))
+            .withPositionalArgs(isSequence(isUntypedBoolLiteralNode(true)))
         );
     }
 
@@ -123,8 +122,8 @@ public class ParserCallTests {
         assertThat(node, isUntypedCallNode()
             .withReceiver(isUntypedCallNode()
                 .withReceiver(isUntypedReferenceNode("f"))
-                .withPositionalArgs(empty()))
-            .withPositionalArgs(empty())
+                .withPositionalArgs(isSequence()))
+            .withPositionalArgs(isSequence())
         );
     }
 
@@ -135,7 +134,7 @@ public class ParserCallTests {
         var node = parseString(source, Parser::parseTopLevelExpression);
 
         assertThat(node, isUntypedCallNode()
-            .withTypeLevelArgs(empty())
+            .withTypeLevelArgs(isSequence())
         );
     }
 
@@ -146,7 +145,7 @@ public class ParserCallTests {
         var node = parseString(source, Parser::parseTopLevelExpression);
 
         assertThat(node, isUntypedCallNode()
-            .withTypeLevelArgs(contains(isUntypedTypeLevelReferenceNode("A")))
+            .withTypeLevelArgs(isSequence(isUntypedTypeLevelReferenceNode("A")))
         );
     }
 
@@ -157,7 +156,7 @@ public class ParserCallTests {
         var node = parseString(source, Parser::parseTopLevelExpression);
 
         assertThat(node, isUntypedCallNode()
-            .withTypeLevelArgs(contains(
+            .withTypeLevelArgs(isSequence(
                 isUntypedTypeLevelReferenceNode("A"),
                 isUntypedTypeLevelReferenceNode("B"),
                 isUntypedTypeLevelReferenceNode("C")
@@ -172,7 +171,7 @@ public class ParserCallTests {
         var node = parseString(source, Parser::parseTopLevelExpression);
 
         assertThat(node, isUntypedCallNode()
-            .withTypeLevelArgs(contains(
+            .withTypeLevelArgs(isSequence(
                 isUntypedTypeLevelReferenceNode("A")
             ))
         );

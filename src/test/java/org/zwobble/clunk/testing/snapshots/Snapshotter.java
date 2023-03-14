@@ -3,9 +3,9 @@ package org.zwobble.clunk.testing.snapshots;
 import java.io.IOException;
 import java.nio.file.Files;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 import static org.zwobble.clunk.testing.ProjectRoot.findRoot;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.equalTo;
 
 public class Snapshotter {
     private final String uniqueId;

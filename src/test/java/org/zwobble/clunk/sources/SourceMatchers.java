@@ -1,8 +1,8 @@
 package org.zwobble.clunk.sources;
 
-import org.hamcrest.Matcher;
+import org.zwobble.precisely.Matcher;
 
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
+import static org.zwobble.precisely.Matchers.instanceOf;
 
 public class SourceMatchers {
     private SourceMatchers() {
@@ -10,6 +10,6 @@ public class SourceMatchers {
     }
 
     public static Matcher<Source> isFileFragmentSource(Matcher<FileFragmentSource> matcher) {
-        return cast(FileFragmentSource.class, matcher);
+        return instanceOf(FileFragmentSource.class, matcher);
     }
 }

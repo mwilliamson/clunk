@@ -11,8 +11,8 @@ import org.zwobble.clunk.types.Types;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.*;
 import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class JavaCodeGeneratorCallConstructorTests {
@@ -30,7 +30,7 @@ public class JavaCodeGeneratorCallConstructorTests {
 
         var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("new Id(123)"));
-        assertThat(context.imports(), contains(equalTo(Java.importType("example.Id"))));
+        assertThat(context.imports(), isSequence(equalTo(Java.importType("example.Id"))));
     }
 
     @Test
@@ -52,7 +52,7 @@ public class JavaCodeGeneratorCallConstructorTests {
 
         var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("new Id(123)"));
-        assertThat(context.imports(), contains(equalTo(Java.importType("example.Id"))));
+        assertThat(context.imports(), isSequence(equalTo(Java.importType("example.Id"))));
     }
 
     @Test
@@ -68,7 +68,7 @@ public class JavaCodeGeneratorCallConstructorTests {
 
         var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("new StringBuilder()"));
-        assertThat(context.imports(), empty());
+        assertThat(context.imports(), isSequence());
     }
 
     @Test
@@ -85,6 +85,6 @@ public class JavaCodeGeneratorCallConstructorTests {
 
         var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("new java.util.ArrayList<String>()"));
-        assertThat(context.imports(), empty());
+        assertThat(context.imports(), isSequence());
     }
 }

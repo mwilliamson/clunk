@@ -2,11 +2,10 @@ package org.zwobble.clunk.parser;
 
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.empty;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.*;
 import static org.zwobble.clunk.parser.Parsing.parseString;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.isSequence;
 
 public class ParserIfStatementTests {
     @Test
@@ -16,16 +15,16 @@ public class ParserIfStatementTests {
         var node = parseString(source, Parser::parseFunctionStatement);
 
         assertThat(node, isUntypedIfStatementNode()
-            .withConditionalBranches(contains(
+            .withConditionalBranches(isSequence(
                 isUntypedConditionalBranchNode(
                     isUntypedBoolLiteralNode(true),
-                    contains(
+                    isSequence(
                         isUntypedExpressionStatementNode(isUntypedIntLiteralNode(42)),
                         isUntypedExpressionStatementNode(isUntypedIntLiteralNode(47))
                     )
                 )
             ))
-            .withElseBody(empty()));
+            .withElseBody(isSequence()));
     }
 
     @Test
@@ -35,15 +34,15 @@ public class ParserIfStatementTests {
         var node = parseString(source, Parser::parseFunctionStatement);
 
         assertThat(node, isUntypedIfStatementNode()
-            .withConditionalBranches(contains(
+            .withConditionalBranches(isSequence(
                 isUntypedConditionalBranchNode(
                     isUntypedBoolLiteralNode(true),
-                    contains(
+                    isSequence(
                         isUntypedExpressionStatementNode(isUntypedIntLiteralNode(42))
                     )
                 )
             ))
-            .withElseBody(contains(
+            .withElseBody(isSequence(
                 isUntypedExpressionStatementNode(isUntypedIntLiteralNode(47))
             )));
     }
@@ -55,21 +54,21 @@ public class ParserIfStatementTests {
         var node = parseString(source, Parser::parseFunctionStatement);
 
         assertThat(node, isUntypedIfStatementNode()
-            .withConditionalBranches(contains(
+            .withConditionalBranches(isSequence(
                 isUntypedConditionalBranchNode(
                     isUntypedBoolLiteralNode(true),
-                    contains(
+                    isSequence(
                         isUntypedExpressionStatementNode(isUntypedIntLiteralNode(42))
                     )
                 ),
                 isUntypedConditionalBranchNode(
                     isUntypedBoolLiteralNode(false),
-                    contains(
+                    isSequence(
                         isUntypedExpressionStatementNode(isUntypedIntLiteralNode(47))
                     )
                 )
             ))
-            .withElseBody(empty()));
+            .withElseBody(isSequence()));
     }
 
     @Test
@@ -79,21 +78,21 @@ public class ParserIfStatementTests {
         var node = parseString(source, Parser::parseFunctionStatement);
 
         assertThat(node, isUntypedIfStatementNode()
-            .withConditionalBranches(contains(
+            .withConditionalBranches(isSequence(
                 isUntypedConditionalBranchNode(
                     isUntypedBoolLiteralNode(true),
-                    contains(
+                    isSequence(
                         isUntypedExpressionStatementNode(isUntypedIntLiteralNode(42))
                     )
                 ),
                 isUntypedConditionalBranchNode(
                     isUntypedBoolLiteralNode(false),
-                    contains(
+                    isSequence(
                         isUntypedExpressionStatementNode(isUntypedIntLiteralNode(47))
                     )
                 )
             ))
-            .withElseBody(contains(
+            .withElseBody(isSequence(
                 isUntypedExpressionStatementNode(isUntypedIntLiteralNode(52))
             )));
     }

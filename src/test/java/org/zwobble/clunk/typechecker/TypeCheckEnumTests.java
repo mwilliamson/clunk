@@ -1,21 +1,18 @@
 package org.zwobble.clunk.typechecker;
 
-import org.hamcrest.Matcher;
+import org.zwobble.precisely.Matcher;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.TypedEnumNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.*;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.equalTo;
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.precisely.AssertThat.assertThat;
 import static org.zwobble.clunk.matchers.MapEntryMatcher.isMapEntry;
 import static org.zwobble.clunk.matchers.OptionalMatcher.present;
 import static org.zwobble.clunk.matchers.TypeMatchers.isMetaType;
 import static org.zwobble.clunk.typechecker.TypeCheckNamespaceStatementTesting.typeCheckNamespaceStatementAllPhases;
+import static org.zwobble.precisely.Matchers.*;
 
 public class TypeCheckEnumTests {
     @Test
@@ -27,9 +24,12 @@ public class TypeCheckEnumTests {
 
         assertThat(
             result.context().typeOf("NoteType", NullSource.INSTANCE),
-            cast(
+            instanceOf(
                 TypeLevelValueType.class,
-                has("value", isEnumType(NamespaceId.source("a", "b"), "NoteType"))
+                has("value", x -> x.value(), instanceOf(
+                    Type.class,
+                    isEnumType(NamespaceId.source("a", "b"), "NoteType")
+                ))
             )
         );
     }
@@ -59,11 +59,15 @@ public class TypeCheckEnumTests {
 
         var typedNode = (TypedEnumNode) result.typedNode();
         assertThat(typedNode, allOf(
-            has("type", isEnumType(NamespaceId.source("a", "b"), "NoteType"))
+            has("type", x -> x.type(), isEnumType(NamespaceId.source("a", "b"), "NoteType"))
         ));
     }
 
     private Matcher<Type> isEnumType(NamespaceId namespaceId, String name) {
-        return cast(EnumType.class, has("namespaceId", equalTo(namespaceId)), has("name", equalTo(name)));
+        return instanceOf(
+            EnumType.class,
+            has("namespaceId", x -> x.namespaceId(), equalTo(namespaceId)),
+            has("name", x -> x.name(), equalTo(name))
+        );
     }
 }

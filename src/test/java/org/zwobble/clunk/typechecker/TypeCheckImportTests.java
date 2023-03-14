@@ -12,12 +12,10 @@ import org.zwobble.clunk.types.Types;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedImportNode;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.precisely.Matchers.*;
 
 public class TypeCheckImportTests {
     // TODO: test unknown namespace
@@ -34,9 +32,9 @@ public class TypeCheckImportTests {
         var result = TypeChecker.typeCheckImport(untypedNode, context);
 
         assertThat(result.node(), isTypedImportNode(allOf(
-            has("namespaceName", equalTo(NamespaceName.fromParts("x", "y"))),
-            has("fieldName", equalTo(Optional.empty())),
-            has("type", equalTo(namespaceType)
+            has("namespaceName", x -> x.namespaceName(), equalTo(NamespaceName.fromParts("x", "y"))),
+            has("fieldName", x -> x.fieldName(), equalTo(Optional.empty())),
+            has("type", x -> x.type(), equalTo(namespaceType)
         ))));
     }
 
@@ -68,9 +66,9 @@ public class TypeCheckImportTests {
         var result = TypeChecker.typeCheckImport(untypedNode, context);
 
         assertThat(result.node(), isTypedImportNode(allOf(
-            has("namespaceName", equalTo(NamespaceName.fromParts("x", "y"))),
-            has("fieldName", equalTo(Optional.of("IntAlias"))),
-            has("type", equalTo(Types.metaType(Types.INT)))
+            has("namespaceName", x -> x.namespaceName(), equalTo(NamespaceName.fromParts("x", "y"))),
+            has("fieldName", x -> x.fieldName(), equalTo(Optional.of("IntAlias"))),
+            has("type", x -> x.type(), equalTo(Types.metaType(Types.INT)))
         )));
     }
 

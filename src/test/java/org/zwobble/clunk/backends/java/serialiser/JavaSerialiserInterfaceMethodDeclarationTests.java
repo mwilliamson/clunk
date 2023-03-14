@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.backends.java.ast.Java;
 import org.zwobble.clunk.backends.java.ast.JavaInterfaceMethodDeclarationNode;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.equalTo;
 import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class JavaSerialiserInterfaceMethodDeclarationTests {

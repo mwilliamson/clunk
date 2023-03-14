@@ -2,12 +2,11 @@ package org.zwobble.clunk.parser;
 
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.empty;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.*;
 import static org.zwobble.clunk.parser.Parsing.parseString;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.isSequence;
 
 public class ParserFunctionTests {
     @Test
@@ -28,7 +27,7 @@ public class ParserFunctionTests {
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
-        assertThat(node, isUntypedFunctionNode().withPositionalParams(empty()).withNamedParams(empty()));
+        assertThat(node, isUntypedFunctionNode().withPositionalParams(isSequence()).withNamedParams(isSequence()));
     }
 
     @Test
@@ -37,7 +36,7 @@ public class ParserFunctionTests {
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
-        assertThat(node, isUntypedFunctionNode().withPositionalParams(contains(
+        assertThat(node, isUntypedFunctionNode().withPositionalParams(isSequence(
             isUntypedParamNode().withName("x").withType(isUntypedTypeLevelReferenceNode("Int"))
         )));
     }
@@ -48,7 +47,7 @@ public class ParserFunctionTests {
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
-        assertThat(node, isUntypedFunctionNode().withPositionalParams(contains(
+        assertThat(node, isUntypedFunctionNode().withPositionalParams(isSequence(
             isUntypedParamNode().withName("x").withType(isUntypedTypeLevelReferenceNode("Int")),
             isUntypedParamNode().withName("y").withType(isUntypedTypeLevelReferenceNode("String"))
         )));
@@ -61,8 +60,8 @@ public class ParserFunctionTests {
         var node = parseString(source, Parser::parseNamespaceStatement);
 
         assertThat(node, isUntypedFunctionNode()
-            .withPositionalParams(empty())
-            .withNamedParams(contains(
+            .withPositionalParams(isSequence())
+            .withNamedParams(isSequence(
                 isUntypedParamNode().withName("x").withType(isUntypedTypeLevelReferenceNode("Int"))
             ))
         );
@@ -75,8 +74,8 @@ public class ParserFunctionTests {
         var node = parseString(source, Parser::parseNamespaceStatement);
 
         assertThat(node, isUntypedFunctionNode()
-            .withPositionalParams(empty())
-            .withNamedParams(contains(
+            .withPositionalParams(isSequence())
+            .withNamedParams(isSequence(
                 isUntypedParamNode().withName("x").withType(isUntypedTypeLevelReferenceNode("Int")),
                 isUntypedParamNode().withName("y").withType(isUntypedTypeLevelReferenceNode("String"))
             ))
@@ -90,10 +89,10 @@ public class ParserFunctionTests {
         var node = parseString(source, Parser::parseNamespaceStatement);
 
         assertThat(node, isUntypedFunctionNode()
-            .withPositionalParams(contains(
+            .withPositionalParams(isSequence(
                 isUntypedParamNode().withName("x").withType(isUntypedTypeLevelReferenceNode("Int"))
             ))
-            .withNamedParams(contains(
+            .withNamedParams(isSequence(
                 isUntypedParamNode().withName("y").withType(isUntypedTypeLevelReferenceNode("String"))
             ))
         );
@@ -115,7 +114,7 @@ public class ParserFunctionTests {
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
-        assertThat(node, isUntypedFunctionNode().withBody(contains(
+        assertThat(node, isUntypedFunctionNode().withBody(isSequence(
             isUntypedReturnNode().withExpression(isUntypedBoolLiteralNode(true)),
             isUntypedReturnNode().withExpression(isUntypedBoolLiteralNode(false))
         )));
@@ -135,7 +134,7 @@ public class ParserFunctionTests {
         var node = parseString(source, Parser::parseNamespaceStatement);
 
         assertThat(node, isUntypedFunctionNode()
-            .withBody(contains(
+            .withBody(isSequence(
                 isUntypedBlankLineNode(),
                 isUntypedExpressionStatementNode(isUntypedReferenceNode("one")),
                 isUntypedBlankLineNode(),

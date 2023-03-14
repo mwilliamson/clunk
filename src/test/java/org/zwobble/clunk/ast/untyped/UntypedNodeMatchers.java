@@ -1,23 +1,21 @@
 package org.zwobble.clunk.ast.untyped;
 
-import org.hamcrest.Matcher;
 import org.zwobble.clunk.types.NamespaceName;
 import org.zwobble.clunk.util.P;
+import org.zwobble.precisely.Matcher;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.*;
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.precisely.Matchers.*;
 
 public class UntypedNodeMatchers {
     public static Matcher<UntypedNode> isUntypedBlankLineNode() {
-        return cast(UntypedBlankLineNode.class);
+        return instanceOf(UntypedBlankLineNode.class);
     }
 
     public static Matcher<UntypedExpressionNode> isUntypedBoolLiteralNode(boolean value) {
-        return cast(UntypedBoolLiteralNode.class, has("value", equalTo(value)));
+        return instanceOf(UntypedBoolLiteralNode.class, has("value", x -> x.value(), equalTo(value)));
     }
 
     public static UntypedCallNodeMatcher isUntypedCallNode() {
@@ -26,27 +24,30 @@ public class UntypedNodeMatchers {
 
     public static Matcher<UntypedConditionalBranchNode> isUntypedConditionalBranchNode(
         Matcher<UntypedExpressionNode> condition,
-        Matcher<? extends Iterable<? extends UntypedFunctionStatementNode>> body
+        Matcher<Iterable<UntypedFunctionStatementNode>> body
     ) {
         return allOf(
-            has("condition", condition),
-            has("body", body)
+            has("condition", x -> x.condition(), condition),
+            has("body", x -> x.body(), body)
         );
     }
 
     public static Matcher<UntypedNamespaceStatementNode> isUntypedEnumNode(
         Matcher<String> name,
-        Matcher<? extends Iterable<? extends String>> members
+        Matcher<Iterable<String>> members
     ) {
-        return cast(
+        return instanceOf(
             UntypedEnumNode.class,
-            has("name", name),
-            has("members", members)
+            has("name", x -> x.name(), name),
+            has("members", x -> x.members(), members)
         );
     }
 
     public static Matcher<UntypedFunctionStatementNode> isUntypedExpressionStatementNode(Matcher<? super UntypedExpressionNode> expression) {
-        return cast(UntypedExpressionStatementNode.class, has("expression", expression));
+        return instanceOf(
+            UntypedExpressionStatementNode.class,
+            has("expression", x-> x.expression(), expression)
+        );
     }
 
     public static UntypedFunctionNodeMatcher isUntypedFunctionNode() {
@@ -61,9 +62,9 @@ public class UntypedNodeMatchers {
         NamespaceName namespaceName,
         Optional<String> fieldName
     ) {
-        return cast(UntypedImportNode.class, allOf(
-            has("namespaceName", equalTo(namespaceName)),
-            has("fieldName", equalTo(fieldName))
+        return instanceOf(UntypedImportNode.class, allOf(
+            has("namespaceName", x -> x.namespaceName(), equalTo(namespaceName)),
+            has("fieldName", x -> x.fieldName(), equalTo(fieldName))
         ));
     }
 
@@ -72,19 +73,25 @@ public class UntypedNodeMatchers {
     }
 
     public static Matcher<UntypedExpressionNode> isUntypedIntLiteralNode(int value) {
-        return cast(UntypedIntLiteralNode.class, has("value", equalTo(value)));
+        return instanceOf(
+            UntypedIntLiteralNode.class,
+            has("value", x -> x.value(), equalTo(value))
+        );
     }
 
     public static Matcher<UntypedExpressionNode> isUntypedLogicalNotNode(Matcher<UntypedExpressionNode> operand) {
-        return cast(UntypedLogicalNotNode.class, has("operand", operand));
+        return instanceOf(
+            UntypedLogicalNotNode.class,
+            has("operand", x -> x.operand(), operand)
+        );
     }
 
     public static Matcher<UntypedExpressionNode> isUntypedMapLiteralNode(
-        Matcher<? extends Iterable<? extends UntypedMapEntryLiteralNode>> entries
+        Matcher<Iterable<UntypedMapEntryLiteralNode>> entries
     ) {
-        return cast(
+        return instanceOf(
             UntypedMapLiteralNode.class,
-            has("entries", entries)
+            has("entries", x -> x.entries(), entries)
         );
     }
 
@@ -93,8 +100,8 @@ public class UntypedNodeMatchers {
         Matcher<UntypedExpressionNode> value
     ) {
         return allOf(
-            has("key", key),
-            has("value", value)
+            has("key", x -> x.key(), key),
+            has("value", x -> x.value(), value)
         );
     }
 
@@ -102,9 +109,9 @@ public class UntypedNodeMatchers {
         Matcher<UntypedExpressionNode> receiver,
         Matcher<String> memberName
     ) {
-        return cast(UntypedMemberAccessNode.class, allOf(
-            has("receiver", receiver),
-            has("memberName", memberName)
+        return instanceOf(UntypedMemberAccessNode.class, allOf(
+            has("receiver", x -> x.receiver(), receiver),
+            has("memberName", x -> x.memberName(), memberName)
         ));
     }
 
@@ -113,8 +120,8 @@ public class UntypedNodeMatchers {
         Matcher<UntypedExpressionNode> expression
     ) {
         return allOf(
-            has("name", equalTo(name)),
-            has("expression", expression)
+            has("name", x -> x.name(), equalTo(name)),
+            has("expression", x -> x.expression(), expression)
         );
     }
 
@@ -135,7 +142,10 @@ public class UntypedNodeMatchers {
     }
 
     public static Matcher<UntypedExpressionNode> isUntypedReferenceNode(String name) {
-        return cast(UntypedReferenceNode.class, has("name", equalTo(name)));
+        return instanceOf(
+            UntypedReferenceNode.class,
+            has("name", x -> x.name(), equalTo(name))
+        );
     }
 
     public static UntypedReturnNodeMatcher isUntypedReturnNode() {
@@ -143,7 +153,10 @@ public class UntypedNodeMatchers {
     }
 
     public static Matcher<UntypedExpressionNode> isUntypedStringLiteralNode(String value) {
-        return cast(UntypedStringLiteralNode.class, has("value", equalTo(value)));
+        return instanceOf(
+            UntypedStringLiteralNode.class,
+            has("value", x -> x.value(), equalTo(value))
+        );
     }
 
     public static UntypedTestNodeMatcher isUntypedTestNode() {
@@ -155,16 +168,19 @@ public class UntypedNodeMatchers {
     }
 
     public static Matcher<UntypedTypeLevelExpressionNode> isUntypedTypeLevelReferenceNode(String value) {
-        return cast(UntypedTypeLevelExpressionNode.class, has("name", equalTo(value)));
+        return instanceOf(
+            UntypedTypeLevelReferenceNode.class,
+            has("name", x -> x.name(), equalTo(value))
+        );
     }
 
     public static Matcher<UntypedTypeLevelExpressionNode> isUntypedConstructedTypeNode(
         Matcher<UntypedTypeLevelExpressionNode> receiver,
-        Matcher<? extends Iterable<? extends UntypedTypeLevelExpressionNode>> args
+        Matcher<Iterable<UntypedTypeLevelExpressionNode>> args
     ) {
-        return cast(UntypedConstructedTypeNode.class, allOf(
-            has("receiver", receiver),
-            has("args", args)
+        return instanceOf(UntypedConstructedTypeNode.class, allOf(
+            has("receiver", x -> x.receiver(), receiver),
+            has("args", x -> x.args(), args)
         ));
     }
 

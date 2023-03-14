@@ -8,10 +8,10 @@ import org.zwobble.clunk.ast.untyped.UntypedRecordBodyDeclarationNode;
 
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
+import static org.zwobble.precisely.AssertThat.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.typechecker.TypeChecker.typeCheckRecordBodyDeclaration;
+import static org.zwobble.precisely.Matchers.isSequence;
 
 public class TypeCheckPropertyTests {
     @Test
@@ -25,7 +25,7 @@ public class TypeCheckPropertyTests {
         var result = typeCheckRecordBodyDeclarationAllPhases(untypedNode, TypeCheckerContext.stub());
 
         var typedNode = (TypedPropertyNode) result;
-        assertThat(typedNode.body(), empty());
+        assertThat(typedNode.body(), isSequence());
     }
 
     @Test

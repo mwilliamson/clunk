@@ -9,12 +9,12 @@ import org.zwobble.clunk.types.*;
 
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.precisely.Matchers.instanceOf;
+import static org.zwobble.precisely.Matchers.has;
 import static org.zwobble.clunk.matchers.MapEntryMatcher.isMapEntry;
 import static org.zwobble.clunk.matchers.OptionalMatcher.present;
 import static org.zwobble.clunk.typechecker.TypeCheckNamespaceStatementTesting.typeCheckNamespaceStatementAllPhases;
@@ -40,7 +40,7 @@ public class TypeCheckFunctionTests {
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, TypeCheckerContext.stub());
 
-        assertThat(result.typedNode(), isTypedFunctionNode().withPositionalParams(contains(
+        assertThat(result.typedNode(), isTypedFunctionNode().withPositionalParams(isSequence(
             isTypedParamNode().withName("x").withType(IntType.INSTANCE),
             isTypedParamNode().withName("y").withType(StringType.INSTANCE)
         )));
@@ -55,7 +55,7 @@ public class TypeCheckFunctionTests {
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, TypeCheckerContext.stub());
 
-        assertThat(result.typedNode(), isTypedFunctionNode().withNamedParams(contains(
+        assertThat(result.typedNode(), isTypedFunctionNode().withNamedParams(isSequence(
             isTypedParamNode().withName("x").withType(IntType.INSTANCE),
             isTypedParamNode().withName("y").withType(StringType.INSTANCE)
         )));
@@ -95,7 +95,7 @@ public class TypeCheckFunctionTests {
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, TypeCheckerContext.stub());
 
-        assertThat(result.typedNode(), isTypedFunctionNode().withBody(contains(
+        assertThat(result.typedNode(), isTypedFunctionNode().withBody(isSequence(
             isTypedReturnNode().withExpression(isTypedBoolLiteralNode(false))
         )));
     }
@@ -110,7 +110,7 @@ public class TypeCheckFunctionTests {
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, TypeCheckerContext.stub());
 
-        assertThat(result.typedNode(), isTypedFunctionNode().withBody(contains(
+        assertThat(result.typedNode(), isTypedFunctionNode().withBody(isSequence(
             isTypedReturnNode().withExpression(isTypedReferenceNode().withName("x").withType(Types.BOOL))
         )));
     }
@@ -125,7 +125,7 @@ public class TypeCheckFunctionTests {
 
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, TypeCheckerContext.stub());
 
-        assertThat(result.typedNode(), isTypedFunctionNode().withBody(contains(
+        assertThat(result.typedNode(), isTypedFunctionNode().withBody(isSequence(
             isTypedReturnNode().withExpression(isTypedReferenceNode().withName("x").withType(Types.BOOL))
         )));
     }
@@ -139,7 +139,7 @@ public class TypeCheckFunctionTests {
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, TypeCheckerContext.stub());
 
         var typedNode = (TypedFunctionNode) result.typedNode();
-        assertThat(typedNode.body(), empty());
+        assertThat(typedNode.body(), isSequence());
     }
 
     @Test
@@ -202,7 +202,10 @@ public class TypeCheckFunctionTests {
             result.fieldType(),
             present(isMapEntry(
                 equalTo("f"),
-                cast(StaticFunctionType.class, has("functionName", equalTo("f")))
+                instanceOf(
+                    StaticFunctionType.class,
+                    has("functionName", x -> x.functionName(), equalTo("f"))
+                )
             ))
         );
     }

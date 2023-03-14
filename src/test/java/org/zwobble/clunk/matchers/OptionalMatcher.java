@@ -1,50 +1,36 @@
 package org.zwobble.clunk.matchers;
 
-import org.hamcrest.Description;
-import org.hamcrest.DiagnosingMatcher;
-import org.hamcrest.Matcher;
+import org.zwobble.precisely.MatchResult;
+import org.zwobble.precisely.Matcher;
 
 import java.util.Optional;
 
-public class OptionalMatcher<T> extends DiagnosingMatcher<Optional<T>> {
-    public static <T> OptionalMatcher<T> present(Matcher<T> matcher) {
+public class OptionalMatcher<T> implements Matcher<Optional<? extends T>> {
+    public static <T> OptionalMatcher<T> present(Matcher<? super T> matcher) {
         return new OptionalMatcher<>(matcher);
     }
 
-    private final Matcher<T> matcher;
+    private final Matcher<? super T> matcher;
 
-    public OptionalMatcher(Matcher<T> matcher) {
+    public OptionalMatcher(Matcher<? super T> matcher) {
         this.matcher = matcher;
     }
 
     @Override
-    protected boolean matches(Object item, Description mismatch) {
-        if (null == item) {
-            mismatch.appendText("null");
-            return false;
+    public MatchResult match(Optional<? extends T> actual) {
+        if (null == actual) {
+            return MatchResult.unmatched("was null");
         }
 
-        if (!(item instanceof Optional<?> optional)) {
-            mismatch.appendValue(item).appendText(" is a " + item.getClass().getName());
-            return false;
+        if (actual.isEmpty()) {
+            return MatchResult.unmatched("was empty");
         }
 
-        if (optional.isEmpty()) {
-            mismatch.appendText("is empty");
-            return false;
-        }
-
-        var elementMatches = matcher.matches(optional.get());
-
-        if (!elementMatches) {
-            matcher.describeMismatch(optional.get(), mismatch);
-        }
-
-        return elementMatches;
+        return matcher.match(actual.get());
     }
 
     @Override
-    public void describeTo(Description description) {
-        description.appendText("optional of ").appendDescriptionOf(matcher);
+    public String describe() {
+        return matcher.describe();
     }
 }

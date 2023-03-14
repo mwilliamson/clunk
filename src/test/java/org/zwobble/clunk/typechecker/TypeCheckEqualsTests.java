@@ -8,12 +8,12 @@ import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.Types;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.precisely.Matchers.instanceOf;
+import static org.zwobble.precisely.Matchers.has;
 
 public class TypeCheckEqualsTests {
     @Test
@@ -23,10 +23,10 @@ public class TypeCheckEqualsTests {
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 
-        assertThat(result, cast(
+        assertThat(result, instanceOf(
             TypedIntEqualsNode.class,
-            has("left", isTypedIntLiteralNode(42)),
-            has("right", isTypedIntLiteralNode(47))
+            has("left", x -> x.left(), isTypedIntLiteralNode(42)),
+            has("right", x -> x.right(), isTypedIntLiteralNode(47))
         ));
     }
 
@@ -37,10 +37,10 @@ public class TypeCheckEqualsTests {
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 
-        assertThat(result, cast(
+        assertThat(result, instanceOf(
             TypedStringEqualsNode.class,
-            has("left", isTypedStringLiteralNode("a")),
-            has("right", isTypedStringLiteralNode("b"))
+            has("left", x -> x.left(), isTypedStringLiteralNode("a")),
+            has("right", x -> x.right(), isTypedStringLiteralNode("b"))
         ));
     }
 
@@ -53,10 +53,10 @@ public class TypeCheckEqualsTests {
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 
-        assertThat(result, cast(
+        assertThat(result, instanceOf(
             TypedStructuredEqualsNode.class,
-            has("left", isTypedReferenceNode().withName("a")),
-            has("right", isTypedReferenceNode().withName("b"))
+            has("left", x -> x.left(), isTypedReferenceNode().withName("a")),
+            has("right", x -> x.right(), isTypedReferenceNode().withName("b"))
         ));
     }
 

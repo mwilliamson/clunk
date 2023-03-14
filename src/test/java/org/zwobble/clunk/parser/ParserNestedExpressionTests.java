@@ -4,12 +4,10 @@ import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.untyped.UntypedAddNode;
 import org.zwobble.clunk.ast.untyped.UntypedLogicalAndNode;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.*;
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 import static org.zwobble.clunk.parser.Parsing.parseString;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.*;
 
 public class ParserNestedExpressionTests {
     @Test
@@ -18,12 +16,12 @@ public class ParserNestedExpressionTests {
 
         var result = parseString(source, Parser::parseTopLevelExpression);
 
-        assertThat(result, cast(
+        assertThat(result, instanceOf(
             UntypedAddNode.class,
-            has("left", isUntypedIntLiteralNode(1)),
-            has("right", isUntypedCallNode()
+            has("left", x -> x.left(), isUntypedIntLiteralNode(1)),
+            has("right", x -> x.right(), isUntypedCallNode()
                 .withReceiver(isUntypedReferenceNode("f"))
-                .withPositionalArgs(empty())
+                .withPositionalArgs(isSequence())
             )
         ));
     }
@@ -34,10 +32,10 @@ public class ParserNestedExpressionTests {
 
         var result = parseString(source, Parser::parseTopLevelExpression);
 
-        assertThat(result, cast(
+        assertThat(result, instanceOf(
             UntypedLogicalAndNode.class,
-            has("left", isUntypedLogicalNotNode(isUntypedReferenceNode("x"))),
-            has("right", isUntypedReferenceNode("y"))
+            has("left", x -> x.left(), isUntypedLogicalNotNode(isUntypedReferenceNode("x"))),
+            has("right", x -> x.right(), isUntypedReferenceNode("y"))
         ));
     }
 
@@ -47,14 +45,14 @@ public class ParserNestedExpressionTests {
 
         var result = parseString(source, Parser::parseTopLevelExpression);
 
-        assertThat(result, cast(
+        assertThat(result, instanceOf(
             UntypedAddNode.class,
-            has("left", cast(
+            has("left", x -> x.left(), instanceOf(
                 UntypedAddNode.class,
-                has("left", isUntypedIntLiteralNode(1)),
-                has("right", isUntypedIntLiteralNode(2))
+                has("left", x -> x.left(), isUntypedIntLiteralNode(1)),
+                has("right", x -> x.right(), isUntypedIntLiteralNode(2))
             )),
-            has("right", isUntypedIntLiteralNode(3))
+            has("right", x -> x.right(), isUntypedIntLiteralNode(3))
         ));
     }
 
@@ -67,9 +65,9 @@ public class ParserNestedExpressionTests {
         assertThat(result, isUntypedCallNode()
             .withReceiver(isUntypedCallNode()
                 .withReceiver(isUntypedReferenceNode("f"))
-                .withPositionalArgs(empty())
+                .withPositionalArgs(isSequence())
             )
-            .withPositionalArgs(empty())
+            .withPositionalArgs(isSequence())
         );
     }
 }

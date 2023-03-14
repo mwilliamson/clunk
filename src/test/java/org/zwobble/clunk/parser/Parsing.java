@@ -5,8 +5,8 @@ import org.zwobble.clunk.tokeniser.TokenIterator;
 
 import java.util.function.BiFunction;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.equalTo;
 
 public class Parsing {
     public static <T> T parseString(

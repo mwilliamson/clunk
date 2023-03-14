@@ -6,11 +6,11 @@ import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.Types;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.equalTo;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.precisely.Matchers.instanceOf;
+import static org.zwobble.precisely.Matchers.has;
 
 public class TypeCheckCastUnsafeTests {
     @Test
@@ -24,11 +24,11 @@ public class TypeCheckCastUnsafeTests {
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 
-        assertThat(result, cast(
+        assertThat(result, instanceOf(
             TypedCastUnsafeNode.class,
-            has("expression", isTypedReferenceNode().withName("x").withType(Types.OBJECT)),
-            has("typeExpression", isTypedTypeLevelReferenceNode("String", Types.STRING)),
-            has("type", equalTo(Types.STRING))
+            has("expression", x -> x.expression(), isTypedReferenceNode().withName("x").withType(Types.OBJECT)),
+            has("typeExpression", x -> x.typeExpression(), isTypedTypeLevelReferenceNode("String", Types.STRING)),
+            has("type", x -> x.type(), equalTo(Types.STRING))
         ));
     }
 }

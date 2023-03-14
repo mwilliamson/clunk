@@ -3,11 +3,9 @@ package org.zwobble.clunk.parser;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.untyped.UntypedInterfaceNode;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 import static org.zwobble.clunk.parser.Parsing.parseString;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.*;
 
 public class ParserInterfaceTests {
     @Test
@@ -16,10 +14,10 @@ public class ParserInterfaceTests {
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
-        assertThat(node, cast(
+        assertThat(node, instanceOf(
             UntypedInterfaceNode.class,
-            has("name", equalTo("HasChildren")),
-            has("isSealed", equalTo(false))
+            has("name", x -> x.name(), equalTo("HasChildren")),
+            has("isSealed", x -> x.isSealed(), equalTo(false))
         ));
     }
 
@@ -29,10 +27,10 @@ public class ParserInterfaceTests {
 
         var node = parseString(source, Parser::parseNamespaceStatement);
 
-        assertThat(node, cast(
+        assertThat(node, instanceOf(
             UntypedInterfaceNode.class,
-            has("name", equalTo("DocumentElement")),
-            has("isSealed", equalTo(true))
+            has("name", x -> x.name(), equalTo("DocumentElement")),
+            has("isSealed", x -> x.isSealed(), equalTo(true))
         ));
     }
 }

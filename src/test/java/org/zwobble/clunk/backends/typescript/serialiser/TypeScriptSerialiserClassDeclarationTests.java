@@ -5,8 +5,8 @@ import org.zwobble.clunk.backends.typescript.ast.TypeScript;
 import org.zwobble.clunk.backends.typescript.ast.TypeScriptClassDeclarationNode;
 import org.zwobble.clunk.backends.typescript.ast.TypeScriptFunctionDeclarationNode;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.equalTo;
 import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class TypeScriptSerialiserClassDeclarationTests {

@@ -3,11 +3,11 @@ package org.zwobble.clunk.parser;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.untyped.UntypedCastUnsafeNode;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.zwobble.clunk.ast.untyped.UntypedNodeMatchers.*;
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 import static org.zwobble.clunk.parser.Parsing.parseString;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.has;
+import static org.zwobble.precisely.Matchers.instanceOf;
 
 public class ParserCastUnsafeTests {
     @Test
@@ -16,10 +16,10 @@ public class ParserCastUnsafeTests {
 
         var result = parseString(source, Parser::parseTopLevelExpression);
 
-        assertThat(result, cast(
+        assertThat(result, instanceOf(
             UntypedCastUnsafeNode.class,
-            has("expression", isUntypedReferenceNode("x")),
-            has("typeExpression", isUntypedTypeLevelReferenceNode("String"))
+            has("expression", x -> x.expression(), isUntypedReferenceNode("x")),
+            has("typeExpression", x -> x.typeExpression(), isUntypedTypeLevelReferenceNode("String"))
         ));
     }
 }

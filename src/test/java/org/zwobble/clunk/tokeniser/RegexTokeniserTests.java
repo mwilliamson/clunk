@@ -1,16 +1,13 @@
 package org.zwobble.clunk.tokeniser;
 
-import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.sources.FileFragmentSource;
-import org.zwobble.clunk.sources.Source;
 
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.empty;
-import static org.zwobble.clunk.tokeniser.Token.token;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.equalTo;
+import static org.zwobble.precisely.Matchers.isSequence;
 
 public class RegexTokeniserTests {
     enum TokenType {
@@ -27,7 +24,7 @@ public class RegexTokeniserTests {
 
         var result = tokeniser.tokenise(source);
 
-        assertThat(result, empty());
+        assertThat(result, isSequence());
     }
 
     @Test
@@ -39,8 +36,8 @@ public class RegexTokeniserTests {
 
         var result = tokeniser.tokenise(source);
 
-        assertThat(result, contains(
-            new Token<>(source.at(0, 5), TokenType.IDENTIFIER, "count")
+        assertThat(result, isSequence(
+            equalTo(new Token<>(source.at(0, 5), TokenType.IDENTIFIER, "count"))
         ));
     }
 
@@ -54,8 +51,8 @@ public class RegexTokeniserTests {
 
         var result = tokeniser.tokenise(source);
 
-        assertThat(result, contains(
-            new Token<>(source.at(0, 2), TokenType.KEYWORD, "if")
+        assertThat(result, isSequence(
+            equalTo(new Token<>(source.at(0, 2), TokenType.KEYWORD, "if"))
         ));
     }
 
@@ -69,10 +66,10 @@ public class RegexTokeniserTests {
 
         var result = tokeniser.tokenise(source);
 
-        assertThat(result, contains(
-            new Token<>(source.at(0, 3), TokenType.IDENTIFIER, "one"),
-            new Token<>(source.at(3, 4), TokenType.WHITESPACE, " "),
-            new Token<>(source.at(4, 7), TokenType.IDENTIFIER, "two")
+        assertThat(result, isSequence(
+            equalTo(new Token<>(source.at(0, 3), TokenType.IDENTIFIER, "one")),
+            equalTo(new Token<>(source.at(3, 4), TokenType.WHITESPACE, " ")),
+            equalTo(new Token<>(source.at(4, 7), TokenType.IDENTIFIER, "two"))
         ));
     }
 
@@ -85,11 +82,11 @@ public class RegexTokeniserTests {
 
         var result = tokeniser.tokenise(source);
 
-        assertThat(result, contains(
-            new Token<>(source.at(0, 1), TokenType.UNKNOWN, "!"),
-            new Token<>(source.at(1, 2), TokenType.UNKNOWN, "!"),
-            new Token<>(source.at(2, 3), TokenType.IDENTIFIER, "a"),
-            new Token<>(source.at(3, 4), TokenType.UNKNOWN, "!")
+        assertThat(result, isSequence(
+            equalTo(new Token<>(source.at(0, 1), TokenType.UNKNOWN, "!")),
+            equalTo(new Token<>(source.at(1, 2), TokenType.UNKNOWN, "!")),
+            equalTo(new Token<>(source.at(2, 3), TokenType.IDENTIFIER, "a")),
+            equalTo(new Token<>(source.at(3, 4), TokenType.UNKNOWN, "!"))
         ));
     }
 

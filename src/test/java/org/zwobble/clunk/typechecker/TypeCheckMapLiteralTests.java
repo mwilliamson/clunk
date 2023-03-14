@@ -7,11 +7,11 @@ import org.zwobble.clunk.types.Types;
 
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.*;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.precisely.Matchers.instanceOf;
+import static org.zwobble.precisely.Matchers.has;
 
 public class TypeCheckMapLiteralTests {
     @Test
@@ -21,11 +21,11 @@ public class TypeCheckMapLiteralTests {
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 
-        assertThat(result, cast(
+        assertThat(result, instanceOf(
             TypedMapLiteralNode.class,
-            has("entries", empty()),
-            has("keyType", equalTo(Types.NOTHING)),
-            has("valueType", equalTo(Types.NOTHING))
+            has("entries", x -> x.entries(), isSequence()),
+            has("keyType", x -> x.keyType(), equalTo(Types.NOTHING)),
+            has("valueType", x -> x.valueType(), equalTo(Types.NOTHING))
         ));
     }
 
@@ -38,13 +38,13 @@ public class TypeCheckMapLiteralTests {
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 
-        assertThat(result, cast(
+        assertThat(result, instanceOf(
             TypedMapLiteralNode.class,
-            has("entries", contains(
+            has("entries", x -> x.entries(), isSequence(
                 isTypedMapEntryLiteralNode(isTypedStringLiteralNode("a"), isTypedIntLiteralNode(42))
             )),
-            has("keyType", equalTo(Types.STRING)),
-            has("valueType", equalTo(Types.INT))
+            has("keyType", x -> x.keyType(), equalTo(Types.STRING)),
+            has("valueType", x -> x.valueType(), equalTo(Types.INT))
         ));
     }
 
@@ -58,14 +58,14 @@ public class TypeCheckMapLiteralTests {
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 
-        assertThat(result, cast(
+        assertThat(result, instanceOf(
             TypedMapLiteralNode.class,
-            has("entries", contains(
+            has("entries", x -> x.entries(), isSequence(
                 isTypedMapEntryLiteralNode(isTypedStringLiteralNode("a"), isTypedIntLiteralNode(42)),
                 isTypedMapEntryLiteralNode(isTypedStringLiteralNode("b"), isTypedIntLiteralNode(47))
             )),
-            has("keyType", equalTo(Types.STRING)),
-            has("valueType", equalTo(Types.INT))
+            has("keyType", x -> x.keyType(), equalTo(Types.STRING)),
+            has("valueType", x -> x.valueType(), equalTo(Types.INT))
         ));
     }
 }

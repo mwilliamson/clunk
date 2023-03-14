@@ -1,21 +1,18 @@
 package org.zwobble.clunk.ast.typed;
 
-import org.hamcrest.Matcher;
 import org.zwobble.clunk.types.NamespaceType;
 import org.zwobble.clunk.types.StructuredType;
 import org.zwobble.clunk.types.TypeLevelValue;
 import org.zwobble.clunk.util.P;
+import org.zwobble.precisely.Matcher;
 
 import java.util.List;
 
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.equalTo;
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.precisely.Matchers.*;
 
 public class TypedNodeMatchers {
     public static Matcher<TypedExpressionNode> isTypedBoolLiteralNode(boolean value) {
-        return cast(TypedBoolLiteralNode.class, has("value", equalTo(value)));
+        return instanceOf(TypedBoolLiteralNode.class, has("value", x -> x.value(), equalTo(value)));
     }
 
     public static TypedCallConstructorNodeMatcher isTypedCallConstructorNode() {
@@ -31,7 +28,7 @@ public class TypedNodeMatchers {
     }
 
     public static Matcher<TypedFunctionStatementNode> isTypedExpressionStatementNode(Matcher<? super TypedExpressionNode> expression) {
-        return cast(TypedExpressionStatementNode.class, has("expression", expression));
+        return instanceOf(TypedExpressionStatementNode.class, has("expression", x -> x.expression(), expression));
     }
 
     public static TypedFunctionNodeMatcher isTypedFunctionNode() {
@@ -47,7 +44,7 @@ public class TypedNodeMatchers {
     }
 
     public static Matcher<TypedExpressionNode> isTypedIntLiteralNode(int value) {
-        return cast(TypedIntLiteralNode.class, has("value", equalTo(value)));
+        return instanceOf(TypedIntLiteralNode.class, has("value", x -> x.value(), equalTo(value)));
     }
 
     public static Matcher<TypedMapEntryLiteralNode> isTypedMapEntryLiteralNode(
@@ -55,8 +52,8 @@ public class TypedNodeMatchers {
         Matcher<TypedExpressionNode> value
     ) {
         return allOf(
-            has("key", key),
-            has("value", value)
+            has("key", x -> x.key(), key),
+            has("value", x -> x.value(), value)
         );
     }
 
@@ -73,8 +70,8 @@ public class TypedNodeMatchers {
         Matcher<TypedExpressionNode> expression
     ) {
         return allOf(
-            has("name", equalTo(name)),
-            has("expression", expression)
+            has("name", x -> x.name(), equalTo(name)),
+            has("expression", x -> x.expression(), expression)
         );
     }
 
@@ -87,13 +84,13 @@ public class TypedNodeMatchers {
         String functionName
     ) {
         return allOf(
-            has("namespaceType", equalTo(namespaceType)),
-            has("functionName", equalTo(functionName))
+            has("namespaceType", x -> x.namespaceType(), equalTo(namespaceType)),
+            has("functionName", x -> x.functionName(), equalTo(functionName))
         );
     }
 
     public static Matcher<TypedNamespaceStatementNode> isTypedRecordNode(Matcher<TypedRecordNode> matcher) {
-        return cast(TypedRecordNode.class, matcher);
+        return instanceOf(TypedRecordNode.class, matcher);
     }
 
     public static TypedReferenceNodeMatcher isTypedReferenceNode() {
@@ -105,7 +102,7 @@ public class TypedNodeMatchers {
     }
 
     public static Matcher<TypedExpressionNode> isTypedStringLiteralNode(String value) {
-        return cast(TypedStringLiteralNode.class, has("value", equalTo(value)));
+        return instanceOf(TypedStringLiteralNode.class, has("value", x -> x.value(), equalTo(value)));
     }
 
     public static TypedTestNodeMatcher isTypedTestNode() {
@@ -117,21 +114,25 @@ public class TypedNodeMatchers {
     }
 
     public static Matcher<TypedTypeLevelExpressionNode> isTypedTypeLevelExpressionNode(TypeLevelValue value) {
-        return has("value", equalTo(value));
+        return has("value", x -> x.value(), equalTo(value));
     }
 
     public static Matcher<TypedTypeLevelExpressionNode> isTypedTypeLevelReferenceNode(String name, TypeLevelValue value) {
-        return cast(TypedTypeLevelReferenceNode.class, has("name", equalTo(name)), has("value", equalTo(value)));
+        return instanceOf(
+            TypedTypeLevelReferenceNode.class,
+            has("name", x -> x.name(), equalTo(name)),
+            has("value", x -> x.value(), equalTo(value))
+        );
     }
 
-    public static Matcher<TypedTypeNarrowNode> isTypedTypeNarrowNode(
+    public static Matcher<TypedFunctionStatementNode> isTypedTypeNarrowNode(
         String variableName,
         Matcher<StructuredType> type
     ) {
-        return cast(
+        return instanceOf(
             TypedTypeNarrowNode.class,
-            has("variableName", equalTo(variableName)),
-            has("type", type)
+            has("variableName", x -> x.variableName(), equalTo(variableName)),
+            has("type", x -> x.type(), type)
         );
     }
 

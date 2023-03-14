@@ -5,8 +5,8 @@ import org.zwobble.clunk.sources.NullSource;
 
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.zwobble.clunk.tokeniser.Token.token;
 

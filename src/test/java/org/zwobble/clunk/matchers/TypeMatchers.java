@@ -1,17 +1,17 @@
 package org.zwobble.clunk.matchers;
 
-import org.hamcrest.Matcher;
 import org.zwobble.clunk.types.Type;
 import org.zwobble.clunk.types.TypeLevelValueType;
+import org.zwobble.precisely.Matcher;
 
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.precisely.Matchers.has;
+import static org.zwobble.precisely.Matchers.instanceOf;
 
 public class TypeMatchers {
     public static Matcher<Type> isMetaType(Matcher<Type> value) {
-        return cast(
+        return instanceOf(
             TypeLevelValueType.class,
-            has("value", value)
+            has("value", x -> x.value(), instanceOf(Type.class, value))
         );
     }
 }

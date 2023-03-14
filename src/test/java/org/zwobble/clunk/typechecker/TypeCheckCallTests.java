@@ -9,12 +9,13 @@ import org.zwobble.clunk.types.*;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.isSequence;
+import static org.zwobble.precisely.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
 import static org.zwobble.clunk.matchers.OptionalMatcher.present;
+import static org.zwobble.precisely.AssertThat.assertThat;
 
 public class TypeCheckCallTests {
     @Test
@@ -37,7 +38,7 @@ public class TypeCheckCallTests {
         assertThat(result, isTypedCallMethodNode()
             .withReceiver(isTypedReferenceNode().withName("x").withType(recordType))
             .withMethodName("y")
-            .withPositionalArgs(contains(isTypedIntLiteralNode(123)))
+            .withPositionalArgs(isSequence(isTypedIntLiteralNode(123)))
             .withType(Types.INT)
         );
     }
@@ -57,7 +58,7 @@ public class TypeCheckCallTests {
         assertThat(result, isTypedCallMethodNode()
             .withImplicitReceiver()
             .withMethodName("y")
-            .withPositionalArgs(contains(isTypedIntLiteralNode(123)))
+            .withPositionalArgs(isSequence(isTypedIntLiteralNode(123)))
             .withType(Types.INT)
         );
     }
@@ -106,7 +107,7 @@ public class TypeCheckCallTests {
 
         assertThat(result, isTypedCallStaticFunctionNode()
             .withReceiver(isTypedReferenceNode().withName("abs").withType(functionType))
-            .withPositionalArgs(contains(isTypedIntLiteralNode(123)))
+            .withPositionalArgs(isSequence(isTypedIntLiteralNode(123)))
             .withType(Types.INT)
         );
     }
@@ -127,7 +128,7 @@ public class TypeCheckCallTests {
 
         assertThat(result, isTypedCallConstructorNode()
             .withReceiver(isTypedReferenceNode().withName("Id").withType(Types.metaType(recordType)))
-            .withPositionalArgs(contains(isTypedIntLiteralNode(123)))
+            .withPositionalArgs(isSequence(isTypedIntLiteralNode(123)))
             .withType(recordType)
         );
     }
@@ -154,8 +155,8 @@ public class TypeCheckCallTests {
                 .withName("Id")
                 .withType(Types.typeConstructorType(typeConstructor))
             )
-            .withTypeArgs(present(contains(isTypedTypeLevelReferenceNode("String", Types.STRING))))
-            .withPositionalArgs(contains(isTypedStringLiteralNode("Hello.")))
+            .withTypeArgs(present(isSequence(isTypedTypeLevelReferenceNode("String", Types.STRING))))
+            .withPositionalArgs(isSequence(isTypedStringLiteralNode("Hello.")))
             .withType(Types.construct(typeConstructor, List.of(Types.STRING)))
         );
     }
@@ -178,7 +179,7 @@ public class TypeCheckCallTests {
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 
         assertThat(result, isTypedCallStaticFunctionNode()
-            .withPositionalArgs(contains(isTypedIntLiteralNode(42))));
+            .withPositionalArgs(isSequence(isTypedIntLiteralNode(42))));
     }
 
     @Test
@@ -262,7 +263,7 @@ public class TypeCheckCallTests {
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 
         assertThat(result, isTypedCallStaticFunctionNode()
-            .withNamedArgs(contains(
+            .withNamedArgs(isSequence(
                 isTypedNamedArgNode("x", isTypedIntLiteralNode(42))
             ))
         );

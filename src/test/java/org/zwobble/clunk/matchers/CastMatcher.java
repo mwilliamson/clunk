@@ -1,49 +1,26 @@
 package org.zwobble.clunk.matchers;
 
-import org.hamcrest.Description;
-import org.hamcrest.DiagnosingMatcher;
-import org.hamcrest.Matcher;
+import org.zwobble.precisely.MatchResult;
+import org.zwobble.precisely.Matcher;
 
-import static org.hamcrest.Matchers.allOf;
+import java.util.List;
 
-public class CastMatcher<TActual, TExpected> extends DiagnosingMatcher<TActual> {
-    private final Class<TExpected> expectedClass;
-    private final Matcher<TExpected> matcher;
+import static org.zwobble.precisely.Matchers.instanceOf;
 
-    public CastMatcher(Class<TExpected> expectedClass, Matcher<TExpected> matcher) {
-        this.expectedClass = expectedClass;
-        this.matcher = matcher;
+public class CastMatcher<TActual, TExpected> implements Matcher<TActual> {
+    private final Matcher<TActual> matcher;
+
+    public CastMatcher(Class<TExpected> expectedClass, List<Matcher<? super TExpected>> matchers) {
+        this.matcher = instanceOf(expectedClass, matchers);
     }
 
     @Override
-    protected boolean matches(Object item, Description mismatch) {
-        if (null == item) {
-            mismatch.appendText("null");
-            return false;
-        }
-
-        if (!expectedClass.isInstance(item)) {
-            mismatch.appendValue(item).appendText(" is a " + item.getClass().getName());
-            return false;
-        }
-
-        if (!matcher.matches(item)) {
-            matcher.describeMismatch(item, mismatch);
-            return false;
-        }
-
-        return true;
+    public MatchResult match(TActual actual) {
+        return matcher.match(actual);
     }
 
     @Override
-    public void describeTo(Description description) {
-        description.appendText("an instance of ").appendText(expectedClass.getName())
-            .appendText(" and ").appendDescriptionOf(matcher);
-    }
-
-    @SafeVarargs
-    public static <TActual, TExpected> Matcher<TActual> cast(Class<TExpected> type, Matcher<TExpected>... matchers) {
-        var matcher = matchers.length == 1 ? matchers[0] : allOf(matchers);
-        return new CastMatcher<TActual, TExpected>(type, matcher);
+    public String describe() {
+        return matcher.describe();
     }
 }

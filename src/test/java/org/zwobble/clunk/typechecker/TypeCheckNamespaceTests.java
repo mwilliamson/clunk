@@ -13,13 +13,11 @@ import org.zwobble.clunk.types.*;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedImportNode;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedRecordNode;
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
 import static org.zwobble.clunk.matchers.OptionalMatcher.present;
 
 public class TypeCheckNamespaceTests {
@@ -33,9 +31,9 @@ public class TypeCheckNamespaceTests {
         var result = TypeChecker.typeCheckNamespace(untypedNode, TypeCheckerContext.stub());
 
         assertThat(result.typedNode(), allOf(
-            has("id", equalTo(NamespaceId.source("example", "project"))),
-            has("statements", contains(
-                isTypedRecordNode(has("name", equalTo("X")))
+            has("id", x -> x.id(), equalTo(NamespaceId.source("example", "project"))),
+            has("statements", x -> x.statements(), isSequence(
+                isTypedRecordNode(has("name", x -> x.name(), equalTo("X")))
             ))
         ));
     }
@@ -82,17 +80,17 @@ public class TypeCheckNamespaceTests {
         var result = TypeChecker.typeCheckNamespace(untypedNode, context);
 
         assertThat(result.typedNode(), allOf(
-            has("imports", contains(
+            has("imports", x -> x.imports(), isSequence(
                 isTypedImportNode(allOf(
-                    has("namespaceName", equalTo(NamespaceName.fromParts("x", "y"))),
-                    has("fieldName", equalTo(Optional.of("IntAlias")))
+                    has("namespaceName", x -> x.namespaceName(), equalTo(NamespaceName.fromParts("x", "y"))),
+                    has("fieldName", x -> x.fieldName(), equalTo(Optional.of("IntAlias")))
                 ))
             ))
         ));
         var typedRecordNode = (TypedRecordNode) result.typedNode().statements().get(0);
-        assertThat(result.context().constructorType(typedRecordNode.type()), present(cast(
+        assertThat(result.context().constructorType(typedRecordNode.type()), present(instanceOf(
             ConstructorType.class,
-            has("positionalParams", contains(equalTo(Types.INT)))
+            has("positionalParams", x -> x.positionalParams(), isSequence(equalTo(Types.INT)))
         )));
     }
 

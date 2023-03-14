@@ -6,9 +6,9 @@ import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.types.BoolType;
 import org.zwobble.clunk.types.StringType;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.isSequence;
+import static org.zwobble.precisely.Matchers.equalTo;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
 
 public class TypeCheckReturnTests {
@@ -19,7 +19,7 @@ public class TypeCheckReturnTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
-        assertThat(result.value(), contains(
+        assertThat(result.value(), isSequence(
             isTypedReturnNode().withExpression(isTypedBoolLiteralNode(false))
         ));
     }

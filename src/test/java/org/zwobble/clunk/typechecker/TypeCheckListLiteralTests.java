@@ -7,11 +7,11 @@ import org.zwobble.clunk.types.Types;
 
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.*;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedIntLiteralNode;
-import static org.zwobble.clunk.matchers.CastMatcher.cast;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.precisely.Matchers.instanceOf;
+import static org.zwobble.precisely.Matchers.has;
 
 public class TypeCheckListLiteralTests {
     @Test
@@ -21,10 +21,10 @@ public class TypeCheckListLiteralTests {
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 
-        assertThat(result, cast(
+        assertThat(result, instanceOf(
             TypedListLiteralNode.class,
-            has("elements", empty()),
-            has("elementType", equalTo(Types.NOTHING))
+            has("elements", x -> x.elements(), isSequence()),
+            has("elementType", x -> x.elementType(), equalTo(Types.NOTHING))
         ));
     }
 
@@ -37,12 +37,12 @@ public class TypeCheckListLiteralTests {
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 
-        assertThat(result, cast(
+        assertThat(result, instanceOf(
             TypedListLiteralNode.class,
-            has("elements", contains(
+            has("elements", x -> x.elements(), isSequence(
                 isTypedIntLiteralNode(42)
             )),
-            has("elementType", equalTo(Types.INT))
+            has("elementType", x -> x.elementType(), equalTo(Types.INT))
         ));
     }
 
@@ -56,13 +56,13 @@ public class TypeCheckListLiteralTests {
 
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 
-        assertThat(result, cast(
+        assertThat(result, instanceOf(
             TypedListLiteralNode.class,
-            has("elements", contains(
+            has("elements", x -> x.elements(), isSequence(
                 isTypedIntLiteralNode(42),
                 isTypedIntLiteralNode(47)
             )),
-            has("elementType", equalTo(Types.INT))
+            has("elementType", x -> x.elementType(), equalTo(Types.INT))
         ));
     }
 }

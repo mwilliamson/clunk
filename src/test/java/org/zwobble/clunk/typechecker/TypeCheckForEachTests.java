@@ -8,11 +8,11 @@ import org.zwobble.clunk.types.Types;
 
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
-import static org.zwobble.clunk.matchers.HasMethodWithValue.has;
+import static org.zwobble.precisely.Matchers.has;
 
 public class TypeCheckForEachTests {
     @Test
@@ -29,13 +29,13 @@ public class TypeCheckForEachTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
-        assertThat(result.value(), contains(
-            allOf(
-                isA(TypedForEachNode.class),
-                has("targetName", equalTo("x")),
-                has("targetType", equalTo(Types.INT)),
-                has("iterable", isTypedReferenceNode().withName("xs").withType(Types.list(Types.INT))),
-                has("body", contains(
+        assertThat(result.value(), isSequence(
+            instanceOf(
+                TypedForEachNode.class,
+                has("targetName", x -> x.targetName(), equalTo("x")),
+                has("targetType", x -> x.targetType(), equalTo(Types.INT)),
+                has("iterable", x -> x.iterable(), isTypedReferenceNode().withName("xs").withType(Types.list(Types.INT))),
+                has("body", x -> x.body(), isSequence(
                     isTypedExpressionStatementNode(isTypedStringLiteralNode("hello"))
                 ))
             )
@@ -56,10 +56,10 @@ public class TypeCheckForEachTests {
 
         var result = TypeChecker.typeCheckFunctionStatement(untypedNode, context);
 
-        assertThat(result.value(), contains(
-            allOf(
-                isA(TypedForEachNode.class),
-                has("body", contains(
+        assertThat(result.value(), isSequence(
+            instanceOf(
+                TypedForEachNode.class,
+                has("body", x -> x.body(), isSequence(
                     isTypedExpressionStatementNode(isTypedReferenceNode().withName("x").withType(Types.INT))
                 ))
             )

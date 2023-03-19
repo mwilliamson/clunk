@@ -45,7 +45,7 @@ public class SignaturesTests {
     @Test
     public void genericCallableHasGenericSignature() {
         var namespaceId = NamespaceId.source("example");
-        var typeParameter = TypeParameter.function(namespaceId, "X", "f", "A");
+        var typeParameter = TypeParameter.method(namespaceId, "X", "f", "A");
         var methodType = Types.methodType(
             namespaceId,
             List.of(typeParameter),

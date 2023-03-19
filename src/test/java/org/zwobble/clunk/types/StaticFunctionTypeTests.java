@@ -21,4 +21,22 @@ public class StaticFunctionTypeTests {
 
         assertThat(result, equalTo("A/B.f: (Bool, String) -> Int"));
     }
+
+    @Test
+    public void describeIncludesTypeLevelArgs() {
+        var type = Types.staticFunctionType(
+            NamespaceId.source("A", "B"),
+            "f",
+            List.of(
+                TypeParameter.function(NamespaceId.source(), "f", "T"),
+                TypeParameter.function(NamespaceId.source(), "f", "U")
+            ),
+            ParamTypes.empty(),
+            Types.INT
+        );
+
+        var result = type.describe();
+
+        assertThat(result, equalTo("A/B.f: [T, U]() -> Int"));
+    }
 }

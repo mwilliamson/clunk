@@ -3,6 +3,7 @@ package org.zwobble.clunk.types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public record NamespaceType(NamespaceId id, Map<String, Type> fields) implements Type {
@@ -31,7 +32,7 @@ public record NamespaceType(NamespaceId id, Map<String, Type> fields) implements
         public Builder addFunction(String functionName, List<Type> positionalParams, Type returnType) {
             var fields = new ArrayList<>(this.fields);
             var params = new ParamTypes(positionalParams, List.of());
-            var type = new StaticFunctionType(id, functionName, params, returnType, Visibility.PUBLIC);
+            var type = new StaticFunctionType(id, functionName, Optional.empty(), params, returnType, Visibility.PUBLIC);
             fields.add(Map.entry(functionName, type));
             return new Builder(id, fields);
         }

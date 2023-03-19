@@ -27,8 +27,8 @@ public class MethodTypeTests {
         var type = Types.methodType(
             NamespaceId.source(),
             List.of(
-                TypeParameter.function(NamespaceId.source(), "T", "f", "A"),
-                TypeParameter.function(NamespaceId.source(), "T", "f", "B")
+                TypeParameter.method(NamespaceId.source(), "T", "f", "A"),
+                TypeParameter.method(NamespaceId.source(), "T", "f", "B")
             ),
             List.of(),
             Types.INT

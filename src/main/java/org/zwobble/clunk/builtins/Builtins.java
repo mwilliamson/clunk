@@ -7,6 +7,7 @@ import org.zwobble.clunk.types.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.zwobble.clunk.types.Types.metaType;
@@ -42,6 +43,7 @@ public class Builtins {
             Map.entry("assertThat", new StaticFunctionType(
                 NamespaceId.source("stdlib", "assertions"),
                 "assertThat",
+                Optional.empty(),
                 new ParamTypes(List.of(Types.OBJECT, Types.UNIT), List.of()),
                 Types.UNIT,
                 Visibility.PUBLIC
@@ -52,6 +54,7 @@ public class Builtins {
             Map.entry("equalTo", new StaticFunctionType(
                 NamespaceId.source("stdlib", "matchers"),
                 "equalTo",
+                Optional.empty(),
                 new ParamTypes(List.of(Types.OBJECT), List.of()),
                 Types.UNIT,
                 Visibility.PUBLIC
@@ -117,7 +120,7 @@ public class Builtins {
     }
 
     private static MethodType listFlatMapType() {
-        var typeParameterResult = TypeParameter.function(
+        var typeParameterResult = TypeParameter.method(
             Types.LIST_CONSTRUCTOR,
             "flatMap",
             "R"

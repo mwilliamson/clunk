@@ -193,6 +193,23 @@ public class Types {
     public static StaticFunctionType staticFunctionType(
         NamespaceId namespaceId,
         String functionName,
+        List<TypeParameter> typeLevelParams,
+        ParamTypes paramTypes,
+        Type returnType
+    ) {
+        return new StaticFunctionType(
+            namespaceId,
+            functionName,
+            Optional.of(typeLevelParams),
+            paramTypes,
+            returnType,
+            Visibility.PUBLIC
+        );
+    }
+
+    public static StaticFunctionType staticFunctionType(
+        NamespaceId namespaceId,
+        String functionName,
         List<Type> positionalParams,
         Type returnType
     ) {
@@ -232,6 +249,7 @@ public class Types {
         return new StaticFunctionType(
             namespaceId,
             functionName,
+            Optional.empty(),
             new ParamTypes(positionalParams, List.of()),
             returnType,
             visibility
@@ -249,6 +267,7 @@ public class Types {
         return new StaticFunctionType(
             namespaceId,
             functionName,
+            Optional.empty(),
             new ParamTypes(positionalParams, namedParams),
             returnType,
             visibility

@@ -8,6 +8,14 @@ public record ParamTypes(
     List<Type> positional,
     List<NamedParamType> named
 ) {
+    public static ParamTypes empty() {
+        return new ParamTypes(List.of(), List.of());
+    }
+
+    public static ParamTypes of(List<Type> positional) {
+        return new ParamTypes(positional, List.of());
+    }
+
     public String describe() {
         return Stream.concat(
             positional.stream()

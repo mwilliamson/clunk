@@ -548,6 +548,7 @@ public class TypeChecker {
                         var type = new StaticFunctionType(
                             context.namespaceId(),
                             node.name(),
+                            Optional.empty(),
                             functionType.params(),
                             functionType.returnType(),
                             Visibility.PUBLIC

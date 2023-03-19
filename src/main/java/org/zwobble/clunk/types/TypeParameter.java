@@ -4,29 +4,33 @@ import java.util.Optional;
 
 public record TypeParameter(
     NamespaceId namespaceId,
-    String typeName,
+    Optional<String> typeName,
     Optional<String> functionName,
     String name,
     Variance variance
 ) implements Type {
     public static TypeParameter covariant(NamespaceId namespaceId, String typeName, String name) {
-        return new TypeParameter(namespaceId, typeName, Optional.empty(), name, Variance.COVARIANT);
+        return new TypeParameter(namespaceId, Optional.of(typeName), Optional.empty(), name, Variance.COVARIANT);
     }
 
     public static TypeParameter invariant(NamespaceId namespaceId, String typeName, String name) {
-        return new TypeParameter(namespaceId, typeName, Optional.empty(), name, Variance.INVARIANT);
+        return new TypeParameter(namespaceId, Optional.of(typeName), Optional.empty(), name, Variance.INVARIANT);
     }
 
-    public static TypeParameter function(NamespaceId namespaceId, String typeName, String functionName, String name) {
-        return new TypeParameter(namespaceId, typeName, Optional.of(functionName), name, Variance.INVARIANT);
+    public static TypeParameter method(NamespaceId namespaceId, String typeName, String functionName, String name) {
+        return new TypeParameter(namespaceId, Optional.of(typeName), Optional.of(functionName), name, Variance.INVARIANT);
     }
 
-    public static TypeParameter function(StructuredType type, String functionName, String name) {
-        return new TypeParameter(type.namespaceId(), type.name(), Optional.of(functionName), name, Variance.INVARIANT);
+    public static TypeParameter method(StructuredType type, String functionName, String name) {
+        return method(type.namespaceId(), type.name(), functionName, name);
     }
 
-    public static TypeParameter function(TypeConstructor typeConstructor, String functionName, String name) {
-        return function(typeConstructor.genericType(), functionName, name);
+    public static TypeParameter method(TypeConstructor typeConstructor, String functionName, String name) {
+        return method(typeConstructor.genericType(), functionName, name);
+    }
+
+    public static TypeParameter function(NamespaceId namespaceId, String functionName, String name) {
+        return new TypeParameter(namespaceId, Optional.empty(), Optional.of(functionName), name, Variance.INVARIANT);
     }
 
     @Override

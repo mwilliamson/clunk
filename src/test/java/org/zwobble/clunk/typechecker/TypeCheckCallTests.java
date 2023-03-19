@@ -15,7 +15,6 @@ import static org.zwobble.precisely.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
 import static org.zwobble.clunk.matchers.OptionalMatcher.present;
-import static org.zwobble.precisely.AssertThat.assertThat;
 
 public class TypeCheckCallTests {
     @Test
@@ -75,7 +74,7 @@ public class TypeCheckCallTests {
         );
         var namespaceId = NamespaceId.source("example");
         var recordType = Types.recordType(namespaceId, "X");
-        var typeParameter = TypeParameter.function(namespaceId, "X", "f", "T");
+        var typeParameter = TypeParameter.method(namespaceId, "X", "f", "T");
         var methodType = Types.methodType(namespaceId, List.of(typeParameter), List.of(typeParameter), typeParameter);
         var context = TypeCheckerContext.stub()
             .addLocal("x", recordType, NullSource.INSTANCE)
@@ -415,7 +414,7 @@ public class TypeCheckCallTests {
         );
         var namespaceId = NamespaceId.source("example");
         var recordType = Types.recordType(namespaceId, "X");
-        var typeParameter = TypeParameter.function(namespaceId, "X", "f", "T");
+        var typeParameter = TypeParameter.method(namespaceId, "X", "f", "T");
         var methodType = Types.methodType(namespaceId, List.of(typeParameter), List.of(typeParameter), typeParameter);
         var context = TypeCheckerContext.stub()
             .addLocal("x", recordType, NullSource.INSTANCE)
@@ -439,8 +438,8 @@ public class TypeCheckCallTests {
         );
         var namespaceId = NamespaceId.source("example");
         var recordType = Types.recordType(namespaceId, "X");
-        var typeParameter1 = TypeParameter.function(namespaceId, "X", "f", "T1");
-        var typeParameter2 = TypeParameter.function(namespaceId, "X", "f", "T2");
+        var typeParameter1 = TypeParameter.method(namespaceId, "X", "f", "T1");
+        var typeParameter2 = TypeParameter.method(namespaceId, "X", "f", "T2");
         var methodType = Types.methodType(
             namespaceId,
             List.of(typeParameter1, typeParameter2),
@@ -472,7 +471,7 @@ public class TypeCheckCallTests {
         );
         var namespaceId = NamespaceId.source("example");
         var recordType = Types.recordType(namespaceId, "X");
-        var typeParameter = TypeParameter.function(namespaceId, "X", "f", "T");
+        var typeParameter = TypeParameter.method(namespaceId, "X", "f", "T");
         var methodType = Types.methodType(namespaceId, List.of(typeParameter), List.of(typeParameter), typeParameter);
         var context = TypeCheckerContext.stub()
             .addLocal("x", recordType, NullSource.INSTANCE)

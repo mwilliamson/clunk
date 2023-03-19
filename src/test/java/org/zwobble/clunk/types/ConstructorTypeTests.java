@@ -25,8 +25,8 @@ public class ConstructorTypeTests {
     public void describeIncludesTypeLevelArgs() {
         var type = Types.constructorType(
             List.of(
-                TypeParameter.function(NamespaceId.source(), "T", "f", "A"),
-                TypeParameter.function(NamespaceId.source(), "T", "f", "B")
+                TypeParameter.method(NamespaceId.source(), "T", "f", "A"),
+                TypeParameter.method(NamespaceId.source(), "T", "f", "B")
             ),
             List.of(),
             Types.recordType(NamespaceId.source(), "X")

@@ -386,6 +386,11 @@ public class TypeChecker {
             }
 
             @Override
+            public TypedExpressionNode visit(UntypedMemberDefinitionReferenceNode node) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
             public TypedExpressionNode visit(UntypedNotEqualNode node) {
                 return typeCheckNotEqual(node, context);
             }

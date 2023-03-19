@@ -39,7 +39,12 @@ public record StaticFunctionType(
 
     @Override
     public Type replace(TypeMap typeMap) {
-        // TODO: implement properly
-        return this;
+        return new StaticFunctionType(
+            namespaceId,
+            functionName,
+            typeLevelParams,params.replace(typeMap),
+            returnType.replace(typeMap),
+            visibility
+        );
     }
 }

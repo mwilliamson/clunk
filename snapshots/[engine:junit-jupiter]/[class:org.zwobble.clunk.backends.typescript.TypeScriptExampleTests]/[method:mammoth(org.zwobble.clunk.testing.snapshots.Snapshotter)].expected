@@ -586,6 +586,14 @@ Source path: src/mammoth/xml.clunk
 sealed interface XmlNode {
 }
 
+fun element(
+    name: String,
+    attributes: Map[String, String],
+    children: List[XmlNode],
+) -> XmlElement {
+    return XmlElement(name, attributes, children);
+}
+
 record XmlElement(
     name: String,
     attributes: Map[String, String],
@@ -1223,6 +1231,10 @@ suite("collapse", function () {
 Output path: mammoth/xml.ts
 type XmlNode = XmlElement | XmlTextNode;
 
+function element(name: string, attributes: Map<string, string>, children: ReadonlyArray<XmlNode>): XmlElement {
+    return new XmlElement(name, attributes, children);
+}
+
 class XmlElement {
     readonly type: "XmlElement" = "XmlElement";
     readonly name: string;
@@ -1244,7 +1256,7 @@ class XmlTextNode {
         this.value = value;
     }
 }
-export {XmlElement, XmlNode, XmlTextNode};
+export {XmlElement, XmlNode, XmlTextNode, element};
 
 
 ==============

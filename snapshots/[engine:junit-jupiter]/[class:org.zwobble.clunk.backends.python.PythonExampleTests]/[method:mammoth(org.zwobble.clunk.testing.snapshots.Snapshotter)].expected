@@ -586,6 +586,14 @@ Source path: src/mammoth/xml.clunk
 sealed interface XmlNode {
 }
 
+fun element(
+    name: String,
+    attributes: Map[String, String],
+    children: List[XmlNode],
+) -> XmlElement {
+    return XmlElement(name, attributes, children);
+}
+
 record XmlElement(
     name: String,
     attributes: Map[String, String],
@@ -1088,6 +1096,9 @@ import dataclasses
 import typing
 class XmlNode:
     pass
+
+def element(name, attributes, children, /):
+    return XmlElement(name, attributes, children)
 
 @dataclasses.dataclass(frozen=True)
 class XmlElement:

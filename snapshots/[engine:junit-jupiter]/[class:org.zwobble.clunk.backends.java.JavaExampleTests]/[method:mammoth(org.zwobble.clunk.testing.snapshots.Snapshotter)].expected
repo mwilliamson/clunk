@@ -586,6 +586,14 @@ Source path: src/mammoth/xml.clunk
 sealed interface XmlNode {
 }
 
+fun element(
+    name: String,
+    attributes: Map[String, String],
+    children: List[XmlNode],
+) -> XmlElement {
+    return XmlElement(name, attributes, children);
+}
+
 record XmlElement(
     name: String,
     attributes: Map[String, String],
@@ -1341,6 +1349,19 @@ package org.zwobble.mammoth.internal.mammoth.xml;
 public record XmlTextNode(String value) implements org.zwobble.mammoth.internal.mammoth.xml.XmlNode {
     public <T> T accept(org.zwobble.mammoth.internal.mammoth.xml.XmlNode.Visitor<T> visitor) {
         return visitor.visit(this);
+    }
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/mammoth/xml/Xml.java
+package org.zwobble.mammoth.internal.mammoth.xml;
+
+import org.zwobble.mammoth.internal.mammoth.xml.XmlElement;
+
+public class Xml {
+    public static XmlElement element(String name, java.util.Map<String, String> attributes, java.util.List<? extends XmlNode> children) {
+        return new XmlElement(name, attributes, children);
     }
 }
 

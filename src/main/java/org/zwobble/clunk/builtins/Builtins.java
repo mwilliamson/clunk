@@ -50,16 +50,7 @@ public class Builtins {
             ))
         )));
 
-        context = context.updateNamespaceType(new NamespaceType(NamespaceId.source("stdlib", "matchers"), Map.ofEntries(
-            Map.entry("equalTo", new StaticFunctionType(
-                NamespaceId.source("stdlib", "matchers"),
-                "equalTo",
-                Optional.empty(),
-                new ParamTypes(List.of(Types.OBJECT), List.of()),
-                Types.UNIT,
-                Visibility.PUBLIC
-            ))
-        )));
+        context = context.updateNamespaceType(BuiltinsMatchers.NAMESPACE_TYPE);
 
         context = context.withBuiltins(Builtins.ENVIRONMENT);
 

@@ -13,13 +13,15 @@ public record StaticFunctionType(
     Visibility visibility
 ) implements CallableType {
     @Override
-    public Optional<List<TypeParameter>> typeLevelParams() {
-        return Optional.empty();
-    }
-
-    @Override
     public CallableType withoutTypeParams() {
-        return this;
+        return new StaticFunctionType(
+            namespaceId,
+            functionName,
+            Optional.empty(),
+            params,
+            returnType,
+            visibility
+        );
     }
 
     @Override

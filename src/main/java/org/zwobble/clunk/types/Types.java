@@ -31,6 +31,11 @@ public class Types {
         Types.interfaceType(BUILTIN_NAMESPACE_ID, "Map")
     );
 
+    public static final TypeConstructor MEMBER_CONSTRUCTOR = new TypeConstructor(
+        List.of(TypeParameter.invariant(BUILTIN_NAMESPACE_ID, "Member", "T")),
+        Types.recordType(BUILTIN_NAMESPACE_ID, "Member")
+    );
+
     public static final TypeConstructor MUTABLE_LIST_CONSTRUCTOR = new TypeConstructor(
         List.of(TypeParameter.invariant(BUILTIN_NAMESPACE_ID, "MutableList", "T")),
         Types.recordType(BUILTIN_NAMESPACE_ID, "MutableList")
@@ -47,6 +52,10 @@ public class Types {
 
     public static StructuredType map(Type keyType, Type valueType) {
         return construct(MAP_CONSTRUCTOR, List.of(keyType, valueType));
+    }
+
+    public static StructuredType member(Type receiverType, Type memberType) {
+        return construct(MEMBER_CONSTRUCTOR, List.of(receiverType, memberType));
     }
 
     public static StructuredType mutableList(Type elementType) {

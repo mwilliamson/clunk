@@ -25,6 +25,7 @@ public interface TypedExpressionNode extends TypedNode {
         T visit(TypedLogicalOrNode node);
         T visit(TypedMapLiteralNode node);
         T visit(TypedMemberAccessNode node);
+        T visit(TypedMemberDefinitionReferenceNode node);
         T visit(TypedMemberReferenceNode node);
         T visit(TypedStaticMethodToFunctionNode node);
         T visit(TypedStringEqualsNode node);

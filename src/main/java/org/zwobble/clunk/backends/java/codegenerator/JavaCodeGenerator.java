@@ -212,6 +212,11 @@ public class JavaCodeGenerator {
             }
 
             @Override
+            public JavaExpressionNode visit(TypedMemberDefinitionReferenceNode node) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
             public JavaExpressionNode visit(TypedMemberReferenceNode node) {
                 return compileMemberReference(node);
             }

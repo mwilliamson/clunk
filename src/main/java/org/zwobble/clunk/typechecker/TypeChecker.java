@@ -387,7 +387,7 @@ public class TypeChecker {
 
             @Override
             public TypedExpressionNode visit(UntypedMemberDefinitionReferenceNode node) {
-                throw new UnsupportedOperationException();
+                return typeCheckMemberDefinitionReference(node, context);
             }
 
             @Override
@@ -937,6 +937,28 @@ public class TypeChecker {
             typedReceiverNode,
             node.memberName(),
             memberType.get(),
+            node.operatorSource(),
+            node.source()
+        );
+    }
+
+    private static TypedExpressionNode typeCheckMemberDefinitionReference(
+        UntypedMemberDefinitionReferenceNode node,
+        TypeCheckerContext context
+    ) {
+        var typeExpression = typeCheckExpression(node.typeExpression(), context);
+        // TODO: exception when receiver is not meta-type
+        var receiverType = (Type) ((TypeLevelValueType) typeExpression.type()).value();
+        var memberType = context.memberType(receiverType, node.memberName());
+
+        if (memberType.isEmpty()) {
+            throw new UnknownMemberError(receiverType, node.memberName(), node.operatorSource());
+        }
+
+        return new TypedMemberDefinitionReferenceNode(
+            typeExpression,
+            node.memberName(),
+            Types.member(receiverType, memberType.get()),
             node.operatorSource(),
             node.source()
         );

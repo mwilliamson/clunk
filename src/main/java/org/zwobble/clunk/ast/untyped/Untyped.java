@@ -140,8 +140,12 @@ public class Untyped {
         return new UntypedIntLiteralNode(value, NullSource.INSTANCE);
     }
 
-    public static UntypedExpressionNode memberAccess(UntypedExpressionNode receiver, String memberAccess) {
-        return new UntypedMemberAccessNode(receiver, memberAccess, NullSource.INSTANCE, NullSource.INSTANCE);
+    public static UntypedExpressionNode memberAccess(UntypedExpressionNode receiver, String membername) {
+        return new UntypedMemberAccessNode(receiver, membername, NullSource.INSTANCE, NullSource.INSTANCE);
+    }
+
+    public static UntypedExpressionNode memberDefinitionReference(UntypedExpressionNode typeExpression, String memberName) {
+        return new UntypedMemberDefinitionReferenceNode(typeExpression, memberName, NullSource.INSTANCE, NullSource.INSTANCE);
     }
 
     public static UntypedListLiteralNode listLiteral(List<UntypedExpressionNode> elements) {

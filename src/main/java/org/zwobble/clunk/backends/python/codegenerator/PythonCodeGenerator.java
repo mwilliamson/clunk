@@ -224,6 +224,11 @@ public class PythonCodeGenerator {
             }
 
             @Override
+            public PythonExpressionNode visit(TypedMemberDefinitionReferenceNode node) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
             public PythonExpressionNode visit(TypedMemberReferenceNode node) {
                 return compileMemberReference(node, context);
             }

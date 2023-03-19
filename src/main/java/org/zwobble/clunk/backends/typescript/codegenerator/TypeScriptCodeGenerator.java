@@ -201,6 +201,11 @@ public class TypeScriptCodeGenerator {
             }
 
             @Override
+            public TypeScriptExpressionNode visit(TypedMemberDefinitionReferenceNode node) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
             public TypeScriptExpressionNode visit(TypedMemberReferenceNode node) {
                 return compileMemberReference(node, context);
             }

@@ -109,10 +109,22 @@ public class UntypedNodeMatchers {
         Matcher<UntypedExpressionNode> receiver,
         Matcher<String> memberName
     ) {
-        return instanceOf(UntypedMemberAccessNode.class, allOf(
+        return instanceOf(
+            UntypedMemberAccessNode.class,
             has("receiver", x -> x.receiver(), receiver),
             has("memberName", x -> x.memberName(), memberName)
-        ));
+        );
+    }
+
+    public static Matcher<UntypedExpressionNode> isUntypedMemberDefinitionReferenceNode(
+        Matcher<UntypedExpressionNode> typeExpression,
+        Matcher<String> memberName
+    ) {
+        return instanceOf(
+            UntypedMemberDefinitionReferenceNode.class,
+            has("typeExpression", x -> x.typeExpression(), typeExpression),
+            has("memberName", x -> x.memberName(), memberName)
+        );
     }
 
     public static Matcher<UntypedNamedArgNode> isUntypedNamedArg(

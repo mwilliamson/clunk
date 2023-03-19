@@ -5,6 +5,7 @@ import org.zwobble.clunk.sources.Source;
 public record UntypedMemberDefinitionReferenceNode(
     UntypedExpressionNode typeExpression,
     String memberName,
+    Source operatorSource,
     Source source
 ) implements UntypedExpressionNode {
     @Override

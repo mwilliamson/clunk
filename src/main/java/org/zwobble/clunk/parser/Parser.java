@@ -240,6 +240,7 @@ public class Parser {
         new ParseLogicalAnd(),
         new ParseLogicalOr(),
         new ParseMemberAccess(),
+        new ParseMemberDefinitionReferenceAccess(),
         new ParseNotEqual()
     ).collect(Collectors.toMap(
             parselet -> parselet.tokenType(),
@@ -497,6 +498,28 @@ public class Parser {
         @Override
         public TokenType tokenType() {
             return TokenType.SYMBOL_DOT;
+        }
+    }
+
+    private static class ParseMemberDefinitionReferenceAccess implements OperatorParselet {
+        @Override
+        public OperatorPrecedence precedence() {
+            return OperatorPrecedence.CALL;
+        }
+
+        @Override
+        public UntypedExpressionNode parse(
+            UntypedExpressionNode left,
+            TokenIterator<TokenType> tokens,
+            Source operatorSource
+        ) {
+            var fieldName = tokens.nextValue(TokenType.IDENTIFIER);
+            return new UntypedMemberDefinitionReferenceNode(left, fieldName, operatorSource, left.source());
+        }
+
+        @Override
+        public TokenType tokenType() {
+            return TokenType.SYMBOL_COLON_COLON;
         }
     }
 

@@ -17,7 +17,7 @@ public class TypedMemberDefinitionReferenceNodeMatcher extends CastMatcher<Objec
     }
 
     public TypedMemberDefinitionReferenceNodeMatcher withReceiver(Matcher<? super TypedExpressionNode> receiver) {
-        return addMatcher(has("typeExpression", x -> x.typeExpression(), receiver));
+        return addMatcher(has("receiver", x -> x.receiver(), receiver));
     }
 
     public TypedMemberDefinitionReferenceNodeMatcher withMemberName(Matcher<String> memberName) {

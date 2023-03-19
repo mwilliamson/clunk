@@ -3,7 +3,7 @@ package org.zwobble.clunk.ast.untyped;
 import org.zwobble.clunk.sources.Source;
 
 public record UntypedMemberDefinitionReferenceNode(
-    UntypedExpressionNode typeExpression,
+    UntypedExpressionNode receiver,
     String memberName,
     Source operatorSource,
     Source source

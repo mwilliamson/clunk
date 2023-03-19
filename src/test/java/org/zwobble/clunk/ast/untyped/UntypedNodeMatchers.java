@@ -118,12 +118,12 @@ public class UntypedNodeMatchers {
     }
 
     public static Matcher<UntypedExpressionNode> isUntypedMemberDefinitionReferenceNode(
-        Matcher<UntypedExpressionNode> typeExpression,
+        Matcher<UntypedExpressionNode> receiver,
         Matcher<String> memberName
     ) {
         return instanceOf(
             UntypedMemberDefinitionReferenceNode.class,
-            has("typeExpression", x -> x.typeExpression(), typeExpression),
+            has("receiver", x -> x.receiver(), receiver),
             has("memberName", x -> x.memberName(), memberName)
         );
     }

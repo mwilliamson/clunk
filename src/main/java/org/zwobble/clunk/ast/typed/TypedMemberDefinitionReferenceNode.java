@@ -4,7 +4,7 @@ import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.types.Type;
 
 public record TypedMemberDefinitionReferenceNode(
-    TypedExpressionNode typeExpression,
+    TypedExpressionNode receiver,
     String memberName,
     Type type,
     Source operatorSource,

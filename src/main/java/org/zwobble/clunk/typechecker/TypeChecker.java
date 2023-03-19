@@ -946,9 +946,9 @@ public class TypeChecker {
         UntypedMemberDefinitionReferenceNode node,
         TypeCheckerContext context
     ) {
-        var typeExpression = typeCheckExpression(node.typeExpression(), context);
+        var receiver = typeCheckExpression(node.receiver(), context);
         // TODO: exception when receiver is not meta-type
-        var receiverType = (Type) ((TypeLevelValueType) typeExpression.type()).value();
+        var receiverType = (Type) ((TypeLevelValueType) receiver.type()).value();
         var memberType = context.memberType(receiverType, node.memberName());
 
         if (memberType.isEmpty()) {
@@ -956,7 +956,7 @@ public class TypeChecker {
         }
 
         return new TypedMemberDefinitionReferenceNode(
-            typeExpression,
+            receiver,
             node.memberName(),
             Types.member(receiverType, memberType.get()),
             node.operatorSource(),

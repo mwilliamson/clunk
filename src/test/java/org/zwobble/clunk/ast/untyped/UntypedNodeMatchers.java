@@ -62,10 +62,11 @@ public class UntypedNodeMatchers {
         NamespaceName namespaceName,
         Optional<String> fieldName
     ) {
-        return instanceOf(UntypedImportNode.class, allOf(
+        return instanceOf(
+            UntypedImportNode.class,
             has("namespaceName", x -> x.namespaceName(), equalTo(namespaceName)),
             has("fieldName", x -> x.fieldName(), equalTo(fieldName))
-        ));
+        );
     }
 
     public static UntypedIndexNodeMatcher isUntypedIndexNode() {
@@ -190,10 +191,11 @@ public class UntypedNodeMatchers {
         Matcher<UntypedTypeLevelExpressionNode> receiver,
         Matcher<Iterable<UntypedTypeLevelExpressionNode>> args
     ) {
-        return instanceOf(UntypedConstructedTypeNode.class, allOf(
+        return instanceOf(
+            UntypedConstructedTypeNode.class,
             has("receiver", x -> x.receiver(), receiver),
             has("args", x -> x.args(), args)
-        ));
+        );
     }
 
     public static UntypedVarNodeMatcher isUntypedVarNode() {

@@ -26,7 +26,7 @@ public class TypeArgs {
         this.typeParamToTypeArg = typeParamToTypeArg;
     }
 
-    public Type instantiate(Type type) {
+    public Type specialise(Type type) {
         var fullTypeMap = typeParamToTypeArg.entrySet().stream()
             .collect(Collectors.toMap(
                 entry -> entry.getKey(),
@@ -35,7 +35,7 @@ public class TypeArgs {
         return type.replace(new TypeMap(fullTypeMap));
     }
 
-    public Signature instantiate(Signature signature, TypeCheckerContext context, Source source) {
+    public SignatureNonGeneric specialise(Signature signature, Source source) {
         // TODO: handle missing unknown type args
         var typeArgs = typeParamToTypeArg.values().stream()
             // TODO: include specific missing type arg
@@ -43,8 +43,8 @@ public class TypeArgs {
             .toList();
 
         return signature instanceof SignatureGeneric signatureGeneric
-            ? Signatures.toSignature(signatureGeneric.typeArgs(typeArgs), context, source)
-            : signature;
+            ? signatureGeneric.typeArgs(typeArgs)
+            : (SignatureNonGeneric) signature;
     }
 
     public void unify(Type paramType, Type argType) {

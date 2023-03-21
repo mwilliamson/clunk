@@ -67,7 +67,7 @@ public class TypeChecker {
 
         for (var argIndex = 0; argIndex < signature.positionalParamCount(); argIndex++) {
             var paramType = signature.positionalParam(argIndex);
-            var instantiatedParamType = typeArgs.instantiate(paramType);
+            var instantiatedParamType = typeArgs.specialise(paramType);
 
             var untypedArgNode = node.positionalArgs().get(argIndex);
             // TODO: handle nested type param (e.g. List[T])
@@ -112,9 +112,9 @@ public class TypeChecker {
 
         var typedArgsNode = new TypedArgsNode(typedPositionalArgs, typedNamedArgs, node.args().source());
 
-        var signatureNonGeneric = typeArgs.instantiate(signature, context, node.source());
+        var signatureNonGeneric = typeArgs.specialise(signature, node.source());
 
-        return new TypeCheckArgsResult(typedArgsNode, (SignatureNonGeneric) signatureNonGeneric);
+        return new TypeCheckArgsResult(typedArgsNode, signatureNonGeneric);
     }
 
     private static TypeCheckFunctionStatementResult<TypedFunctionStatementNode> typeCheckBlankLineInFunction(
@@ -1521,13 +1521,11 @@ public class TypeChecker {
                         .map(arg -> typeCheckTypeLevelExpressionNode(arg, context))
                         .toList();
 
-                    var nonGenericType = signatureGeneric.typeArgs(
+                    var nonGenericSignature = signatureGeneric.typeArgs(
                         typedArgs.stream()
                             .map(arg -> (Type) arg.value())
                             .toList()
                     );
-
-                    var nonGenericSignature = Signatures.toSignature(nonGenericType, context, node.source());
 
                     return new TypeCheckTypeArgsResult(Optional.of(typedArgs), nonGenericSignature);
                 }

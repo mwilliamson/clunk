@@ -121,6 +121,7 @@ public class TypeChecker {
 
         var typedArgsNode = new TypedArgsNode(typedPositionalArgs, typedNamedArgs, node.args().source());
 
+        // TODO: handle missing unknown type args
         var typeArgs = typeParamToTypeArg.values().stream()
             .map(Optional::orElseThrow)
             .toList();

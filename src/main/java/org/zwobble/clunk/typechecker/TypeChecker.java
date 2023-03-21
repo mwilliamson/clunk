@@ -68,12 +68,12 @@ public class TypeChecker {
 
         for (var argIndex = 0; argIndex < signature.positionalParamCount(); argIndex++) {
             var paramType = signature.positionalParam(argIndex);
-            Type paramTypeHint;
-            if (typeParamToTypeArg.containsKey(paramType)) {
-                paramTypeHint = typeParamToTypeArg.get(paramType).orElse(Types.OBJECT);
-            } else {
-                paramTypeHint = paramType;
-            }
+            var fullTypeMap = typeParamToTypeArg.entrySet().stream()
+                .collect(Collectors.toMap(
+                    entry -> entry.getKey(),
+                    entry -> entry.getValue().orElse(Types.OBJECT)
+                ));
+            var paramTypeHint = paramType.replace(new TypeMap(fullTypeMap));
 
             var untypedArgNode = node.positionalArgs().get(argIndex);
             // TODO: handle nested type param (e.g. List[T])

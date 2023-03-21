@@ -1,6 +1,7 @@
 package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.ast.typed.TypedExpressionNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.ast.untyped.UntypedCallNode;
 import org.zwobble.clunk.sources.NullSource;
@@ -10,11 +11,10 @@ import java.util.List;
 import java.util.Map;
 
 import static org.zwobble.precisely.AssertThat.assertThat;
-import static org.zwobble.precisely.Matchers.isSequence;
-import static org.zwobble.precisely.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
 import static org.zwobble.clunk.matchers.OptionalMatcher.present;
+import static org.zwobble.precisely.Matchers.*;
 
 public class TypeCheckCallTests {
     @Test
@@ -423,6 +423,40 @@ public class TypeCheckCallTests {
         var result = TypeChecker.typeCheckExpression(untypedNode, context);
 
         assertThat(result, isTypedCallMethodNode()
+            .withType(Types.STRING)
+        );
+    }
+
+    @Test
+    public void inferredTypeArgsAreUsedInLaterArgs() {
+        var untypedNode = UntypedCallNode
+            .builder(Untyped.memberAccess(
+                Untyped.reference("x"),
+                "y"
+            ))
+            .addPositionalArg(Untyped.string())
+            .addPositionalArg(Untyped.listLiteral(List.of(Untyped.string())))
+            .build();
+        var namespaceId = NamespaceId.source("example");
+        var recordType = Types.recordType(namespaceId, "X");
+        var typeParameter = TypeParameter.method(namespaceId, "X", "f", "T");
+        var methodType = Types.methodType(
+            namespaceId,
+            List.of(typeParameter),
+            List.of(typeParameter, Types.list(typeParameter)),
+            typeParameter
+        );
+        var context = TypeCheckerContext.stub()
+            .addLocal("x", recordType, NullSource.INSTANCE)
+            .addMemberTypes(recordType, Map.of("y", methodType));
+
+        var result = TypeChecker.typeCheckExpression(untypedNode, context);
+
+        assertThat(result, isTypedCallMethodNode()
+            .withPositionalArgs(isSequence(
+                has("type", TypedExpressionNode::type, equalTo(Types.STRING)),
+                has("type", TypedExpressionNode::type, equalTo(Types.list(Types.STRING)))
+            ))
             .withType(Types.STRING)
         );
     }

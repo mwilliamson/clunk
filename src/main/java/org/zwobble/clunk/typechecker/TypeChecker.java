@@ -123,7 +123,8 @@ public class TypeChecker {
 
         // TODO: handle missing unknown type args
         var typeArgs = typeParamToTypeArg.values().stream()
-            .map(Optional::orElseThrow)
+            // TODO: include specific missing type arg
+            .map(typeArg -> typeArg.orElseThrow(() -> new MissingTypeLevelArgsError(node.source())))
             .toList();
 
         var signatureNonGeneric = signature instanceof SignatureGeneric signatureGeneric

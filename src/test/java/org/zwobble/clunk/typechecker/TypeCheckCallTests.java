@@ -428,6 +428,36 @@ public class TypeCheckCallTests {
     }
 
     @Test
+    public void givenSignatureHasTypeParamsWhenNoTypeArgsArePassedThenTypeArgsAreInferredFromNamedArgs() {
+        var untypedNode = UntypedCallNode
+            .builder(Untyped.memberAccess(
+                Untyped.reference("x"),
+                "y"
+            ))
+            .addNamedArg("x", Untyped.string())
+            .build();
+        var namespaceId = NamespaceId.source("example");
+        var recordType = Types.recordType(namespaceId, "X");
+        var typeParameter = TypeParameter.method(namespaceId, "X", "f", "T");
+        var methodType = Types.methodType(
+            namespaceId,
+            List.of(typeParameter),
+            List.of(),
+            List.of(Types.namedParam("x", typeParameter)),
+            typeParameter
+        );
+        var context = TypeCheckerContext.stub()
+            .addLocal("x", recordType, NullSource.INSTANCE)
+            .addMemberTypes(recordType, Map.of("y", methodType));
+
+        var result = TypeChecker.typeCheckExpression(untypedNode, context);
+
+        assertThat(result, isTypedCallMethodNode()
+            .withType(Types.STRING)
+        );
+    }
+
+    @Test
     public void inferredTypeArgsAreUsedInLaterArgs() {
         var untypedNode = UntypedCallNode
             .builder(Untyped.memberAccess(

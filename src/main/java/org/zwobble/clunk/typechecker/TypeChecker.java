@@ -67,13 +67,13 @@ public class TypeChecker {
 
         for (var argIndex = 0; argIndex < signature.positionalParamCount(); argIndex++) {
             var paramType = signature.positionalParam(argIndex);
-            var instantiatedParamType = typeArgs.specialise(paramType);
-
             var untypedArgNode = node.positionalArgs().get(argIndex);
-            // TODO: handle nested type param (e.g. List[T])
-            var typedArgNode = typeCheckExpression(untypedArgNode, instantiatedParamType, context);
-
-            typeArgs.unify(paramType, typedArgNode.type());
+            var typedArgNode = typeCheckExpression(
+                untypedArgNode,
+                paramType,
+                context,
+                typeArgs
+            );
 
             typedPositionalArgs.add(typedArgNode);
         }
@@ -91,7 +91,8 @@ public class TypeChecker {
             var typedExpression = typeCheckExpression(
                 untypedNamedArgNode.expression(),
                 namedParam.type(),
-                context
+                context,
+                typeArgs
             );
             typedNamedArgs.add(new TypedNamedArgNode(
                 untypedNamedArgNode.name(),
@@ -307,6 +308,22 @@ public class TypeChecker {
             right,
             node.source()
         );
+    }
+
+    private static TypedExpressionNode typeCheckExpression(
+        UntypedExpressionNode node,
+        Type expected,
+        TypeCheckerContext context,
+        TypeArgs typeArgs
+    ) {
+        var instantiatedParamType = typeArgs.specialise(expected);
+
+        // TODO: handle nested type param (e.g. List[T])
+        var typedArgNode = TypeChecker.typeCheckExpression(node, instantiatedParamType, context);
+
+        typeArgs.unify(expected, typedArgNode.type());
+
+        return typedArgNode;
     }
 
     public static TypedExpressionNode typeCheckExpression(

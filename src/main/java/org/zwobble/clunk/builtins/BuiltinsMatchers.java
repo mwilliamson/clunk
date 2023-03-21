@@ -12,12 +12,28 @@ public class BuiltinsMatchers {
 
     static final NamespaceId NAMESPACE_ID = NamespaceId.source("stdlib", "matchers");
 
+    private static final TypeConstructor MATCHER_CONSTRUCTOR = new TypeConstructor(
+        List.of(TypeParameter.contravariant(NamespaceId.source("stdlib", "matchers"), "Matcher", "T")),
+        Types.recordType(NamespaceId.source("stdlib", "matchers"), "Matcher")
+    );
+
+    static Type matcher(Type type) {
+        return Types.construct(MATCHER_CONSTRUCTOR, List.of(type));
+    }
+
+    // TODO: type equalTo more precisely
+//    private static final TypeParameter EQUAL_TO_TYPE_PARAM = TypeParameter.function(
+//        NAMESPACE_ID,
+//        "equalTo",
+//        "T"
+//    );
+
     static final StaticFunctionType EQUAL_TO_TYPE = new StaticFunctionType(
         NAMESPACE_ID,
         "equalTo",
         Optional.empty(),
         new ParamTypes(List.of(Types.OBJECT), List.of()),
-        Types.UNIT,
+        matcher(Types.OBJECT),
         Visibility.PUBLIC
     );
 

@@ -7,15 +7,24 @@ import java.util.Map;
 import java.util.Optional;
 
 public class BuiltinsAssertions {
+
+    private static final NamespaceId NAMESPACE_ID = NamespaceId.source("stdlib", "assertions");
+
     private BuiltinsAssertions() {
     }
 
-    static final NamespaceType NAMESPACE_TYPE = new NamespaceType(NamespaceId.source("stdlib", "assertions"), Map.ofEntries(
+    private static final TypeParameter ASSERT_THAT_TYPE_PARAM = TypeParameter.function(
+        NAMESPACE_ID,
+        "assertThat",
+        "T"
+    );
+
+    static final NamespaceType NAMESPACE_TYPE = new NamespaceType(NAMESPACE_ID, Map.ofEntries(
         Map.entry("assertThat", new StaticFunctionType(
-            NamespaceId.source("stdlib", "assertions"),
+            NAMESPACE_ID,
             "assertThat",
-            Optional.empty(),
-            new ParamTypes(List.of(Types.OBJECT, Types.UNIT), List.of()),
+            Optional.of(List.of(ASSERT_THAT_TYPE_PARAM)),
+            new ParamTypes(List.of(ASSERT_THAT_TYPE_PARAM, BuiltinsMatchers.matcher(ASSERT_THAT_TYPE_PARAM)), List.of()),
             Types.UNIT,
             Visibility.PUBLIC
         ))

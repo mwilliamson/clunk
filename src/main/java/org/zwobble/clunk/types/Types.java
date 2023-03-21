@@ -151,10 +151,26 @@ public class Types {
     }
 
     public static MethodType methodType(NamespaceId namespaceId, List<TypeParameter> typeLevelParams, List<Type> positionalParams, Type returnType) {
+        return methodType(
+            namespaceId,
+            typeLevelParams,
+            positionalParams,
+            List.of(),
+            returnType
+        );
+    }
+
+    public static MethodType methodType(
+        NamespaceId namespaceId,
+        List<TypeParameter> typeLevelParams,
+        List<Type> positionalParams,
+        List<NamedParamType> namedParams,
+        Type returnType
+    ) {
         return new MethodType(
             namespaceId,
             Optional.of(typeLevelParams),
-            new ParamTypes(positionalParams, List.of()),
+            new ParamTypes(positionalParams, namedParams),
             returnType,
             Visibility.PUBLIC
         );

@@ -57,32 +57,23 @@ public class TypeChecker {
             );
         }
 
-        var typeParamToTypeArg = new LinkedHashMap<TypeParameter, Optional<Type>>();
-        if (signature instanceof SignatureGeneric signatureGeneric) {
-            for (var typeParam : signatureGeneric.typeParams()) {
-                typeParamToTypeArg.put(typeParam, Optional.empty());
-            }
-        }
+        var typeArgs = TypeArgs.forTypeParams(
+            signature instanceof SignatureGeneric signatureGeneric
+                ? signatureGeneric.typeParams()
+                : List.of()
+        );
 
         var typedPositionalArgs = new ArrayList<TypedExpressionNode>();
 
         for (var argIndex = 0; argIndex < signature.positionalParamCount(); argIndex++) {
             var paramType = signature.positionalParam(argIndex);
-            var fullTypeMap = typeParamToTypeArg.entrySet().stream()
-                .collect(Collectors.toMap(
-                    entry -> entry.getKey(),
-                    entry -> entry.getValue().orElse(Types.OBJECT)
-                ));
-            var paramTypeHint = paramType.replace(new TypeMap(fullTypeMap));
+            var instantiatedParamType = typeArgs.instantiate(paramType);
 
             var untypedArgNode = node.positionalArgs().get(argIndex);
             // TODO: handle nested type param (e.g. List[T])
-            var typedArgNode = typeCheckExpression(untypedArgNode, paramTypeHint, context);
+            var typedArgNode = typeCheckExpression(untypedArgNode, instantiatedParamType, context);
 
-            // TODO: handle conflicts of type args
-            if (typeParamToTypeArg.containsKey(paramType)/* && typeParamToTypeArg.get(paramType).isEmpty()*/) {
-                typeParamToTypeArg.put((TypeParameter) paramType, Optional.of(typedArgNode.type()));
-            }
+            typeArgs.unify(paramType, typedArgNode.type());
 
             typedPositionalArgs.add(typedArgNode);
         }
@@ -121,15 +112,7 @@ public class TypeChecker {
 
         var typedArgsNode = new TypedArgsNode(typedPositionalArgs, typedNamedArgs, node.args().source());
 
-        // TODO: handle missing unknown type args
-        var typeArgs = typeParamToTypeArg.values().stream()
-            // TODO: include specific missing type arg
-            .map(typeArg -> typeArg.orElseThrow(() -> new MissingTypeLevelArgsError(node.source())))
-            .toList();
-
-        var signatureNonGeneric = signature instanceof SignatureGeneric signatureGeneric
-            ? Signatures.toSignature(signatureGeneric.typeArgs(typeArgs), context, node.source())
-            : signature;
+        var signatureNonGeneric = typeArgs.instantiate(signature, context, node.source());
 
         return new TypeCheckArgsResult(typedArgsNode, (SignatureNonGeneric) signatureNonGeneric);
     }

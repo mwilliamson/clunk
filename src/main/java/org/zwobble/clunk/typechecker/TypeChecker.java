@@ -42,21 +42,47 @@ public class TypeChecker {
         );
     }
 
-    private static TypedArgsNode typeCheckArgs(SignatureNonGeneric signature, UntypedCallNode node, TypeCheckerContext context) {
-        if (node.positionalArgs().size() != signature.positionalParams().size()) {
+    private record TypeCheckArgsResult(
+        TypedArgsNode typedArgsNode,
+        SignatureNonGeneric signatureNonGeneric
+    ) {
+    }
+
+    private static TypeCheckArgsResult typeCheckArgs(Signature signature, UntypedCallNode node, TypeCheckerContext context) {
+        if (node.positionalArgs().size() != signature.positionalParamCount()) {
             throw new WrongNumberOfArgumentsError(
-                signature.positionalParams().size(),
+                signature.positionalParamCount(),
                 node.positionalArgs().size(),
                 node.source()
             );
         }
 
+        var typeParamToTypeArg = new LinkedHashMap<TypeParameter, Optional<Type>>();
+        if (signature instanceof SignatureGeneric signatureGeneric) {
+            for (var typeParam : signatureGeneric.typeParams()) {
+                typeParamToTypeArg.put(typeParam, Optional.empty());
+            }
+        }
+
         var typedPositionalArgs = new ArrayList<TypedExpressionNode>();
 
-        for (var argIndex = 0; argIndex < signature.positionalParams().size(); argIndex++) {
-            var paramType = signature.positionalParams().get(argIndex);
+        for (var argIndex = 0; argIndex < signature.positionalParamCount(); argIndex++) {
+            var paramType = signature.positionalParam(argIndex);
+            Type paramTypeHint;
+            if (typeParamToTypeArg.containsKey(paramType)) {
+                paramTypeHint = typeParamToTypeArg.get(paramType).orElse(Types.OBJECT);
+            } else {
+                paramTypeHint = paramType;
+            }
+
             var untypedArgNode = node.positionalArgs().get(argIndex);
-            var typedArgNode = typeCheckExpression(untypedArgNode, paramType, context);
+            // TODO: handle nested type param (e.g. List[T])
+            var typedArgNode = typeCheckExpression(untypedArgNode, paramTypeHint, context);
+
+            // TODO: handle conflicts of type args
+            if (typeParamToTypeArg.containsKey(paramType)/* && typeParamToTypeArg.get(paramType).isEmpty()*/) {
+                typeParamToTypeArg.put((TypeParameter) paramType, Optional.of(typedArgNode.type()));
+            }
 
             typedPositionalArgs.add(typedArgNode);
         }
@@ -93,7 +119,17 @@ public class TypeChecker {
             }
         }
 
-        return new TypedArgsNode(typedPositionalArgs, typedNamedArgs, node.args().source());
+        var typedArgsNode = new TypedArgsNode(typedPositionalArgs, typedNamedArgs, node.args().source());
+
+        var typeArgs = typeParamToTypeArg.values().stream()
+            .map(Optional::orElseThrow)
+            .toList();
+
+        var signatureNonGeneric = signature instanceof SignatureGeneric signatureGeneric
+            ? Signatures.toSignature(signatureGeneric.typeArgs(typeArgs), context, node.source())
+            : signature;
+
+        return new TypeCheckArgsResult(typedArgsNode, (SignatureNonGeneric) signatureNonGeneric);
     }
 
     private static TypeCheckFunctionStatementResult<TypedFunctionStatementNode> typeCheckBlankLineInFunction(
@@ -122,9 +158,10 @@ public class TypeChecker {
         var signature = Signatures.toSignature(receiver.type(), context, receiver.source());
 
         var typeCheckTypeArgsResult = typeCheckTypeArgs(signature, node, context);
-        var signatureNonGeneric = typeCheckTypeArgsResult.signatureNonGeneric;
 
-        var typedArgs = typeCheckArgs(signatureNonGeneric, node, context);
+        var typeCheckArgsResult = typeCheckArgs(typeCheckTypeArgsResult.signature(), node, context);
+        var typedArgs = typeCheckArgsResult.typedArgsNode();
+        var signatureNonGeneric = typeCheckArgsResult.signatureNonGeneric();
 
         return switch (signatureNonGeneric.type()) {
             case ConstructorType ignored -> new TypedCallConstructorNode(
@@ -1468,7 +1505,7 @@ public class TypeChecker {
 
     private record TypeCheckTypeArgsResult(
         Optional<List<TypedTypeLevelExpressionNode>> nodes,
-        SignatureNonGeneric signatureNonGeneric
+        Signature signature
     ) {
     }
 
@@ -1487,7 +1524,7 @@ public class TypeChecker {
             }
             case SignatureGeneric signatureGeneric -> {
                 if (node.typeLevelArgs().isEmpty()) {
-                    throw new MissingTypeLevelArgsError(node.source());
+                    return new TypeCheckTypeArgsResult(Optional.empty(), signatureGeneric);
                 } else if (node.typeLevelArgs().size() != signatureGeneric.typeParams().size()) {
                     throw new WrongNumberOfTypeLevelArgsError(
                         signatureGeneric.typeParams().size(),
@@ -1505,7 +1542,7 @@ public class TypeChecker {
                             .toList()
                     );
 
-                    var nonGenericSignature = (SignatureNonGeneric) Signatures.toSignature(nonGenericType, context, node.source());
+                    var nonGenericSignature = Signatures.toSignature(nonGenericType, context, node.source());
 
                     return new TypeCheckTypeArgsResult(Optional.of(typedArgs), nonGenericSignature);
                 }

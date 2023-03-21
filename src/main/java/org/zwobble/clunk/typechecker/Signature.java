@@ -5,6 +5,23 @@ import org.zwobble.clunk.types.*;
 import java.util.List;
 
 sealed interface Signature permits SignatureNonGeneric, SignatureGeneric {
+    CallableType type();
+
+    default int positionalParamCount() {
+        return type().positionalParams().size();
+    }
+
+    default Type positionalParam(int index) {
+        return type().positionalParams().get(index);
+    }
+
+    default List<Type> positionalParams() {
+        return type().params().positional();
+    }
+
+    default List<NamedParamType> namedParams() {
+        return type().params().named();
+    }
 }
 
 record SignatureGeneric(CallableType type) implements Signature {
@@ -22,14 +39,6 @@ record SignatureGeneric(CallableType type) implements Signature {
 }
 
 record SignatureNonGeneric(CallableType type) implements Signature {
-    public List<Type> positionalParams() {
-        return type.params().positional();
-    }
-
-    public List<NamedParamType> namedParams() {
-        return type.params().named();
-    }
-
     public Type returnType() {
         return type.returnType();
     }

@@ -404,14 +404,14 @@ public class TypeCheckCallTests {
     }
 
     @Test
-    public void givenSignatureHasTypeParamsWhenNoTypeArgsArePassedThenErrorIsThrown() {
-        var untypedNode = Untyped.call(
-            Untyped.memberAccess(
+    public void givenSignatureHasTypeParamsWhenNoTypeArgsArePassedThenTypeArgsAreInferred() {
+        var untypedNode = UntypedCallNode
+            .builder(Untyped.memberAccess(
                 Untyped.reference("x"),
                 "y"
-            ),
-            List.of(Untyped.string())
-        );
+            ))
+            .addPositionalArg(Untyped.string())
+            .build();
         var namespaceId = NamespaceId.source("example");
         var recordType = Types.recordType(namespaceId, "X");
         var typeParameter = TypeParameter.method(namespaceId, "X", "f", "T");
@@ -420,9 +420,10 @@ public class TypeCheckCallTests {
             .addLocal("x", recordType, NullSource.INSTANCE)
             .addMemberTypes(recordType, Map.of("y", methodType));
 
-        assertThrows(
-            MissingTypeLevelArgsError.class,
-            () -> TypeChecker.typeCheckExpression(untypedNode, context)
+        var result = TypeChecker.typeCheckExpression(untypedNode, context);
+
+        assertThat(result, isTypedCallMethodNode()
+            .withType(Types.STRING)
         );
     }
 

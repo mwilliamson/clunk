@@ -45,6 +45,15 @@ public record UntypedCallNode(
             );
         }
 
+        public Builder addPositionalArg(UntypedExpressionNode expression) {
+            return new Builder(
+                receiver,
+                typeLevelArgs,
+                positionalArgs.plus(expression),
+                namedArgs
+            );
+        }
+
         public Builder addNamedArg(String name, UntypedExpressionNode expression) {
             return new Builder(
                 receiver,

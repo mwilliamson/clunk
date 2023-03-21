@@ -94,6 +94,11 @@ public class SubtypeRelations {
                             return false;
                         }
                     }
+                    case CONTRAVARIANT -> {
+                        if (!isSubType(argSupertype, argSubtype)) {
+                            return false;
+                        }
+                    }
                     case INVARIANT -> {
                         if (!argSubtype.equals(argSupertype)) {
                             return false;

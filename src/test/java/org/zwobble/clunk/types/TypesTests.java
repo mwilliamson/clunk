@@ -18,6 +18,11 @@ public class TypesTests {
         Types.recordType(NamespaceId.source(), "TypeConstructorCovariantOther")
     );
 
+    private static final TypeConstructor TYPE_CONSTRUCTOR_CONTRAVARIANT = new TypeConstructor(
+        List.of(TypeParameter.contravariant(NamespaceId.source(), "TypeConstructorContravariant", "T")),
+        Types.recordType(NamespaceId.source(), "TypeConstructorContravariant")
+    );
+
     private static final TypeConstructor TYPE_CONSTRUCTOR_INVARIANT = new TypeConstructor(
         List.of(TypeParameter.invariant(NamespaceId.source(), "TypeConstructorInvariant", "T")),
         Types.recordType(NamespaceId.source(), "TypeConstructorInvariant")
@@ -270,5 +275,53 @@ public class TypesTests {
         );
 
         assertThat(result, equalTo(false));
+    }
+
+    @Test
+    public void givenTypeParamIsContravariantWhenTypeArgsAreTheSameThenConstructedTypesAreSubtypes() {
+        var subtypeRelations = SubtypeRelations.EMPTY;
+
+        var result = subtypeRelations.isSubType(
+            Types.construct(TYPE_CONSTRUCTOR_CONTRAVARIANT, List.of(Types.STRING)),
+            Types.construct(TYPE_CONSTRUCTOR_CONTRAVARIANT, List.of(Types.STRING))
+        );
+
+        assertThat(result, equalTo(true));
+    }
+
+    @Test
+    public void givenTypeParamIsContravariantWhenTypeArgsAreUnrelatedThenConstructedTypesAreNotSubtypes() {
+        var subtypeRelations = SubtypeRelations.EMPTY;
+
+        var result = subtypeRelations.isSubType(
+            Types.construct(TYPE_CONSTRUCTOR_CONTRAVARIANT, List.of(Types.STRING)),
+            Types.construct(TYPE_CONSTRUCTOR_CONTRAVARIANT, List.of(Types.INT))
+        );
+
+        assertThat(result, equalTo(false));
+    }
+
+    @Test
+    public void givenTypeParamIsContravariantWhenTypeArgsAreSubtypesThenConstructedTypesAreNotSubtypes() {
+        var subtypeRelations = SubtypeRelations.EMPTY;
+
+        var result = subtypeRelations.isSubType(
+            Types.construct(TYPE_CONSTRUCTOR_CONTRAVARIANT, List.of(Types.STRING)),
+            Types.construct(TYPE_CONSTRUCTOR_CONTRAVARIANT, List.of(Types.OBJECT))
+        );
+
+        assertThat(result, equalTo(false));
+    }
+
+    @Test
+    public void givenTypeParamIsContravariantWhenTypeArgsAreSupertypesThenConstructedTypesAreSubtypes() {
+        var subtypeRelations = SubtypeRelations.EMPTY;
+
+        var result = subtypeRelations.isSubType(
+            Types.construct(TYPE_CONSTRUCTOR_CONTRAVARIANT, List.of(Types.OBJECT)),
+            Types.construct(TYPE_CONSTRUCTOR_CONTRAVARIANT, List.of(Types.STRING))
+        );
+
+        assertThat(result, equalTo(true));
     }
 }

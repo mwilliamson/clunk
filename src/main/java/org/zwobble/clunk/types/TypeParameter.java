@@ -13,6 +13,10 @@ public record TypeParameter(
         return new TypeParameter(namespaceId, Optional.of(typeName), Optional.empty(), name, Variance.COVARIANT);
     }
 
+    public static TypeParameter contravariant(NamespaceId namespaceId, String typeName, String name) {
+        return new TypeParameter(namespaceId, Optional.of(typeName), Optional.empty(), name, Variance.CONTRAVARIANT);
+    }
+
     public static TypeParameter invariant(NamespaceId namespaceId, String typeName, String name) {
         return new TypeParameter(namespaceId, Optional.of(typeName), Optional.empty(), name, Variance.INVARIANT);
     }

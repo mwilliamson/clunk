@@ -1,7 +1,5 @@
 package org.zwobble.clunk.typechecker;
 
-import org.zwobble.clunk.ast.typed.TypedExpressionNode;
-import org.zwobble.clunk.ast.untyped.UntypedExpressionNode;
 import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.types.Type;
 import org.zwobble.clunk.types.TypeMap;
@@ -47,21 +45,6 @@ public class TypeArgs {
         return signature instanceof SignatureGeneric signatureGeneric
             ? signatureGeneric.typeArgs(typeArgs)
             : (SignatureNonGeneric) signature;
-    }
-
-    public TypedExpressionNode typeCheckExpression(
-        UntypedExpressionNode expression,
-        Type paramType,
-        TypeCheckerContext context
-    ) {
-        var instantiatedParamType = specialise(paramType);
-
-        // TODO: handle nested type param (e.g. List[T])
-        var typedArgNode = TypeChecker.typeCheckExpression(expression, instantiatedParamType, context);
-
-        unify(paramType, typedArgNode.type());
-
-        return typedArgNode;
     }
 
     public void unify(Type paramType, Type argType) {

@@ -331,29 +331,7 @@ public class TypeChecker {
         Type expected,
         TypeCheckerContext context
     ) {
-        var typed = typeCheckExpression(node, context);
-
-        if (expected instanceof FunctionType && typed.type() instanceof StaticFunctionType staticFunctionType) {
-            var functionType = new FunctionType(
-                staticFunctionType.params(),
-                staticFunctionType.returnType()
-            );
-            typed = new TypedStaticMethodToFunctionNode(typed, functionType);
-        }
-
-        var argType = typed.type();
-        if (!context.isSubType(argType, expected)) {
-            throw new UnexpectedTypeError(expected, argType, node.source());
-        }
-
-        return typed;
-    }
-
-    public static TypedExpressionNode typeCheckExpression(
-        UntypedExpressionNode node,
-        TypeCheckerContext context
-    ) {
-        return node.accept(new UntypedExpressionNode.Visitor<TypedExpressionNode>() {
+        var typed = node.accept(new UntypedExpressionNode.Visitor<TypedExpressionNode>() {
             @Override
             public TypedExpressionNode visit(UntypedAddNode node) {
                 return typeCheckAdd(node, context);
@@ -444,6 +422,28 @@ public class TypeChecker {
                 return typeCheckStringLiteral(node);
             }
         });
+
+        if (expected instanceof FunctionType && typed.type() instanceof StaticFunctionType staticFunctionType) {
+            var functionType = new FunctionType(
+                staticFunctionType.params(),
+                staticFunctionType.returnType()
+            );
+            typed = new TypedStaticMethodToFunctionNode(typed, functionType);
+        }
+
+        var argType = typed.type();
+        if (!context.isSubType(argType, expected)) {
+            throw new UnexpectedTypeError(expected, argType, node.source());
+        }
+
+        return typed;
+    }
+
+    public static TypedExpressionNode typeCheckExpression(
+        UntypedExpressionNode node,
+        TypeCheckerContext context
+    ) {
+        return typeCheckExpression(node, Types.OBJECT, context);
     }
 
     private static TypeCheckFunctionStatementResult<TypedFunctionStatementNode> typeCheckExpressionStatement(

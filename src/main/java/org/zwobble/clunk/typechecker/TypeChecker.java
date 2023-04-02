@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static org.zwobble.clunk.types.Types.listElementType;
 import static org.zwobble.clunk.types.Types.metaType;
 import static org.zwobble.clunk.util.Iterables.slidingPairs;
 import static org.zwobble.clunk.util.Lists.last;
@@ -374,7 +375,7 @@ public class TypeChecker {
 
             @Override
             public TypedExpressionNode visit(UntypedListLiteralNode node) {
-                return typeCheckListLiteral(node, context);
+                return typeCheckListLiteral(node, expected, context);
             }
 
             @Override
@@ -877,9 +878,15 @@ public class TypeChecker {
         return new TypedIntLiteralNode(node.value(), node.source());
     }
 
-    private static TypedExpressionNode typeCheckListLiteral(UntypedListLiteralNode node, TypeCheckerContext context) {
+    private static TypedExpressionNode typeCheckListLiteral(
+        UntypedListLiteralNode node,
+        Type expectedType,
+        TypeCheckerContext context
+    ) {
+        var expectedElementType = listElementType(expectedType);
+
         var elements = node.elements().stream()
-            .map(element -> typeCheckExpression(element, context))
+            .map(element -> typeCheckExpression(element, expectedElementType.orElse(Types.OBJECT), context))
             .toList();
 
         var elementTypes = elements.stream()
@@ -887,7 +894,7 @@ public class TypeChecker {
             .distinct()
             .toList();
 
-        var elementType = Types.unify(elementTypes, Types.NOTHING);
+        var elementType = expectedElementType.orElseGet(() -> Types.unify(elementTypes, Types.NOTHING));
 
         return new TypedListLiteralNode(
             elements,

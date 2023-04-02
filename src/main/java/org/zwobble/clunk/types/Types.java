@@ -50,6 +50,17 @@ public class Types {
         return construct(LIST_CONSTRUCTOR, List.of(elementType));
     }
 
+    public static Optional<Type> listElementType(Type type) {
+        if (
+            type instanceof ConstructedType constructedType &&
+                constructedType.constructor() == LIST_CONSTRUCTOR
+        ) {
+            return Optional.of(constructedType.args().get(0));
+        } else {
+            return Optional.empty();
+        }
+    }
+
     public static StructuredType map(Type keyType, Type valueType) {
         return construct(MAP_CONSTRUCTOR, List.of(keyType, valueType));
     }

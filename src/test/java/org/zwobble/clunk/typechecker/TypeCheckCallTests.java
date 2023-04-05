@@ -526,6 +526,108 @@ public class TypeCheckCallTests {
     }
 
     @Test
+    public void whenTypeParamIsCovariantSubPartOfParamTypeThenTypeParamCanBeInferred() {
+        var untypedNode = UntypedCallNode
+            .builder(Untyped.memberAccess(
+                Untyped.reference("x"),
+                "y"
+            ))
+            .addPositionalArg(Untyped.listLiteral(List.of(Untyped.string())))
+            .build();
+        var namespaceId = NamespaceId.source("example");
+        var recordType = Types.recordType(namespaceId, "X");
+        var typeParameter = TypeParameter.method(namespaceId, "X", "f", "T");
+        var methodType = Types.methodType(namespaceId, List.of(typeParameter), List.of(Types.list(typeParameter)), typeParameter);
+        var context = TypeCheckerContext.stub()
+            .addLocal("x", recordType, NullSource.INSTANCE)
+            .addMemberTypes(recordType, Map.of("y", methodType));
+
+        var result = TypeChecker.typeCheckExpression(untypedNode, context);
+
+        assertThat(result, isTypedCallMethodNode()
+            .withType(Types.STRING)
+        );
+    }
+
+    @Test
+    public void whenTypeParamIsContravariantSubPartOfParamTypeThenTypeParamCanBeInferred() {
+        var namespaceId = NamespaceId.source("example");
+
+        var consumerTypeParam = TypeParameter.contravariant(namespaceId, "Consumer", "T");
+        var consumerTypeConstructor = new TypeConstructor(List.of(consumerTypeParam), Types.interfaceType(namespaceId, "Consumer"));
+
+        var recordType = Types.recordType(namespaceId, "X");
+        var typeParameter = TypeParameter.method(namespaceId, "X", "f", "T");
+        var methodType = Types.methodType(
+            namespaceId,
+            List.of(typeParameter),
+            List.of(
+                Types.construct(consumerTypeConstructor, List.of(typeParameter)),
+                typeParameter
+            ),
+            typeParameter
+        );
+
+        var untypedNode = UntypedCallNode
+            .builder(Untyped.memberAccess(
+                Untyped.reference("x"),
+                "y"
+            ))
+            .addPositionalArg(Untyped.reference("z"))
+            .addPositionalArg(Untyped.listLiteral(List.of(Untyped.string())))
+            .build();
+        var context = TypeCheckerContext.stub()
+            .addLocal("x", recordType, NullSource.INSTANCE)
+            .addMemberTypes(recordType, Map.of("y", methodType))
+            .addLocal("z", Types.construct(consumerTypeConstructor, List.of(Types.list(Types.OBJECT))), NullSource.INSTANCE);
+
+        var result = TypeChecker.typeCheckExpression(untypedNode, context);
+
+        assertThat(result, isTypedCallMethodNode()
+            .withType(Types.list(Types.STRING))
+        );
+    }
+
+    @Test
+    public void whenUpperAndLowerTypeBoundsConflictThenErrorIsThrown() {
+        var namespaceId = NamespaceId.source("example");
+
+        var consumerTypeParam = TypeParameter.contravariant(namespaceId, "Consumer", "T");
+        var consumerTypeConstructor = new TypeConstructor(List.of(consumerTypeParam), Types.interfaceType(namespaceId, "Consumer"));
+
+        var recordType = Types.recordType(namespaceId, "X");
+        var typeParameter = TypeParameter.method(namespaceId, "X", "f", "T");
+        var methodType = Types.methodType(
+            namespaceId,
+            List.of(typeParameter),
+            List.of(
+                Types.construct(consumerTypeConstructor, List.of(typeParameter)),
+                typeParameter
+            ),
+            typeParameter
+        );
+
+        var untypedNode = UntypedCallNode
+            .builder(Untyped.memberAccess(
+                Untyped.reference("x"),
+                "y"
+            ))
+            .addPositionalArg(Untyped.reference("z"))
+            .addPositionalArg(Untyped.reference("obj"))
+            .build();
+        var context = TypeCheckerContext.stub()
+            .addLocal("x", recordType, NullSource.INSTANCE)
+            .addMemberTypes(recordType, Map.of("y", methodType))
+            .addLocal("z", Types.construct(consumerTypeConstructor, List.of(Types.STRING)), NullSource.INSTANCE)
+            .addLocal("obj", Types.OBJECT, NullSource.INSTANCE);
+
+        assertThrows(
+            MissingTypeLevelArgsError.class,
+            () -> TypeChecker.typeCheckExpression(untypedNode, context)
+        );
+    }
+
+    @Test
     public void givenSignatureHasTypeParamsWhenNoTypeArgsArePassedAndTypeArgCannotBeInferredThenErrorIsThrown() {
         var untypedNode = UntypedCallNode
             .builder(Untyped.memberAccess(

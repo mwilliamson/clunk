@@ -726,7 +726,7 @@ public class TypeChecker {
             } else if (statementResult.returnBehaviour().equals(ReturnBehaviour.SOMETIMES) && returnBehaviour.equals(ReturnBehaviour.NEVER)) {
                 returnBehaviour = ReturnBehaviour.SOMETIMES;
             }
-            returnType = Types.unify(returnType, statementResult.returnType());
+            returnType = Types.commonSupertype(returnType, statementResult.returnType());
         }
 
         return new TypeCheckFunctionStatementResult<>(typedStatements, returnBehaviour, returnType, context);
@@ -755,7 +755,7 @@ public class TypeChecker {
                 );
             typedConditionalBranches.add(result.value());
             returnBehaviours.add(result.returnBehaviour());
-            returnType = Types.unify(returnType, result.returnType());
+            returnType = Types.commonSupertype(returnType, result.returnType());
 
             if (
                 result.value().condition() instanceof TypedLogicalNotNode typedConditionNotNode &&
@@ -782,7 +782,7 @@ public class TypeChecker {
             );
 
         returnBehaviours.add(typeCheckElseResult.returnBehaviour());
-        returnType = Types.unify(returnType, typeCheckElseResult.returnType());
+        returnType = Types.commonSupertype(returnType, typeCheckElseResult.returnType());
 
         var typedNode = new TypedIfStatementNode(
             typedConditionalBranches,
@@ -924,7 +924,7 @@ public class TypeChecker {
             .distinct()
             .toList();
 
-        var elementType = expectedElementType.orElseGet(() -> Types.unify(elementTypes, Types.NOTHING));
+        var elementType = expectedElementType.orElseGet(() -> Types.commonSupertype(elementTypes, Types.NOTHING));
 
         return new TypedListLiteralNode(
             elements,
@@ -985,13 +985,13 @@ public class TypeChecker {
             .map(entry -> entry.keyType())
             .distinct()
             .toList();
-        var keyType = Types.unify(keyTypes, Types.NOTHING);
+        var keyType = Types.commonSupertype(keyTypes, Types.NOTHING);
 
         var valueTypes = entries.stream()
             .map(entry -> entry.valueType())
             .distinct()
             .toList();
-        var valueType = Types.unify(valueTypes, Types.NOTHING);
+        var valueType = Types.commonSupertype(valueTypes, Types.NOTHING);
 
         return new TypedMapLiteralNode(
             entries,
@@ -1454,7 +1454,7 @@ public class TypeChecker {
             typedCaseNodes.add(typedCaseNode);
 
             returnBehaviours.add(typedBody.returnBehaviour());
-            returnType = Types.unify(returnType, typedBody.returnType());
+            returnType = Types.commonSupertype(returnType, typedBody.returnType());
 
             if (!unhandledTypes.remove(caseType)) {
                 throw new InvalidCaseTypeError(typedExpressionNode.type(), caseType, switchCase.source());

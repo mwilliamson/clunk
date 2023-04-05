@@ -318,13 +318,17 @@ public class Types {
         return new ConstructedType(constructor, args);
     }
 
-    public static Type unify(Type left, Type right) {
-        return TypeUnifier.unify(left, right);
+    public static Type commonSupertype(Type left, Type right) {
+        return TypeUnifier.commonSupertype(left, right);
     }
 
-    public static Type unify(List<Type> types, Type defaultType) {
+    public static Type commonSupertype(List<Type> types, Type defaultType) {
         return types.stream()
-            .reduce((x, y) -> unify(x, y))
+            .reduce((x, y) -> commonSupertype(x, y))
             .orElse(defaultType);
+    }
+
+    public static Type commonSubtype(Type left, Type right) {
+        return TypeUnifier.commonSubtype(left, right);
     }
 }

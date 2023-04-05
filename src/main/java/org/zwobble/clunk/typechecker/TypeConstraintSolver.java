@@ -7,9 +7,17 @@ import org.zwobble.clunk.util.Pair;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 public class TypeConstraintSolver {
-    private record Constraint(Type subtype, TypeParameter supertype) {
+    private record Constraint(TypeParameter typeParam, Optional<Type> subtype, Optional<Type> supertype) {
+        public static Constraint subtype(TypeParameter typeParam, Type supertype) {
+            return new Constraint(typeParam, Optional.empty(), Optional.of(supertype));
+        }
+
+        public static Constraint supertype(TypeParameter typeParam, Type subtype) {
+            return new Constraint(typeParam, Optional.of(subtype), Optional.empty());
+        }
     }
 
     private final List<TypeParameter> typeParams;
@@ -101,7 +109,12 @@ public class TypeConstraintSolver {
         }
 
         if (supertype instanceof TypeParameter supertypeTypeParam && typeParams.contains(supertypeTypeParam)) {
-            constraints.add(new Constraint(subtype, supertypeTypeParam));
+            constraints.add(Constraint.supertype(supertypeTypeParam, subtype));
+            return true;
+        }
+
+        if (subtype instanceof TypeParameter subtypeTypeParam && typeParams.contains(subtypeTypeParam)) {
+            constraints.add(Constraint.subtype(subtypeTypeParam, supertype));
             return true;
         }
 
@@ -120,10 +133,20 @@ public class TypeConstraintSolver {
             var constraintIterator = constraints.listIterator();
             while (constraintIterator.hasNext()) {
                 var constraint = constraintIterator.next();
-                var currentBounds = typeParamBounds.get(constraint.supertype());
+                var currentBounds = typeParamBounds.get(constraint.typeParam());
                 // TODO: check for type parameter as constraining type
-                var lowerBound = Types.unify(currentBounds.second(), constraint.subtype());
-                typeParamBounds.put(constraint.supertype(), Pair.of(currentBounds.first(), lowerBound));
+                var upperBound = currentBounds.first();
+                var lowerBound = currentBounds.second();
+                if (constraint.subtype().isPresent()) {
+                    lowerBound = Types.commonSupertype(lowerBound, constraint.subtype().get());
+                }
+                if (constraint.supertype().isPresent()) {
+                    upperBound = Types.commonSubtype(upperBound, constraint.supertype().get());
+                }
+                if (!subtypeRelations.isSubType(lowerBound, upperBound)) {
+                    throw new MissingTypeLevelArgsError(source);
+                }
+                typeParamBounds.put(constraint.typeParam(), Pair.of(upperBound, lowerBound));
                 constraintIterator.remove();
             }
         }

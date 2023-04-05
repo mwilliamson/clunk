@@ -2,7 +2,10 @@ package org.zwobble.clunk.types;
 
 import org.pcollections.PMap;
 import org.pcollections.PVector;
+import org.zwobble.clunk.typechecker.TypeConstraintSolver;
 import org.zwobble.clunk.util.P;
+
+import java.util.List;
 
 public class SubtypeRelations {
     public static final SubtypeRelations EMPTY = new SubtypeRelations(P.map(), P.map());
@@ -35,81 +38,8 @@ public class SubtypeRelations {
     }
 
     public boolean isSubType(Type subtype, Type supertype) {
-        if (supertype.equals(Types.OBJECT)) {
-            return true;
-        }
-
-        if (subtype.equals(Types.NOTHING)) {
-            return true;
-        }
-
-        if (subtype.equals(supertype)) {
-            return true;
-        }
-
-        var extendedTypes = extendedTypes(subtype);
-        for (var extendedType : extendedTypes) {
-            if (isSubType(extendedType, supertype)) {
-                return true;
-            }
-        }
-
-        if (
-            subtype instanceof FunctionType subtypeFunction &&
-            supertype instanceof FunctionType supertypeFunction
-        ) {
-            // TODO: handle named params
-            if (subtypeFunction.params().positional().size() != supertypeFunction.params().positional().size()) {
-                return false;
-            }
-
-            for (var i = 0; i < subtypeFunction.params().positional().size(); i++) {
-                var subtypeParam = subtypeFunction.params().positional().get(i);
-                var supertypeParam = supertypeFunction.params().positional().get(i);
-                if (!isSubType(supertypeParam, subtypeParam)) {
-                    return false;
-                }
-            }
-
-            if (!isSubType(subtypeFunction.returnType(), supertypeFunction.returnType())) {
-                return false;
-            }
-
-            return true;
-        }
-
-        if (
-            subtype instanceof ConstructedType subtypeConstructed &&
-            supertype instanceof ConstructedType supertypeConstructed &&
-            subtypeConstructed.constructor().equals(supertypeConstructed.constructor())
-        ) {
-            for (var i = 0; i < subtypeConstructed.constructor().params().size(); i++) {
-                var param = subtypeConstructed.constructor().params().get(i);
-                var argSubtype = subtypeConstructed.args().get(0);
-                var argSupertype = supertypeConstructed.args().get(0);
-
-                switch (param.variance()) {
-                    case COVARIANT -> {
-                        if (!isSubType(argSubtype, argSupertype)) {
-                            return false;
-                        }
-                    }
-                    case CONTRAVARIANT -> {
-                        if (!isSubType(argSupertype, argSubtype)) {
-                            return false;
-                        }
-                    }
-                    case INVARIANT -> {
-                        if (!argSubtype.equals(argSupertype)) {
-                            return false;
-                        }
-                    }
-                }
-            }
-            return true;
-        }
-
-        return false;
+        var typeConstraintSolver = new TypeConstraintSolver(List.of(), this);
+        return typeConstraintSolver.addSubtypeConstraint(subtype, supertype);
     }
 
     public SubtypeRelations addExtendedType(StructuredType subtype, StructuredType supertype) {

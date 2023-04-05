@@ -465,7 +465,7 @@ public class TypeCheckCallTests {
                 "y"
             ))
             .addPositionalArg(Untyped.string())
-            .addPositionalArg(Untyped.listLiteral(List.of(Untyped.string())))
+            .addPositionalArg(Untyped.listLiteral(List.of()))
             .build();
         var namespaceId = NamespaceId.source("example");
         var recordType = Types.recordType(namespaceId, "X");
@@ -488,6 +488,40 @@ public class TypeCheckCallTests {
                 has("type", TypedExpressionNode::type, equalTo(Types.list(Types.STRING)))
             ))
             .withType(Types.STRING)
+        );
+    }
+
+    @Test
+    public void possibleSpecialisationsOfTypeArgAreUnified() {
+        var untypedNode = UntypedCallNode
+            .builder(Untyped.memberAccess(
+                Untyped.reference("x"),
+                "y"
+            ))
+            .addPositionalArg(Untyped.string())
+            .addPositionalArg(Untyped.intLiteral())
+            .build();
+        var namespaceId = NamespaceId.source("example");
+        var recordType = Types.recordType(namespaceId, "X");
+        var typeParameter = TypeParameter.method(namespaceId, "X", "f", "T");
+        var methodType = Types.methodType(
+            namespaceId,
+            List.of(typeParameter),
+            List.of(typeParameter, typeParameter),
+            typeParameter
+        );
+        var context = TypeCheckerContext.stub()
+            .addLocal("x", recordType, NullSource.INSTANCE)
+            .addMemberTypes(recordType, Map.of("y", methodType));
+
+        var result = TypeChecker.typeCheckExpression(untypedNode, context);
+
+        assertThat(result, isTypedCallMethodNode()
+            .withPositionalArgs(isSequence(
+                has("type", TypedExpressionNode::type, equalTo(Types.STRING)),
+                has("type", TypedExpressionNode::type, equalTo(Types.INT))
+            ))
+            .withType(Types.OBJECT)
         );
     }
 

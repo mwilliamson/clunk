@@ -6,6 +6,7 @@ import org.zwobble.clunk.errors.InternalCompilerError;
 import org.zwobble.clunk.errors.SourceError;
 import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.types.*;
+import org.zwobble.clunk.util.Pair;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -58,65 +59,110 @@ public class TypeChecker {
             );
         }
 
-        var typeArgs = TypeArgs.forTypeParams(
-            signature instanceof SignatureGeneric signatureGeneric
-                ? signatureGeneric.typeParams()
-                : List.of()
-        );
-
-        var typedPositionalArgs = new ArrayList<TypedExpressionNode>();
-
+        var positionalChecks = new ArrayList<Pair<UntypedExpressionNode, Type>>();
         for (var argIndex = 0; argIndex < signature.positionalParamCount(); argIndex++) {
             var paramType = signature.positionalParam(argIndex);
             var untypedArgNode = node.positionalArgs().get(argIndex);
-            var typedArgNode = typeCheckExpression(
-                untypedArgNode,
-                paramType,
-                context,
-                typeArgs
-            );
-
-            typedPositionalArgs.add(typedArgNode);
+            positionalChecks.add(Pair.of(untypedArgNode, paramType));
         }
 
         var namedParams = signature.namedParams().stream()
             .collect(Collectors.toMap(param -> param.name(), param -> param));
 
-        var typedNamedArgs = new ArrayList<TypedNamedArgNode>();
+        var namedChecks = new ArrayList<Pair<UntypedNamedArgNode, Type>>();
 
         for (var untypedNamedArgNode : node.namedArgs()) {
             var namedParam = namedParams.remove(untypedNamedArgNode.name());
             if (namedParam == null) {
                 throw new ExtraNamedArgError(untypedNamedArgNode.name(), untypedNamedArgNode.source());
             }
-            var typedExpression = typeCheckExpression(
-                untypedNamedArgNode.expression(),
-                namedParam.type(),
-                context,
-                typeArgs
-            );
-            typedNamedArgs.add(new TypedNamedArgNode(
-                untypedNamedArgNode.name(),
-                typedExpression,
-                untypedNamedArgNode.source()
-            ));
+            namedChecks.add(Pair.of(untypedNamedArgNode, namedParam.type()));
         }
 
         for (var missingParam : namedParams.values()) {
             throw new NamedArgIsMissingError(missingParam.name(), node.source());
         }
 
-        for (var namedArgPair : slidingPairs(node.args().named())) {
-            if (namedArgPair.first().name().compareTo(namedArgPair.second().name()) > 0) {
-                throw new NamedArgsNotInLexicographicalOrderError(namedArgPair.second().source());
+        if (signature instanceof SignatureGeneric signatureGeneric) {
+            var typeConstraintSolver = new TypeConstraintSolver(
+                signatureGeneric.typeParams(),
+                context.subtypeRelations()
+            );
+            for (var positionalCheck : positionalChecks) {
+                var untypedExpressionNode = positionalCheck.first();
+                var expressionType = typeCheckExpression(untypedExpressionNode, context).type();
+
+                if (!typeConstraintSolver.addSubtypeConstraint(expressionType, positionalCheck.second())) {
+                    throw new UnexpectedTypeError(
+                        positionalCheck.second(),
+                        expressionType,
+                        untypedExpressionNode.source()
+                    );
+                }
             }
+            for (var namedCheck : namedChecks) {
+                var untypedExpressionNode = namedCheck.first().expression();
+                var expressionType = typeCheckExpression(untypedExpressionNode, context).type();
+
+                if (!typeConstraintSolver.addSubtypeConstraint(expressionType, namedCheck.second())) {
+                    throw new UnexpectedTypeError(
+                        namedCheck.second(),
+                        expressionType,
+                        untypedExpressionNode.source()
+                    );
+                }
+            }
+            var typeArgs = typeConstraintSolver.solve(node.source());
+            return typeCheckArgs(
+                signatureGeneric.typeArgs(typeArgs),
+                node,
+                context
+            );
+        } else if (signature instanceof SignatureNonGeneric signatureNonGeneric) {
+            for (var namedArgPair : slidingPairs(node.args().named())) {
+                if (namedArgPair.first().name().compareTo(namedArgPair.second().name()) > 0) {
+                    throw new NamedArgsNotInLexicographicalOrderError(namedArgPair.second().source());
+                }
+            }
+
+            var typedPositionalArgs = new ArrayList<TypedExpressionNode>();
+
+            for (var positionalCheck : positionalChecks) {
+                var untypedArgNode = positionalCheck.first();
+                var paramType = positionalCheck.second();
+                var typedArgNode = typeCheckExpression(
+                    untypedArgNode,
+                    paramType,
+                    context
+                );
+
+                typedPositionalArgs.add(typedArgNode);
+            }
+
+            var typedNamedArgs = new ArrayList<TypedNamedArgNode>();
+
+            for (var namedCheck : namedChecks) {
+                var untypedNamedArgNode = namedCheck.first();
+                var paramType = namedCheck.second();
+                var typedExpression = typeCheckExpression(
+                    untypedNamedArgNode.expression(),
+                    paramType,
+                    context
+                );
+                typedNamedArgs.add(new TypedNamedArgNode(
+                    untypedNamedArgNode.name(),
+                    typedExpression,
+                    untypedNamedArgNode.source()
+                ));
+            }
+
+            var typedArgsNode = new TypedArgsNode(typedPositionalArgs, typedNamedArgs, node.args().source());
+
+            return new TypeCheckArgsResult(typedArgsNode, signatureNonGeneric);
+        } else {
+            // TODO: tidy up signature hierarchy to remove this
+            throw new InternalCompilerError("signature should be generic or non-generic");
         }
-
-        var typedArgsNode = new TypedArgsNode(typedPositionalArgs, typedNamedArgs, node.args().source());
-
-        var signatureNonGeneric = typeArgs.specialise(signature, node.source());
-
-        return new TypeCheckArgsResult(typedArgsNode, signatureNonGeneric);
     }
 
     private static TypeCheckFunctionStatementResult<TypedFunctionStatementNode> typeCheckBlankLineInFunction(
@@ -309,22 +355,6 @@ public class TypeChecker {
             right,
             node.source()
         );
-    }
-
-    private static TypedExpressionNode typeCheckExpression(
-        UntypedExpressionNode node,
-        Type expected,
-        TypeCheckerContext context,
-        TypeArgs typeArgs
-    ) {
-        var instantiatedParamType = typeArgs.specialise(expected);
-
-        // TODO: handle nested type param (e.g. List[T])
-        var typedArgNode = TypeChecker.typeCheckExpression(node, instantiatedParamType, context);
-
-        typeArgs.unify(expected, typedArgNode.type());
-
-        return typedArgNode;
     }
 
     public static TypedExpressionNode typeCheckExpression(

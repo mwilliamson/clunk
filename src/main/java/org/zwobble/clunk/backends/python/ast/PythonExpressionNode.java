@@ -19,6 +19,7 @@ public interface PythonExpressionNode extends PythonNode {
         T visit(PythonIntLiteralNode node);
         T visit(PythonListNode node);
         T visit(PythonListComprehensionNode node);
+        T visit(PythonNoneLiteralNode node);
         T visit(PythonNotEqualNode node);
         T visit(PythonReferenceNode node);
         T visit(PythonStringLiteralNode node);

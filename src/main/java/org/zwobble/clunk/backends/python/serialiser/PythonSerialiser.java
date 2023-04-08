@@ -255,6 +255,12 @@ public class PythonSerialiser {
             }
 
             @Override
+            public Void visit(PythonNoneLiteralNode node) {
+                serialiseNoneLiteral(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(PythonNotEqualNode node) {
                 serialiseNotEqual(node, builder);
                 return null;
@@ -410,6 +416,10 @@ public class PythonSerialiser {
 
     private static void serialiseModuleName(List<String> moduleName, CodeBuilder builder) {
         builder.append(String.join(".", moduleName));
+    }
+
+    private static void serialiseNoneLiteral(PythonNoneLiteralNode node, CodeBuilder builder) {
+        builder.append("None");
     }
 
     private static void serialiseNotEqual(PythonNotEqualNode node, CodeBuilder builder) {

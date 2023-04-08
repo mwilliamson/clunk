@@ -1,9 +1,6 @@
 package org.zwobble.clunk.backends.python.codegenerator;
 
-import org.zwobble.clunk.backends.python.ast.PythonArgsNode;
-import org.zwobble.clunk.backends.python.ast.PythonCallNode;
-import org.zwobble.clunk.backends.python.ast.PythonExpressionNode;
-import org.zwobble.clunk.backends.python.ast.PythonReferenceNode;
+import org.zwobble.clunk.backends.python.ast.*;
 import org.zwobble.clunk.backends.python.codegenerator.macros.PythonListMacro;
 import org.zwobble.clunk.backends.python.codegenerator.macros.PythonMutableListMacro;
 import org.zwobble.clunk.backends.python.codegenerator.macros.PythonStringBuilderMacro;
@@ -40,8 +37,7 @@ public class PythonMacros {
                 Map.entry("none", new PythonStaticFunctionMacro() {
                     @Override
                     public PythonExpressionNode compileCall(PythonArgsNode args, PythonCodeGeneratorContext context) {
-                        // TODO: Create separate node type for None
-                        return new PythonReferenceNode("None");
+                        return new PythonNoneLiteralNode();
                     }
                 })
             )

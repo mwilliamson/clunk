@@ -116,6 +116,10 @@ public class Python {
         return new PythonListComprehensionNode(element, forClauses);
     }
 
+    public static PythonNoneLiteralNode noneLiteral() {
+        return new PythonNoneLiteralNode();
+    }
+
     public static PythonNotEqualNode notEqual(PythonExpressionNode left, PythonExpressionNode right) {
         return new PythonNotEqualNode(left, right);
     }

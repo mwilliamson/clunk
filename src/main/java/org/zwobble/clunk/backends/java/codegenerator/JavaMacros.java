@@ -1,8 +1,6 @@
 package org.zwobble.clunk.backends.java.codegenerator;
 
-import org.zwobble.clunk.backends.java.ast.JavaExpressionNode;
-import org.zwobble.clunk.backends.java.ast.JavaReferenceNode;
-import org.zwobble.clunk.backends.java.ast.JavaTypeExpressionNode;
+import org.zwobble.clunk.backends.java.ast.*;
 import org.zwobble.clunk.backends.java.codegenerator.macros.*;
 import org.zwobble.clunk.types.*;
 
@@ -15,13 +13,40 @@ import java.util.stream.Stream;
 public class JavaMacros {
     private static final Map<NamespaceId, Map<String, JavaStaticFunctionMacro>> STATIC_FUNCTION_MACROS = Map.ofEntries(
         Map.entry(
+            Types.BUILTIN_NAMESPACE_ID,
+            Map.ofEntries(
+                Map.entry("none", new JavaStaticFunctionMacro() {
+                    @Override
+                    public JavaExpressionNode compileCall(
+                        List<JavaExpressionNode> args,
+                        JavaCodeGeneratorContext context
+                    ) {
+                        context.addImportType("java.util.Optional");
+                        return new JavaCallNode(
+                            new JavaMemberAccessNode(
+                                new JavaReferenceNode("Optional"),
+                                "empty"
+                            ),
+                            args
+                        );
+                    }
+                })
+            )
+        ),
+        Map.entry(
             NamespaceId.source("stdlib", "assertions"),
             Map.ofEntries(
                 Map.entry("assertThat", new JavaStaticFunctionMacro() {
                     @Override
-                    public JavaExpressionNode compileReceiver(JavaCodeGeneratorContext context) {
+                    public JavaExpressionNode compileCall(
+                        List<JavaExpressionNode> args,
+                        JavaCodeGeneratorContext context
+                    ) {
                         context.addImportStatic("org.zwobble.precisely.AssertThat", "assertThat");
-                        return new JavaReferenceNode("assertThat");
+                        return new JavaCallNode(
+                            new JavaReferenceNode("assertThat"),
+                            args
+                        );
                     }
                 })
             )
@@ -31,9 +56,15 @@ public class JavaMacros {
             Map.ofEntries(
                 Map.entry("equalTo", new JavaStaticFunctionMacro() {
                     @Override
-                    public JavaExpressionNode compileReceiver(JavaCodeGeneratorContext context) {
+                    public JavaExpressionNode compileCall(
+                        List<JavaExpressionNode> args,
+                        JavaCodeGeneratorContext context
+                    ) {
                         context.addImportStatic("org.zwobble.precisely.Matchers", "equalTo");
-                        return new JavaReferenceNode("equalTo");
+                        return new JavaCallNode(
+                            new JavaReferenceNode("equalTo"),
+                            args
+                        );
                     }
                 })
             )

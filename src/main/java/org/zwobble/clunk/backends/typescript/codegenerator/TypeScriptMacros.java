@@ -1,10 +1,12 @@
 package org.zwobble.clunk.backends.typescript.codegenerator;
 
+import org.zwobble.clunk.backends.typescript.ast.TypeScriptCallNode;
 import org.zwobble.clunk.backends.typescript.ast.TypeScriptExpressionNode;
 import org.zwobble.clunk.backends.typescript.ast.TypeScriptReferenceNode;
 import org.zwobble.clunk.backends.typescript.codegenerator.macros.*;
 import org.zwobble.clunk.types.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -52,13 +54,31 @@ public class TypeScriptMacros {
 
     private static final Map<NamespaceId, Map<String, TypeScriptStaticFunctionMacro>> STATIC_FUNCTION_MACROS = Map.ofEntries(
         Map.entry(
+            Types.BUILTIN_NAMESPACE_ID,
+            Map.ofEntries(
+                Map.entry("none", new TypeScriptStaticFunctionMacro() {
+                    @Override
+                    public TypeScriptExpressionNode compileCall(
+                        List<TypeScriptExpressionNode> args,
+                        TypeScriptCodeGeneratorContext context
+                    ) {
+                        // TODO: Create separate node type for null
+                        return new TypeScriptReferenceNode("null");
+                    }
+                })
+            )
+        ),
+        Map.entry(
             NamespaceId.source("stdlib", "assertions"),
             Map.ofEntries(
                 Map.entry("assertThat", new TypeScriptStaticFunctionMacro() {
                     @Override
-                    public TypeScriptExpressionNode compileReceiver(TypeScriptCodeGeneratorContext context) {
+                    public TypeScriptExpressionNode compileCall(
+                        List<TypeScriptExpressionNode> args,
+                        TypeScriptCodeGeneratorContext context
+                    ) {
                         context.addImport("@mwilliamson/precisely", "assertThat");
-                        return new TypeScriptReferenceNode("assertThat");
+                        return new TypeScriptCallNode(new TypeScriptReferenceNode("assertThat"), args);
                     }
                 })
             )
@@ -68,9 +88,12 @@ public class TypeScriptMacros {
             Map.ofEntries(
                 Map.entry("equalTo", new TypeScriptStaticFunctionMacro() {
                     @Override
-                    public TypeScriptExpressionNode compileReceiver(TypeScriptCodeGeneratorContext context) {
+                    public TypeScriptExpressionNode compileCall(
+                        List<TypeScriptExpressionNode> args,
+                        TypeScriptCodeGeneratorContext context
+                    ) {
                         context.addImport("@mwilliamson/precisely", "deepEqualTo");
-                        return new TypeScriptReferenceNode("deepEqualTo");
+                        return new TypeScriptCallNode(new TypeScriptReferenceNode("deepEqualTo"), args);
                     }
                 })
             )

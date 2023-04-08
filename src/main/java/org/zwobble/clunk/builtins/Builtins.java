@@ -2,19 +2,23 @@ package org.zwobble.clunk.builtins;
 
 import org.zwobble.clunk.typechecker.TypeCheckerContext;
 import org.zwobble.clunk.typechecker.Variable;
-import org.zwobble.clunk.types.MethodType;
-import org.zwobble.clunk.types.Type;
-import org.zwobble.clunk.types.TypeParameter;
-import org.zwobble.clunk.types.Types;
+import org.zwobble.clunk.types.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.zwobble.clunk.types.Types.metaType;
 
 public class Builtins {
+    private static final TypeParameter NONE_TYPE_PARAM = TypeParameter.function(
+        Types.BUILTIN_NAMESPACE_ID,
+        "none",
+        "T"
+    );
+
     private static final Map<String, Type> ENVIRONMENT_TYPES = Map.ofEntries(
         Map.entry("Bool", metaType(Types.BOOL)),
         Map.entry("Int", metaType(Types.INT)),
@@ -25,7 +29,16 @@ public class Builtins {
         Map.entry(Types.OPTION_CONSTRUCTOR.name(), Types.typeConstructorType(Types.OPTION_CONSTRUCTOR)),
         Map.entry("String", metaType(Types.STRING)),
         Map.entry("StringBuilder", Types.metaType(Types.STRING_BUILDER)),
-        Map.entry("Unit", metaType(Types.UNIT))
+        Map.entry("Unit", metaType(Types.UNIT)),
+
+        Map.entry("none", new StaticFunctionType(
+            Types.BUILTIN_NAMESPACE_ID,
+            "none",
+            Optional.of(List.of(NONE_TYPE_PARAM)),
+            ParamTypes.empty(),
+            Types.option(NONE_TYPE_PARAM),
+            Visibility.PUBLIC
+        ))
     );
 
     public static final Map<String, Variable> ENVIRONMENT = ENVIRONMENT_TYPES.entrySet()

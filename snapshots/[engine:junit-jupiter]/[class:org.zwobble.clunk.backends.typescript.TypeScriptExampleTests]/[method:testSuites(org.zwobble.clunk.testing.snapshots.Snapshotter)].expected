@@ -38,8 +38,8 @@ testSuite "ints" {
 ==============
 
 Output path: testSuites.test.ts
-import {assertThat} from "@mwilliamson/precisely";
 import {deepEqualTo} from "@mwilliamson/precisely";
+import {assertThat} from "@mwilliamson/precisely";
 
 suite("bools", function () {
     suite("passing", function () {

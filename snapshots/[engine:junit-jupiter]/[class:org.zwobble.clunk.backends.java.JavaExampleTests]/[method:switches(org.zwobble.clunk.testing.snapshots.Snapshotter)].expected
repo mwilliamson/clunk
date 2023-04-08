@@ -72,8 +72,8 @@ package switches;
 
 import switches.Literal;
 import switches.Add;
-import static org.zwobble.precisely.AssertThat.assertThat;
 import static org.zwobble.precisely.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
 import switches.Node;
 
 public class SwitchesTests {

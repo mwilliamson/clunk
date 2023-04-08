@@ -87,9 +87,9 @@ public class JavaCodeGenerator {
         var macro = JavaMacros.lookupStaticFunctionMacro(node.receiverType());
 
         if (macro.isPresent()) {
-            return new JavaCallNode(
-                macro.get().compileReceiver(context),
-                compileArgs(node.args(), context)
+            return macro.get().compileCall(
+                compileArgs(node.args(), context),
+                context
             );
         } else {
             return new JavaCallNode(

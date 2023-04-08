@@ -32,8 +32,8 @@ fun evaluate(node: Node) -> Int {
 ==============
 
 Output path: switches.test.ts
-import {assertThat} from "@mwilliamson/precisely";
 import {deepEqualTo} from "@mwilliamson/precisely";
+import {assertThat} from "@mwilliamson/precisely";
 
 type Node = Add | Literal;
 

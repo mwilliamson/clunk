@@ -16,8 +16,8 @@ test "string builder" {
 ==============
 
 Output path: stringBuilder.test.ts
-import {assertThat} from "@mwilliamson/precisely";
 import {deepEqualTo} from "@mwilliamson/precisely";
+import {assertThat} from "@mwilliamson/precisely";
 
 test("string builder", function () {
     let node = [];

@@ -126,6 +126,24 @@ enum VerticalAlignment {
 
 ==============
 
+Source path: src/mammoth/docx/styles.clunk
+import mammoth/xml.XmlElement;
+
+record Styles() {
+    fun findParagraphStyleById(name: String) -> Option[Style] {
+        return none();
+    }
+}
+
+record Style()
+
+fun readStylesXmlElement() -> Styles {
+    return Styles();
+}
+
+
+==============
+
 Source path: src/mammoth/html.clunk
 sealed interface HtmlNode {
 }
@@ -861,6 +879,59 @@ export {Bookmark, BreakColumn, BreakLine, BreakPage, Comment, CommentReference, 
 
 ==============
 
+Output path: mammoth/xml.ts
+type XmlNode = XmlElement | XmlTextNode;
+
+function element(name: string, attributes: Map<string, string>, children: ReadonlyArray<XmlNode>): XmlElement {
+    return new XmlElement(name, attributes, children);
+}
+
+class XmlElement {
+    readonly type: "XmlElement" = "XmlElement";
+    readonly name: string;
+    readonly attributes: Map<string, string>;
+    readonly children: ReadonlyArray<XmlNode>;
+
+    constructor(name: string, attributes: Map<string, string>, children: ReadonlyArray<XmlNode>) {
+        this.name = name;
+        this.attributes = attributes;
+        this.children = children;
+    }
+}
+
+class XmlTextNode {
+    readonly type: "XmlTextNode" = "XmlTextNode";
+    readonly value: string;
+
+    constructor(value: string) {
+        this.value = value;
+    }
+}
+export {XmlElement, XmlNode, XmlTextNode, element};
+
+
+==============
+
+Output path: mammoth/docx/styles.ts
+import {XmlElement} from "../xml";
+
+class Styles {
+    findParagraphStyleById(name: string): Style | null {
+        return null;
+    }
+}
+
+class Style {
+}
+
+function readStylesXmlElement(): Styles {
+    return new Styles();
+}
+export {Style, Styles, readStylesXmlElement};
+
+
+==============
+
 Output path: mammoth/html.ts
 import {last as lodash_last} from "lodash";
 import {isEqual as lodash_isEqual} from "lodash";
@@ -1057,8 +1128,8 @@ export {HtmlElement, HtmlForceWrite, HtmlNode, HtmlTag, HtmlText, collapse, coll
 ==============
 
 Output path: mammoth/html.test.ts
-import {assertThat} from "@mwilliamson/precisely";
 import {deepEqualTo} from "@mwilliamson/precisely";
+import {assertThat} from "@mwilliamson/precisely";
 import * as html from "./html";
 
 suite("stripEmpty", function () {
@@ -1224,39 +1295,6 @@ suite("collapse", function () {
         assertThat(result, deepEqualTo([html.freshElement(["pre"], new Map([]), [html.text("Hello"), html.text("\n"), html.text(" the"), html.text("re")])]));
     });
 });
-
-
-==============
-
-Output path: mammoth/xml.ts
-type XmlNode = XmlElement | XmlTextNode;
-
-function element(name: string, attributes: Map<string, string>, children: ReadonlyArray<XmlNode>): XmlElement {
-    return new XmlElement(name, attributes, children);
-}
-
-class XmlElement {
-    readonly type: "XmlElement" = "XmlElement";
-    readonly name: string;
-    readonly attributes: Map<string, string>;
-    readonly children: ReadonlyArray<XmlNode>;
-
-    constructor(name: string, attributes: Map<string, string>, children: ReadonlyArray<XmlNode>) {
-        this.name = name;
-        this.attributes = attributes;
-        this.children = children;
-    }
-}
-
-class XmlTextNode {
-    readonly type: "XmlTextNode" = "XmlTextNode";
-    readonly value: string;
-
-    constructor(value: string) {
-        this.value = value;
-    }
-}
-export {XmlElement, XmlNode, XmlTextNode, element};
 
 
 ==============

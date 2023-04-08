@@ -83,9 +83,9 @@ public class PythonCodeGenerator {
         var macro = PythonMacros.lookupStaticFunctionMacro(node.receiver().type());
 
         if (macro.isPresent()) {
-            return new PythonCallNode(
-                macro.get().compileReceiver(context),
-                compileArgs(node.args(), context)
+            return macro.get().compileCall(
+                compileArgs(node.args(), context),
+                context
             );
         } else {
             return new PythonCallNode(

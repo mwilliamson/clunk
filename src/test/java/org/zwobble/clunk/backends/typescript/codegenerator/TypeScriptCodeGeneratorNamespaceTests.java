@@ -151,8 +151,8 @@ public class TypeScriptCodeGeneratorNamespaceTests {
 
         var string = serialiseToString(result, TypeScriptSerialiser::serialiseModule);
         assertThat(string, equalTo("""
-            import {assertThat} from "@mwilliamson/precisely";
             import {deepEqualTo} from "@mwilliamson/precisely";
+            import {assertThat} from "@mwilliamson/precisely";
             test("x", function () {
                 assertThat(1, deepEqualTo(2));
             });

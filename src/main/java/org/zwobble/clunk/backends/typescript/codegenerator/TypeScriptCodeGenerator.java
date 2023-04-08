@@ -79,9 +79,9 @@ public class TypeScriptCodeGenerator {
         var macro = TypeScriptMacros.lookupStaticFunctionMacro(node.receiverType());
 
         if (macro.isPresent()) {
-            return new TypeScriptCallNode(
-                macro.get().compileReceiver(context),
-                compileArgs(node.args(), context)
+            return macro.get().compileCall(
+                compileArgs(node.args(), context),
+                context
             );
         } else {
             return new TypeScriptCallNode(

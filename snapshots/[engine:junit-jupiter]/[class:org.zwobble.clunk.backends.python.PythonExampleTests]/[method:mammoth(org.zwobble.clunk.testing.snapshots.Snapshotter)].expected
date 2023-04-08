@@ -126,6 +126,24 @@ enum VerticalAlignment {
 
 ==============
 
+Source path: src/mammoth/docx/styles.clunk
+import mammoth/xml.XmlElement;
+
+record Styles() {
+    fun findParagraphStyleById(name: String) -> Option[Style] {
+        return none();
+    }
+}
+
+record Style()
+
+fun readStylesXmlElement() -> Styles {
+    return Styles();
+}
+
+
+==============
+
 Source path: src/mammoth/html.clunk
 sealed interface HtmlNode {
 }
@@ -776,6 +794,55 @@ class VerticalAlignment(enum.Enum):
 
 ==============
 
+Output path: mammoth/xml.py
+from __future__ import annotations
+
+import dataclasses
+import typing
+class XmlNode:
+    pass
+
+def element(name, attributes, children, /):
+    return XmlElement(name, attributes, children)
+
+@dataclasses.dataclass(frozen=True)
+class XmlElement:
+    name: str
+    attributes: Map[str, str]
+    children: typing.List[XmlNode]
+    def accept(self, visitor, /):
+        return visitor.visit_xml_element(self)
+
+@dataclasses.dataclass(frozen=True)
+class XmlTextNode:
+    value: str
+    def accept(self, visitor, /):
+        return visitor.visit_xml_text_node(self)
+
+
+==============
+
+Output path: mammoth/docx/styles.py
+from __future__ import annotations
+
+import dataclasses
+from mammoth.xml import XmlElement
+
+@dataclasses.dataclass(frozen=True)
+class Styles:
+    def find_paragraph_style_by_id(self, name, /):
+        return None
+
+@dataclasses.dataclass(frozen=True)
+class Style:
+    pass
+
+def read_styles_xml_element():
+    return Styles()
+
+
+==============
+
 Output path: mammoth/html.py
 from __future__ import annotations
 
@@ -940,8 +1007,8 @@ def try_collapse(collapsed, node, /):
 Output path: mammoth/html_test.py
 from __future__ import annotations
 
-from precisely import assert_that
 from precisely import equal_to
+from precisely import assert_that
 from mammoth import html
 
 class StripEmptyTests:
@@ -1085,34 +1152,6 @@ class CollapseTests:
         result = html.collapse(nodes)
 
         assert_that(result, equal_to([html.fresh_element(["pre"], {}, [html.text("Hello"), html.text("\n"), html.text(" the"), html.text("re")])]))
-
-
-==============
-
-Output path: mammoth/xml.py
-from __future__ import annotations
-
-import dataclasses
-import typing
-class XmlNode:
-    pass
-
-def element(name, attributes, children, /):
-    return XmlElement(name, attributes, children)
-
-@dataclasses.dataclass(frozen=True)
-class XmlElement:
-    name: str
-    attributes: Map[str, str]
-    children: typing.List[XmlNode]
-    def accept(self, visitor, /):
-        return visitor.visit_xml_element(self)
-
-@dataclasses.dataclass(frozen=True)
-class XmlTextNode:
-    value: str
-    def accept(self, visitor, /):
-        return visitor.visit_xml_text_node(self)
 
 
 ==============

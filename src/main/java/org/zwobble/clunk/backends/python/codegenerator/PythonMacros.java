@@ -1,14 +1,13 @@
 package org.zwobble.clunk.backends.python.codegenerator;
 
+import org.zwobble.clunk.backends.python.ast.PythonArgsNode;
+import org.zwobble.clunk.backends.python.ast.PythonCallNode;
 import org.zwobble.clunk.backends.python.ast.PythonExpressionNode;
 import org.zwobble.clunk.backends.python.ast.PythonReferenceNode;
 import org.zwobble.clunk.backends.python.codegenerator.macros.PythonListMacro;
 import org.zwobble.clunk.backends.python.codegenerator.macros.PythonMutableListMacro;
 import org.zwobble.clunk.backends.python.codegenerator.macros.PythonStringBuilderMacro;
-import org.zwobble.clunk.types.ConstructedType;
-import org.zwobble.clunk.types.NamespaceId;
-import org.zwobble.clunk.types.StaticFunctionType;
-import org.zwobble.clunk.types.Type;
+import org.zwobble.clunk.types.*;
 
 import java.util.List;
 import java.util.Map;
@@ -36,13 +35,25 @@ public class PythonMacros {
 
     private static final Map<NamespaceId, Map<String, PythonStaticFunctionMacro>> STATIC_FUNCTION_MACROS = Map.ofEntries(
         Map.entry(
+            Types.BUILTIN_NAMESPACE_ID,
+            Map.ofEntries(
+                Map.entry("none", new PythonStaticFunctionMacro() {
+                    @Override
+                    public PythonExpressionNode compileCall(PythonArgsNode args, PythonCodeGeneratorContext context) {
+                        // TODO: Create separate node type for None
+                        return new PythonReferenceNode("None");
+                    }
+                })
+            )
+        ),
+        Map.entry(
             NamespaceId.source("stdlib", "assertions"),
             Map.ofEntries(
                 Map.entry("assertThat", new PythonStaticFunctionMacro() {
                     @Override
-                    public PythonExpressionNode compileReceiver(PythonCodeGeneratorContext context) {
+                    public PythonExpressionNode compileCall(PythonArgsNode args, PythonCodeGeneratorContext context) {
                         context.addImport(List.of("precisely", "assert_that"));
-                        return new PythonReferenceNode("assert_that");
+                        return new PythonCallNode(new PythonReferenceNode("assert_that"), args);
                     }
                 })
             )
@@ -52,9 +63,9 @@ public class PythonMacros {
             Map.ofEntries(
                 Map.entry("equalTo", new PythonStaticFunctionMacro() {
                     @Override
-                    public PythonExpressionNode compileReceiver(PythonCodeGeneratorContext context) {
+                    public PythonExpressionNode compileCall(PythonArgsNode args, PythonCodeGeneratorContext context) {
                         context.addImport(List.of("precisely", "equal_to"));
-                        return new PythonReferenceNode("equal_to");
+                        return new PythonCallNode(new PythonReferenceNode("equal_to"), args);
                     }
                 })
             )

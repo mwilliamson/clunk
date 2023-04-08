@@ -151,8 +151,8 @@ public class PythonCodeGeneratorNamespaceTests {
         assertThat(result.name(), equalTo(List.of("example", "project")));
         var string = serialiseToString(result, PythonSerialiser::serialiseModule);
         assertThat(string, equalTo("""
-            from precisely import assert_that
             from precisely import equal_to
+            from precisely import assert_that
             def test_x():
                 assert_that(1, equal_to(2))
             """));

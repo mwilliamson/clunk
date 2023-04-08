@@ -191,8 +191,8 @@ public class JavaCodeGeneratorNamespaceTests {
                 """
                     package example.project;
                     
-                    import static org.zwobble.precisely.AssertThat.assertThat;
                     import static org.zwobble.precisely.Matchers.equalTo;
+                    import static org.zwobble.precisely.AssertThat.assertThat;
 
                     public class Project {
                         @org.junit.jupiter.api.Test

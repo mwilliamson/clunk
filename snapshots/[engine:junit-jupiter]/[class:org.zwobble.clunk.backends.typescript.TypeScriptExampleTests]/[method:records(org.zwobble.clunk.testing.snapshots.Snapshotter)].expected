@@ -27,8 +27,8 @@ test "assert sum" {
 ==============
 
 Output path: records.test.ts
-import {assertThat} from "@mwilliamson/precisely";
 import {deepEqualTo} from "@mwilliamson/precisely";
+import {assertThat} from "@mwilliamson/precisely";
 
 class Add {
     readonly left: number;

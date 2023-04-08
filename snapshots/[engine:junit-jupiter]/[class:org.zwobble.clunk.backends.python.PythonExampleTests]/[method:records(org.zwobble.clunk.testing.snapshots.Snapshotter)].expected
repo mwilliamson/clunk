@@ -30,8 +30,8 @@ Output path: records_test.py
 from __future__ import annotations
 
 import dataclasses
-from precisely import assert_that
 from precisely import equal_to
+from precisely import assert_that
 
 @dataclasses.dataclass(frozen=True)
 class Add:

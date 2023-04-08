@@ -1,0 +1,13 @@
+import mammoth/xml.XmlElement;
+
+record Styles() {
+    fun findParagraphStyleById(name: String) -> Option[Style] {
+        return none();
+    }
+}
+
+record Style()
+
+fun readStylesXmlElement() -> Styles {
+    return Styles();
+}

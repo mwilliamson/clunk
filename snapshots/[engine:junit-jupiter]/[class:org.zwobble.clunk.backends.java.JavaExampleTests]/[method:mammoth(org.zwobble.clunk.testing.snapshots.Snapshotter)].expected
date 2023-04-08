@@ -126,6 +126,24 @@ enum VerticalAlignment {
 
 ==============
 
+Source path: src/mammoth/docx/styles.clunk
+import mammoth/xml.XmlElement;
+
+record Styles() {
+    fun findParagraphStyleById(name: String) -> Option[Style] {
+        return none();
+    }
+}
+
+record Style()
+
+fun readStylesXmlElement() -> Styles {
+    return Styles();
+}
+
+
+==============
+
 Source path: src/mammoth/html.clunk
 sealed interface HtmlNode {
 }
@@ -885,6 +903,88 @@ public enum VerticalAlignment {
 
 ==============
 
+Output path: org/zwobble/mammoth/internal/mammoth/xml/XmlNode.java
+package org.zwobble.mammoth.internal.mammoth.xml;
+
+public sealed interface XmlNode permits XmlElement, XmlTextNode {
+    <T> T accept(Visitor<T> visitor);
+    public interface Visitor<T> {
+        T visit(XmlElement xmlElement);
+        T visit(XmlTextNode xmlTextNode);
+    }
+}
+
+
+==============
+
+Output path: org/zwobble/mammoth/internal/mammoth/xml/XmlElement.java
+package org.zwobble.mammoth.internal.mammoth.xml;
+
+public record XmlElement(String name, java.util.Map<String, String> attributes, java.util.List<? extends XmlNode> children) implements org.zwobble.mammoth.internal.mammoth.xml.XmlNode {
+    public <T> T accept(org.zwobble.mammoth.internal.mammoth.xml.XmlNode.Visitor<T> visitor) {
+        return visitor.visit(this);
+    }
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/mammoth/xml/XmlTextNode.java
+package org.zwobble.mammoth.internal.mammoth.xml;
+
+public record XmlTextNode(String value) implements org.zwobble.mammoth.internal.mammoth.xml.XmlNode {
+    public <T> T accept(org.zwobble.mammoth.internal.mammoth.xml.XmlNode.Visitor<T> visitor) {
+        return visitor.visit(this);
+    }
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/mammoth/xml/Xml.java
+package org.zwobble.mammoth.internal.mammoth.xml;
+
+import org.zwobble.mammoth.internal.mammoth.xml.XmlElement;
+
+public class Xml {
+    public static XmlElement element(String name, java.util.Map<String, String> attributes, java.util.List<? extends XmlNode> children) {
+        return new XmlElement(name, attributes, children);
+    }
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/mammoth/docx/styles/Styles.java
+package org.zwobble.mammoth.internal.mammoth.docx.styles;
+
+public record Styles() {
+    public java.util.Optional<Style> findParagraphStyleById(String name) {
+        return Optional.empty();
+    }
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/mammoth/docx/styles/Style.java
+package org.zwobble.mammoth.internal.mammoth.docx.styles;
+
+public record Style() {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/mammoth/docx/styles/Styles.java
+package org.zwobble.mammoth.internal.mammoth.docx.styles;
+
+import java.util.Optional;
+import org.zwobble.mammoth.internal.mammoth.docx.styles.Styles;
+
+public class Styles {
+    public static Styles readStylesXmlElement() {
+        return new Styles();
+    }
+}
+
+==============
+
 Output path: org/zwobble/mammoth/internal/mammoth/html/HtmlNode.java
 package org.zwobble.mammoth.internal.mammoth.html;
 
@@ -1108,8 +1208,8 @@ Output path: org/zwobble/mammoth/internal/mammoth/html/HtmlTests.java
 package org.zwobble.mammoth.internal.mammoth.html;
 
 import org.zwobble.mammoth.internal.mammoth.html.Html;
-import static org.zwobble.precisely.AssertThat.assertThat;
 import static org.zwobble.precisely.Matchers.equalTo;
+import static org.zwobble.precisely.AssertThat.assertThat;
 
 public class HtmlTests {
     @org.junit.jupiter.api.Nested
@@ -1315,55 +1415,6 @@ public class HtmlTests {
             assertThat(result, equalTo(java.util.List.of(Html.freshElement(java.util.List.of("pre"), java.util.Map.ofEntries(), java.util.List.of(Html.text("Hello"), Html.text("\n"), Html.text(" the"), Html.text("re"))))));
         }
     }}
-
-==============
-
-Output path: org/zwobble/mammoth/internal/mammoth/xml/XmlNode.java
-package org.zwobble.mammoth.internal.mammoth.xml;
-
-public sealed interface XmlNode permits XmlElement, XmlTextNode {
-    <T> T accept(Visitor<T> visitor);
-    public interface Visitor<T> {
-        T visit(XmlElement xmlElement);
-        T visit(XmlTextNode xmlTextNode);
-    }
-}
-
-
-==============
-
-Output path: org/zwobble/mammoth/internal/mammoth/xml/XmlElement.java
-package org.zwobble.mammoth.internal.mammoth.xml;
-
-public record XmlElement(String name, java.util.Map<String, String> attributes, java.util.List<? extends XmlNode> children) implements org.zwobble.mammoth.internal.mammoth.xml.XmlNode {
-    public <T> T accept(org.zwobble.mammoth.internal.mammoth.xml.XmlNode.Visitor<T> visitor) {
-        return visitor.visit(this);
-    }
-}
-
-==============
-
-Output path: org/zwobble/mammoth/internal/mammoth/xml/XmlTextNode.java
-package org.zwobble.mammoth.internal.mammoth.xml;
-
-public record XmlTextNode(String value) implements org.zwobble.mammoth.internal.mammoth.xml.XmlNode {
-    public <T> T accept(org.zwobble.mammoth.internal.mammoth.xml.XmlNode.Visitor<T> visitor) {
-        return visitor.visit(this);
-    }
-}
-
-==============
-
-Output path: org/zwobble/mammoth/internal/mammoth/xml/Xml.java
-package org.zwobble.mammoth.internal.mammoth.xml;
-
-import org.zwobble.mammoth.internal.mammoth.xml.XmlElement;
-
-public class Xml {
-    public static XmlElement element(String name, java.util.Map<String, String> attributes, java.util.List<? extends XmlNode> children) {
-        return new XmlElement(name, attributes, children);
-    }
-}
 
 ==============
 

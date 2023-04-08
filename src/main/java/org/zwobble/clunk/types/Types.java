@@ -8,7 +8,7 @@ public class Types {
 
     }
 
-    private static final NamespaceId BUILTIN_NAMESPACE_ID = NamespaceId.source();
+    public static final NamespaceId BUILTIN_NAMESPACE_ID = NamespaceId.source();
     public static final Type BOOL = BoolType.INSTANCE;
     public static final TypeSet CALLABLE = CallableTypeSet.INSTANCE;
     public static final Type INT = IntType.INSTANCE;

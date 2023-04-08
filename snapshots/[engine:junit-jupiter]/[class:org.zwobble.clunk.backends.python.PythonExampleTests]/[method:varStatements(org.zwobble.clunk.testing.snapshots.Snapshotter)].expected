@@ -14,8 +14,8 @@ test "var statement" {
 Output path: varStatements_test.py
 from __future__ import annotations
 
-from precisely import assert_that
 from precisely import equal_to
+from precisely import assert_that
 
 def test_var_statement():
     result = 5

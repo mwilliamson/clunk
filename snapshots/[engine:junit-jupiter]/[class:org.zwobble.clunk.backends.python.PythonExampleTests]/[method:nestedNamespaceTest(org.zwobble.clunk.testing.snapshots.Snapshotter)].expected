@@ -12,8 +12,8 @@ test "assert False" {
 Output path: one/two/simple_test.py
 from __future__ import annotations
 
-from precisely import assert_that
 from precisely import equal_to
+from precisely import assert_that
 
 def test_assert_false():
     assert_that(False, equal_to(True))

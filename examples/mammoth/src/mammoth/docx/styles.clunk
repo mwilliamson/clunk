@@ -8,6 +8,6 @@ record Styles() {
 
 record Style()
 
-fun readStylesXmlElement() -> Styles {
+fun readStylesXmlElement(element: XmlElement) -> Styles {
     return Styles();
 }

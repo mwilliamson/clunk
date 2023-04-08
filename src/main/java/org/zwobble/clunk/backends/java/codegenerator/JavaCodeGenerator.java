@@ -565,11 +565,13 @@ public class JavaCodeGenerator {
         var imports = new ArrayList<JavaImportNode>();
 
         for (var import_ : node.imports()) {
+            var packageName = namespaceToPackage(import_.namespaceId(), context);
             if (import_.fieldName().isEmpty()) {
-                var packageName = namespaceToPackage(import_.namespaceId(), context);
                 var className = namespaceIdToClassName(import_.namespaceId());
                 imports.add(new JavaImportTypeNode(packageName + "." + className));
                 context.renameVariable(import_.variableName(), className);
+            } else if (Types.isMetaType(import_.type())) {
+                imports.add(new JavaImportTypeNode(packageName + "." + import_.fieldName().get()));
             }
         }
 

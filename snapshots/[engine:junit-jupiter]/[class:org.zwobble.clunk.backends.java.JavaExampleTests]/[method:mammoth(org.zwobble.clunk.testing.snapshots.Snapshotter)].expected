@@ -137,7 +137,7 @@ record Styles() {
 
 record Style()
 
-fun readStylesXmlElement() -> Styles {
+fun readStylesXmlElement(element: XmlElement) -> Styles {
     return Styles();
 }
 
@@ -974,11 +974,12 @@ public record Style() {
 Output path: org/zwobble/mammoth/internal/mammoth/docx/styles/Styles.java
 package org.zwobble.mammoth.internal.mammoth.docx.styles;
 
+import org.zwobble.mammoth.internal.mammoth.xml.XmlElement;
 import java.util.Optional;
 import org.zwobble.mammoth.internal.mammoth.docx.styles.Styles;
 
 public class Styles {
-    public static Styles readStylesXmlElement() {
+    public static Styles readStylesXmlElement(XmlElement element) {
         return new Styles();
     }
 }

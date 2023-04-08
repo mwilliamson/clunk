@@ -137,7 +137,7 @@ record Styles() {
 
 record Style()
 
-fun readStylesXmlElement() -> Styles {
+fun readStylesXmlElement(element: XmlElement) -> Styles {
     return Styles();
 }
 
@@ -924,7 +924,7 @@ class Styles {
 class Style {
 }
 
-function readStylesXmlElement(): Styles {
+function readStylesXmlElement(element: XmlElement): Styles {
     return new Styles();
 }
 export {Style, Styles, readStylesXmlElement};

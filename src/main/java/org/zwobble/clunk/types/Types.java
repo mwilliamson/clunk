@@ -81,6 +81,11 @@ public class Types {
         return new TypeLevelValueType(type);
     }
 
+    public static boolean isMetaType(Type type) {
+        return type instanceof TypeLevelValueType typeLevelValueType &&
+            typeLevelValueType.value() instanceof Type;
+    }
+
     public static TypeLevelValueType typeLevelValueType(TypeLevelValue value) {
         return new TypeLevelValueType(value);
     }

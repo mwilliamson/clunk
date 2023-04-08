@@ -137,7 +137,7 @@ record Styles() {
 
 record Style()
 
-fun readStylesXmlElement() -> Styles {
+fun readStylesXmlElement(element: XmlElement) -> Styles {
     return Styles();
 }
 
@@ -837,7 +837,7 @@ class Styles:
 class Style:
     pass
 
-def read_styles_xml_element():
+def read_styles_xml_element(element, /):
     return Styles()
 
 

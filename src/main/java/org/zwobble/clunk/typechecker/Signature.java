@@ -22,6 +22,10 @@ sealed interface Signature permits SignatureNonGeneric, SignatureGeneric {
     default List<NamedParamType> namedParams() {
         return type().params().named();
     }
+
+    default Type returnType() {
+        return type().returnType();
+    }
 }
 
 record SignatureGeneric(CallableType type) implements Signature {
@@ -39,7 +43,4 @@ record SignatureGeneric(CallableType type) implements Signature {
 }
 
 record SignatureNonGeneric(CallableType type) implements Signature {
-    public Type returnType() {
-        return type.returnType();
-    }
 }

@@ -50,7 +50,12 @@ public class TypeChecker {
     ) {
     }
 
-    private static TypeCheckArgsResult typeCheckArgs(Signature signature, UntypedCallNode node, TypeCheckerContext context) {
+    private static TypeCheckArgsResult typeCheckArgs(
+        Signature signature,
+        Type expectedReturnType,
+        UntypedCallNode node,
+        TypeCheckerContext context
+    ) {
         if (node.positionalArgs().size() != signature.positionalParamCount()) {
             throw new WrongNumberOfArgumentsError(
                 signature.positionalParamCount(),
@@ -88,6 +93,15 @@ public class TypeChecker {
                 signatureGeneric.typeParams(),
                 context.subtypeRelations()
             );
+
+            if (!typeConstraintSolver.addSubtypeConstraint(signatureGeneric.returnType(), expectedReturnType)) {
+                throw new UnexpectedTypeError(
+                    expectedReturnType,
+                    signatureGeneric.returnType(),
+                    node.source()
+                );
+            }
+
             for (var positionalCheck : positionalChecks) {
                 var untypedExpressionNode = positionalCheck.first();
                 var expressionType = typeCheckExpression(untypedExpressionNode, context).type();
@@ -115,6 +129,7 @@ public class TypeChecker {
             var typeArgs = typeConstraintSolver.solve(node.source());
             return typeCheckArgs(
                 signatureGeneric.typeArgs(typeArgs),
+                expectedReturnType,
                 node,
                 context
             );
@@ -186,13 +201,22 @@ public class TypeChecker {
         return new TypedBoolLiteralNode(node.value(), node.source());
     }
 
-    private static TypedExpressionNode typeCheckCall(UntypedCallNode node, TypeCheckerContext context) {
+    private static TypedExpressionNode typeCheckCall(
+        UntypedCallNode node,
+        Type expected,
+        TypeCheckerContext context
+    ) {
         var receiver = typeCheckExpression(node.receiver(), context);
         var signature = Signatures.toSignature(receiver.type(), context, receiver.source());
 
         var typeCheckTypeArgsResult = typeCheckTypeArgs(signature, node, context);
 
-        var typeCheckArgsResult = typeCheckArgs(typeCheckTypeArgsResult.signature(), node, context);
+        var typeCheckArgsResult = typeCheckArgs(
+            typeCheckTypeArgsResult.signature(),
+            expected,
+            node,
+            context
+        );
         var typedArgs = typeCheckArgsResult.typedArgsNode();
         var signatureNonGeneric = typeCheckArgsResult.signatureNonGeneric();
 
@@ -375,7 +399,7 @@ public class TypeChecker {
 
             @Override
             public TypedExpressionNode visit(UntypedCallNode node) {
-                return typeCheckCall(node, context);
+                return typeCheckCall(node, expected, context);
             }
 
             @Override

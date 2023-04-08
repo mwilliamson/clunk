@@ -2,12 +2,14 @@ package org.zwobble.clunk.builtins;
 
 import org.zwobble.clunk.typechecker.TypeCheckerContext;
 import org.zwobble.clunk.typechecker.Variable;
-import org.zwobble.clunk.types.*;
+import org.zwobble.clunk.types.MethodType;
+import org.zwobble.clunk.types.Type;
+import org.zwobble.clunk.types.TypeParameter;
+import org.zwobble.clunk.types.Types;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.zwobble.clunk.types.Types.metaType;

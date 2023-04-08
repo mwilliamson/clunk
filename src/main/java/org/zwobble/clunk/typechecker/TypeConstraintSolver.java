@@ -154,11 +154,16 @@ public class TypeConstraintSolver {
         return typeParams.stream()
             .map(typeParam -> {
                 var bounds = typeParamBounds.get(typeParam);
+                var upperBound = bounds.first();
                 var lowerBound = bounds.second();
-                if (lowerBound.equals(Types.NOTHING)) {
+                // TODO: check to see if we've been constrained rather than for Nothing/Object?
+                if (lowerBound.equals(Types.NOTHING) && upperBound.equals(Types.OBJECT)) {
                     throw new MissingTypeLevelArgsError(source);
+                } else if (lowerBound.equals(Types.NOTHING)) {
+                    return upperBound;
+                } else {
+                    return lowerBound;
                 }
-                return lowerBound;
             })
             .toList();
     }

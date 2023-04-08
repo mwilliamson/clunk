@@ -789,7 +789,7 @@ public class TypeScriptCodeGenerator {
                 if (node.receiver().value() == Types.OPTION_CONSTRUCTOR) {
                     return new TypeScriptUnionNode(List.of(
                         compileTypeLevelExpression(node.args().get(0).type()),
-                        new TypeScriptReferenceNode("null")
+                        new TypeScriptNullLiteralNode()
                     ));
                 } else {
                     return new TypeScriptConstructedTypeNode(

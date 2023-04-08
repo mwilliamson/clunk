@@ -2,6 +2,7 @@ package org.zwobble.clunk.backends.typescript.codegenerator;
 
 import org.zwobble.clunk.backends.typescript.ast.TypeScriptCallNode;
 import org.zwobble.clunk.backends.typescript.ast.TypeScriptExpressionNode;
+import org.zwobble.clunk.backends.typescript.ast.TypeScriptNullLiteralNode;
 import org.zwobble.clunk.backends.typescript.ast.TypeScriptReferenceNode;
 import org.zwobble.clunk.backends.typescript.codegenerator.macros.*;
 import org.zwobble.clunk.types.*;
@@ -62,8 +63,7 @@ public class TypeScriptMacros {
                         List<TypeScriptExpressionNode> args,
                         TypeScriptCodeGeneratorContext context
                     ) {
-                        // TODO: Create separate node type for null
-                        return new TypeScriptReferenceNode("null");
+                        return new TypeScriptNullLiteralNode();
                     }
                 })
             )

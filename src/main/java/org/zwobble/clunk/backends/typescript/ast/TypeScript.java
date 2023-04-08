@@ -153,6 +153,10 @@ public class TypeScript {
         return new TypeScriptNonNullAssertionNode(operand);
     }
 
+    public static TypeScriptNullLiteralNode nullLiteral() {
+        return new TypeScriptNullLiteralNode();
+    }
+
     public static TypeScriptExpressionNode numberLiteral(double value) {
         return new TypeScriptNumberLiteralNode(value);
     }

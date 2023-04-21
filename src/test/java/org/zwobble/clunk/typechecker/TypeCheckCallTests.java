@@ -626,6 +626,43 @@ public class TypeCheckCallTests {
     }
 
     @Test
+    public void whenTypeParamIsExplicitlyBoundedFromAboveByObjectThenTypeParamIsInferredAsObject() {
+        var namespaceId = NamespaceId.source("example");
+
+        var consumerTypeParam = TypeParameter.contravariant(namespaceId, "Consumer", "T");
+        var consumerTypeConstructor = new TypeConstructor(List.of(consumerTypeParam), Types.interfaceType(namespaceId, "Consumer"));
+
+        var recordType = Types.recordType(namespaceId, "X");
+        var typeParameter = TypeParameter.method(namespaceId, "X", "f", "T");
+        var methodType = Types.methodType(
+            namespaceId,
+            List.of(typeParameter),
+            List.of(
+                Types.construct(consumerTypeConstructor, List.of(typeParameter))
+            ),
+            typeParameter
+        );
+
+        var untypedNode = UntypedCallNode
+            .builder(Untyped.memberAccess(
+                Untyped.reference("x"),
+                "y"
+            ))
+            .addPositionalArg(Untyped.reference("z"))
+            .build();
+        var context = TypeCheckerContext.stub()
+            .addLocal("x", recordType, NullSource.INSTANCE)
+            .addMemberTypes(recordType, Map.of("y", methodType))
+            .addLocal("z", Types.construct(consumerTypeConstructor, List.of(Types.OBJECT)), NullSource.INSTANCE);
+
+        var result = TypeChecker.typeCheckExpression(untypedNode, context);
+
+        assertThat(result, isTypedCallMethodNode()
+            .withType(Types.OBJECT)
+        );
+    }
+
+    @Test
     public void whenUpperAndLowerTypeBoundsConflictThenErrorIsThrown() {
         var namespaceId = NamespaceId.source("example");
 
@@ -698,7 +735,7 @@ public class TypeCheckCallTests {
         var namespaceId = NamespaceId.source("example");
         var recordType = Types.recordType(namespaceId, "X");
         var typeParameter = TypeParameter.method(namespaceId, "X", "f", "T");
-        var methodType = Types.methodType(namespaceId, List.of(typeParameter), List.of(), typeParameter);
+        var methodType = Types.methodType(namespaceId, List.of(typeParameter), List.of(), Types.UNIT);
         var context = TypeCheckerContext.stub()
             .addLocal("x", recordType, NullSource.INSTANCE)
             .addMemberTypes(recordType, Map.of("y", methodType));

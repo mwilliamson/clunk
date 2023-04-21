@@ -34,6 +34,16 @@ public class TypeConstraintSolver {
     }
 
     public boolean addSubtypeConstraint(Type subtype, Type supertype) {
+        if (supertype instanceof TypeParameter supertypeTypeParam && typeParams.contains(supertypeTypeParam)) {
+            constraints.add(Constraint.supertype(supertypeTypeParam, subtype));
+            return true;
+        }
+
+        if (subtype instanceof TypeParameter subtypeTypeParam && typeParams.contains(subtypeTypeParam)) {
+            constraints.add(Constraint.subtype(subtypeTypeParam, supertype));
+            return true;
+        }
+
         if (supertype.equals(Types.OBJECT)) {
             return true;
         }
@@ -108,23 +118,13 @@ public class TypeConstraintSolver {
             return true;
         }
 
-        if (supertype instanceof TypeParameter supertypeTypeParam && typeParams.contains(supertypeTypeParam)) {
-            constraints.add(Constraint.supertype(supertypeTypeParam, subtype));
-            return true;
-        }
-
-        if (subtype instanceof TypeParameter subtypeTypeParam && typeParams.contains(subtypeTypeParam)) {
-            constraints.add(Constraint.subtype(subtypeTypeParam, supertype));
-            return true;
-        }
-
         return false;
     }
 
     public List<Type> solve(Source source) {
-        var typeParamBounds = new HashMap<TypeParameter, Pair<Type, Type>>();
+        var typeParamBounds = new HashMap<TypeParameter, Pair<Optional<Type>, Optional<Type>>>();
         for (var typeParam : typeParams) {
-            typeParamBounds.put(typeParam, Pair.of(Types.OBJECT, Types.NOTHING));
+            typeParamBounds.put(typeParam, Pair.of(Optional.empty(), Optional.empty()));
         }
 
         var constraints = new ArrayList<>(this.constraints);
@@ -138,12 +138,21 @@ public class TypeConstraintSolver {
                 var upperBound = currentBounds.first();
                 var lowerBound = currentBounds.second();
                 if (constraint.subtype().isPresent()) {
-                    lowerBound = Types.commonSupertype(lowerBound, constraint.subtype().get());
+                    if (lowerBound.isPresent()) {
+                        lowerBound = Optional.of(Types.commonSupertype(lowerBound.get(), constraint.subtype().get()));
+                    } else {
+                        lowerBound = constraint.subtype();
+                    }
+
                 }
                 if (constraint.supertype().isPresent()) {
-                    upperBound = Types.commonSubtype(upperBound, constraint.supertype().get());
+                    if (upperBound.isPresent()) {
+                        upperBound = Optional.of(Types.commonSubtype(upperBound.get(), constraint.supertype().get()));
+                    } else {
+                        upperBound = constraint.supertype();
+                    }
                 }
-                if (!subtypeRelations.isSubType(lowerBound, upperBound)) {
+                if (lowerBound.isPresent() && upperBound.isPresent() && !subtypeRelations.isSubType(lowerBound.get(), upperBound.get())) {
                     throw new MissingTypeLevelArgsError(source);
                 }
                 typeParamBounds.put(constraint.typeParam(), Pair.of(upperBound, lowerBound));
@@ -156,13 +165,12 @@ public class TypeConstraintSolver {
                 var bounds = typeParamBounds.get(typeParam);
                 var upperBound = bounds.first();
                 var lowerBound = bounds.second();
-                // TODO: check to see if we've been constrained rather than for Nothing/Object?
-                if (lowerBound.equals(Types.NOTHING) && upperBound.equals(Types.OBJECT)) {
+                if (lowerBound.isEmpty() && upperBound.isEmpty()) {
                     throw new MissingTypeLevelArgsError(source);
-                } else if (lowerBound.equals(Types.NOTHING)) {
-                    return upperBound;
+                } else if (lowerBound.isEmpty()) {
+                    return upperBound.get();
                 } else {
-                    return lowerBound;
+                    return lowerBound.get();
                 }
             })
             .toList();

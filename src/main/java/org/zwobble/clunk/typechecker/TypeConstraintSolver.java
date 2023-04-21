@@ -99,7 +99,7 @@ public class TypeConstraintSolver {
                         }
                     }
                     case INVARIANT -> {
-                        if (!argSubtype.equals(argSupertype)) {
+                        if (!addSubtypeConstraint(argSubtype, argSupertype) || !addSubtypeConstraint(argSupertype, argSubtype)) {
                             return false;
                         }
                     }

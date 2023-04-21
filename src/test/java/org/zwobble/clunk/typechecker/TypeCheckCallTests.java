@@ -589,6 +589,43 @@ public class TypeCheckCallTests {
     }
 
     @Test
+    public void whenTypeParamIsInvariantSubPartOfParamTypeThenTypeParamCanBeInferred() {
+        var namespaceId = NamespaceId.source("example");
+
+        var boxTypeParam = TypeParameter.invariant(namespaceId, "MutableBox", "T");
+        var boxTypeConstructor = new TypeConstructor(List.of(boxTypeParam), Types.interfaceType(namespaceId, "MutableBox"));
+
+        var recordType = Types.recordType(namespaceId, "X");
+        var typeParameter = TypeParameter.method(namespaceId, "X", "f", "T");
+        var methodType = Types.methodType(
+            namespaceId,
+            List.of(typeParameter),
+            List.of(
+                Types.construct(boxTypeConstructor, List.of(typeParameter))
+            ),
+            typeParameter
+        );
+
+        var untypedNode = UntypedCallNode
+            .builder(Untyped.memberAccess(
+                Untyped.reference("x"),
+                "y"
+            ))
+            .addPositionalArg(Untyped.reference("z"))
+            .build();
+        var context = TypeCheckerContext.stub()
+            .addLocal("x", recordType, NullSource.INSTANCE)
+            .addMemberTypes(recordType, Map.of("y", methodType))
+            .addLocal("z", Types.construct(boxTypeConstructor, List.of(Types.STRING)), NullSource.INSTANCE);
+
+        var result = TypeChecker.typeCheckExpression(untypedNode, context);
+
+        assertThat(result, isTypedCallMethodNode()
+            .withType(Types.STRING)
+        );
+    }
+
+    @Test
     public void whenUpperAndLowerTypeBoundsConflictThenErrorIsThrown() {
         var namespaceId = NamespaceId.source("example");
 

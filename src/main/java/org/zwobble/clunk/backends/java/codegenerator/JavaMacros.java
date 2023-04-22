@@ -67,7 +67,7 @@ public class JavaMacros {
                         );
                     }
                 }),
-                Map.entry("has", new JavaStaticFunctionMacro() {
+                Map.entry("hasMember", new JavaStaticFunctionMacro() {
                     @Override
                     public JavaExpressionNode compileCall(
                         List<JavaExpressionNode> args,

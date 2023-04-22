@@ -1,9 +1,6 @@
 package org.zwobble.clunk.backends.typescript.codegenerator;
 
-import org.zwobble.clunk.backends.typescript.ast.TypeScriptCallNode;
-import org.zwobble.clunk.backends.typescript.ast.TypeScriptExpressionNode;
-import org.zwobble.clunk.backends.typescript.ast.TypeScriptNullLiteralNode;
-import org.zwobble.clunk.backends.typescript.ast.TypeScriptReferenceNode;
+import org.zwobble.clunk.backends.typescript.ast.*;
 import org.zwobble.clunk.backends.typescript.codegenerator.macros.*;
 import org.zwobble.clunk.types.*;
 
@@ -94,6 +91,35 @@ public class TypeScriptMacros {
                     ) {
                         context.addImport("@mwilliamson/precisely", "deepEqualTo");
                         return new TypeScriptCallNode(new TypeScriptReferenceNode("deepEqualTo"), args);
+                    }
+                }),
+                Map.entry("hasMember", new TypeScriptStaticFunctionMacro() {
+                    @Override
+                    public TypeScriptExpressionNode compileCall(
+                        List<TypeScriptExpressionNode> args,
+                        TypeScriptCodeGeneratorContext context
+                    ) {
+                        context.addImport("@mwilliamson/precisely", "hasProperties");
+                        var memberName = (TypeScriptStringLiteralNode) args.get(0);
+                        var memberMatcher = args.get(1);
+                        return new TypeScriptCallNode(
+                            new TypeScriptReferenceNode("hasProperties"),
+                            List.of(new TypeScriptObjectLiteralNode(List.of(
+                                new TypeScriptPropertyLiteralNode(
+                                    memberName.value(),
+                                    memberMatcher
+                                )
+                            )))
+                        );
+                    }
+                }),
+                Map.entry("isSome", new TypeScriptStaticFunctionMacro() {
+                    @Override
+                    public TypeScriptExpressionNode compileCall(
+                        List<TypeScriptExpressionNode> args,
+                        TypeScriptCodeGeneratorContext context
+                    ) {
+                        return args.get(0);
                     }
                 })
             )

@@ -94,8 +94,8 @@ public class TypeConstraintSolver {
         ) {
             for (var i = 0; i < subtypeConstructed.constructor().params().size(); i++) {
                 var param = subtypeConstructed.constructor().params().get(i);
-                var argSubtype = subtypeConstructed.args().get(0);
-                var argSupertype = supertypeConstructed.args().get(0);
+                var argSubtype = subtypeConstructed.args().get(i);
+                var argSupertype = supertypeConstructed.args().get(i);
 
                 switch (param.variance()) {
                     case COVARIANT -> {

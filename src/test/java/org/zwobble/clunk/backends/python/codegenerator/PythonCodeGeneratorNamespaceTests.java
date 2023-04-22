@@ -61,6 +61,23 @@ public class PythonCodeGeneratorNamespaceTests {
     }
 
     @Test
+    public void fieldImportsUsePythonisedNames() {
+        var node = TypedNamespaceNode
+            .builder(NamespaceId.source("example", "project"))
+            .addImport(Typed.import_(NamespaceName.fromParts("a", "b"), "doSomething", Types.INT))
+            .build();
+
+        var result = PythonCodeGenerator.compileNamespace(node);
+
+        assertThat(result.name(), equalTo(List.of("example", "project")));
+        var string = serialiseToString(result, PythonSerialiser::serialiseModule);
+        assertThat(string, equalTo("""
+            from a.b import do_something
+            """
+        ));
+    }
+
+    @Test
     public void namespaceImportsAreCompiled() {
         var node = TypedNamespaceNode
             .builder(NamespaceId.source("example", "project"))

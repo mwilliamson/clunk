@@ -366,7 +366,7 @@ public class PythonCodeGenerator {
         } else if (import_.fieldName().isPresent()) {
             return List.of(new PythonImportFromNode(
                 namespaceIdToModuleName(import_.namespaceId()),
-                List.of(import_.fieldName().get())
+                List.of(pythonizeName(import_.fieldName().get()))
             ));
         } else if (import_.namespaceName().parts().size() == 1) {
             return List.of(new PythonImportNode(

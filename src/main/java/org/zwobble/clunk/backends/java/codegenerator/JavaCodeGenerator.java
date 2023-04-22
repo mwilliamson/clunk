@@ -213,7 +213,7 @@ public class JavaCodeGenerator {
 
             @Override
             public JavaExpressionNode visit(TypedMemberDefinitionReferenceNode node) {
-                throw new UnsupportedOperationException();
+                return compileMemberDefinitionReference(node, context);
             }
 
             @Override
@@ -545,6 +545,19 @@ public class JavaCodeGenerator {
                 List.of()
             );
         }
+    }
+
+    private static JavaExpressionNode compileMemberDefinitionReference(
+        TypedMemberDefinitionReferenceNode node,
+        JavaCodeGeneratorContext context
+    ) {
+        // TODO: compile receiver expression rather than the type
+        var receiverMetaType = (TypeLevelValueType) node.receiver().type();
+        var receiver = typeLevelValueToTypeExpression(receiverMetaType.value(), false, context);
+        return new JavaMethodReferenceStaticNode(
+            receiver,
+            node.memberName()
+        );
     }
 
     private static JavaExpressionNode compileMemberReference(TypedMemberReferenceNode node) {

@@ -32,7 +32,10 @@ public class Types {
     );
 
     public static final TypeConstructor MEMBER_CONSTRUCTOR = new TypeConstructor(
-        List.of(TypeParameter.invariant(BUILTIN_NAMESPACE_ID, "Member", "T")),
+        List.of(
+            TypeParameter.invariant(BUILTIN_NAMESPACE_ID, "Member", "T"),
+            TypeParameter.invariant(BUILTIN_NAMESPACE_ID, "Member", "R")
+        ),
         Types.recordType(BUILTIN_NAMESPACE_ID, "Member")
     );
 

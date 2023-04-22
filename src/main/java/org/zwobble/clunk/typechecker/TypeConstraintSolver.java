@@ -34,6 +34,7 @@ public class TypeConstraintSolver {
     }
 
     public boolean addSubtypeConstraint(Type subtype, Type supertype) {
+        // TODO: resolve the tension between statefulness and backtracking
         if (supertype instanceof TypeParameter supertypeTypeParam && typeParams.contains(supertypeTypeParam)) {
             constraints.add(Constraint.supertype(supertypeTypeParam, subtype));
             return true;

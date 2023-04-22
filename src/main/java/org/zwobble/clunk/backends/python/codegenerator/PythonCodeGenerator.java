@@ -225,7 +225,7 @@ public class PythonCodeGenerator {
 
             @Override
             public PythonExpressionNode visit(TypedMemberDefinitionReferenceNode node) {
-                throw new UnsupportedOperationException();
+                return compileMemberDefinitionReference(node, context);
             }
 
             @Override
@@ -495,6 +495,13 @@ public class PythonCodeGenerator {
             compileExpression(node.receiver(), context),
             pythonizeName(node.memberName())
         );
+    }
+
+    private static PythonExpressionNode compileMemberDefinitionReference(
+        TypedMemberDefinitionReferenceNode node,
+        PythonCodeGeneratorContext context
+    ) {
+        return new PythonStringLiteralNode(node.memberName());
     }
 
     private static PythonExpressionNode compileMemberReference(

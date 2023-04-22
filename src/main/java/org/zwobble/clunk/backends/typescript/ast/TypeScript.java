@@ -161,12 +161,25 @@ public class TypeScript {
         return new TypeScriptNumberLiteralNode(value);
     }
 
+    public static TypeScriptObjectLiteralNode objectLiteral(
+        List<TypeScriptPropertyLiteralNode> properties
+    ) {
+        return new TypeScriptObjectLiteralNode(properties);
+    }
+
     public static TypeScriptParamNode param(String name, TypeScriptReferenceNode type) {
         return new TypeScriptParamNode(name, type);
     }
 
     public static TypeScriptPropertyAccessNode propertyAccess(TypeScriptReferenceNode receiver, String propertyName) {
         return new TypeScriptPropertyAccessNode(receiver, propertyName);
+    }
+
+    public static TypeScriptPropertyLiteralNode propertyLiteral(
+        String name,
+        TypeScriptExpressionNode expression
+    ) {
+        return new TypeScriptPropertyLiteralNode(name, expression);
     }
 
     public static TypeScriptReferenceNode reference(String name) {

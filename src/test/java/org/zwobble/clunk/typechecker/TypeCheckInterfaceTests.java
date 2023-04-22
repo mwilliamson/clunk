@@ -9,13 +9,10 @@ import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.TypeLevelValueType;
 
 import static org.zwobble.precisely.AssertThat.assertThat;
-import static org.zwobble.precisely.Matchers.equalTo;
-import static org.zwobble.precisely.Matchers.instanceOf;
-import static org.zwobble.precisely.Matchers.has;
 import static org.zwobble.clunk.matchers.MapEntryMatcher.isMapEntry;
-import static org.zwobble.clunk.matchers.OptionalMatcher.present;
 import static org.zwobble.clunk.matchers.TypeMatchers.isMetaType;
 import static org.zwobble.clunk.typechecker.TypeCheckNamespaceStatementTesting.typeCheckNamespaceStatementAllPhases;
+import static org.zwobble.precisely.Matchers.*;
 
 public class TypeCheckInterfaceTests {
     @Test
@@ -85,7 +82,7 @@ public class TypeCheckInterfaceTests {
 
         assertThat(
             result.fieldType(),
-            present(isMapEntry(
+            isOptionalOf(isMapEntry(
                 equalTo("DocumentElement"),
                 isMetaType(instanceOf(
                     InterfaceType.class,

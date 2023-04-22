@@ -13,7 +13,6 @@ import java.util.Map;
 import static org.zwobble.precisely.AssertThat.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
-import static org.zwobble.clunk.matchers.OptionalMatcher.present;
 import static org.zwobble.precisely.Matchers.*;
 
 public class TypeCheckCallTests {
@@ -154,7 +153,7 @@ public class TypeCheckCallTests {
                 .withName("Id")
                 .withType(Types.typeConstructorType(typeConstructor))
             )
-            .withTypeArgs(present(isSequence(isTypedTypeLevelReferenceNode("String", Types.STRING))))
+            .withTypeArgs(isOptionalOf(isSequence(isTypedTypeLevelReferenceNode("String", Types.STRING))))
             .withPositionalArgs(isSequence(isTypedStringLiteralNode("Hello.")))
             .withType(Types.construct(typeConstructor, List.of(Types.STRING)))
         );

@@ -16,7 +16,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
-import static org.zwobble.clunk.matchers.OptionalMatcher.present;
 import static org.zwobble.clunk.typechecker.TypeCheckNamespaceStatementTesting.typeCheckNamespaceStatementAllPhases;
 import static org.zwobble.precisely.AssertThat.assertThat;
 import static org.zwobble.precisely.Matchers.*;
@@ -101,7 +100,7 @@ public class TypeCheckRecordTests {
         var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
 
         var typedNode = (TypedRecordNode) result.typedNode();
-        assertThat(result.context().constructorType(typedNode.type()), present(instanceOf(
+        assertThat(result.context().constructorType(typedNode.type()), isOptionalOf(instanceOf(
             ConstructorType.class,
             has("typeLevelParams", x -> x.typeLevelParams(), equalTo(Optional.empty())),
             has("positionalParams", x -> x.positionalParams(), isSequence(equalTo(Types.STRING))),

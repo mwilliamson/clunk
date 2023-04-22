@@ -9,7 +9,6 @@ import org.zwobble.clunk.types.*;
 
 import static org.zwobble.precisely.AssertThat.assertThat;
 import static org.zwobble.clunk.matchers.MapEntryMatcher.isMapEntry;
-import static org.zwobble.clunk.matchers.OptionalMatcher.present;
 import static org.zwobble.clunk.matchers.TypeMatchers.isMetaType;
 import static org.zwobble.clunk.typechecker.TypeCheckNamespaceStatementTesting.typeCheckNamespaceStatementAllPhases;
 import static org.zwobble.precisely.Matchers.*;
@@ -43,7 +42,7 @@ public class TypeCheckEnumTests {
 
         assertThat(
             result.fieldType(),
-            present(isMapEntry(
+            isOptionalOf(isMapEntry(
                 equalTo("NoteType"),
                 isMetaType(isEnumType(NamespaceId.source("a", "b"), "NoteType"))
             ))

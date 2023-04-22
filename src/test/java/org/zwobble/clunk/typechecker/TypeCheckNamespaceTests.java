@@ -18,7 +18,6 @@ import static org.zwobble.precisely.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedImportNode;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedRecordNode;
-import static org.zwobble.clunk.matchers.OptionalMatcher.present;
 
 public class TypeCheckNamespaceTests {
     @Test
@@ -88,7 +87,7 @@ public class TypeCheckNamespaceTests {
             ))
         ));
         var typedRecordNode = (TypedRecordNode) result.typedNode().statements().get(0);
-        assertThat(result.context().constructorType(typedRecordNode.type()), present(instanceOf(
+        assertThat(result.context().constructorType(typedRecordNode.type()), isOptionalOf(instanceOf(
             ConstructorType.class,
             has("positionalParams", x -> x.positionalParams(), isSequence(equalTo(Types.INT)))
         )));

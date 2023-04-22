@@ -16,7 +16,6 @@ import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
 import static org.zwobble.precisely.Matchers.instanceOf;
 import static org.zwobble.precisely.Matchers.has;
 import static org.zwobble.clunk.matchers.MapEntryMatcher.isMapEntry;
-import static org.zwobble.clunk.matchers.OptionalMatcher.present;
 import static org.zwobble.clunk.typechecker.TypeCheckNamespaceStatementTesting.typeCheckNamespaceStatementAllPhases;
 
 public class TypeCheckFunctionTests {
@@ -200,7 +199,7 @@ public class TypeCheckFunctionTests {
 
         assertThat(
             result.fieldType(),
-            present(isMapEntry(
+            isOptionalOf(isMapEntry(
                 equalTo("f"),
                 instanceOf(
                     StaticFunctionType.class,

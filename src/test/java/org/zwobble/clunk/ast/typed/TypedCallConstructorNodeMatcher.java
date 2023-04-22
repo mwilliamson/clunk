@@ -23,7 +23,7 @@ public class TypedCallConstructorNodeMatcher extends CastMatcher<Object, TypedCa
         return addMatcher(has("receiver", x -> x.receiver(), receiver));
     }
 
-    public TypedCallConstructorNodeMatcher withTypeArgs(Matcher<Optional<? extends Iterable<TypedTypeLevelExpressionNode>>> receiver) {
+    public TypedCallConstructorNodeMatcher withTypeArgs(Matcher<? super Optional<? extends Iterable<TypedTypeLevelExpressionNode>>> receiver) {
         return addMatcher(has("typeArgs", x -> x.typeArgs(), receiver));
     }
 

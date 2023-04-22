@@ -56,7 +56,7 @@
         <dependency>
             <groupId>com.github.mwilliamson</groupId>
             <artifactId>java-precisely</artifactId>
-            <version>7158b6324d20b5b177be3f3a60681998c2d0c67f</version>
+            <version>2af34017ed172b6ff00415efe1d42bd2f0d0a73d</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

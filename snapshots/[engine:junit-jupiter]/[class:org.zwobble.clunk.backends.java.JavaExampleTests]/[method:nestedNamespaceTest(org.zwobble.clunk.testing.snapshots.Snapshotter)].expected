@@ -43,7 +43,7 @@ Expected:
   true
 but:
   was false
-       org.zwobble.precisely.AssertThat.assertThat(AssertThat.java:12)
+       org.zwobble.precisely.AssertThat.assertThat(AssertThat.java:15)
        one.two.simple.SimpleTests.assertFalse(Unknown Source)
        java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
        java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)

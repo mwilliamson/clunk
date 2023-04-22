@@ -8,9 +8,7 @@ import org.zwobble.precisely.Matcher;
 import java.util.List;
 import java.util.Optional;
 
-import static org.zwobble.clunk.matchers.OptionalMatcher.present;
-import static org.zwobble.precisely.Matchers.equalTo;
-import static org.zwobble.precisely.Matchers.has;
+import static org.zwobble.precisely.Matchers.*;
 
 public class TypedCallMethodNodeMatcher extends CastMatcher<Object, TypedCallMethodNode> {
     private final List<Matcher<? super TypedCallMethodNode>> matchers;
@@ -21,7 +19,7 @@ public class TypedCallMethodNodeMatcher extends CastMatcher<Object, TypedCallMet
     }
 
     public TypedCallMethodNodeMatcher withReceiver(Matcher<? super TypedExpressionNode> receiver) {
-        return addMatcher(has("receiver", x -> x.receiver(), present(receiver)));
+        return addMatcher(has("receiver", x -> x.receiver(), isOptionalOf(receiver)));
     }
 
     public TypedCallMethodNodeMatcher withImplicitReceiver() {

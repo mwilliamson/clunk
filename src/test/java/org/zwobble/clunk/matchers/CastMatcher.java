@@ -2,6 +2,7 @@ package org.zwobble.clunk.matchers;
 
 import org.zwobble.precisely.MatchResult;
 import org.zwobble.precisely.Matcher;
+import org.zwobble.precisely.TextTree;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class CastMatcher<TActual, TExpected> implements Matcher<TActual> {
     }
 
     @Override
-    public String describe() {
+    public TextTree describe() {
         return matcher.describe();
     }
 }

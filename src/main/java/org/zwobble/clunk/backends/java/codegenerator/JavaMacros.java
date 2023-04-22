@@ -111,10 +111,14 @@ public class JavaMacros {
         JavaUnitMacro.INSTANCE
     ).collect(Collectors.toMap(x -> x.receiverType(), x -> x));
 
-    public static Optional<JavaStaticFunctionMacro> lookupStaticFunctionMacro(StaticFunctionType receiverType) {
-        var macro = STATIC_FUNCTION_MACROS.getOrDefault(receiverType.namespaceId(), Map.of())
-            .get(receiverType.functionName());
-        return Optional.ofNullable(macro);
+    public static Optional<JavaStaticFunctionMacro> lookupStaticFunctionMacro(Type receiverType) {
+        if (receiverType instanceof StaticFunctionType staticFunctionType) {
+            var macro = STATIC_FUNCTION_MACROS.getOrDefault(staticFunctionType.namespaceId(), Map.of())
+                .get(staticFunctionType.functionName());
+            return Optional.ofNullable(macro);
+        } else {
+            return Optional.empty();
+        }
     }
 
     public static Optional<JavaExpressionNode> compileConstructorCall(

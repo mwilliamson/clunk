@@ -345,6 +345,27 @@ public class JavaCodeGenerator {
         );
     }
 
+    private static List<JavaImportNode> compileImport(
+        TypedImportNode import_,
+        JavaCodeGeneratorContext context
+    ) {
+        var macro = JavaMacros.lookupStaticFunctionMacro(import_.type());
+        var packageName = namespaceToPackage(import_.namespaceId(), context);
+        if (macro.isPresent()) {
+            return List.of();
+        } else if (import_.fieldName().isEmpty()) {
+            var className = namespaceIdToClassName(import_.namespaceId());
+            context.renameVariable(import_.variableName(), className);
+            return List.of(new JavaImportTypeNode(packageName + "." + className));
+        } else if (Types.isMetaType(import_.type())) {
+            return List.of(new JavaImportTypeNode(packageName + "." + import_.fieldName().get()));
+        } else {
+            var className = namespaceIdToClassName(import_.namespaceId());
+            var fullyQualifiedClassName = packageName + "." + className;
+            return List.of(new JavaImportStaticNode(fullyQualifiedClassName, import_.fieldName().get()));
+        }
+    }
+
     private static JavaExpressionNode compileIndex(
         TypedIndexNode node,
         JavaCodeGeneratorContext context
@@ -578,14 +599,7 @@ public class JavaCodeGenerator {
         var imports = new ArrayList<JavaImportNode>();
 
         for (var import_ : node.imports()) {
-            var packageName = namespaceToPackage(import_.namespaceId(), context);
-            if (import_.fieldName().isEmpty()) {
-                var className = namespaceIdToClassName(import_.namespaceId());
-                imports.add(new JavaImportTypeNode(packageName + "." + className));
-                context.renameVariable(import_.variableName(), className);
-            } else if (Types.isMetaType(import_.type())) {
-                imports.add(new JavaImportTypeNode(packageName + "." + import_.fieldName().get()));
-            }
+            imports.addAll(compileImport(import_, context));
         }
 
         for (var statement : node.statements()) {

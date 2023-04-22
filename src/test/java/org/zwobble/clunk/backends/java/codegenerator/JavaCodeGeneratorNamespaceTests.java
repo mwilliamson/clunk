@@ -179,6 +179,43 @@ public class JavaCodeGeneratorNamespaceTests {
     }
 
     @Test
+    public void nonTypeImportsAreCompiled() {
+        var node = TypedNamespaceNode
+            .builder(NamespaceId.source("example", "project"))
+            .addImport(Typed.import_(NamespaceName.fromParts("a"), "X1", Types.STRING))
+            .addImport(Typed.import_(NamespaceName.fromParts("b", "c"), "X2", Types.STRING))
+            .addImport(Typed.import_(NamespaceName.fromParts("d", "e", "f"), "X3", Types.STRING))
+            .addStatement(TypedFunctionNode.builder()
+                .name("f")
+                .returnType(Typed.typeLevelString())
+                .addBodyStatement(
+                    Typed.returnStatement(Typed.string(""))
+                )
+                .build()
+            )
+            .build();
+
+        var result = JavaCodeGenerator.compileNamespace(node, JavaTargetConfig.stub(), SubtypeRelations.EMPTY);
+
+        assertThat(serialise(result), isSequence(
+            equalTo(
+                """
+                    package example.project;
+
+                    import static a.A.X1;
+                    import static b.c.C.X2;
+                    import static d.e.f.F.X3;
+
+                    public class Project {
+                        public static String f() {
+                            return "";
+                        }
+                    }"""
+            )
+        ));
+    }
+
+    @Test
     public void macrosInTestsGenerateImports() {
         var assertThatType = Types.staticFunctionType(
             NamespaceId.source("stdlib", "assertions"),

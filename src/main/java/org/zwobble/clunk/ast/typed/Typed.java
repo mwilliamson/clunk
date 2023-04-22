@@ -224,6 +224,20 @@ public class Typed {
         );
     }
 
+    public static TypedMemberDefinitionReferenceNode memberDefinitionReference(
+        TypedExpressionNode receiver,
+        String memberName,
+        Type type
+    ) {
+        return new TypedMemberDefinitionReferenceNode(
+            receiver,
+            memberName,
+            type,
+            NullSource.INSTANCE,
+            NullSource.INSTANCE
+        );
+    }
+
     public static TypedMemberReferenceNode memberReference(String name, Type type) {
         return new TypedMemberReferenceNode(name, type, NullSource.INSTANCE);
     }

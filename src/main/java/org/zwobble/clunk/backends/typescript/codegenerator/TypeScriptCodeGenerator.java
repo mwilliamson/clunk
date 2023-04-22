@@ -202,7 +202,7 @@ public class TypeScriptCodeGenerator {
 
             @Override
             public TypeScriptExpressionNode visit(TypedMemberDefinitionReferenceNode node) {
-                throw new UnsupportedOperationException();
+                return compileMemberDefinitionAccess(node, context);
             }
 
             @Override
@@ -532,6 +532,13 @@ public class TypeScriptCodeGenerator {
             compileExpression(node.receiver(), context),
             node.memberName()
         );
+    }
+
+    private static TypeScriptExpressionNode compileMemberDefinitionAccess(
+        TypedMemberDefinitionReferenceNode node,
+        TypeScriptCodeGeneratorContext context
+    ) {
+        return new TypeScriptStringLiteralNode(node.memberName());
     }
 
     private static TypeScriptExpressionNode compileMemberReference(

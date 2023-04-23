@@ -1,10 +1,19 @@
 import stdlib/assertions.assertThat;
 import stdlib/matchers.equalTo;
 import stdlib/matchers.hasMember;
+import stdlib/matchers.isNone;
 import stdlib/matchers.isSome;
 import mammoth/docx/styles.readStylesXmlElement;
 import mammoth/docx/styles.Style;
 import mammoth/xml;
+
+test "paragraph style is none if no style with that ID exists" {
+    var element = xml.element("w:styles", #[], []);
+
+    var styles = readStylesXmlElement(element);
+
+    assertThat(styles.findParagraphStyleById("Heading1"), isNone());
+}
 
 test "paragraph style can be found by ID" {
     var element = xml.element("w:styles", #[], [

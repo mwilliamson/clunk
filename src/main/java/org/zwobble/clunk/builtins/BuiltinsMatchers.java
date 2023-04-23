@@ -64,6 +64,15 @@ public class BuiltinsMatchers {
         Visibility.PUBLIC
     );
 
+    private static final StaticFunctionType IS_NONE_TYPE = new StaticFunctionType(
+        NAMESPACE_ID,
+        "isNone",
+        Optional.empty(),
+        new ParamTypes(List.of(), List.of()),
+        matcher(Types.option(Types.OBJECT)),
+        Visibility.PUBLIC
+    );
+
     private static final TypeParameter IS_SOME_TYPE_PARAM = TypeParameter.function(
         NAMESPACE_ID,
         "isSome",
@@ -82,6 +91,7 @@ public class BuiltinsMatchers {
     static final NamespaceType NAMESPACE_TYPE = new NamespaceType(NAMESPACE_ID, Map.ofEntries(
         Map.entry("equalTo", EQUAL_TO_TYPE),
         Map.entry("hasMember", HAS_MEMBER_TYPE),
+        Map.entry("isNone", IS_NONE_TYPE),
         Map.entry("isSome", IS_SOME_TYPE)
     ));
 }

@@ -79,6 +79,19 @@ public class PythonMacros {
                         );
                     }
                 }),
+                Map.entry("isNone", new PythonStaticFunctionMacro() {
+                    @Override
+                    public PythonExpressionNode compileCall(PythonArgsNode args, PythonCodeGeneratorContext context) {
+                        context.addImport(List.of("precisely", "equal_to"));
+                        return new PythonCallNode(
+                            new PythonReferenceNode("equal_to"),
+                            new PythonArgsNode(
+                                List.of(new PythonNoneLiteralNode()),
+                                List.of()
+                            )
+                        );
+                    }
+                }),
                 Map.entry("isSome", new PythonStaticFunctionMacro() {
                     @Override
                     public PythonExpressionNode compileCall(PythonArgsNode args, PythonCodeGeneratorContext context) {

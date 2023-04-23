@@ -149,10 +149,19 @@ Source path: src/mammoth/docx/styles.test.clunk
 import stdlib/assertions.assertThat;
 import stdlib/matchers.equalTo;
 import stdlib/matchers.hasMember;
+import stdlib/matchers.isNone;
 import stdlib/matchers.isSome;
 import mammoth/docx/styles.readStylesXmlElement;
 import mammoth/docx/styles.Style;
 import mammoth/xml;
+
+test "paragraph style is none if no style with that ID exists" {
+    var element = xml.element("w:styles", #[], []);
+
+    var styles = readStylesXmlElement(element);
+
+    assertThat(styles.findParagraphStyleById("Heading1"), isNone());
+}
 
 test "paragraph style can be found by ID" {
     var element = xml.element("w:styles", #[], [
@@ -1025,11 +1034,21 @@ import static org.zwobble.mammoth.internal.mammoth.docx.styles.Styles.readStyles
 import org.zwobble.mammoth.internal.mammoth.docx.styles.Style;
 import org.zwobble.mammoth.internal.mammoth.xml.Xml;
 import static org.zwobble.precisely.Matchers.equalTo;
+import java.util.Optional;
+import static org.zwobble.precisely.AssertThat.assertThat;
 import static org.zwobble.precisely.Matchers.isOptionalOf;
 import static org.zwobble.precisely.Matchers.has;
-import static org.zwobble.precisely.AssertThat.assertThat;
 
 public class StylesTests {
+    @org.junit.jupiter.api.Test
+    @org.junit.jupiter.api.DisplayName("paragraph style is none if no style with that ID exists")
+    public void paragraphStyleIsNoneIfNoStyleWithThatIDExists() {
+        var element = Xml.element("w:styles", java.util.Map.ofEntries(), java.util.List.of());
+
+        var styles = readStylesXmlElement(element);
+
+        assertThat(styles.findParagraphStyleById("Heading1"), equalTo(Optional.empty()));
+    }
     @org.junit.jupiter.api.Test
     @org.junit.jupiter.api.DisplayName("paragraph style can be found by ID")
     public void paragraphStyleCanBeFoundByID() {
@@ -1479,14 +1498,15 @@ public class HtmlTests {
 ╷
 ├─ JUnit Jupiter ✔
 │  ├─ StylesTests ✔
-│  │  └─ paragraph style can be found by ID ✘ 
-│  │           Expected:
-│  │             optional value:
-│  │               name:
-│  │                 optional value:
-│  │                   "Heading 1"
-│  │           but:
-│  │             was empty
+│  │  ├─ paragraph style can be found by ID ✘ 
+│  │  │        Expected:
+│  │  │          optional value:
+│  │  │            name:
+│  │  │              optional value:
+│  │  │                "Heading 1"
+│  │  │        but:
+│  │  │          was empty
+│  │  └─ paragraph style is none if no style with that ID exists ✔
 │  └─ HtmlTests ✔
 │     ├─ Collapse ✔
 │     │  ├─ consecutive elements can collapse if second element has choice of tag names incl... ✔
@@ -1542,9 +1562,9 @@ Test run finished after TIME ms
 [         0 containers aborted    ]
 [         6 containers successful ]
 [         0 containers failed     ]
-[        21 tests found           ]
+[        22 tests found           ]
 [         0 tests skipped         ]
-[        21 tests started         ]
+[        22 tests started         ]
 [         0 tests aborted         ]
-[        20 tests successful      ]
+[        21 tests successful      ]
 [         1 tests failed          ]

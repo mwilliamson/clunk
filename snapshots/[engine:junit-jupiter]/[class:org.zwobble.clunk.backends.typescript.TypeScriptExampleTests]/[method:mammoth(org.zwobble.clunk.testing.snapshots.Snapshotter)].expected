@@ -149,10 +149,19 @@ Source path: src/mammoth/docx/styles.test.clunk
 import stdlib/assertions.assertThat;
 import stdlib/matchers.equalTo;
 import stdlib/matchers.hasMember;
+import stdlib/matchers.isNone;
 import stdlib/matchers.isSome;
 import mammoth/docx/styles.readStylesXmlElement;
 import mammoth/docx/styles.Style;
 import mammoth/xml;
+
+test "paragraph style is none if no style with that ID exists" {
+    var element = xml.element("w:styles", #[], []);
+
+    var styles = readStylesXmlElement(element);
+
+    assertThat(styles.findParagraphStyleById("Heading1"), isNone());
+}
 
 test "paragraph style can be found by ID" {
     var element = xml.element("w:styles", #[], [
@@ -967,12 +976,21 @@ export {DocumentStyles, Style, readStylesXmlElement};
 ==============
 
 Output path: mammoth/docx/styles.test.ts
+import {equalTo} from "@mwilliamson/precisely";
+import {assertThat} from "@mwilliamson/precisely";
 import {deepEqualTo} from "@mwilliamson/precisely";
 import {hasProperties} from "@mwilliamson/precisely";
-import {assertThat} from "@mwilliamson/precisely";
 import {readStylesXmlElement} from "./styles";
 import {Style} from "./styles";
 import * as xml from "../xml";
+
+test("paragraph style is none if no style with that ID exists", function () {
+    let element = xml.element("w:styles", new Map([]), []);
+
+    let styles = readStylesXmlElement(element);
+
+    assertThat(styles.findParagraphStyleById("Heading1"), equalTo(null));
+});
 
 test("paragraph style can be found by ID", function () {
     let element = xml.element("w:styles", new Map([]), [xml.element("w:style", new Map([["w:type", "paragraph"], ["w:styleId", "Heading1"]]), [xml.element("w:name", new Map([["w:val", "Heading 1"]]), [])])]);
@@ -1354,6 +1372,7 @@ suite("collapse", function () {
 
 
 
+  ✔ paragraph style is none if no style with that ID exists
   1) paragraph style can be found by ID
   stripEmpty
     ✔ text nodes with text are not stripped
@@ -1380,7 +1399,7 @@ suite("collapse", function () {
     ✔ when separator is present then separator is prepended to collapsed element
 
 
-  20 passing (TIME)
+  21 passing (TIME)
   1 failing
 
   1) paragraph style can be found by ID:
@@ -1388,7 +1407,7 @@ suite("collapse", function () {
       at hasOwnProperty (<anonymous>)
       at Object.match (node_modules/@mwilliamson/precisely/lib/hasProperties.js:17:54)
       at assertThat (node_modules/@mwilliamson/precisely/lib/assertThat.js:10:28)
-      at Context.<anonymous> (src/mammoth/docx/styles.test.ts:13:15)
+      at Context.<anonymous> (src/mammoth/docx/styles.test.ts:22:15)
       at processImmediate (node:internal/timers:466:21)
 
 

@@ -149,10 +149,19 @@ Source path: src/mammoth/docx/styles.test.clunk
 import stdlib/assertions.assertThat;
 import stdlib/matchers.equalTo;
 import stdlib/matchers.hasMember;
+import stdlib/matchers.isNone;
 import stdlib/matchers.isSome;
 import mammoth/docx/styles.readStylesXmlElement;
 import mammoth/docx/styles.Style;
 import mammoth/xml;
+
+test "paragraph style is none if no style with that ID exists" {
+    var element = xml.element("w:styles", #[], []);
+
+    var styles = readStylesXmlElement(element);
+
+    assertThat(styles.findParagraphStyleById("Heading1"), isNone());
+}
 
 test "paragraph style can be found by ID" {
     var element = xml.element("w:styles", #[], [
@@ -877,11 +886,18 @@ Output path: mammoth/docx/styles_test.py
 from __future__ import annotations
 
 from precisely import equal_to
-from precisely import has_attrs
 from precisely import assert_that
+from precisely import has_attrs
 from mammoth.docx.styles import read_styles_xml_element
 from mammoth.docx.styles import Style
 from mammoth import xml
+
+def test_paragraph_style_is_none_if_no_style_with_that_id_exists():
+    element = xml.element("w:styles", {}, [])
+
+    styles = read_styles_xml_element(element)
+
+    assert_that(styles.find_paragraph_style_by_id("Heading1"), equal_to(None))
 
 def test_paragraph_style_can_be_found_by_id():
     element = xml.element("w:styles", {}, [xml.element("w:style", {"w:type": "paragraph", "w:styleId": "Heading1"}, [xml.element("w:name", {"w:val": "Heading 1"}, [])])])
@@ -1208,14 +1224,14 @@ class CollapseTests:
 
 ============================= test session starts ==============================
 rootdir: ROOTDIR, configfile: tox.ini
-collected 21 items
+collected 22 items
 
-mammoth/html_test.py ....................                                [ 95%]
-mammoth/docx/styles_test.py F                                            [100%]
+mammoth/html_test.py ....................                                [ 90%]
+mammoth/docx/styles_test.py .F                                           [100%]
 
 =================================== FAILURES ===================================
 ___________________ test_paragraph_style_can_be_found_by_id ____________________
-mammoth/docx/styles_test.py:15: in test_paragraph_style_can_be_found_by_id
+mammoth/docx/styles_test.py:22: in test_paragraph_style_can_be_found_by_id
     assert_that(styles.find_paragraph_style_by_id("Heading1"), has_attrs(name=equal_to("Heading 1")))
 SITE-PACKAGES/precisely/__init__.py:50: in assert_that
     raise AssertionError("\nExpected:{0}\nbut:{1}".format(
@@ -1227,4 +1243,4 @@ E   but:
 E     was missing attribute name
 =========================== short test summary info ============================
 FAILED mammoth/docx/styles_test.py::test_paragraph_style_can_be_found_by_id
-========================= 1 failed, 20 passed in TIME =========================
+========================= 1 failed, 21 passed in TIME =========================

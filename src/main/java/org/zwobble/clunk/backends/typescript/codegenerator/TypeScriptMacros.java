@@ -113,6 +113,19 @@ public class TypeScriptMacros {
                         );
                     }
                 }),
+                Map.entry("isNone", new TypeScriptStaticFunctionMacro() {
+                    @Override
+                    public TypeScriptExpressionNode compileCall(
+                        List<TypeScriptExpressionNode> args,
+                        TypeScriptCodeGeneratorContext context
+                    ) {
+                        context.addImport("@mwilliamson/precisely", "equalTo");
+                        return new TypeScriptCallNode(
+                            new TypeScriptReferenceNode("equalTo"),
+                            List.of(new TypeScriptNullLiteralNode())
+                        );
+                    }
+                }),
                 Map.entry("isSome", new TypeScriptStaticFunctionMacro() {
                     @Override
                     public TypeScriptExpressionNode compileCall(

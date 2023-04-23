@@ -86,6 +86,28 @@ public class JavaMacros {
                         );
                     }
                 }),
+                Map.entry("isNone", new JavaStaticFunctionMacro() {
+                    @Override
+                    public JavaExpressionNode compileCall(
+                        List<JavaExpressionNode> args,
+                        JavaCodeGeneratorContext context
+                    ) {
+                        context.addImportStatic("org.zwobble.precisely.Matchers", "equalTo");
+                        context.addImportType("java.util.Optional");
+                        return new JavaCallNode(
+                            new JavaReferenceNode("equalTo"),
+                            List.of(
+                                new JavaCallNode(
+                                    new JavaMemberAccessNode(
+                                        new JavaReferenceNode("Optional"),
+                                        "empty"
+                                    ),
+                                    List.of()
+                                )
+                            )
+                        );
+                    }
+                }),
                 Map.entry("isSome", new JavaStaticFunctionMacro() {
                     @Override
                     public JavaExpressionNode compileCall(

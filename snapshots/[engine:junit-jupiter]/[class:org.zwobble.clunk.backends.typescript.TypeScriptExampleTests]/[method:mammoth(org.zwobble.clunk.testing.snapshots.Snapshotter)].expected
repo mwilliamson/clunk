@@ -129,16 +129,44 @@ enum VerticalAlignment {
 Source path: src/mammoth/docx/styles.clunk
 import mammoth/xml.XmlElement;
 
-record Styles() {
+// TODO: deal with naming conflict with namespace class Styles
+record DocumentStyles() {
     fun findParagraphStyleById(name: String) -> Option[Style] {
         return none();
     }
 }
 
-record Style()
+record Style(name: Option[String])
 
-fun readStylesXmlElement(element: XmlElement) -> Styles {
-    return Styles();
+fun readStylesXmlElement(element: XmlElement) -> DocumentStyles {
+    return DocumentStyles();
+}
+
+
+==============
+
+Source path: src/mammoth/docx/styles.test.clunk
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+import stdlib/matchers.hasMember;
+import stdlib/matchers.isSome;
+import mammoth/docx/styles.readStylesXmlElement;
+import mammoth/docx/styles.Style;
+import mammoth/xml;
+
+test "paragraph style can be found by ID" {
+    var element = xml.element("w:styles", #[], [
+        xml.element("w:style", #[["w:type", "paragraph"], ["w:styleId", "Heading1"]], [
+            xml.element("w:name", #[["w:val", "Heading 1"]], []),
+        ]),
+    ]);
+
+    var styles = readStylesXmlElement(element);
+
+    assertThat(
+        styles.findParagraphStyleById("Heading1"),
+        isSome(hasMember(Style::name, isSome(equalTo("Heading 1")))),
+    );
 }
 
 
@@ -915,19 +943,44 @@ export {XmlElement, XmlNode, XmlTextNode, element};
 Output path: mammoth/docx/styles.ts
 import {XmlElement} from "../xml";
 
-class Styles {
+// TODO: deal with naming conflict with namespace class Styles
+class DocumentStyles {
     findParagraphStyleById(name: string): Style | null {
         return null;
     }
 }
 
 class Style {
+    readonly name: string | null;
+
+    constructor(name: string | null) {
+        this.name = name;
+    }
 }
 
-function readStylesXmlElement(element: XmlElement): Styles {
-    return new Styles();
+function readStylesXmlElement(element: XmlElement): DocumentStyles {
+    return new DocumentStyles();
 }
-export {Style, Styles, readStylesXmlElement};
+export {DocumentStyles, Style, readStylesXmlElement};
+
+
+==============
+
+Output path: mammoth/docx/styles.test.ts
+import {deepEqualTo} from "@mwilliamson/precisely";
+import {hasProperties} from "@mwilliamson/precisely";
+import {assertThat} from "@mwilliamson/precisely";
+import {readStylesXmlElement} from "./styles";
+import {Style} from "./styles";
+import * as xml from "../xml";
+
+test("paragraph style can be found by ID", function () {
+    let element = xml.element("w:styles", new Map([]), [xml.element("w:style", new Map([["w:type", "paragraph"], ["w:styleId", "Heading1"]]), [xml.element("w:name", new Map([["w:val", "Heading 1"]]), [])])]);
+
+    let styles = readStylesXmlElement(element);
+
+    assertThat(styles.findParagraphStyleById("Heading1"), hasProperties({name: deepEqualTo("Heading 1")}));
+});
 
 
 ==============
@@ -1301,6 +1354,7 @@ suite("collapse", function () {
 
 
 
+  1) paragraph style can be found by ID
   stripEmpty
     ✔ text nodes with text are not stripped
     ✔ empty text nodes are stripped
@@ -1327,3 +1381,14 @@ suite("collapse", function () {
 
 
   20 passing (TIME)
+  1 failing
+
+  1) paragraph style can be found by ID:
+     TypeError: Cannot convert undefined or null to object
+      at hasOwnProperty (<anonymous>)
+      at Object.match (node_modules/@mwilliamson/precisely/lib/hasProperties.js:17:54)
+      at assertThat (node_modules/@mwilliamson/precisely/lib/assertThat.js:10:28)
+      at Context.<anonymous> (src/mammoth/docx/styles.test.ts:13:15)
+      at processImmediate (node:internal/timers:466:21)
+
+

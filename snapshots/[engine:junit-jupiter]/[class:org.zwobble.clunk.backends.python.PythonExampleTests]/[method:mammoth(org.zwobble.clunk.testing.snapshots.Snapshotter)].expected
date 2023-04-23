@@ -129,16 +129,44 @@ enum VerticalAlignment {
 Source path: src/mammoth/docx/styles.clunk
 import mammoth/xml.XmlElement;
 
-record Styles() {
+// TODO: deal with naming conflict with namespace class Styles
+record DocumentStyles() {
     fun findParagraphStyleById(name: String) -> Option[Style] {
         return none();
     }
 }
 
-record Style()
+record Style(name: Option[String])
 
-fun readStylesXmlElement(element: XmlElement) -> Styles {
-    return Styles();
+fun readStylesXmlElement(element: XmlElement) -> DocumentStyles {
+    return DocumentStyles();
+}
+
+
+==============
+
+Source path: src/mammoth/docx/styles.test.clunk
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+import stdlib/matchers.hasMember;
+import stdlib/matchers.isSome;
+import mammoth/docx/styles.readStylesXmlElement;
+import mammoth/docx/styles.Style;
+import mammoth/xml;
+
+test "paragraph style can be found by ID" {
+    var element = xml.element("w:styles", #[], [
+        xml.element("w:style", #[["w:type", "paragraph"], ["w:styleId", "Heading1"]], [
+            xml.element("w:name", #[["w:val", "Heading 1"]], []),
+        ]),
+    ]);
+
+    var styles = readStylesXmlElement(element);
+
+    assertThat(
+        styles.findParagraphStyleById("Heading1"),
+        isSome(hasMember(Style::name, isSome(equalTo("Heading 1")))),
+    );
 }
 
 
@@ -826,19 +854,41 @@ Output path: mammoth/docx/styles.py
 from __future__ import annotations
 
 import dataclasses
+import typing
 from mammoth.xml import XmlElement
 
+# TODO: deal with naming conflict with namespace class Styles
 @dataclasses.dataclass(frozen=True)
-class Styles:
+class DocumentStyles:
     def find_paragraph_style_by_id(self, name, /):
         return None
 
 @dataclasses.dataclass(frozen=True)
 class Style:
-    pass
+    name: typing.Optional[str]
 
 def read_styles_xml_element(element, /):
-    return Styles()
+    return DocumentStyles()
+
+
+==============
+
+Output path: mammoth/docx/styles_test.py
+from __future__ import annotations
+
+from precisely import equal_to
+from precisely import has_attrs
+from precisely import assert_that
+from mammoth.docx.styles import read_styles_xml_element
+from mammoth.docx.styles import Style
+from mammoth import xml
+
+def test_paragraph_style_can_be_found_by_id():
+    element = xml.element("w:styles", {}, [xml.element("w:style", {"w:type": "paragraph", "w:styleId": "Heading1"}, [xml.element("w:name", {"w:val": "Heading 1"}, [])])])
+
+    styles = read_styles_xml_element(element)
+
+    assert_that(styles.find_paragraph_style_by_id("Heading1"), has_attrs(name=equal_to("Heading 1")))
 
 
 ==============
@@ -1158,8 +1208,23 @@ class CollapseTests:
 
 ============================= test session starts ==============================
 rootdir: ROOTDIR, configfile: tox.ini
-collected 20 items
+collected 21 items
 
-mammoth/html_test.py ....................                                [100%]
+mammoth/html_test.py ....................                                [ 95%]
+mammoth/docx/styles_test.py F                                            [100%]
 
-============================== 20 passed in TIME ==============================
+=================================== FAILURES ===================================
+___________________ test_paragraph_style_can_be_found_by_id ____________________
+mammoth/docx/styles_test.py:15: in test_paragraph_style_can_be_found_by_id
+    assert_that(styles.find_paragraph_style_by_id("Heading1"), has_attrs(name=equal_to("Heading 1")))
+SITE-PACKAGES/precisely/__init__.py:50: in assert_that
+    raise AssertionError("\nExpected:{0}\nbut:{1}".format(
+E   AssertionError: 
+E   Expected:
+E     object with attributes:
+E      * name: 'Heading 1'
+E   but:
+E     was missing attribute name
+=========================== short test summary info ============================
+FAILED mammoth/docx/styles_test.py::test_paragraph_style_can_be_found_by_id
+========================= 1 failed, 20 passed in TIME =========================

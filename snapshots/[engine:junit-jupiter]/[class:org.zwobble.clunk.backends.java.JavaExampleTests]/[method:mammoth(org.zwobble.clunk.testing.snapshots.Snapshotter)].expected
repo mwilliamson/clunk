@@ -129,16 +129,44 @@ enum VerticalAlignment {
 Source path: src/mammoth/docx/styles.clunk
 import mammoth/xml.XmlElement;
 
-record Styles() {
+// TODO: deal with naming conflict with namespace class Styles
+record DocumentStyles() {
     fun findParagraphStyleById(name: String) -> Option[Style] {
         return none();
     }
 }
 
-record Style()
+record Style(name: Option[String])
 
-fun readStylesXmlElement(element: XmlElement) -> Styles {
-    return Styles();
+fun readStylesXmlElement(element: XmlElement) -> DocumentStyles {
+    return DocumentStyles();
+}
+
+
+==============
+
+Source path: src/mammoth/docx/styles.test.clunk
+import stdlib/assertions.assertThat;
+import stdlib/matchers.equalTo;
+import stdlib/matchers.hasMember;
+import stdlib/matchers.isSome;
+import mammoth/docx/styles.readStylesXmlElement;
+import mammoth/docx/styles.Style;
+import mammoth/xml;
+
+test "paragraph style can be found by ID" {
+    var element = xml.element("w:styles", #[], [
+        xml.element("w:style", #[["w:type", "paragraph"], ["w:styleId", "Heading1"]], [
+            xml.element("w:name", #[["w:val", "Heading 1"]], []),
+        ]),
+    ]);
+
+    var styles = readStylesXmlElement(element);
+
+    assertThat(
+        styles.findParagraphStyleById("Heading1"),
+        isSome(hasMember(Style::name, isSome(equalTo("Heading 1")))),
+    );
 }
 
 
@@ -952,13 +980,13 @@ public class Xml {
 
 ==============
 
-Output path: org/zwobble/mammoth/internal/mammoth/docx/styles/Styles.java
+Output path: org/zwobble/mammoth/internal/mammoth/docx/styles/DocumentStyles.java
 package org.zwobble.mammoth.internal.mammoth.docx.styles;
 
 import org.zwobble.mammoth.internal.mammoth.xml.XmlElement;
 import java.util.Optional;
 
-public record Styles() {
+public record DocumentStyles() {
     public java.util.Optional<Style> findParagraphStyleById(String name) {
         return Optional.empty();
     }
@@ -971,7 +999,7 @@ package org.zwobble.mammoth.internal.mammoth.docx.styles;
 
 import org.zwobble.mammoth.internal.mammoth.xml.XmlElement;
 
-public record Style() {
+public record Style(java.util.Optional<String> name) {
 }
 
 ==============
@@ -980,11 +1008,36 @@ Output path: org/zwobble/mammoth/internal/mammoth/docx/styles/Styles.java
 package org.zwobble.mammoth.internal.mammoth.docx.styles;
 
 import org.zwobble.mammoth.internal.mammoth.xml.XmlElement;
-import org.zwobble.mammoth.internal.mammoth.docx.styles.Styles;
+import org.zwobble.mammoth.internal.mammoth.docx.styles.DocumentStyles;
 
 public class Styles {
-    public static Styles readStylesXmlElement(XmlElement element) {
-        return new Styles();
+    public static DocumentStyles readStylesXmlElement(XmlElement element) {
+        return new DocumentStyles();
+    }
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/mammoth/docx/styles/StylesTests.java
+package org.zwobble.mammoth.internal.mammoth.docx.styles;
+
+import static org.zwobble.mammoth.internal.mammoth.docx.styles.Styles.readStylesXmlElement;
+import org.zwobble.mammoth.internal.mammoth.docx.styles.Style;
+import org.zwobble.mammoth.internal.mammoth.xml.Xml;
+import static org.zwobble.precisely.Matchers.equalTo;
+import static org.zwobble.precisely.Matchers.isOptionalOf;
+import static org.zwobble.precisely.Matchers.has;
+import static org.zwobble.precisely.AssertThat.assertThat;
+
+public class StylesTests {
+    @org.junit.jupiter.api.Test
+    @org.junit.jupiter.api.DisplayName("paragraph style can be found by ID")
+    public void paragraphStyleCanBeFoundByID() {
+        var element = Xml.element("w:styles", java.util.Map.ofEntries(), java.util.List.of(Xml.element("w:style", java.util.Map.ofEntries(java.util.Map.entry("w:type", "paragraph"), java.util.Map.entry("w:styleId", "Heading1")), java.util.List.of(Xml.element("w:name", java.util.Map.ofEntries(java.util.Map.entry("w:val", "Heading 1")), java.util.List.of())))));
+
+        var styles = readStylesXmlElement(element);
+
+        assertThat(styles.findParagraphStyleById("Heading1"), isOptionalOf(has("name", org.zwobble.mammoth.internal.mammoth.docx.styles.Style::name, isOptionalOf(equalTo("Heading 1")))));
     }
 }
 
@@ -1425,6 +1478,15 @@ public class HtmlTests {
 
 ╷
 ├─ JUnit Jupiter ✔
+│  ├─ StylesTests ✔
+│  │  └─ paragraph style can be found by ID ✘ 
+│  │           Expected:
+│  │             optional value:
+│  │               name:
+│  │                 optional value:
+│  │                   "Heading 1"
+│  │           but:
+│  │             was empty
 │  └─ HtmlTests ✔
 │     ├─ Collapse ✔
 │     │  ├─ consecutive elements can collapse if second element has choice of tag names incl... ✔
@@ -1450,16 +1512,39 @@ public class HtmlTests {
 │        └─ elements with only empty children are stripped ✔
 └─ JUnit Vintage ✔
 
+Failures (1):
+  JUnit Jupiter:StylesTests:paragraph style can be found by ID
+    MethodSource [className = 'org.zwobble.mammoth.internal.mammoth.docx.styles.StylesTests', methodName = 'paragraphStyleCanBeFoundByID', methodParameterTypes = '']
+    => java.lang.AssertionError: 
+Expected:
+  optional value:
+    name:
+      optional value:
+        "Heading 1"
+but:
+  was empty
+       org.zwobble.precisely.AssertThat.assertThat(AssertThat.java:15)
+       org.zwobble.mammoth.internal.mammoth.docx.styles.StylesTests.paragraphStyleCanBeFoundByID(Unknown Source)
+       java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+       java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+       java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+       java.base/java.lang.reflect.Method.invoke(Method.java:568)
+       org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:725)
+       org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+       org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+       org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:149)
+       [...]
+
 Test run finished after TIME ms
-[         5 containers found      ]
+[         6 containers found      ]
 [         0 containers skipped    ]
-[         5 containers started    ]
+[         6 containers started    ]
 [         0 containers aborted    ]
-[         5 containers successful ]
+[         6 containers successful ]
 [         0 containers failed     ]
-[        20 tests found           ]
+[        21 tests found           ]
 [         0 tests skipped         ]
-[        20 tests started         ]
+[        21 tests started         ]
 [         0 tests aborted         ]
 [        20 tests successful      ]
-[         0 tests failed          ]
+[         1 tests failed          ]

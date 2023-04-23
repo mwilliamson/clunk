@@ -1,13 +1,14 @@
 import mammoth/xml.XmlElement;
 
-record Styles() {
+// TODO: deal with naming conflict with namespace class Styles
+record DocumentStyles() {
     fun findParagraphStyleById(name: String) -> Option[Style] {
         return none();
     }
 }
 
-record Style()
+record Style(name: Option[String])
 
-fun readStylesXmlElement(element: XmlElement) -> Styles {
-    return Styles();
+fun readStylesXmlElement(element: XmlElement) -> DocumentStyles {
+    return DocumentStyles();
 }

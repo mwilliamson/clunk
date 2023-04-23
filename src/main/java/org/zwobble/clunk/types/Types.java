@@ -97,7 +97,7 @@ public class Types {
         return new TypeLevelValueType(typeConstructor);
     }
 
-    public static Type enumType(NamespaceId namespaceId, String name, List<String> members) {
+    public static EnumType enumType(NamespaceId namespaceId, String name, List<String> members) {
         return new EnumType(namespaceId, name, members);
     }
 

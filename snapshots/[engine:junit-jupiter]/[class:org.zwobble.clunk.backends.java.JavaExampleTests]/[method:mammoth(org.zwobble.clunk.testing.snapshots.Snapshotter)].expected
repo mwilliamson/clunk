@@ -955,6 +955,9 @@ public class Xml {
 Output path: org/zwobble/mammoth/internal/mammoth/docx/styles/Styles.java
 package org.zwobble.mammoth.internal.mammoth.docx.styles;
 
+import org.zwobble.mammoth.internal.mammoth.xml.XmlElement;
+import java.util.Optional;
+
 public record Styles() {
     public java.util.Optional<Style> findParagraphStyleById(String name) {
         return Optional.empty();
@@ -966,6 +969,8 @@ public record Styles() {
 Output path: org/zwobble/mammoth/internal/mammoth/docx/styles/Style.java
 package org.zwobble.mammoth.internal.mammoth.docx.styles;
 
+import org.zwobble.mammoth.internal.mammoth.xml.XmlElement;
+
 public record Style() {
 }
 
@@ -975,7 +980,6 @@ Output path: org/zwobble/mammoth/internal/mammoth/docx/styles/Styles.java
 package org.zwobble.mammoth.internal.mammoth.docx.styles;
 
 import org.zwobble.mammoth.internal.mammoth.xml.XmlElement;
-import java.util.Optional;
 import org.zwobble.mammoth.internal.mammoth.docx.styles.Styles;
 
 public class Styles {

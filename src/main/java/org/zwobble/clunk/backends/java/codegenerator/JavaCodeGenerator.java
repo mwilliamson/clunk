@@ -115,7 +115,7 @@ public class JavaCodeGenerator {
             node.type().name(),
             node.type().members()
         );
-        return new JavaOrdinaryCompilationUnitNode(packageDeclaration, List.of(), typeDeclaration);
+        return new JavaOrdinaryCompilationUnitNode(packageDeclaration, context.generateImports(), typeDeclaration);
     }
 
 
@@ -444,7 +444,7 @@ public class JavaCodeGenerator {
 
         return new JavaOrdinaryCompilationUnitNode(
             namespaceToPackage(node.type().namespaceId(), context),
-            List.of(),
+            context.generateImports(),
             new JavaInterfaceDeclarationNode(
                 List.of(),
                 node.name(),
@@ -457,7 +457,7 @@ public class JavaCodeGenerator {
     private static JavaOrdinaryCompilationUnitNode compileInterfaceUnsealed(TypedInterfaceNode node, JavaCodeGeneratorContext context) {
         return new JavaOrdinaryCompilationUnitNode(
             namespaceToPackage(node.type().namespaceId(), context),
-            List.of(),
+            context.generateImports(),
             new JavaInterfaceDeclarationNode(
                 List.of(),
                 node.name(),
@@ -593,14 +593,15 @@ public class JavaCodeGenerator {
         JavaTargetConfig config,
         SubtypeRelations subtypeRelations
     ) {
-        var context = new JavaCodeGeneratorContext(config, subtypeRelations);
+        var baseContext = new JavaCodeGeneratorContext(config, subtypeRelations);
         var compilationUnits = new ArrayList<JavaOrdinaryCompilationUnitNode>();
         var classBody = new ArrayList<JavaClassBodyDeclarationNode>();
-        var imports = new ArrayList<JavaImportNode>();
 
         for (var import_ : node.imports()) {
-            imports.addAll(compileImport(import_, context));
+            baseContext.addImports(compileImport(import_, baseContext));
         }
+
+        var topLevelContext = baseContext.enterCompilationUnit();
 
         for (var statement : node.statements()) {
             statement.accept(new TypedNamespaceStatementNode.Visitor<Void>() {
@@ -611,25 +612,25 @@ public class JavaCodeGenerator {
 
                 @Override
                 public Void visit(TypedEnumNode node) {
-                    compilationUnits.add(compileEnum(node, context));
+                    compilationUnits.add(compileEnum(node, baseContext.enterCompilationUnit()));
                     return null;
                 }
 
                 @Override
                 public Void visit(TypedFunctionNode functionNode) {
-                    classBody.add(compileFunction(functionNode, true, context));
+                    classBody.add(compileFunction(functionNode, true, topLevelContext));
                     return null;
                 }
 
                 @Override
                 public Void visit(TypedInterfaceNode interfaceNode) {
-                    compilationUnits.add(compileInterface(interfaceNode, context));
+                    compilationUnits.add(compileInterface(interfaceNode, baseContext.enterCompilationUnit()));
                     return null;
                 }
 
                 @Override
                 public Void visit(TypedRecordNode recordNode) {
-                    compilationUnits.add(compileRecord(recordNode, context));
+                    compilationUnits.add(compileRecord(recordNode, baseContext.enterCompilationUnit()));
                     return null;
                 }
 
@@ -641,26 +642,24 @@ public class JavaCodeGenerator {
 
                 @Override
                 public Void visit(TypedTestNode testNode) {
-                    classBody.add(compileTest(testNode, context));
+                    classBody.add(compileTest(testNode, topLevelContext));
                     return null;
                 }
 
                 @Override
                 public Void visit(TypedTestSuiteNode node) {
-                    classBody.add(compileTestSuite(node, context));
+                    classBody.add(compileTestSuite(node, topLevelContext));
                     return null;
                 }
             });
         }
 
-        imports.addAll(context.imports());
-
         if (!classBody.isEmpty()) {
             var className = namespaceIdToClassName(node.id());
 
             compilationUnits.add(new JavaOrdinaryCompilationUnitNode(
-                namespaceToPackage(node.id(), context),
-                imports,
+                namespaceToPackage(node.id(), topLevelContext),
+                topLevelContext.generateImports(),
                 new JavaClassDeclarationNode(List.of(), className, classBody)
             ));
         }
@@ -716,7 +715,7 @@ public class JavaCodeGenerator {
 
         return new JavaOrdinaryCompilationUnitNode(
             namespaceToPackage(node.type().namespaceId(), context),
-            List.of(),
+            context.generateImports(),
             new JavaRecordDeclarationNode(
                 node.name(),
                 components,

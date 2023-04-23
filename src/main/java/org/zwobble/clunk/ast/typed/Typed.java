@@ -117,6 +117,10 @@ public class Typed {
         return TypedConstructedTypeNode.Arg.covariant(type);
     }
 
+    public static TypedEnumNode enum_(EnumType enumType) {
+        return new TypedEnumNode(enumType, NullSource.INSTANCE);
+    }
+
     public static TypedExpressionStatementNode expressionStatement(TypedExpressionNode expression) {
         return new TypedExpressionStatementNode(expression, NullSource.INSTANCE);
     }
@@ -150,6 +154,10 @@ public class Typed {
         TypedTypeLevelExpressionNode typeExpression
     ) {
         return new TypedInstanceOfNode(expression, typeExpression, NullSource.INSTANCE);
+    }
+
+    public static TypedInterfaceNode interface_(InterfaceType type) {
+        return new TypedInterfaceNode(type.name(), type, NullSource.INSTANCE);
     }
 
     public static TypedInterfaceNode interface_(String name, InterfaceType type) {

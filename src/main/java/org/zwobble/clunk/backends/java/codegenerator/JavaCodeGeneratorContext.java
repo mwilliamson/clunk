@@ -18,7 +18,7 @@ public class JavaCodeGeneratorContext {
     }
 
     private final JavaTargetConfig config;
-    private final Set<JavaImportNode> imports;
+    private final LinkedHashSet<JavaImportNode> imports;
     private final SubtypeRelations subtypeRelations;
     private final Map<String, String> variableRenames;
 
@@ -31,7 +31,7 @@ public class JavaCodeGeneratorContext {
 
     public JavaCodeGeneratorContext(
         JavaTargetConfig config,
-        Set<JavaImportNode> imports,
+        LinkedHashSet<JavaImportNode> imports,
         SubtypeRelations subtypeRelations,
         Map<String, String> variableRenames
     ) {
@@ -39,6 +39,15 @@ public class JavaCodeGeneratorContext {
         this.imports = imports;
         this.subtypeRelations = subtypeRelations;
         this.variableRenames = variableRenames;
+    }
+
+    public JavaCodeGeneratorContext enterCompilationUnit() {
+        return new JavaCodeGeneratorContext(
+            config,
+            new LinkedHashSet<>(imports),
+            subtypeRelations,
+            new HashMap<>(variableRenames)
+        );
     }
 
     public JavaCodeGeneratorContext enterBlock() {
@@ -58,8 +67,16 @@ public class JavaCodeGeneratorContext {
         imports.add(new JavaImportTypeNode(typeName));
     }
 
+    public void addImports(List<JavaImportNode> imports) {
+        this.imports.addAll(imports);
+    }
+
     public Set<JavaImportNode> imports() {
         return imports;
+    }
+
+    public List<JavaImportNode> generateImports() {
+        return imports.stream().toList();
     }
 
     public String packagePrefix() {

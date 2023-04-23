@@ -18,11 +18,97 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class JavaCodeGeneratorNamespaceTests {
     @Test
+    public void enumsInNamespaceAreCompiledToSeparateJavaCompilationUnits() {
+        var enum1 = Typed.enum_(Types.enumType(NamespaceId.source("example", "project"), "First", List.of("A", "B")));
+        var enum2 = Typed.enum_(Types.enumType(NamespaceId.source("example", "project"), "Second", List.of("C", "D")));
+        var node = TypedNamespaceNode
+            .builder(NamespaceId.source("example", "project"))
+            .addImport(Typed.import_(NamespaceName.fromParts("a"), Types.INT))
+            .addStatement(enum1)
+            .addStatement(enum2)
+            .build();
+
+        var result = JavaCodeGenerator.compileNamespace(node, JavaTargetConfig.stub(), SubtypeRelations.EMPTY);
+
+        assertThat(serialise(result), isSequence(
+            equalTo(
+                """
+                    package example.project;
+                    
+                    import a.A;
+                    
+                    public enum First {
+                        A,
+                        B
+                    }"""
+            ),
+            equalTo(
+                """
+                    package example.project;
+                    
+                    import a.A;
+                    
+                    public enum Second {
+                        C,
+                        D
+                    }"""
+            )
+        ));
+    }
+
+    @Test
+    public void interfacesInNamespaceAreCompiledToSeparateJavaCompilationUnits() {
+        var namespaceId = NamespaceId.source("example", "project");
+        var interface1 = Typed.interface_(Types.unsealedInterfaceType(namespaceId, "First"));
+        var interface2 = Typed.interface_(Types.sealedInterfaceType(namespaceId, "Second"));
+        var node = TypedNamespaceNode
+            .builder(namespaceId)
+            .addImport(Typed.import_(NamespaceName.fromParts("a"), Types.INT))
+            .addStatement(interface1)
+            .addStatement(interface2)
+            .build();
+        var subtypeRelations = SubtypeRelations.EMPTY
+            .addSealedInterfaceCase(interface2.type(), Types.recordType(namespaceId, "A"))
+            .addSealedInterfaceCase(interface2.type(), Types.recordType(namespaceId, "B"));
+
+        var result = JavaCodeGenerator.compileNamespace(node, JavaTargetConfig.stub(), subtypeRelations);
+
+        assertThat(serialise(result), isSequence(
+            equalTo(
+                """
+                    package example.project;
+                    
+                    import a.A;
+                    
+                    public interface First {
+                    }
+                    """
+            ),
+            equalTo(
+                """
+                    package example.project;
+                    
+                    import a.A;
+                    
+                    public sealed interface Second permits A, B {
+                        <T> T accept(Visitor<T> visitor);
+                        public interface Visitor<T> {
+                            T visit(A a);
+                            T visit(B b);
+                        }
+                    }
+                    """
+            )
+        ));
+    }
+
+    @Test
     public void recordsInNamespaceAreCompiledToSeparateJavaCompilationUnits() {
         var record1 = TypedRecordNode.builder(NamespaceId.source("example", "project"), "First").build();
         var record2 = TypedRecordNode.builder(NamespaceId.source("example", "project"), "Second").build();
         var node = TypedNamespaceNode
             .builder(NamespaceId.source("example", "project"))
+            .addImport(Typed.import_(NamespaceName.fromParts("a"), Types.INT))
             .addStatement(record1)
             .addStatement(record2)
             .build();
@@ -34,12 +120,16 @@ public class JavaCodeGeneratorNamespaceTests {
                 """
                     package example.project;
                     
+                    import a.A;
+                    
                     public record First() {
                     }"""
             ),
             equalTo(
                 """
                     package example.project;
+                    
+                    import a.A;
                     
                     public record Second() {
                     }"""

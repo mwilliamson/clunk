@@ -23,7 +23,8 @@ public class ParserListComprehensionTests {
             hasIterables(isSequence(
                 allOf(
                     hasTargetName("x"),
-                    hasIterable(isUntypedReferenceNode("xs"))
+                    hasIterable(isUntypedReferenceNode("xs")),
+                    hasConditions(isSequence())
                 )
             )),
             hasYield(isUntypedReferenceNode("x"))
@@ -41,11 +42,56 @@ public class ParserListComprehensionTests {
             hasIterables(isSequence(
                 allOf(
                     hasTargetName("x"),
-                    hasIterable(isUntypedReferenceNode("xs"))
+                    hasIterable(isUntypedReferenceNode("xs")),
+                    hasConditions(isSequence())
                 ),
                 allOf(
                     hasTargetName("y"),
-                    hasIterable(isUntypedReferenceNode("ys"))
+                    hasIterable(isUntypedReferenceNode("ys")),
+                    hasConditions(isSequence())
+                )
+            )),
+            hasYield(isUntypedReferenceNode("x"))
+        ));
+    }
+
+    @Test
+    public void canParseComprehensionWithSingleIf() {
+        var source = "[for x in xs if y yield x]";
+
+        var node = parseString(source, Parser::parseTopLevelExpression);
+
+        assertThat(node, instanceOf(
+            UntypedListComprehensionNode.class,
+            hasIterables(isSequence(
+                allOf(
+                    hasTargetName("x"),
+                    hasIterable(isUntypedReferenceNode("xs")),
+                    hasConditions(isSequence(
+                        isUntypedReferenceNode("y")
+                    ))
+                )
+            )),
+            hasYield(isUntypedReferenceNode("x"))
+        ));
+    }
+
+    @Test
+    public void canParseComprehensionWithMultipleIfs() {
+        var source = "[for x in xs if y if z yield x]";
+
+        var node = parseString(source, Parser::parseTopLevelExpression);
+
+        assertThat(node, instanceOf(
+            UntypedListComprehensionNode.class,
+            hasIterables(isSequence(
+                allOf(
+                    hasTargetName("x"),
+                    hasIterable(isUntypedReferenceNode("xs")),
+                    hasConditions(isSequence(
+                        isUntypedReferenceNode("y"),
+                        isUntypedReferenceNode("z")
+                    ))
                 )
             )),
             hasYield(isUntypedReferenceNode("x"))
@@ -74,5 +120,11 @@ public class ParserListComprehensionTests {
         String targetName
     ) {
         return has("targetName", x -> x.targetName(), equalTo(targetName));
+    }
+
+    private Matcher<UntypedComprehensionIterableNode> hasConditions(
+        Matcher<? super Iterable<UntypedExpressionNode>> conditions
+    ) {
+        return has("conditions", x -> x.conditions(), conditions);
     }
 }

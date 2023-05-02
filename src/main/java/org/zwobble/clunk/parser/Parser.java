@@ -166,11 +166,22 @@ public class Parser {
 
     private UntypedComprehensionIterableNode parseComprehensionIterable(TokenIterator<TokenType> tokens) {
         var source = source(tokens);
+
         tokens.skip(TokenType.KEYWORD_FOR);
         var targetName = tokens.nextValue(TokenType.IDENTIFIER);
         tokens.skip(TokenType.KEYWORD_IN);
         var iterable = parseTopLevelExpression(tokens);
-        return new UntypedComprehensionIterableNode(targetName, iterable, source);
+
+        var conditions = parseMany(
+            () -> !tokens.isNext(TokenType.KEYWORD_IF),
+            () -> {
+                tokens.skip(TokenType.KEYWORD_IF);
+                return parseTopLevelExpression(tokens);
+            },
+            () -> true
+        );
+
+        return new UntypedComprehensionIterableNode(targetName, iterable, conditions, source);
     }
 
     private UntypedNamespaceStatementNode parseEnum(TokenIterator<TokenType> tokens) {

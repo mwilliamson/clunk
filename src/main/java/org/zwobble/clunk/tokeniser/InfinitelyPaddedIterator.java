@@ -13,6 +13,11 @@ public class InfinitelyPaddedIterator<T> {
     }
 
     public T get() {
+        return get(0);
+    }
+
+    public T get(int offset) {
+        var index = this.index + offset;
         if (index < elements.size()) {
             return elements.get(index);
         } else {

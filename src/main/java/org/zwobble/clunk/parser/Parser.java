@@ -164,6 +164,15 @@ public class Parser {
         }
     }
 
+    private UntypedComprehensionIterableNode parseComprehensionIterable(TokenIterator<TokenType> tokens) {
+        var source = source(tokens);
+        tokens.skip(TokenType.KEYWORD_FOR);
+        var targetName = tokens.nextValue(TokenType.IDENTIFIER);
+        tokens.skip(TokenType.KEYWORD_IN);
+        var iterable = parseTopLevelExpression(tokens);
+        return new UntypedComprehensionIterableNode(targetName, iterable, source);
+    }
+
     private UntypedNamespaceStatementNode parseEnum(TokenIterator<TokenType> tokens) {
         var source = source(tokens);
         tokens.skip(TokenType.KEYWORD_ENUM);
@@ -267,6 +276,8 @@ public class Parser {
             var expression = parseTopLevelExpression(tokens);
             tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
             return expression;
+        } else if (tokens.isNext(TokenType.SYMBOL_SQUARE_OPEN, TokenType.KEYWORD_FOR)) {
+            return parseListComprehension(tokens);
         } else if (tokens.isNext(TokenType.SYMBOL_SQUARE_OPEN)) {
             return parseListLiteral(tokens);
         } else if (tokens.isNext(TokenType.SYMBOL_HASH_OPEN)) {
@@ -360,6 +371,26 @@ public class Parser {
             case "\\" -> '\\';
             default -> throw new UnrecognisedEscapeSequenceError("\\" + code, source);
         };
+    }
+
+    private UntypedListComprehensionNode parseListComprehension(TokenIterator<TokenType> tokens) {
+        var source = source(tokens);
+
+        tokens.skip(TokenType.SYMBOL_SQUARE_OPEN);
+        
+        var iterables = parseMany(
+            () -> !tokens.isNext(TokenType.KEYWORD_FOR),
+            () -> parseComprehensionIterable(tokens),
+            () -> true
+        );
+
+        tokens.skip(TokenType.KEYWORD_YIELD);
+
+        var yield = parseTopLevelExpression(tokens);
+
+        tokens.skip(TokenType.SYMBOL_SQUARE_CLOSE);
+
+        return new UntypedListComprehensionNode(iterables, yield, source);
     }
 
     private UntypedListLiteralNode parseListLiteral(TokenIterator<TokenType> tokens) {

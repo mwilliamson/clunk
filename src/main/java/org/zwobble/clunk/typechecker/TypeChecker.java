@@ -428,6 +428,11 @@ public class TypeChecker {
             }
 
             @Override
+            public TypedExpressionNode visit(UntypedListComprehensionNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public TypedExpressionNode visit(UntypedListLiteralNode node) {
                 return typeCheckListLiteral(node, expected, context);
             }

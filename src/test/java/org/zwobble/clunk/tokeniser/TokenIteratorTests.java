@@ -5,10 +5,9 @@ import org.zwobble.clunk.sources.NullSource;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.zwobble.precisely.AssertThat.assertThat;
 import static org.zwobble.precisely.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.zwobble.clunk.tokeniser.Token.token;
 
 public class TokenIteratorTests {
     enum TokenType {
@@ -128,7 +127,7 @@ public class TokenIteratorTests {
     }
 
     @Test
-    public void isNextReturnsTrueIfNextTokenIsOfMatchingType() {
+    public void isNextWithOneArgReturnsTrueIfNextTokenIsOfMatchingType() {
         var tokens = new TokenIterator<>(
             List.of(
                 token(0, TokenType.SYMBOL, "!"),
@@ -144,7 +143,7 @@ public class TokenIteratorTests {
     }
 
     @Test
-    public void isNextReturnsFalseIfNextTokenIsNotOfMatchingType() {
+    public void isNextWithOneArgReturnsFalseIfNextTokenIsNotOfMatchingType() {
         var tokens = new TokenIterator<>(
             List.of(
                 token(0, TokenType.SYMBOL, "!"),
@@ -157,6 +156,54 @@ public class TokenIteratorTests {
         tokens.skip(TokenType.SYMBOL);
 
         assertThat(tokens.isNext(TokenType.SYMBOL), equalTo(false));
+    }
+
+    @Test
+    public void isNextWithTwoArgReturnsTrueIfBothNextTokensMatchRespectiveTypes() {
+        var tokens = new TokenIterator<>(
+            List.of(
+                token(0, TokenType.SYMBOL, "!"),
+                token(1, TokenType.IDENTIFIER, "x"),
+                token(2, TokenType.SYMBOL, "!")
+            ),
+            token(3, TokenType.END, "")
+        );
+
+        tokens.skip(TokenType.SYMBOL);
+
+        assertThat(tokens.isNext(TokenType.IDENTIFIER, TokenType.SYMBOL), equalTo(true));
+    }
+
+    @Test
+    public void isNextWithTwoArgReturnsFalseIfFirstTokenDoesNotMatchRespectiveType() {
+        var tokens = new TokenIterator<>(
+            List.of(
+                token(0, TokenType.SYMBOL, "!"),
+                token(1, TokenType.IDENTIFIER, "x"),
+                token(2, TokenType.SYMBOL, "!")
+            ),
+            token(3, TokenType.END, "")
+        );
+
+        tokens.skip(TokenType.SYMBOL);
+
+        assertThat(tokens.isNext(TokenType.SYMBOL, TokenType.SYMBOL), equalTo(false));
+    }
+
+    @Test
+    public void isNextWithTwoArgReturnsFalseIfSecondTokenDoesNotMatchRespectiveType() {
+        var tokens = new TokenIterator<>(
+            List.of(
+                token(0, TokenType.SYMBOL, "!"),
+                token(1, TokenType.IDENTIFIER, "x"),
+                token(2, TokenType.SYMBOL, "!")
+            ),
+            token(3, TokenType.END, "")
+        );
+
+        tokens.skip(TokenType.SYMBOL);
+
+        assertThat(tokens.isNext(TokenType.IDENTIFIER, TokenType.IDENTIFIER), equalTo(false));
     }
 
     @Test

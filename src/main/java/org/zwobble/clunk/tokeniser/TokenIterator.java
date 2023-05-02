@@ -31,6 +31,11 @@ public class TokenIterator<TTokenType> {
         return tokens.get().tokenType().equals(tokenType);
     }
 
+    public boolean isNext(TTokenType tokenType1, TTokenType tokenType2) {
+        return tokens.get().tokenType().equals(tokenType1) &&
+            tokens.get(1).tokenType().equals(tokenType2);
+    }
+
     public boolean trySkip(TTokenType tokenType) {
         if (isNext(tokenType)) {
             tokens.moveNext();

@@ -30,6 +30,14 @@ public record StackFrame(
         );
     }
 
+    public static StackFrame comprehension() {
+        return new StackFrame(
+            Optional.empty(),
+            Optional.empty(),
+            P.copyOf(Map.of())
+        );
+    }
+
     public static StackFrame function(Type returnType) {
         return new StackFrame(
             Optional.empty(),

@@ -51,6 +51,13 @@ public class Untyped {
         return new UntypedCastUnsafeNode(expression, typeExpression, NullSource.INSTANCE);
     }
 
+    public static UntypedComprehensionIterableNode comprehensionIterable(
+        String targetName,
+        UntypedExpressionNode iterable
+    ) {
+        return new UntypedComprehensionIterableNode(targetName, iterable, List.of(), NullSource.INSTANCE);
+    }
+
     public static UntypedConditionalBranchNode conditionalBranch(
         UntypedExpressionNode condition,
         List<UntypedFunctionStatementNode> body
@@ -138,6 +145,13 @@ public class Untyped {
 
     public static UntypedIntLiteralNode intLiteral(int value) {
         return new UntypedIntLiteralNode(value, NullSource.INSTANCE);
+    }
+
+    public static UntypedListComprehensionNode listComprehension(
+        List<UntypedComprehensionIterableNode> iterables,
+        UntypedExpressionNode yield
+    ) {
+        return new UntypedListComprehensionNode(iterables, yield, NullSource.INSTANCE);
     }
 
     public static UntypedExpressionNode memberAccess(UntypedExpressionNode receiver, String membername) {

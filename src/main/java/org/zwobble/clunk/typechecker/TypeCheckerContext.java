@@ -44,6 +44,10 @@ public record TypeCheckerContext(
         return enter(StackFrame.namespace(namespaceId));
     }
 
+    public TypeCheckerContext enterComprehension() {
+        return enter(StackFrame.comprehension());
+    }
+
     public TypeCheckerContext enterFunction(Type returnType) {
         return enter(StackFrame.function(returnType));
     }

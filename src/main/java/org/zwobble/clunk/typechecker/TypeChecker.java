@@ -429,7 +429,7 @@ public class TypeChecker {
 
             @Override
             public TypedExpressionNode visit(UntypedListComprehensionNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return typeCheckListComprehension(node, context);
             }
 
             @Override
@@ -519,18 +519,10 @@ public class TypeChecker {
         UntypedForEachNode node,
         TypeCheckerContext context
     ) {
-        var typedIterable = typeCheckExpression(node.iterable(), context);
-        var iterableType = typedIterable.type();
+        var typeCheckIterableResult = typeCheckIterable(node.iterable(), context);
+        var typedIterable = typeCheckIterableResult.iterable();
+        var targetType = typeCheckIterableResult.elementType();
 
-        if (!(iterableType instanceof ConstructedType iterableTypeList)) {
-            throw new UnexpectedTypeError(
-                Types.LIST_CONSTRUCTOR.genericType(),
-                iterableType,
-                node.source()
-            );
-        }
-
-        var targetType = iterableTypeList.args().get(0);
         var bodyContext = context.addLocal(node.targetName(), targetType, node.source());
         var typeCheckBodyResult = typeCheckFunctionStatements(node.body(), bodyContext);
 
@@ -935,6 +927,62 @@ public class TypeChecker {
 
     private static TypedExpressionNode typeCheckIntLiteral(UntypedIntLiteralNode node) {
         return new TypedIntLiteralNode(node.value(), node.source());
+    }
+
+    private record TypeCheckIterableResult(TypedExpressionNode iterable, Type elementType) {}
+
+    private static TypeCheckIterableResult typeCheckIterable(
+        UntypedExpressionNode expression,
+        TypeCheckerContext context
+    ) {
+        var typedIterable = typeCheckExpression(expression, context);
+        var iterableType = typedIterable.type();
+
+        if (!(iterableType instanceof ConstructedType iterableTypeList)) {
+            throw new UnexpectedTypeError(
+                Types.LIST_CONSTRUCTOR.genericType(),
+                iterableType,
+                expression.source()
+            );
+        }
+
+        // TODO: check this is a list
+
+        var elementType = iterableTypeList.args().get(0);
+
+        return new TypeCheckIterableResult(typedIterable, elementType);
+    }
+
+    private static TypedExpressionNode typeCheckListComprehension(
+        UntypedListComprehensionNode node,
+        TypeCheckerContext context
+    ) {
+        var typedIterables = new ArrayList<TypedComprehensionIterableNode>();
+        var comprehensionContext = context.enterComprehension();
+
+        for (var iterable : node.iterables()) {
+            var typeCheckIterableResult = typeCheckIterable(iterable.iterable(), comprehensionContext);
+            comprehensionContext = comprehensionContext.addLocal(
+                iterable.targetName(),
+                typeCheckIterableResult.elementType(),
+                iterable.source()
+            );
+            typedIterables.add(new TypedComprehensionIterableNode(
+                iterable.targetName(),
+                typeCheckIterableResult.elementType(),
+                typeCheckIterableResult.iterable(),
+                List.of(),
+                iterable.source()
+            ));
+        }
+
+        var typedYield = typeCheckExpression(node.yield(), comprehensionContext);
+
+        return new TypedListComprehensionNode(
+            typedIterables,
+            typedYield,
+            node.source()
+        );
     }
 
     private static TypedExpressionNode typeCheckListLiteral(

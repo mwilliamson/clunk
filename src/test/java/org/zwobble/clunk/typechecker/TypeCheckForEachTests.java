@@ -68,7 +68,7 @@ public class TypeCheckForEachTests {
     }
 
     @Test
-    public void whenIterableIsNotListThenErrorIsThrown() {
+    public void whenIterableExpressionIsNotIterableThenErrorIsThrown() {
         var untypedNode = Untyped.forEach(
             "x",
             Untyped.reference("xs"),
@@ -85,7 +85,7 @@ public class TypeCheckForEachTests {
         );
 
         assertThat(result.getActual(), equalTo(Types.INT));
-        assertThat(result.getExpected(), equalTo(Types.LIST_CONSTRUCTOR.genericType()));
+        assertThat(result.getExpected(), equalTo(Types.list(Types.OBJECT)));
     }
 
     @Test

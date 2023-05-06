@@ -519,7 +519,7 @@ public class TypeChecker {
         UntypedForEachNode node,
         TypeCheckerContext context
     ) {
-        var typeCheckIterableResult = typeCheckIterable(node.iterable(), context);
+        var typeCheckIterableResult = typeCheckIterableExpression(node.iterable(), context);
         var typedIterable = typeCheckIterableResult.iterable();
         var targetType = typeCheckIterableResult.elementType();
 
@@ -929,13 +929,13 @@ public class TypeChecker {
         return new TypedIntLiteralNode(node.value(), node.source());
     }
 
-    private record TypeCheckIterableResult(TypedExpressionNode iterable, Type elementType) {}
+    record TypeCheckIterableResult(TypedExpressionNode iterable, Type elementType) {}
 
-    private static TypeCheckIterableResult typeCheckIterable(
+    static TypeCheckIterableResult typeCheckIterableExpression(
         UntypedExpressionNode expression,
         TypeCheckerContext context
     ) {
-        var typedIterable = typeCheckExpression(expression, context);
+        var typedIterable = typeCheckExpression(expression, Types.list(Types.OBJECT), context);
         var iterableType = typedIterable.type();
 
         if (!(iterableType instanceof ConstructedType iterableTypeList)) {
@@ -961,7 +961,7 @@ public class TypeChecker {
         var comprehensionContext = context.enterComprehension();
 
         for (var iterable : node.iterables()) {
-            var typeCheckIterableResult = typeCheckIterable(iterable.iterable(), comprehensionContext);
+            var typeCheckIterableResult = typeCheckIterableExpression(iterable.iterable(), comprehensionContext);
             comprehensionContext = comprehensionContext.addLocal(
                 iterable.targetName(),
                 typeCheckIterableResult.elementType(),

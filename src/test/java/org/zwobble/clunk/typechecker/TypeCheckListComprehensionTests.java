@@ -91,6 +91,6 @@ public class TypeCheckListComprehensionTests {
         );
 
         assertThat(result.getActual(), equalTo(Types.INT));
-        assertThat(result.getExpected(), equalTo(Types.LIST_CONSTRUCTOR.genericType()));
+        assertThat(result.getExpected(), equalTo(Types.list(Types.OBJECT)));
     }
 }

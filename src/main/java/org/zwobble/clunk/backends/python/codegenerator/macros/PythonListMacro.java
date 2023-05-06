@@ -62,7 +62,8 @@ public class PythonListMacro implements PythonClassMacro {
                     List.of(
                         new PythonComprehensionForClauseNode(
                             inputElementName,
-                            receiver
+                            receiver,
+                            List.of()
                         ),
                         new PythonComprehensionForClauseNode(
                             outputElementName,
@@ -72,7 +73,8 @@ public class PythonListMacro implements PythonClassMacro {
                                     List.of(new PythonReferenceNode(inputElementName)),
                                     List.of()
                                 )
-                            )
+                            ),
+                            List.of()
                         )
                     )
                 );

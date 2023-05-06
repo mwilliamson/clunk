@@ -52,7 +52,15 @@ public class Python {
         String target,
         PythonExpressionNode iterable
     ) {
-        return new PythonComprehensionForClauseNode(target, iterable);
+        return new PythonComprehensionForClauseNode(target, iterable, List.of());
+    }
+
+    public static PythonComprehensionForClauseNode comprehensionForClause(
+        String target,
+        PythonExpressionNode iterable,
+        List<PythonExpressionNode> conditions
+    ) {
+        return new PythonComprehensionForClauseNode(target, iterable, conditions);
     }
 
     public static PythonConditionalBranchNode conditionalBranch(

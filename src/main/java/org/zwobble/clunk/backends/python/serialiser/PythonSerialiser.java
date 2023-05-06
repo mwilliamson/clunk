@@ -137,6 +137,11 @@ public class PythonSerialiser {
         builder.append(forClause.target());
         builder.append(" in ");
         serialiseExpressionTopLevel(forClause.iterable(), builder);
+
+        for (var condition : forClause.conditions()) {
+            builder.append(" if ");
+            serialiseExpressionTopLevel(condition, builder);
+        }
     }
 
     private static void serialiseDecorators(List<? extends PythonExpressionNode> decorators, CodeBuilder builder) {

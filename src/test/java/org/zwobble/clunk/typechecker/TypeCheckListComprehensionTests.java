@@ -8,6 +8,7 @@ import org.zwobble.clunk.types.Types;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedReferenceNode;
 import static org.zwobble.precisely.AssertThat.assertThat;
 import static org.zwobble.precisely.Matchers.*;
@@ -71,5 +72,25 @@ public class TypeCheckListComprehensionTests {
             has("yield", x -> x.yield(), isTypedReferenceNode().withName("x").withType(Types.STRING)),
             has("type", x -> x.type(), equalTo(Types.list(Types.STRING)))
         ));
+    }
+
+    @Test
+    public void whenIterableExpressionIsNotIterableThenErrorIsThrown() {
+        var untypedNode = Untyped.listComprehension(
+            List.of(
+                Untyped.comprehensionIterable("x", Untyped.reference("xs"))
+            ),
+            Untyped.reference("x")
+        );
+        var context = TypeCheckerContext.stub()
+            .addLocal("xs", Types.INT, NullSource.INSTANCE);
+
+        var result = assertThrows(
+            UnexpectedTypeError.class,
+            () -> TypeChecker.typeCheckExpression(untypedNode, context)
+        );
+
+        assertThat(result.getActual(), equalTo(Types.INT));
+        assertThat(result.getExpected(), equalTo(Types.LIST_CONSTRUCTOR.genericType()));
     }
 }

@@ -15,12 +15,28 @@ import static org.zwobble.precisely.Matchers.*;
 
 public class TypeCheckListComprehensionTests {
     @Test
-    public void canTypeSimpleListComprehension() {
+    public void typeOfListComprehensionIsListOfYieldExpressionType() {
         var untypedNode = Untyped.listComprehension(
             List.of(
                 Untyped.comprehensionIterable("x", Untyped.reference("xs"))
             ),
-            Untyped.reference("x")
+            Untyped.string()
+        );
+        var context = TypeCheckerContext.stub()
+            .addLocal("xs", Types.list(Types.STRING), NullSource.INSTANCE);
+
+        var result = TypeChecker.typeCheckExpression(untypedNode, context);
+
+        assertThat(result, has("type", x -> x.type(), equalTo(Types.list(Types.STRING))));
+    }
+
+    @Test
+    public void iterableClausesAreTyped() {
+        var untypedNode = Untyped.listComprehension(
+            List.of(
+                Untyped.comprehensionIterable("x", Untyped.reference("xs"))
+            ),
+            Untyped.string()
         );
         var context = TypeCheckerContext.stub()
             .addLocal("xs", Types.list(Types.STRING), NullSource.INSTANCE);
@@ -35,9 +51,26 @@ public class TypeCheckListComprehensionTests {
                     has("iterable", x -> x.iterable(), isTypedReferenceNode().withName("xs")),
                     has("conditions", x -> x.conditions(), isSequence())
                 )
-            )),
-            has("yield", x -> x.yield(), isTypedReferenceNode().withName("x").withType(Types.STRING)),
-            has("type", x -> x.type(), equalTo(Types.list(Types.STRING)))
+            ))
+        ));
+    }
+
+    @Test
+    public void targetOfIterableClauseIsAvailableInYieldClause() {
+        var untypedNode = Untyped.listComprehension(
+            List.of(
+                Untyped.comprehensionIterable("x", Untyped.reference("xs"))
+            ),
+            Untyped.reference("x")
+        );
+        var context = TypeCheckerContext.stub()
+            .addLocal("xs", Types.list(Types.STRING), NullSource.INSTANCE);
+
+        var result = TypeChecker.typeCheckExpression(untypedNode, context);
+
+        assertThat(result, instanceOf(
+            TypedListComprehensionNode.class,
+            has("yield", x -> x.yield(), isTypedReferenceNode().withName("x").withType(Types.STRING))
         ));
     }
 

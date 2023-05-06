@@ -18,6 +18,7 @@ public interface TypedExpressionNode extends TypedNode {
         T visit(TypedIntEqualsNode node);
         T visit(TypedIntLiteralNode node);
         T visit(TypedIntNotEqualNode node);
+        T visit(TypedListComprehensionNode node);
         T visit(TypedListLiteralNode node);
         T visit(TypedLocalReferenceNode node);
         T visit(TypedLogicalAndNode node);

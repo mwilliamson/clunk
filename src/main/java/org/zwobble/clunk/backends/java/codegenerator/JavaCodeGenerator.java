@@ -177,6 +177,11 @@ public class JavaCodeGenerator {
             }
 
             @Override
+            public JavaExpressionNode visit(TypedListComprehensionNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
+
+            @Override
             public JavaExpressionNode visit(TypedListLiteralNode node) {
                 return compileListLiteral(node, context);
             }

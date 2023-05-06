@@ -962,16 +962,23 @@ public class TypeChecker {
 
         for (var iterable : node.iterables()) {
             var typeCheckIterableResult = typeCheckIterableExpression(iterable.iterable(), comprehensionContext);
+
             comprehensionContext = comprehensionContext.addLocal(
                 iterable.targetName(),
                 typeCheckIterableResult.elementType(),
                 iterable.source()
             );
+
+            var conditionContext = comprehensionContext;
+            var typedConditions = iterable.conditions().stream()
+                .map(condition -> typeCheckExpression(condition, Types.BOOL, conditionContext))
+                .toList();
+
             typedIterables.add(new TypedComprehensionIterableNode(
                 iterable.targetName(),
                 typeCheckIterableResult.elementType(),
                 typeCheckIterableResult.iterable(),
-                List.of(),
+                typedConditions,
                 iterable.source()
             ));
         }

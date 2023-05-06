@@ -58,6 +58,14 @@ public class Untyped {
         return new UntypedComprehensionIterableNode(targetName, iterable, List.of(), NullSource.INSTANCE);
     }
 
+    public static UntypedComprehensionIterableNode comprehensionIterable(
+        String targetName,
+        UntypedExpressionNode iterable,
+        List<UntypedExpressionNode> conditions
+    ) {
+        return new UntypedComprehensionIterableNode(targetName, iterable, conditions, NullSource.INSTANCE);
+    }
+
     public static UntypedConditionalBranchNode conditionalBranch(
         UntypedExpressionNode condition,
         List<UntypedFunctionStatementNode> body

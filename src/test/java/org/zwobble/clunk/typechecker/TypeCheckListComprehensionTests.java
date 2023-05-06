@@ -126,4 +126,94 @@ public class TypeCheckListComprehensionTests {
         assertThat(result.getActual(), equalTo(Types.INT));
         assertThat(result.getExpected(), equalTo(Types.list(Types.OBJECT)));
     }
+
+    @Test
+    public void ifClausesAreTyped() {
+        var untypedNode = Untyped.listComprehension(
+            List.of(
+                Untyped.comprehensionIterable(
+                    "x",
+                    Untyped.reference("xs"),
+                    List.of(
+                        Untyped.reference("y")
+                    )
+                )
+            ),
+            Untyped.string()
+        );
+        var context = TypeCheckerContext.stub()
+            .addLocal("xs", Types.list(Types.STRING), NullSource.INSTANCE)
+            .addLocal("y", Types.BOOL, NullSource.INSTANCE);
+
+        var result = TypeChecker.typeCheckExpression(untypedNode, context);
+
+        assertThat(result, instanceOf(
+            TypedListComprehensionNode.class,
+            has("iterables", x -> x.iterables(), isSequence(
+                allOf(
+                    has("conditions", x -> x.conditions(), isSequence(
+                        isTypedReferenceNode().withName("y").withType(Types.BOOL)
+                    ))
+                )
+            ))
+        ));
+    }
+
+    @Test
+    public void whenConditionIsNotBoolThenErrorIsThrown() {
+        var untypedNode = Untyped.listComprehension(
+            List.of(
+                Untyped.comprehensionIterable(
+                    "x",
+                    Untyped.reference("xs"),
+                    List.of(
+                        Untyped.intLiteral()
+                    )
+                )
+            ),
+            Untyped.string()
+        );
+        var context = TypeCheckerContext.stub()
+            .addLocal("xs", Types.list(Types.STRING), NullSource.INSTANCE)
+            .addLocal("y", Types.BOOL, NullSource.INSTANCE);
+
+        var result = assertThrows(
+            UnexpectedTypeError.class,
+            () -> TypeChecker.typeCheckExpression(untypedNode, context)
+        );
+
+        assertThat(result.getActual(), equalTo(Types.INT));
+        assertThat(result.getExpected(), equalTo(Types.BOOL));
+    }
+
+    @Test
+    public void targetOfIterableClauseIsAvailableInLaterIfClauses() {
+        var untypedNode = Untyped.listComprehension(
+            List.of(
+                Untyped.comprehensionIterable(
+                    "x",
+                    Untyped.reference("xs"),
+                    List.of(
+                        Untyped.reference("x")
+                    )
+                )
+            ),
+            Untyped.string()
+        );
+        var context = TypeCheckerContext.stub()
+            .addLocal("xs", Types.list(Types.BOOL), NullSource.INSTANCE);
+
+        var result = TypeChecker.typeCheckExpression(untypedNode, context);
+
+        assertThat(result, instanceOf(
+            TypedListComprehensionNode.class,
+            has("iterables", x -> x.iterables(), isSequence(
+                allOf(
+                    has("conditions", x -> x.conditions(), isSequence(
+                        isTypedReferenceNode().withName("x").withType(Types.BOOL)
+                    ))
+                )
+            ))
+        ));
+    }
 }

@@ -96,7 +96,11 @@ record HtmlText(value: String) <: HtmlNode {
 }
 
 fun stripEmpty(nodes: List[HtmlNode]) -> List[HtmlNode] {
-    return nodes.flatMap[HtmlNode](stripEmptyNode);
+    return [
+        for node in nodes
+        for child in stripEmptyNode(node)
+        yield child
+    ];
 }
 
 fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {

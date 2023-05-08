@@ -280,7 +280,11 @@ record HtmlText(value: String) <: HtmlNode {
 }
 
 fun stripEmpty(nodes: List[HtmlNode]) -> List[HtmlNode] {
-    return nodes.flatMap[HtmlNode](stripEmptyNode);
+    return [
+        for node in nodes
+        for child in stripEmptyNode(node)
+        yield child
+    ];
 }
 
 fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
@@ -1188,7 +1192,7 @@ public class Html {
         return new HtmlText(value);
     }
     public static java.util.List<? extends HtmlNode> stripEmpty(java.util.List<? extends HtmlNode> nodes) {
-        return nodes.stream().map(org.zwobble.mammoth.internal.mammoth.html.Html::stripEmptyNode).flatMap(java.util.List::stream).toList();
+        return nodes.stream().flatMap((node) -> stripEmptyNode(node).stream().map((child) -> child)).toList();
     }
     public static java.util.List<? extends HtmlNode> stripEmptyNode(HtmlNode node) {
         return node.accept(new HtmlNode.Visitor<>() {

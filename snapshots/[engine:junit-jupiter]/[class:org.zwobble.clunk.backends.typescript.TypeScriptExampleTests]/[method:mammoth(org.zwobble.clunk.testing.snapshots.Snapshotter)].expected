@@ -280,7 +280,11 @@ record HtmlText(value: String) <: HtmlNode {
 }
 
 fun stripEmpty(nodes: List[HtmlNode]) -> List[HtmlNode] {
-    return nodes.flatMap[HtmlNode](stripEmptyNode);
+    return [
+        for node in nodes
+        for child in stripEmptyNode(node)
+        yield child
+    ];
 }
 
 fun stripEmptyNode(node: HtmlNode) -> List[HtmlNode] {
@@ -1113,7 +1117,7 @@ class HtmlText {
 }
 
 function stripEmpty(nodes: ReadonlyArray<HtmlNode>): ReadonlyArray<HtmlNode> {
-    return nodes.flatMap(stripEmptyNode);
+    return nodes.flatMap((node) => stripEmptyNode(node).map((child) => child));
 }
 
 function stripEmptyNode(node: HtmlNode): ReadonlyArray<HtmlNode> {

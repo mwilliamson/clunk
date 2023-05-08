@@ -480,23 +480,26 @@ public class TypeScriptCodeGenerator {
         TypedListComprehensionNode node,
         TypeScriptCodeGeneratorContext context
     ) {
-        if (node.forClauses().size() == 1) {
-            var forClause = node.forClauses().get(0);
-            return new TypeScriptCallNode(
+        var result = compileExpression(node.yield(), context);
+
+        for (var i = node.forClauses().size() - 1; i >= 0; i--) {
+            var forClause = node.forClauses().get(i);
+            var mapMethodName = i == node.forClauses().size() - 1 ? "map" : "flatMap";
+            result = new TypeScriptCallNode(
                 new TypeScriptPropertyAccessNode(
                     compileExpression(forClause.iterable(), context),
-                    "map"
+                    mapMethodName
                 ),
                 List.of(
                     new TypeScriptArrowFunctionExpressionNode(
                         List.of(new TypeScriptParamNode(forClause.targetName(), Optional.empty())),
-                        compileExpression(node.yield(), context)
+                        result
                     )
                 )
             );
-        } else {
-            throw new UnsupportedOperationException("TODO");
         }
+
+        return result;
     }
 
     private static TypeScriptExpressionNode compileListLiteral(

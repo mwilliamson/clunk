@@ -34,6 +34,38 @@ public class TypeScriptCodeGeneratorListComprehensionTests {
     }
 
     @Test
+    public void multipleForsAreCompiledToFlatMapsAndFinalMap() {
+        var node = Typed.listComprehension(
+            List.of(
+                Typed.comprehensionForClause(
+                    "xss",
+                    Types.list(Types.list(Types.STRING)),
+                    Typed.localReference("xsss", Types.list(Types.list(Types.list(Types.STRING)))),
+                    List.of()
+                ),
+                Typed.comprehensionForClause(
+                    "xs",
+                    Types.list(Types.STRING),
+                    Typed.localReference("xss", Types.list(Types.list(Types.STRING))),
+                    List.of()
+                ),
+                Typed.comprehensionForClause(
+                    "x",
+                    Types.STRING,
+                    Typed.localReference("xs", Types.list(Types.STRING)),
+                    List.of()
+                )
+            ),
+            Typed.localReference("x", Types.STRING)
+        );
+
+        var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("xsss.flatMap((xss) => xss.flatMap((xs) => xs.map((x) => x)))"));
+    }
+
+    @Test
     @Disabled
     public void listComprehensionsAreCompiledToListComprehensions() {
         var node = Typed.listComprehension(

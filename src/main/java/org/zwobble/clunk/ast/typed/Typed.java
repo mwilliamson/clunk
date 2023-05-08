@@ -81,6 +81,15 @@ public class Typed {
         return new TypedCastUnsafeNode(expression, typeExpression, type, NullSource.INSTANCE);
     }
 
+    public static TypedComprehensionIterableNode comprehensionIterable(
+        String targetName,
+        Type targetType,
+        TypedExpressionNode iterable,
+        List<TypedExpressionNode> conditions
+    ) {
+        return new TypedComprehensionIterableNode(targetName, targetType, iterable, conditions, NullSource.INSTANCE);
+    }
+
     public static TypedConditionalBranchNode conditionalBranch(
         TypedExpressionNode condition,
         List<TypedFunctionStatementNode> body
@@ -181,6 +190,13 @@ public class Typed {
         TypedExpressionNode right
     ) {
         return new TypedIntNotEqualNode(left, right, NullSource.INSTANCE);
+    }
+
+    public static TypedListComprehensionNode listComprehension(
+        List<TypedComprehensionIterableNode> iterables,
+        TypedExpressionNode yield
+    ) {
+        return new TypedListComprehensionNode(iterables, yield, NullSource.INSTANCE);
     }
 
     public static TypedListLiteralNode listLiteral(List<TypedExpressionNode> elements, Type elementType) {

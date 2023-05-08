@@ -190,7 +190,7 @@ public class PythonCodeGenerator {
 
             @Override
             public PythonExpressionNode visit(TypedListComprehensionNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileListComprehension(node, context);
             }
 
             @Override
@@ -442,6 +442,24 @@ public class PythonCodeGenerator {
         return new PythonNotEqualNode(
             compileExpression(node.left(), context),
             compileExpression(node.right(), context)
+        );
+    }
+
+    private static PythonExpressionNode compileListComprehension(
+        TypedListComprehensionNode node,
+        PythonCodeGeneratorContext context
+    ) {
+        return new PythonListComprehensionNode(
+            compileExpression(node.yield(), context),
+            node.iterables().stream()
+                .map(iterableClause -> new PythonComprehensionForClauseNode(
+                    iterableClause.targetName(),
+                    compileExpression(iterableClause.iterable(), context),
+                    iterableClause.conditions().stream()
+                        .map(condition -> compileExpression(condition, context))
+                        .toList()
+                ))
+                .toList()
         );
     }
 

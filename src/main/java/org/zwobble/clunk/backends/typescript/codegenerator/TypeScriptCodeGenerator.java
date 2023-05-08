@@ -628,7 +628,7 @@ public class TypeScriptCodeGenerator {
     }
 
     private static TypeScriptParamNode compileParam(TypedParamNode node) {
-        return new TypeScriptParamNode(node.name(), compileTypeLevelExpression(node.type()));
+        return new TypeScriptParamNode(node.name(), Optional.of(compileTypeLevelExpression(node.type())));
     }
 
     private static TypeScriptClassBodyDeclarationNode compileProperty(

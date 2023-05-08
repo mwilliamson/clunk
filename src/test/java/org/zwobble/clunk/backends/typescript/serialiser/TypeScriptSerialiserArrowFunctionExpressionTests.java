@@ -46,4 +46,28 @@ public class TypeScriptSerialiserArrowFunctionExpressionTests {
 
         assertThat(result, equalTo("(x: number, y: string) => 42"));
     }
+
+    @Test
+    public void canSerialiseArrowFunctionWithExplicitParamType() {
+        var node = TypeScriptArrowFunctionExpressionNode.builder()
+            .addParam(TypeScript.param("x", TypeScript.reference("number")))
+            .withBodyExpression(TypeScript.numberLiteral(42))
+            .build();
+
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
+
+        assertThat(result, equalTo("(x: number) => 42"));
+    }
+
+    @Test
+    public void canSerialiseArrowFunctionWithImplicitParamType() {
+        var node = TypeScriptArrowFunctionExpressionNode.builder()
+            .addParam(TypeScript.param("x"))
+            .withBodyExpression(TypeScript.numberLiteral(42))
+            .build();
+
+        var result = serialiseToString(node, TypeScriptSerialiserTesting::serialiseExpression);
+
+        assertThat(result, equalTo("(x) => 42"));
+    }
 }

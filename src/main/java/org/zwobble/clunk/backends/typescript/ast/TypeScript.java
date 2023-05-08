@@ -167,8 +167,12 @@ public class TypeScript {
         return new TypeScriptObjectLiteralNode(properties);
     }
 
+    public static TypeScriptParamNode param(String name) {
+        return new TypeScriptParamNode(name, Optional.empty());
+    }
+
     public static TypeScriptParamNode param(String name, TypeScriptReferenceNode type) {
-        return new TypeScriptParamNode(name, type);
+        return new TypeScriptParamNode(name, Optional.of(type));
     }
 
     public static TypeScriptPropertyAccessNode propertyAccess(TypeScriptReferenceNode receiver, String propertyName) {

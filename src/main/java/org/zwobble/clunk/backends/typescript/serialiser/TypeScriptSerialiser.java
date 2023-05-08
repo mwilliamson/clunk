@@ -520,8 +520,10 @@ public class TypeScriptSerialiser {
 
     private static void serialiseParam(TypeScriptParamNode node, CodeBuilder builder) {
         builder.append(node.name());
-        builder.append(": ");
-        serialiseExpression(node.type(), builder, Optional.empty());
+        if (node.type().isPresent()) {
+            builder.append(": ");
+            serialiseExpression(node.type().get(), builder, Optional.empty());
+        }
     }
 
     private static void serialiseIfStatement(TypeScriptIfStatementNode node, CodeBuilder builder) {

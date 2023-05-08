@@ -1,7 +1,9 @@
 package org.zwobble.clunk.backends.typescript.ast;
 
+import java.util.Optional;
+
 public record TypeScriptParamNode(
     String name,
-    TypeScriptExpressionNode type
+    Optional<TypeScriptExpressionNode> type
 ) implements TypeScriptNode {
 }

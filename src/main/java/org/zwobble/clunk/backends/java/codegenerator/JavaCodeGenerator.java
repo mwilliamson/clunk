@@ -178,7 +178,7 @@ public class JavaCodeGenerator {
 
             @Override
             public JavaExpressionNode visit(TypedListComprehensionNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileListComprehension(node, context);
             }
 
             @Override
@@ -497,6 +497,50 @@ public class JavaCodeGenerator {
         return new JavaNotEqualNode(
             compileExpression(node.left(), context),
             compileExpression(node.right(), context)
+        );
+    }
+
+    private static JavaExpressionNode compileListComprehension(
+        TypedListComprehensionNode node,
+        JavaCodeGeneratorContext context
+    ) {
+        var result = compileExpression(node.yield(), context);
+
+        for (var i = node.forClauses().size() - 1; i >= 0; i--) {
+            var forClause = node.forClauses().get(i);
+
+            var iterable = compileExpression(forClause.iterable(), context);
+            var stream = new JavaCallNode(
+                new JavaMemberAccessNode(iterable, "stream"),
+                List.of()
+            );
+            for (var condition : forClause.conditions()) {
+                stream = new JavaCallNode(
+                    new JavaMemberAccessNode(stream, "filter"),
+                    List.of(
+                        new JavaLambdaExpressionNode(
+                            List.of(forClause.targetName()),
+                            compileExpression(condition, context)
+                        )
+                    )
+                );
+            }
+
+            var mapMethodName = i == node.forClauses().size() - 1 ? "map" : "flatMap";
+            result = new JavaCallNode(
+                new JavaMemberAccessNode(stream, mapMethodName),
+                List.of(
+                    new JavaLambdaExpressionNode(
+                        List.of(forClause.targetName()),
+                        result
+                    )
+                )
+            );
+        }
+
+        return new JavaCallNode(
+            new JavaMemberAccessNode(result, "toList"),
+            List.of()
         );
     }
 

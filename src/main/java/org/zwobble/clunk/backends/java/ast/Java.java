@@ -100,6 +100,13 @@ public class Java {
         return new JavaIntLiteralNode(value);
     }
 
+    public static JavaLambdaExpressionNode lambdaExpression(
+        List<String> params,
+        JavaExpressionNode body
+    ) {
+        return new JavaLambdaExpressionNode(params, body);
+    }
+
     public static JavaLogicalAndNode logicalAnd(JavaExpressionNode left, JavaExpressionNode right) {
         return new JavaLogicalAndNode(left, right);
     }

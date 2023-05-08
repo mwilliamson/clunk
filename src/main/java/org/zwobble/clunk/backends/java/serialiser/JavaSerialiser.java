@@ -260,6 +260,12 @@ public class JavaSerialiser {
             }
 
             @Override
+            public Void visit(JavaLambdaExpressionNode node) {
+                serialiseLambdaExpression(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(JavaLogicalAndNode node) {
                 serialiseLogicalAnd(node, builder);
                 return null;
@@ -500,6 +506,17 @@ public class JavaSerialiser {
 
     private static void serialiseIntLiteral(JavaIntLiteralNode node, CodeBuilder builder) {
         builder.append(Integer.toString(node.value()));
+    }
+
+    private static void serialiseLambdaExpression(JavaLambdaExpressionNode node, CodeBuilder builder) {
+        builder.append("(");
+        forEachInterspersed(
+            node.params(),
+            param -> builder.append(param),
+            () -> builder.append(", ")
+        );
+        builder.append(") -> ");
+        serialiseExpression(node.body(), builder, Optional.empty());
     }
 
     private static void serialiseLogicalAnd(JavaLogicalAndNode node, CodeBuilder builder) {

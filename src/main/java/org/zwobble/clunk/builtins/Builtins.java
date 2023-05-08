@@ -67,7 +67,6 @@ public class Builtins {
                 Types.BOOL
             )),
             Map.entry("flatMap", listFlatMapType()),
-            // TODO: should be a property?
             Map.entry("get", Types.methodType(
                 Types.LIST_CONSTRUCTOR,
                 List.of(Types.INT),

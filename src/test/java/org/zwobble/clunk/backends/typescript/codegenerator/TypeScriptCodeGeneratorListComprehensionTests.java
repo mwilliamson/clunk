@@ -1,6 +1,5 @@
 package org.zwobble.clunk.backends.typescript.codegenerator;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiserTesting;
@@ -66,8 +65,7 @@ public class TypeScriptCodeGeneratorListComprehensionTests {
     }
 
     @Test
-    @Disabled
-    public void listComprehensionsAreCompiledToListComprehensions() {
+    public void conditionsAreAddedAsFiltersOnIterables() {
         var node = Typed.listComprehension(
             List.of(
                 Typed.comprehensionForClause(
@@ -94,6 +92,6 @@ public class TypeScriptCodeGeneratorListComprehensionTests {
         var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
-        assertThat(string, equalTo("[x for xs in xss if a if b for x in xs if c]"));
+        assertThat(string, equalTo("xss.filter((xs) => a).filter((xs) => b).flatMap((xs) => xs.filter((x) => c).map((x) => x))"));
     }
 }

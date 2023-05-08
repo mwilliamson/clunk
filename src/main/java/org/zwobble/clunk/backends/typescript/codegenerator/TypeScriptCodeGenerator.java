@@ -484,12 +484,23 @@ public class TypeScriptCodeGenerator {
 
         for (var i = node.forClauses().size() - 1; i >= 0; i--) {
             var forClause = node.forClauses().get(i);
+
+            var iterable = compileExpression(forClause.iterable(), context);
+            for (var condition : forClause.conditions()) {
+                iterable = new TypeScriptCallNode(
+                    new TypeScriptPropertyAccessNode(iterable, "filter"),
+                    List.of(
+                        new TypeScriptArrowFunctionExpressionNode(
+                            List.of(new TypeScriptParamNode(forClause.targetName(), Optional.empty())),
+                            compileExpression(condition, context)
+                        )
+                    )
+                );
+            }
+
             var mapMethodName = i == node.forClauses().size() - 1 ? "map" : "flatMap";
             result = new TypeScriptCallNode(
-                new TypeScriptPropertyAccessNode(
-                    compileExpression(forClause.iterable(), context),
-                    mapMethodName
-                ),
+                new TypeScriptPropertyAccessNode(iterable, mapMethodName),
                 List.of(
                     new TypeScriptArrowFunctionExpressionNode(
                         List.of(new TypeScriptParamNode(forClause.targetName(), Optional.empty())),

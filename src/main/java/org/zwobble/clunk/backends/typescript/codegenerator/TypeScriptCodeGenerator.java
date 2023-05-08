@@ -167,7 +167,7 @@ public class TypeScriptCodeGenerator {
 
             @Override
             public TypeScriptExpressionNode visit(TypedListComprehensionNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileListComprehension(node, context);
             }
 
             @Override
@@ -474,6 +474,29 @@ public class TypeScriptCodeGenerator {
             compileExpression(node.left(), context),
             compileExpression(node.right(), context)
         );
+    }
+
+    private static TypeScriptExpressionNode compileListComprehension(
+        TypedListComprehensionNode node,
+        TypeScriptCodeGeneratorContext context
+    ) {
+        if (node.iterables().size() == 1) {
+            var iterableClause = node.iterables().get(0);
+            return new TypeScriptCallNode(
+                new TypeScriptPropertyAccessNode(
+                    compileExpression(iterableClause.iterable(), context),
+                    "map"
+                ),
+                List.of(
+                    new TypeScriptArrowFunctionExpressionNode(
+                        List.of(new TypeScriptParamNode(iterableClause.targetName(), Optional.empty())),
+                        compileExpression(node.yield(), context)
+                    )
+                )
+            );
+        } else {
+            throw new UnsupportedOperationException("TODO");
+        }
     }
 
     private static TypeScriptExpressionNode compileListLiteral(

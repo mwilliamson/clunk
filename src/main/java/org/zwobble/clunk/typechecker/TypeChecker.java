@@ -275,29 +275,57 @@ public class TypeChecker {
         );
     }
 
+    private record TypeCheckConditionResult(
+        TypedExpressionNode typedNode,
+        Optional<TypedTypeNarrowNode> typeNarrowNode
+    ) {
+    }
+
+    private static TypeCheckConditionResult typeCheckCondition(
+        UntypedExpressionNode node,
+        TypeCheckerContext context
+    ) {
+        var typedConditionNode = typeCheckExpression(node, context);
+        expectExpressionType(typedConditionNode, Types.BOOL);
+
+        if (
+            typedConditionNode instanceof TypedInstanceOfNode typedInstanceOfNode &&
+            typedInstanceOfNode.expression() instanceof TypedReferenceNode typedInstanceOfReferenceNode
+        ) {
+            var narrowedType = (StructuredType) typedInstanceOfNode.typeExpression().value();
+            var variableName = typedInstanceOfReferenceNode.name();
+
+            return new TypeCheckConditionResult(
+                typedConditionNode,
+                Optional.of(new TypedTypeNarrowNode(variableName, narrowedType, typedInstanceOfNode.source()))
+            );
+        } else {
+            return new TypeCheckConditionResult(typedConditionNode, Optional.empty());
+        }
+    }
+
     private static TypeCheckFunctionStatementResult<TypedConditionalBranchNode> typeCheckConditionalBranch(
         UntypedConditionalBranchNode node,
         TypeCheckerContext context
     ) {
-        var typedConditionNode = typeCheckExpression(node.condition(), context);
-        expectExpressionType(typedConditionNode, Types.BOOL);
+        var conditionTypeCheckResult = typeCheckCondition(node.condition(), context);
 
         var bodyContext = context;
         var bodyPrefix = new ArrayList<TypedFunctionStatementNode>();
-        if (
-            typedConditionNode instanceof TypedInstanceOfNode typedInstanceOfNode
-            && typedInstanceOfNode.expression() instanceof TypedReferenceNode typedInstanceOfReferenceNode
-        ) {
-            var narrowedType = (StructuredType) typedInstanceOfNode.typeExpression().value();
-            var variableName = typedInstanceOfReferenceNode.name();
-            bodyContext = bodyContext.updateLocal(variableName, narrowedType, typedInstanceOfNode.source());
-            bodyPrefix.add(new TypedTypeNarrowNode(variableName, narrowedType, typedInstanceOfNode.source()));
+        if (conditionTypeCheckResult.typeNarrowNode.isPresent()) {
+            var typeNarrowNode = conditionTypeCheckResult.typeNarrowNode.get();
+            bodyContext = bodyContext.updateLocal(
+                typeNarrowNode.variableName(),
+                typeNarrowNode.type(),
+                typeNarrowNode.source()
+            );
+            bodyPrefix.add(typeNarrowNode);
         }
 
         var typeCheckBodyResults = typeCheckFunctionStatements(node.body(), bodyContext);
 
         return typeCheckBodyResults.map(body -> new TypedConditionalBranchNode(
-            typedConditionNode,
+            conditionTypeCheckResult.typedNode,
             Stream.concat(bodyPrefix.stream(), body.stream()).toList(),
             node.source()
         ));

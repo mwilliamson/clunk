@@ -31,6 +31,20 @@ public class TypeScriptSerialiser {
         builder.append("]");
     }
 
+    private static void serialiseArrowFunctionExpression(
+        TypeScriptArrowFunctionExpressionNode node,
+        CodeBuilder builder
+    ) {
+        builder.append("(");
+        forEachInterspersed(
+            node.params(),
+            param -> serialiseParam(param, builder),
+            () -> builder.append(", ")
+        );
+        builder.append(") => ");
+        serialiseExpression(node.body(), builder, Optional.empty());
+    }
+
     private static void serialiseBinaryOperation(String operator, TypeScriptBinaryOperationNode node, CodeBuilder builder) {
         serialiseExpression(node.left(), builder, Optional.of(node));
         builder.append(" ");
@@ -254,6 +268,12 @@ public class TypeScriptSerialiser {
             @Override
             public Void visit(TypeScriptArrayNode node) {
                 serialiseArray(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(TypeScriptArrowFunctionExpressionNode node) {
+                serialiseArrowFunctionExpression(node, builder);
                 return null;
             }
 

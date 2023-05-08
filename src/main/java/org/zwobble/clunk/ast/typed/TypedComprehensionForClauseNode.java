@@ -5,7 +5,7 @@ import org.zwobble.clunk.types.Type;
 
 import java.util.List;
 
-public record TypedComprehensionIterableNode(
+public record TypedComprehensionForClauseNode(
     String targetName,
     Type targetType,
     TypedExpressionNode iterable,

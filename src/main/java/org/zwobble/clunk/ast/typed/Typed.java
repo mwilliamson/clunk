@@ -81,13 +81,13 @@ public class Typed {
         return new TypedCastUnsafeNode(expression, typeExpression, type, NullSource.INSTANCE);
     }
 
-    public static TypedComprehensionIterableNode comprehensionIterable(
+    public static TypedComprehensionForClauseNode comprehensionForClause(
         String targetName,
         Type targetType,
         TypedExpressionNode iterable,
         List<TypedExpressionNode> conditions
     ) {
-        return new TypedComprehensionIterableNode(targetName, targetType, iterable, conditions, NullSource.INSTANCE);
+        return new TypedComprehensionForClauseNode(targetName, targetType, iterable, conditions, NullSource.INSTANCE);
     }
 
     public static TypedConditionalBranchNode conditionalBranch(
@@ -193,10 +193,10 @@ public class Typed {
     }
 
     public static TypedListComprehensionNode listComprehension(
-        List<TypedComprehensionIterableNode> iterables,
+        List<TypedComprehensionForClauseNode> forClauses,
         TypedExpressionNode yield
     ) {
-        return new TypedListComprehensionNode(iterables, yield, NullSource.INSTANCE);
+        return new TypedListComprehensionNode(forClauses, yield, NullSource.INSTANCE);
     }
 
     public static TypedListLiteralNode listLiteral(List<TypedExpressionNode> elements, Type elementType) {

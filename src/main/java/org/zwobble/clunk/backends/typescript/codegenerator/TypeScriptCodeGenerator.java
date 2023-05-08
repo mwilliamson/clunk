@@ -480,16 +480,16 @@ public class TypeScriptCodeGenerator {
         TypedListComprehensionNode node,
         TypeScriptCodeGeneratorContext context
     ) {
-        if (node.iterables().size() == 1) {
-            var iterableClause = node.iterables().get(0);
+        if (node.forClauses().size() == 1) {
+            var forClause = node.forClauses().get(0);
             return new TypeScriptCallNode(
                 new TypeScriptPropertyAccessNode(
-                    compileExpression(iterableClause.iterable(), context),
+                    compileExpression(forClause.iterable(), context),
                     "map"
                 ),
                 List.of(
                     new TypeScriptArrowFunctionExpressionNode(
-                        List.of(new TypeScriptParamNode(iterableClause.targetName(), Optional.empty())),
+                        List.of(new TypeScriptParamNode(forClause.targetName(), Optional.empty())),
                         compileExpression(node.yield(), context)
                     )
                 )

@@ -957,36 +957,36 @@ public class TypeChecker {
         UntypedListComprehensionNode node,
         TypeCheckerContext context
     ) {
-        var typedIterables = new ArrayList<TypedComprehensionIterableNode>();
+        var typedForClauses = new ArrayList<TypedComprehensionForClauseNode>();
         var comprehensionContext = context.enterComprehension();
 
-        for (var iterable : node.iterables()) {
-            var typeCheckIterableResult = typeCheckIterableExpression(iterable.iterable(), comprehensionContext);
+        for (var forClause : node.forClauses()) {
+            var typeCheckIterableResult = typeCheckIterableExpression(forClause.iterable(), comprehensionContext);
 
             comprehensionContext = comprehensionContext.addLocal(
-                iterable.targetName(),
+                forClause.targetName(),
                 typeCheckIterableResult.elementType(),
-                iterable.source()
+                forClause.source()
             );
 
             var conditionContext = comprehensionContext;
-            var typedConditions = iterable.conditions().stream()
+            var typedConditions = forClause.conditions().stream()
                 .map(condition -> typeCheckExpression(condition, Types.BOOL, conditionContext))
                 .toList();
 
-            typedIterables.add(new TypedComprehensionIterableNode(
-                iterable.targetName(),
+            typedForClauses.add(new TypedComprehensionForClauseNode(
+                forClause.targetName(),
                 typeCheckIterableResult.elementType(),
                 typeCheckIterableResult.iterable(),
                 typedConditions,
-                iterable.source()
+                forClause.source()
             ));
         }
 
         var typedYield = typeCheckExpression(node.yield(), comprehensionContext);
 
         return new TypedListComprehensionNode(
-            typedIterables,
+            typedForClauses,
             typedYield,
             node.source()
         );

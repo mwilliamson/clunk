@@ -4,7 +4,7 @@ import org.zwobble.clunk.sources.Source;
 
 import java.util.List;
 
-public record UntypedComprehensionIterableNode(
+public record UntypedComprehensionForClauseNode(
     String targetName,
     UntypedExpressionNode iterable,
     List<UntypedExpressionNode> conditions,

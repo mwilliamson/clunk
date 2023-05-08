@@ -16,7 +16,7 @@ public class PythonCodeGeneratorListComprehensionTests {
     public void listComprehensionsAreCompiledToListComprehensions() {
         var node = Typed.listComprehension(
             List.of(
-                Typed.comprehensionIterable(
+                Typed.comprehensionForClause(
                     "xs",
                     Types.list(Types.STRING),
                     Typed.localReference("xss", Types.list(Types.list(Types.STRING))),
@@ -25,7 +25,7 @@ public class PythonCodeGeneratorListComprehensionTests {
                         Typed.localReference("b", Types.BOOL)
                     )
                 ),
-                Typed.comprehensionIterable(
+                Typed.comprehensionForClause(
                     "x",
                     Types.STRING,
                     Typed.localReference("xs", Types.list(Types.STRING)),

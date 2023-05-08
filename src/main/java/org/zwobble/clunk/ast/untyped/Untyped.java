@@ -51,19 +51,19 @@ public class Untyped {
         return new UntypedCastUnsafeNode(expression, typeExpression, NullSource.INSTANCE);
     }
 
-    public static UntypedComprehensionIterableNode comprehensionIterable(
+    public static UntypedComprehensionForClauseNode comprehensionIterable(
         String targetName,
         UntypedExpressionNode iterable
     ) {
-        return new UntypedComprehensionIterableNode(targetName, iterable, List.of(), NullSource.INSTANCE);
+        return new UntypedComprehensionForClauseNode(targetName, iterable, List.of(), NullSource.INSTANCE);
     }
 
-    public static UntypedComprehensionIterableNode comprehensionIterable(
+    public static UntypedComprehensionForClauseNode comprehensionIterable(
         String targetName,
         UntypedExpressionNode iterable,
         List<UntypedExpressionNode> conditions
     ) {
-        return new UntypedComprehensionIterableNode(targetName, iterable, conditions, NullSource.INSTANCE);
+        return new UntypedComprehensionForClauseNode(targetName, iterable, conditions, NullSource.INSTANCE);
     }
 
     public static UntypedConditionalBranchNode conditionalBranch(
@@ -156,10 +156,10 @@ public class Untyped {
     }
 
     public static UntypedListComprehensionNode listComprehension(
-        List<UntypedComprehensionIterableNode> iterables,
+        List<UntypedComprehensionForClauseNode> forClauses,
         UntypedExpressionNode yield
     ) {
-        return new UntypedListComprehensionNode(iterables, yield, NullSource.INSTANCE);
+        return new UntypedListComprehensionNode(forClauses, yield, NullSource.INSTANCE);
     }
 
     public static UntypedExpressionNode memberAccess(UntypedExpressionNode receiver, String membername) {

@@ -45,7 +45,7 @@ public class TypeCheckListComprehensionTests {
 
         assertThat(result, instanceOf(
             TypedListComprehensionNode.class,
-            has("iterables", x -> x.iterables(), isSequence(
+            has("forClauses", x -> x.forClauses(), isSequence(
                 allOf(
                     has("targetName", x -> x.targetName(), equalTo("x")),
                     has("iterable", x -> x.iterable(), isTypedReferenceNode().withName("xs")),
@@ -90,7 +90,7 @@ public class TypeCheckListComprehensionTests {
 
         assertThat(result, instanceOf(
             TypedListComprehensionNode.class,
-            has("iterables", x -> x.iterables(), isSequence(
+            has("forClauses", x -> x.forClauses(), isSequence(
                 allOf(
                     has("targetName", x -> x.targetName(), equalTo("xs")),
                     has("iterable", x -> x.iterable(), isTypedReferenceNode().withName("xss")),
@@ -149,7 +149,7 @@ public class TypeCheckListComprehensionTests {
 
         assertThat(result, instanceOf(
             TypedListComprehensionNode.class,
-            has("iterables", x -> x.iterables(), isSequence(
+            has("forClauses", x -> x.forClauses(), isSequence(
                 allOf(
                     has("conditions", x -> x.conditions(), isSequence(
                         isTypedReferenceNode().withName("y").withType(Types.BOOL)
@@ -207,7 +207,7 @@ public class TypeCheckListComprehensionTests {
 
         assertThat(result, instanceOf(
             TypedListComprehensionNode.class,
-            has("iterables", x -> x.iterables(), isSequence(
+            has("forClauses", x -> x.forClauses(), isSequence(
                 allOf(
                     has("conditions", x -> x.conditions(), isSequence(
                         isTypedReferenceNode().withName("x").withType(Types.BOOL)

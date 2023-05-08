@@ -7,7 +7,7 @@ import org.zwobble.clunk.types.Types;
 import java.util.List;
 
 public record TypedListComprehensionNode(
-    List<TypedComprehensionIterableNode> iterables,
+    List<TypedComprehensionForClauseNode> forClauses,
     TypedExpressionNode yield,
     Source source
 ) implements TypedExpressionNode {

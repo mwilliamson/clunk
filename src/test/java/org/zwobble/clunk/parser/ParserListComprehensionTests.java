@@ -1,7 +1,7 @@
 package org.zwobble.clunk.parser;
 
 import org.junit.jupiter.api.Test;
-import org.zwobble.clunk.ast.untyped.UntypedComprehensionIterableNode;
+import org.zwobble.clunk.ast.untyped.UntypedComprehensionForClauseNode;
 import org.zwobble.clunk.ast.untyped.UntypedExpressionNode;
 import org.zwobble.clunk.ast.untyped.UntypedListComprehensionNode;
 import org.zwobble.precisely.Matcher;
@@ -20,7 +20,7 @@ public class ParserListComprehensionTests {
 
         assertThat(node, instanceOf(
             UntypedListComprehensionNode.class,
-            hasIterables(isSequence(
+            hasForClauses(isSequence(
                 allOf(
                     hasTargetName("x"),
                     hasIterable(isUntypedReferenceNode("xs")),
@@ -39,7 +39,7 @@ public class ParserListComprehensionTests {
 
         assertThat(node, instanceOf(
             UntypedListComprehensionNode.class,
-            hasIterables(isSequence(
+            hasForClauses(isSequence(
                 allOf(
                     hasTargetName("x"),
                     hasIterable(isUntypedReferenceNode("xs")),
@@ -63,7 +63,7 @@ public class ParserListComprehensionTests {
 
         assertThat(node, instanceOf(
             UntypedListComprehensionNode.class,
-            hasIterables(isSequence(
+            hasForClauses(isSequence(
                 allOf(
                     hasTargetName("x"),
                     hasIterable(isUntypedReferenceNode("xs")),
@@ -84,7 +84,7 @@ public class ParserListComprehensionTests {
 
         assertThat(node, instanceOf(
             UntypedListComprehensionNode.class,
-            hasIterables(isSequence(
+            hasForClauses(isSequence(
                 allOf(
                     hasTargetName("x"),
                     hasIterable(isUntypedReferenceNode("xs")),
@@ -98,10 +98,10 @@ public class ParserListComprehensionTests {
         ));
     }
 
-    private Matcher<UntypedListComprehensionNode> hasIterables(
-        Matcher<? super Iterable<UntypedComprehensionIterableNode>> iterables
+    private Matcher<UntypedListComprehensionNode> hasForClauses(
+        Matcher<? super Iterable<UntypedComprehensionForClauseNode>> forClauses
     ) {
-        return has("iterables", x -> x.iterables(), iterables);
+        return has("forClauses", x -> x.forClauses(), forClauses);
     }
 
     private Matcher<UntypedListComprehensionNode> hasYield(
@@ -110,19 +110,19 @@ public class ParserListComprehensionTests {
         return has("yield", x -> x.yield(), yield);
     }
 
-    private Matcher<UntypedComprehensionIterableNode> hasIterable(
+    private Matcher<UntypedComprehensionForClauseNode> hasIterable(
         Matcher<? super UntypedExpressionNode> iterable
     ) {
         return has("iterable", x -> x.iterable(), iterable);
     }
 
-    private Matcher<UntypedComprehensionIterableNode> hasTargetName(
+    private Matcher<UntypedComprehensionForClauseNode> hasTargetName(
         String targetName
     ) {
         return has("targetName", x -> x.targetName(), equalTo(targetName));
     }
 
-    private Matcher<UntypedComprehensionIterableNode> hasConditions(
+    private Matcher<UntypedComprehensionForClauseNode> hasConditions(
         Matcher<? super Iterable<UntypedExpressionNode>> conditions
     ) {
         return has("conditions", x -> x.conditions(), conditions);

@@ -451,11 +451,11 @@ public class PythonCodeGenerator {
     ) {
         return new PythonListComprehensionNode(
             compileExpression(node.yield(), context),
-            node.iterables().stream()
-                .map(iterableClause -> new PythonComprehensionForClauseNode(
-                    iterableClause.targetName(),
-                    compileExpression(iterableClause.iterable(), context),
-                    iterableClause.conditions().stream()
+            node.forClauses().stream()
+                .map(forClause -> new PythonComprehensionForClauseNode(
+                    forClause.targetName(),
+                    compileExpression(forClause.iterable(), context),
+                    forClause.conditions().stream()
                         .map(condition -> compileExpression(condition, context))
                         .toList()
                 ))

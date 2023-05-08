@@ -164,7 +164,7 @@ public class Parser {
         }
     }
 
-    private UntypedComprehensionIterableNode parseComprehensionIterable(TokenIterator<TokenType> tokens) {
+    private UntypedComprehensionForClauseNode parseComprehensionIterable(TokenIterator<TokenType> tokens) {
         var source = source(tokens);
 
         tokens.skip(TokenType.KEYWORD_FOR);
@@ -181,7 +181,7 @@ public class Parser {
             () -> true
         );
 
-        return new UntypedComprehensionIterableNode(targetName, iterable, conditions, source);
+        return new UntypedComprehensionForClauseNode(targetName, iterable, conditions, source);
     }
 
     private UntypedNamespaceStatementNode parseEnum(TokenIterator<TokenType> tokens) {
@@ -389,7 +389,7 @@ public class Parser {
 
         tokens.skip(TokenType.SYMBOL_SQUARE_OPEN);
         
-        var iterables = parseMany(
+        var forClauses = parseMany(
             () -> !tokens.isNext(TokenType.KEYWORD_FOR),
             () -> parseComprehensionIterable(tokens),
             () -> true
@@ -401,7 +401,7 @@ public class Parser {
 
         tokens.skip(TokenType.SYMBOL_SQUARE_CLOSE);
 
-        return new UntypedListComprehensionNode(iterables, yield, source);
+        return new UntypedListComprehensionNode(forClauses, yield, source);
     }
 
     private UntypedListLiteralNode parseListLiteral(TokenIterator<TokenType> tokens) {

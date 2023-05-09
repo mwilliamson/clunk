@@ -7,10 +7,13 @@ import org.zwobble.clunk.ast.typed.TypedExpressionNode;
 import org.zwobble.clunk.ast.typed.TypedListComprehensionNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.sources.NullSource;
+import org.zwobble.clunk.types.NamespaceId;
+import org.zwobble.clunk.types.Type;
 import org.zwobble.clunk.types.Types;
 import org.zwobble.precisely.Matcher;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedReferenceNode;
@@ -155,7 +158,10 @@ public class TypeCheckListComprehensionTests {
             TypedListComprehensionNode.class,
             has("forClauses", x -> x.forClauses(), isSequence(
                 hasIfClauses(isSequence(
-                    hasCondition(isTypedReferenceNode().withName("y").withType(Types.BOOL))
+                    allOf(
+                        hasCondition(isTypedReferenceNode().withName("y").withType(Types.BOOL)),
+                        hasNarrowedType(equalTo(Optional.empty()))
+                    )
                 ))
             ))
         ));
@@ -211,9 +217,50 @@ public class TypeCheckListComprehensionTests {
             TypedListComprehensionNode.class,
             has("forClauses", x -> x.forClauses(), isSequence(
                 hasIfClauses(isSequence(
-                    hasCondition(isTypedReferenceNode().withName("x").withType(Types.BOOL))
+                    allOf(
+                        hasCondition(isTypedReferenceNode().withName("x").withType(Types.BOOL)),
+                        hasNarrowedType(equalTo(Optional.empty()))
+                    )
                 ))
             ))
+        ));
+    }
+
+    @Test
+    public void whenConditionIsInstanceOfCheckThenTypeOfTargetIsNarrowed() {
+        var namespaceId = NamespaceId.source("example");
+        var interfaceType = Types.interfaceType(namespaceId, "Interface");
+        var recordType = Types.recordType(namespaceId, "Record");
+        var untypedNode = Untyped.listComprehension(
+            List.of(
+                Untyped.comprehensionIterable(
+                    "x",
+                    Untyped.reference("xs"),
+                    List.of(
+                        Untyped.instanceOf(
+                            Untyped.reference("x"),
+                            Untyped.typeLevelReference("Record")
+                        )
+                    )
+                )
+            ),
+            Untyped.reference("x")
+        );
+        var context = TypeCheckerContext.stub()
+            .addSealedInterfaceCase(interfaceType, recordType)
+            .addLocal("xs", Types.list(interfaceType), NullSource.INSTANCE)
+            .addLocal("Record", Types.metaType(recordType), NullSource.INSTANCE);
+
+        var result = TypeChecker.typeCheckExpression(untypedNode, context);
+
+        assertThat(result, instanceOf(
+            TypedListComprehensionNode.class,
+            has("forClauses", x -> x.forClauses(), isSequence(
+                hasIfClauses(isSequence(
+                    hasNarrowedType(isOptionalOf(equalTo(recordType)))
+                ))
+            )),
+            has("yield", x -> x.yield(), isTypedReferenceNode().withType(recordType))
         ));
     }
 
@@ -231,5 +278,9 @@ public class TypeCheckListComprehensionTests {
 
     private static Matcher<TypedComprehensionIfClauseNode> hasCondition(Matcher<? super TypedExpressionNode> condition) {
         return has("condition", x -> x.condition(), condition);
+    }
+
+    private static Matcher<TypedComprehensionIfClauseNode> hasNarrowedType(Matcher<? super Optional<Type>> narrowedType) {
+        return has("narrowedType", x -> x.narrowedType(), narrowedType);
     }
 }

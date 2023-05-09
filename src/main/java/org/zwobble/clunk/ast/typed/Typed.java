@@ -97,7 +97,7 @@ public class Typed {
     }
 
     public static TypedComprehensionIfClauseNode comprehensionIfClause(TypedExpressionNode condition) {
-        return new TypedComprehensionIfClauseNode(condition, NullSource.INSTANCE);
+        return new TypedComprehensionIfClauseNode(condition, Optional.empty(), NullSource.INSTANCE);
     }
 
     public static TypedConditionalBranchNode conditionalBranch(

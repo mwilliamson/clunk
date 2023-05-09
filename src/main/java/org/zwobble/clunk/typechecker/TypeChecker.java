@@ -998,15 +998,18 @@ public class TypeChecker {
             );
 
             var conditionContext = comprehensionContext;
-            var typedConditions = forClause.conditions().stream()
-                .map(condition -> typeCheckExpression(condition, Types.BOOL, conditionContext))
+            var typedIfClauses = forClause.conditions().stream()
+                .map(condition -> {
+                    var typedCondition = typeCheckExpression(condition, Types.BOOL, conditionContext);
+                    return new TypedComprehensionIfClauseNode(typedCondition, typedCondition.source());
+                })
                 .toList();
 
             typedForClauses.add(new TypedComprehensionForClauseNode(
                 forClause.targetName(),
                 typeCheckIterableResult.elementType(),
                 typeCheckIterableResult.iterable(),
-                typedConditions,
+                typedIfClauses,
                 forClause.source()
             ));
         }

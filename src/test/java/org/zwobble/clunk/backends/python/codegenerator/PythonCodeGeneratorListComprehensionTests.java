@@ -21,8 +21,8 @@ public class PythonCodeGeneratorListComprehensionTests {
                     Types.list(Types.STRING),
                     Typed.localReference("xss", Types.list(Types.list(Types.STRING))),
                     List.of(
-                        Typed.localReference("a", Types.BOOL),
-                        Typed.localReference("b", Types.BOOL)
+                        Typed.comprehensionIfClause(Typed.localReference("a", Types.BOOL)),
+                        Typed.comprehensionIfClause(Typed.localReference("b", Types.BOOL))
                     )
                 ),
                 Typed.comprehensionForClause(
@@ -30,7 +30,7 @@ public class PythonCodeGeneratorListComprehensionTests {
                     Types.STRING,
                     Typed.localReference("xs", Types.list(Types.STRING)),
                     List.of(
-                        Typed.localReference("c", Types.BOOL)
+                        Typed.comprehensionIfClause(Typed.localReference("c", Types.BOOL))
                     )
                 )
             ),

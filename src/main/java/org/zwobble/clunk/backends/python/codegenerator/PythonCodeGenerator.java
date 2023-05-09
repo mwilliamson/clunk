@@ -455,8 +455,8 @@ public class PythonCodeGenerator {
                 .map(forClause -> new PythonComprehensionForClauseNode(
                     forClause.targetName(),
                     compileExpression(forClause.iterable(), context),
-                    forClause.conditions().stream()
-                        .map(condition -> compileExpression(condition, context))
+                    forClause.ifClauses().stream()
+                        .map(ifClause -> compileExpression(ifClause.condition(), context))
                         .toList()
                 ))
                 .toList()

@@ -9,7 +9,7 @@ public record TypedComprehensionForClauseNode(
     String targetName,
     Type targetType,
     TypedExpressionNode iterable,
-    List<TypedExpressionNode> conditions,
+    List<TypedComprehensionIfClauseNode> ifClauses,
     Source source
 ) implements TypedNode {
 }

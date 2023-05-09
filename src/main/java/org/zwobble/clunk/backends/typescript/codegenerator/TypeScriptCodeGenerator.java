@@ -486,13 +486,13 @@ public class TypeScriptCodeGenerator {
             var forClause = node.forClauses().get(i);
 
             var iterable = compileExpression(forClause.iterable(), context);
-            for (var condition : forClause.conditions()) {
+            for (var ifClause : forClause.ifClauses()) {
                 iterable = new TypeScriptCallNode(
                     new TypeScriptPropertyAccessNode(iterable, "filter"),
                     List.of(
                         new TypeScriptArrowFunctionExpressionNode(
                             List.of(new TypeScriptParamNode(forClause.targetName(), Optional.empty())),
-                            compileExpression(condition, context)
+                            compileExpression(ifClause.condition(), context)
                         )
                     )
                 );

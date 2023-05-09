@@ -1,10 +1,14 @@
 package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.ast.typed.TypedComprehensionForClauseNode;
+import org.zwobble.clunk.ast.typed.TypedComprehensionIfClauseNode;
+import org.zwobble.clunk.ast.typed.TypedExpressionNode;
 import org.zwobble.clunk.ast.typed.TypedListComprehensionNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.Types;
+import org.zwobble.precisely.Matcher;
 
 import java.util.List;
 
@@ -47,9 +51,9 @@ public class TypeCheckListComprehensionTests {
             TypedListComprehensionNode.class,
             has("forClauses", x -> x.forClauses(), isSequence(
                 allOf(
-                    has("targetName", x -> x.targetName(), equalTo("x")),
-                    has("iterable", x -> x.iterable(), isTypedReferenceNode().withName("xs")),
-                    has("conditions", x -> x.conditions(), isSequence())
+                    hasTargetName(equalTo("x")),
+                    hasIterable(isTypedReferenceNode().withName("xs")),
+                    hasIfClauses(isSequence())
                 )
             ))
         ));
@@ -92,14 +96,14 @@ public class TypeCheckListComprehensionTests {
             TypedListComprehensionNode.class,
             has("forClauses", x -> x.forClauses(), isSequence(
                 allOf(
-                    has("targetName", x -> x.targetName(), equalTo("xs")),
-                    has("iterable", x -> x.iterable(), isTypedReferenceNode().withName("xss")),
-                    has("conditions", x -> x.conditions(), isSequence())
+                    hasTargetName(equalTo("xs")),
+                    hasIterable(isTypedReferenceNode().withName("xss")),
+                    hasIfClauses(isSequence())
                 ),
                 allOf(
-                    has("targetName", x -> x.targetName(), equalTo("x")),
-                    has("iterable", x -> x.iterable(), isTypedReferenceNode().withName("xs")),
-                    has("conditions", x -> x.conditions(), isSequence())
+                    hasTargetName(equalTo("x")),
+                    hasIterable(isTypedReferenceNode().withName("xs")),
+                    hasIfClauses(isSequence())
                 )
             )),
             has("yield", x -> x.yield(), isTypedReferenceNode().withName("x").withType(Types.STRING)),
@@ -150,11 +154,9 @@ public class TypeCheckListComprehensionTests {
         assertThat(result, instanceOf(
             TypedListComprehensionNode.class,
             has("forClauses", x -> x.forClauses(), isSequence(
-                allOf(
-                    has("conditions", x -> x.conditions(), isSequence(
-                        isTypedReferenceNode().withName("y").withType(Types.BOOL)
-                    ))
-                )
+                hasIfClauses(isSequence(
+                    hasCondition(isTypedReferenceNode().withName("y").withType(Types.BOOL))
+                ))
             ))
         ));
     }
@@ -208,12 +210,26 @@ public class TypeCheckListComprehensionTests {
         assertThat(result, instanceOf(
             TypedListComprehensionNode.class,
             has("forClauses", x -> x.forClauses(), isSequence(
-                allOf(
-                    has("conditions", x -> x.conditions(), isSequence(
-                        isTypedReferenceNode().withName("x").withType(Types.BOOL)
-                    ))
-                )
+                hasIfClauses(isSequence(
+                    hasCondition(isTypedReferenceNode().withName("x").withType(Types.BOOL))
+                ))
             ))
         ));
+    }
+
+    private static Matcher<TypedComprehensionForClauseNode> hasTargetName(Matcher<String> targetName) {
+        return has("targetName", x -> x.targetName(), targetName);
+    }
+
+    private static Matcher<TypedComprehensionForClauseNode> hasIterable(Matcher<? super TypedExpressionNode> iterable) {
+        return has("iterable", x -> x.iterable(), iterable);
+    }
+
+    private static Matcher<TypedComprehensionForClauseNode> hasIfClauses(Matcher<Iterable<TypedComprehensionIfClauseNode>> ifClauses) {
+        return has("ifClauses", x -> x.ifClauses(), ifClauses);
+    }
+
+    private static Matcher<TypedComprehensionIfClauseNode> hasCondition(Matcher<? super TypedExpressionNode> condition) {
+        return has("condition", x -> x.condition(), condition);
     }
 }

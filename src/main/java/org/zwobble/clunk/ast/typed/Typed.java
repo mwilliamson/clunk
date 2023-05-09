@@ -85,9 +85,19 @@ public class Typed {
         String targetName,
         Type targetType,
         TypedExpressionNode iterable,
-        List<TypedExpressionNode> conditions
+        List<TypedComprehensionIfClauseNode> ifClauses
     ) {
-        return new TypedComprehensionForClauseNode(targetName, targetType, iterable, conditions, NullSource.INSTANCE);
+        return new TypedComprehensionForClauseNode(
+            targetName,
+            targetType,
+            iterable,
+            ifClauses,
+            NullSource.INSTANCE
+        );
+    }
+
+    public static TypedComprehensionIfClauseNode comprehensionIfClause(TypedExpressionNode condition) {
+        return new TypedComprehensionIfClauseNode(condition, NullSource.INSTANCE);
     }
 
     public static TypedConditionalBranchNode conditionalBranch(

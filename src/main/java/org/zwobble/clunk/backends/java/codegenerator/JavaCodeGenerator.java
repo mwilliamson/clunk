@@ -514,13 +514,13 @@ public class JavaCodeGenerator {
                 new JavaMemberAccessNode(iterable, "stream"),
                 List.of()
             );
-            for (var condition : forClause.conditions()) {
+            for (var ifClause : forClause.ifClauses()) {
                 stream = new JavaCallNode(
                     new JavaMemberAccessNode(stream, "filter"),
                     List.of(
                         new JavaLambdaExpressionNode(
                             List.of(forClause.targetName()),
-                            compileExpression(condition, context)
+                            compileExpression(ifClause.condition(), context)
                         )
                     )
                 );

@@ -1004,9 +1004,13 @@ public class TypeChecker {
                 var typeNarrow = result.typeNarrowNode()
                     .filter(x -> x.variableName().equals(forClause.targetName()));
 
-                comprehensionContext = typeNarrow
-                    .map(x -> context.updateLocal(x.variableName(), x.type(), x.source()))
-                    .orElse(comprehensionContext);
+                if (typeNarrow.isPresent()) {
+                    comprehensionContext = comprehensionContext.updateLocal(
+                        typeNarrow.get().variableName(),
+                        typeNarrow.get().type(),
+                        typeNarrow.get().source()
+                    );
+                }
 
                 var typedIfClause = new TypedComprehensionIfClauseNode(
                     result.typedNode(),

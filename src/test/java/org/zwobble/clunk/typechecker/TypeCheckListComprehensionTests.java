@@ -8,6 +8,7 @@ import org.zwobble.clunk.ast.typed.TypedListComprehensionNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.NamespaceId;
+import org.zwobble.clunk.types.ParamTypes;
 import org.zwobble.clunk.types.Type;
 import org.zwobble.clunk.types.Types;
 import org.zwobble.precisely.Matcher;
@@ -261,6 +262,76 @@ public class TypeCheckListComprehensionTests {
                 ))
             )),
             has("yield", x -> x.yield(), isTypedReferenceNode().withType(recordType))
+        ));
+    }
+
+    @Test
+    public void canNarrowTypeOfSuccessiveTargets() {
+        var namespaceId = NamespaceId.source("example");
+        var interfaceTypeX = Types.interfaceType(namespaceId, "InterfaceX");
+        var recordTypeX = Types.recordType(namespaceId, "RecordX");
+        var interfaceTypeY = Types.interfaceType(namespaceId, "InterfaceY");
+        var recordTypeY = Types.recordType(namespaceId, "RecordY");
+        var untypedNode = Untyped.listComprehension(
+            List.of(
+                Untyped.comprehensionIterable(
+                    "x",
+                    Untyped.reference("xs"),
+                    List.of(
+                        Untyped.instanceOf(
+                            Untyped.reference("x"),
+                            Untyped.typeLevelReference("RecordX")
+                        )
+                    )
+                ),
+                Untyped.comprehensionIterable(
+                    "y",
+                    Untyped.reference("ys"),
+                    List.of(
+                        Untyped.instanceOf(
+                            Untyped.reference("y"),
+                            Untyped.typeLevelReference("RecordY")
+                        )
+                    )
+                )
+            ),
+            Untyped.call(
+                Untyped.reference("f"),
+                List.of(Untyped.reference("x"), Untyped.reference("y"))
+            )
+        );
+        var context = TypeCheckerContext.stub()
+            .addSealedInterfaceCase(interfaceTypeX, recordTypeX)
+            .addSealedInterfaceCase(interfaceTypeY, recordTypeY)
+            .addLocal(
+                "f",
+                Types.staticFunctionType(
+                    namespaceId,
+                    "f",
+                    List.of(),
+                    ParamTypes.of(List.of(recordTypeX, recordTypeY)),
+                    Types.STRING
+                ),
+                NullSource.INSTANCE
+            )
+            .addLocal("xs", Types.list(interfaceTypeX), NullSource.INSTANCE)
+            .addLocal("ys", Types.list(interfaceTypeY), NullSource.INSTANCE)
+            .addLocal("RecordX", Types.metaType(recordTypeX), NullSource.INSTANCE)
+            .addLocal("RecordY", Types.metaType(recordTypeY), NullSource.INSTANCE);
+
+        var result = TypeChecker.typeCheckExpression(untypedNode, context);
+
+        assertThat(result, instanceOf(
+            TypedListComprehensionNode.class,
+            has("forClauses", x -> x.forClauses(), isSequence(
+                hasIfClauses(isSequence(
+                    hasNarrowedTargetType(isOptionalOf(equalTo(recordTypeX)))
+                )),
+                hasIfClauses(isSequence(
+                    hasNarrowedTargetType(isOptionalOf(equalTo(recordTypeY)))
+                ))
+            )),
+            has("yield", x -> x.yield(), has("type", x -> x.type(), equalTo(Types.STRING)))
         ));
     }
 

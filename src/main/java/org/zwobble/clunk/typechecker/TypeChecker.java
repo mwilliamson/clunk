@@ -1008,7 +1008,7 @@ public class TypeChecker {
 
                 var typedIfClause = new TypedComprehensionIfClauseNode(
                     result.typedNode(),
-                    result.typeNarrowNode().map(x -> x.type()),
+                    result.typeNarrowNode(),
                     result.typedNode().source()
                 );
                 typedIfClauses.add(typedIfClause);

@@ -1,14 +1,10 @@
 package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
-import org.zwobble.clunk.ast.typed.TypedComprehensionForClauseNode;
-import org.zwobble.clunk.ast.typed.TypedComprehensionIfClauseNode;
-import org.zwobble.clunk.ast.typed.TypedExpressionNode;
-import org.zwobble.clunk.ast.typed.TypedListComprehensionNode;
+import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.NamespaceId;
-import org.zwobble.clunk.types.Type;
 import org.zwobble.clunk.types.Types;
 import org.zwobble.precisely.Matcher;
 
@@ -160,7 +156,7 @@ public class TypeCheckListComprehensionTests {
                 hasIfClauses(isSequence(
                     allOf(
                         hasCondition(isTypedReferenceNode().withName("y").withType(Types.BOOL)),
-                        hasNarrowedType(equalTo(Optional.empty()))
+                        hasTypeNarrow(equalTo(Optional.empty()))
                     )
                 ))
             ))
@@ -219,7 +215,7 @@ public class TypeCheckListComprehensionTests {
                 hasIfClauses(isSequence(
                     allOf(
                         hasCondition(isTypedReferenceNode().withName("x").withType(Types.BOOL)),
-                        hasNarrowedType(equalTo(Optional.empty()))
+                        hasTypeNarrow(equalTo(Optional.empty()))
                     )
                 ))
             ))
@@ -257,7 +253,10 @@ public class TypeCheckListComprehensionTests {
             TypedListComprehensionNode.class,
             has("forClauses", x -> x.forClauses(), isSequence(
                 hasIfClauses(isSequence(
-                    hasNarrowedType(isOptionalOf(equalTo(recordType)))
+                    hasTypeNarrow(isOptionalOf(allOf(
+                        has("name", x -> x.variableName(), equalTo("x")),
+                        has("type", x -> x.type(), equalTo(recordType))
+                    )))
                 ))
             )),
             has("yield", x -> x.yield(), isTypedReferenceNode().withType(recordType))
@@ -280,7 +279,7 @@ public class TypeCheckListComprehensionTests {
         return has("condition", x -> x.condition(), condition);
     }
 
-    private static Matcher<TypedComprehensionIfClauseNode> hasNarrowedType(Matcher<? super Optional<Type>> narrowedType) {
-        return has("narrowedType", x -> x.narrowedType(), narrowedType);
+    private static Matcher<TypedComprehensionIfClauseNode> hasTypeNarrow(Matcher<? super Optional<TypedTypeNarrowNode>> typeNarrow) {
+        return has("typeNarrow", x -> x.typeNarrow(), typeNarrow);
     }
 }

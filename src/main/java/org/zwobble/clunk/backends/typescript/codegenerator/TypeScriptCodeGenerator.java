@@ -487,15 +487,31 @@ public class TypeScriptCodeGenerator {
 
             var iterable = compileExpression(forClause.iterable(), context);
             for (var ifClause : forClause.ifClauses()) {
-                iterable = new TypeScriptCallNode(
-                    new TypeScriptPropertyAccessNode(iterable, "filter"),
-                    List.of(
-                        new TypeScriptArrowFunctionExpressionNode(
-                            List.of(new TypeScriptParamNode(forClause.targetName(), Optional.empty())),
-                            compileExpression(ifClause.condition(), context)
+                if (ifClause.narrowedTargetType().isPresent()) {
+                    iterable = new TypeScriptCallNode(
+                        new TypeScriptPropertyAccessNode(iterable, "flatMap"),
+                        List.of(
+                            new TypeScriptArrowFunctionExpressionNode(
+                                List.of(new TypeScriptParamNode(forClause.targetName(), Optional.empty())),
+                                new TypeScriptConditionalNode(
+                                    compileExpression(ifClause.condition(), context),
+                                    new TypeScriptArrayNode(List.of(new TypeScriptReferenceNode(forClause.targetName()))),
+                                    new TypeScriptArrayNode(List.of())
+                                )
+                            )
                         )
-                    )
-                );
+                    );
+                } else {
+                    iterable = new TypeScriptCallNode(
+                        new TypeScriptPropertyAccessNode(iterable, "filter"),
+                        List.of(
+                            new TypeScriptArrowFunctionExpressionNode(
+                                List.of(new TypeScriptParamNode(forClause.targetName(), Optional.empty())),
+                                compileExpression(ifClause.condition(), context)
+                            )
+                        )
+                    );
+                }
             }
 
             var mapMethodName = i == node.forClauses().size() - 1 ? "map" : "flatMap";

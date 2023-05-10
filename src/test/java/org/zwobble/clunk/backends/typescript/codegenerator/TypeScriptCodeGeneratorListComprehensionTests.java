@@ -3,6 +3,7 @@ package org.zwobble.clunk.backends.typescript.codegenerator;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiserTesting;
+import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
@@ -93,5 +94,35 @@ public class TypeScriptCodeGeneratorListComprehensionTests {
 
         var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("xss.filter((xs) => a).filter((xs) => b).flatMap((xs) => xs.filter((x) => c).map((x) => x))"));
+    }
+
+    @Test
+    public void conditionWithTypeNarrowingIsAddedAsFlatMap() {
+        var interfaceType = Types.sealedInterfaceType(NamespaceId.source("example"), "Node");
+        var recordType = Types.recordType(NamespaceId.source("example"), "Add");
+        var node = Typed.listComprehension(
+            List.of(
+                Typed.comprehensionForClause(
+                    "x",
+                    Types.STRING,
+                    Typed.localReference("xs", Types.list(Types.STRING)),
+                    List.of(
+                        Typed.comprehensionIfClause(
+                            Typed.instanceOf(
+                                Typed.localReference("x", interfaceType),
+                                Typed.typeLevelReference("Add", recordType)
+                            ),
+                            recordType
+                        )
+                    )
+                )
+            ),
+            Typed.localReference("x", Types.STRING)
+        );
+
+        var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("xs.flatMap((x) => x.type === \"Add\" ? [x] : []).map((x) => x)"));
     }
 }

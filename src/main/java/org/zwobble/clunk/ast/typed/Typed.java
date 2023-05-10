@@ -100,6 +100,13 @@ public class Typed {
         return new TypedComprehensionIfClauseNode(condition, Optional.empty(), NullSource.INSTANCE);
     }
 
+    public static TypedComprehensionIfClauseNode comprehensionIfClause(
+        TypedExpressionNode condition,
+        Type narrowedTargetType
+    ) {
+        return new TypedComprehensionIfClauseNode(condition, Optional.of(narrowedTargetType), NullSource.INSTANCE);
+    }
+
     public static TypedConditionalBranchNode conditionalBranch(
         TypedExpressionNode condition,
         List<TypedFunctionStatementNode> body

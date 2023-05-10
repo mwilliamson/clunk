@@ -98,6 +98,7 @@ public class TypeScriptCodeGeneratorListComprehensionTests {
 
     @Test
     public void conditionWithTypeNarrowingIsAddedAsFlatMap() {
+        // TODO: consider something better than a flat map?
         var interfaceType = Types.sealedInterfaceType(NamespaceId.source("example"), "Node");
         var recordType = Types.recordType(NamespaceId.source("example"), "Add");
         var node = Typed.listComprehension(

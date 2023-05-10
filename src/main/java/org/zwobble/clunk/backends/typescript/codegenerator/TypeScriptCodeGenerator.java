@@ -514,6 +514,7 @@ public class TypeScriptCodeGenerator {
                 }
             }
 
+            // TODO: avoid identity map
             var mapMethodName = i == node.forClauses().size() - 1 ? "map" : "flatMap";
             result = new TypeScriptCallNode(
                 new TypeScriptPropertyAccessNode(iterable, mapMethodName),

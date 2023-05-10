@@ -160,7 +160,7 @@ public class TypeCheckListComprehensionTests {
                 hasIfClauses(isSequence(
                     allOf(
                         hasCondition(isTypedReferenceNode().withName("y").withType(Types.BOOL)),
-                        hasNarrowedType(equalTo(Optional.empty()))
+                        hasNarrowedTargetType(equalTo(Optional.empty()))
                     )
                 ))
             ))
@@ -219,7 +219,7 @@ public class TypeCheckListComprehensionTests {
                 hasIfClauses(isSequence(
                     allOf(
                         hasCondition(isTypedReferenceNode().withName("x").withType(Types.BOOL)),
-                        hasNarrowedType(equalTo(Optional.empty()))
+                        hasNarrowedTargetType(equalTo(Optional.empty()))
                     )
                 ))
             ))
@@ -227,7 +227,7 @@ public class TypeCheckListComprehensionTests {
     }
 
     @Test
-    public void whenConditionIsInstanceOfCheckThenTypeOfTargetIsNarrowed() {
+    public void whenConditionIsInstanceOfCheckOnTargetThenTypeOfTargetIsNarrowed() {
         var namespaceId = NamespaceId.source("example");
         var interfaceType = Types.interfaceType(namespaceId, "Interface");
         var recordType = Types.recordType(namespaceId, "Record");
@@ -257,10 +257,49 @@ public class TypeCheckListComprehensionTests {
             TypedListComprehensionNode.class,
             has("forClauses", x -> x.forClauses(), isSequence(
                 hasIfClauses(isSequence(
-                    hasNarrowedType(isOptionalOf(equalTo(recordType)))
+                    hasNarrowedTargetType(isOptionalOf(equalTo(recordType)))
                 ))
             )),
             has("yield", x -> x.yield(), isTypedReferenceNode().withType(recordType))
+        ));
+    }
+
+    @Test
+    public void whenConditionIsInstanceOfCheckOnVariableOtherThanTargetThenTypeOfTargetIsNotNarrowed() {
+        var namespaceId = NamespaceId.source("example");
+        var interfaceType = Types.interfaceType(namespaceId, "Interface");
+        var recordType = Types.recordType(namespaceId, "Record");
+        var untypedNode = Untyped.listComprehension(
+            List.of(
+                Untyped.comprehensionIterable(
+                    "x",
+                    Untyped.reference("xs"),
+                    List.of(
+                        Untyped.instanceOf(
+                            Untyped.reference("y"),
+                            Untyped.typeLevelReference("Record")
+                        )
+                    )
+                )
+            ),
+            Untyped.reference("x")
+        );
+        var context = TypeCheckerContext.stub()
+            .addSealedInterfaceCase(interfaceType, recordType)
+            .addLocal("xs", Types.list(interfaceType), NullSource.INSTANCE)
+            .addLocal("y", interfaceType, NullSource.INSTANCE)
+            .addLocal("Record", Types.metaType(recordType), NullSource.INSTANCE);
+
+        var result = TypeChecker.typeCheckExpression(untypedNode, context);
+
+        assertThat(result, instanceOf(
+            TypedListComprehensionNode.class,
+            has("forClauses", x -> x.forClauses(), isSequence(
+                hasIfClauses(isSequence(
+                    hasNarrowedTargetType(equalTo(Optional.empty()))
+                ))
+            )),
+            has("yield", x -> x.yield(), isTypedReferenceNode().withType(interfaceType))
         ));
     }
 
@@ -280,7 +319,7 @@ public class TypeCheckListComprehensionTests {
         return has("condition", x -> x.condition(), condition);
     }
 
-    private static Matcher<TypedComprehensionIfClauseNode> hasNarrowedType(Matcher<? super Optional<Type>> narrowedType) {
-        return has("narrowedType", x -> x.narrowedType(), narrowedType);
+    private static Matcher<TypedComprehensionIfClauseNode> hasNarrowedTargetType(Matcher<? super Optional<Type>> narrowedTargetType) {
+        return has("narrowedTargetType", x -> x.narrowedTargetType(), narrowedTargetType);
     }
 }

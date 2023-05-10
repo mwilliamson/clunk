@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public record TypedComprehensionIfClauseNode(
     TypedExpressionNode condition,
-    Optional<Type> narrowedType,
+    Optional<Type> narrowedTargetType,
     Source source
 ) implements TypedNode {
 }

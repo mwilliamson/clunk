@@ -61,6 +61,14 @@ public class TypeScript {
         return new TypeScriptClassFieldNode(name, type, Optional.of(value));
     }
 
+    public static TypeScriptConditionalNode conditional(
+        TypeScriptExpressionNode condition,
+        TypeScriptExpressionNode trueExpression,
+        TypeScriptExpressionNode falseExpression
+    ) {
+        return new TypeScriptConditionalNode(condition, trueExpression, falseExpression);
+    }
+
     public static TypeScriptConditionalBranchNode conditionalBranch(
         TypeScriptExpressionNode condition,
         List<TypeScriptStatementNode> body

@@ -178,6 +178,17 @@ public class TypeScriptSerialiser {
         builder.newLine();
     }
 
+    private static void serialiseConditional(
+        TypeScriptConditionalNode node,
+        CodeBuilder builder
+    ) {
+        serialiseExpression(node.condition(), builder, Optional.of(node));
+        builder.append(" ? ");
+        serialiseExpression(node.trueExpression(), builder, Optional.of(node));
+        builder.append(" : ");
+        serialiseExpression(node.falseExpression(), builder, Optional.of(node));
+    }
+
     private static void serialiseConstructor(List<TypeScriptClassFieldNode> variableFields, CodeBuilder builder) {
         builder.newLine();
         builder.append("constructor(");
@@ -298,6 +309,12 @@ public class TypeScriptSerialiser {
             @Override
             public Void visit(TypeScriptCastNode node) {
                 serialiseCast(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(TypeScriptConditionalNode node) {
+                serialiseConditional(node, builder);
                 return null;
             }
 

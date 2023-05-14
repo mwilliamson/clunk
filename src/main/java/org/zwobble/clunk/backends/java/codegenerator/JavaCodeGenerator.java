@@ -527,16 +527,22 @@ public class JavaCodeGenerator {
                 );
             }
 
-            var mapMethodName = i == node.forClauses().size() - 1 ? "map" : "flatMap";
-            result = new JavaCallNode(
-                new JavaMemberAccessNode(stream, mapMethodName),
-                List.of(
-                    new JavaLambdaExpressionNode(
-                        List.of(forClause.targetName()),
-                        result
+            var isLast = i == node.forClauses().size() - 1;
+
+            if (isLast && result instanceof JavaReferenceNode resultRef && resultRef.name().equals(forClause.targetName())) {
+                result = stream;
+            } else {
+                var mapMethodName = isLast ? "map" : "flatMap";
+                result = new JavaCallNode(
+                    new JavaMemberAccessNode(stream, mapMethodName),
+                    List.of(
+                        new JavaLambdaExpressionNode(
+                            List.of(forClause.targetName()),
+                            result
+                        )
                     )
-                )
-            );
+                );
+            }
         }
 
         return new JavaCallNode(

@@ -55,13 +55,39 @@ public class JavaCodeGeneratorListComprehensionTests {
                     List.of()
                 )
             ),
+            Typed.intAdd(Typed.localReference("x", Types.STRING), Typed.intLiteral(1))
+        );
+
+        var result = JavaCodeGenerator.compileExpression(node, JavaCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("xsss.stream().flatMap((xss) -> xss.stream().flatMap((xs) -> xs.stream().map((x) -> x + 1))).toList()"));
+    }
+
+    @Test
+    public void whenFinalMapIsIdentityThenFinalMapIsSkipped() {
+        var node = Typed.listComprehension(
+            List.of(
+                Typed.comprehensionForClause(
+                    "xs",
+                    Types.list(Types.STRING),
+                    Typed.localReference("xss", Types.list(Types.list(Types.STRING))),
+                    List.of()
+                ),
+                Typed.comprehensionForClause(
+                    "x",
+                    Types.STRING,
+                    Typed.localReference("xs", Types.list(Types.STRING)),
+                    List.of()
+                )
+            ),
             Typed.localReference("x", Types.STRING)
         );
 
         var result = JavaCodeGenerator.compileExpression(node, JavaCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
-        assertThat(string, equalTo("xsss.stream().flatMap((xss) -> xss.stream().flatMap((xs) -> xs.stream().map((x) -> x))).toList()"));
+        assertThat(string, equalTo("xss.stream().flatMap((xs) -> xs.stream()).toList()"));
     }
 
     @Test
@@ -92,6 +118,6 @@ public class JavaCodeGeneratorListComprehensionTests {
         var result = JavaCodeGenerator.compileExpression(node, JavaCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
-        assertThat(string, equalTo("xss.stream().filter((xs) -> a).filter((xs) -> b).flatMap((xs) -> xs.stream().filter((x) -> c).map((x) -> x)).toList()"));
+        assertThat(string, equalTo("xss.stream().filter((xs) -> a).filter((xs) -> b).flatMap((xs) -> xs.stream().filter((x) -> c)).toList()"));
     }
 }

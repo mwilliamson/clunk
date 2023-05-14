@@ -1,8 +1,11 @@
 package org.zwobble.clunk.backends.java.ast;
 
+import java.util.Optional;
+
 public record JavaInstanceOfNode(
     JavaExpressionNode expression,
-    JavaTypeExpressionNode typeExpressionNode
+    JavaTypeExpressionNode typeExpressionNode,
+    Optional<String> targetName
 ) implements JavaExpressionNode {
     @Override
     public JavaPrecedence precedence() {

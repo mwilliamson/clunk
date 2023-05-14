@@ -390,7 +390,8 @@ public class JavaCodeGenerator {
     ) {
         return new JavaInstanceOfNode(
             compileExpression(node.expression(), context),
-            compileTypeLevelExpression(node.typeExpression(), context)
+            compileTypeLevelExpression(node.typeExpression(), context),
+            Optional.empty()
         );
     }
 

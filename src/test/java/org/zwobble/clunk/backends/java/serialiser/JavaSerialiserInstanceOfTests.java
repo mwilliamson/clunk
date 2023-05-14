@@ -9,7 +9,7 @@ import static org.zwobble.clunk.util.Serialisation.serialiseToString;
 
 public class JavaSerialiserInstanceOfTests {
     @Test
-    public void canSerialiseInstanceOf() {
+    public void canSerialiseInstanceOfWithoutTarget() {
         var node = Java.instanceOf(
             Java.reference("a"),
             Java.typeVariableReference("X")
@@ -18,5 +18,18 @@ public class JavaSerialiserInstanceOfTests {
         var result = serialiseToString(node, JavaSerialiserTesting::serialiseExpression);
 
         assertThat(result, equalTo("a instanceof X"));
+    }
+
+    @Test
+    public void canSerialiseInstanceOfWithTarget() {
+        var node = Java.instanceOf(
+            Java.reference("a"),
+            Java.typeVariableReference("X"),
+            "b"
+        );
+
+        var result = serialiseToString(node, JavaSerialiserTesting::serialiseExpression);
+
+        assertThat(result, equalTo("a instanceof X b"));
     }
 }

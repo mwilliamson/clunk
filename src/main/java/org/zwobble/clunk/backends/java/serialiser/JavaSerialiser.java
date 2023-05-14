@@ -418,6 +418,10 @@ public class JavaSerialiser {
         serialiseExpression(node.expression(), builder, Optional.of(node));
         builder.append(" instanceof ");
         serialiseTypeExpression(node.typeExpressionNode(), builder);
+        if (node.targetName().isPresent()) {
+            builder.append(" ");
+            builder.append(node.targetName().get());
+        }
     }
 
     private static void serialiseInterfaceDeclaration(JavaInterfaceDeclarationNode node, CodeBuilder builder) {

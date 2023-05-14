@@ -91,9 +91,17 @@ public class Java {
 
     public static JavaInstanceOfNode instanceOf(
         JavaExpressionNode expression,
+        JavaTypeExpressionNode typeExpression,
+        String targetName
+    ) {
+        return new JavaInstanceOfNode(expression, typeExpression, Optional.of(targetName));
+    }
+
+    public static JavaInstanceOfNode instanceOf(
+        JavaExpressionNode expression,
         JavaTypeExpressionNode typeExpression
     ) {
-        return new JavaInstanceOfNode(expression, typeExpression);
+        return new JavaInstanceOfNode(expression, typeExpression, Optional.empty());
     }
 
     public static JavaExpressionNode intLiteral(int value) {

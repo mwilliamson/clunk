@@ -3,6 +3,7 @@ package org.zwobble.clunk.backends.java.codegenerator;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.Typed;
 import org.zwobble.clunk.backends.java.serialiser.JavaSerialiserTesting;
+import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.Types;
 
 import java.util.List;
@@ -119,5 +120,36 @@ public class JavaCodeGeneratorListComprehensionTests {
 
         var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
         assertThat(string, equalTo("xss.stream().filter((xs) -> a).filter((xs) -> b).flatMap((xs) -> xs.stream().filter((x) -> c)).toList()"));
+    }
+
+    @Test
+    public void conditionWithTypeNarrowingIsAddedAsFlatMap() {
+        // TODO: consider something better than a flat map?
+        var interfaceType = Types.sealedInterfaceType(NamespaceId.source("example"), "Node");
+        var recordType = Types.recordType(NamespaceId.source("example"), "Add");
+        var node = Typed.listComprehension(
+            List.of(
+                Typed.comprehensionForClause(
+                    "x",
+                    Types.STRING,
+                    Typed.localReference("xs", Types.list(Types.STRING)),
+                    List.of(
+                        Typed.comprehensionIfClause(
+                            Typed.instanceOf(
+                                Typed.localReference("x", interfaceType),
+                                Typed.typeLevelReference("Add", recordType)
+                            ),
+                            recordType
+                        )
+                    )
+                )
+            ),
+            Typed.localReference("x", Types.STRING)
+        );
+
+        var result = JavaCodeGenerator.compileExpression(node, JavaCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, JavaSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("xs.stream().flatMap((x) -> x instanceof Add ? java.util.stream.Stream.of((example.Add) x) : null).toList()"));
     }
 }

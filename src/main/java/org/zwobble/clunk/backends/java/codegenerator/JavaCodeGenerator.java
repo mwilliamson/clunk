@@ -516,15 +516,41 @@ public class JavaCodeGenerator {
                 List.of()
             );
             for (var ifClause : forClause.ifClauses()) {
-                stream = new JavaCallNode(
-                    new JavaMemberAccessNode(stream, "filter"),
-                    List.of(
-                        new JavaLambdaExpressionNode(
-                            List.of(forClause.targetName()),
-                            compileExpression(ifClause.condition(), context)
+                if (ifClause.narrowedTargetType().isPresent()) {
+                    stream = new JavaCallNode(
+                        new JavaMemberAccessNode(stream, "flatMap"),
+                        List.of(
+                            new JavaLambdaExpressionNode(
+                                List.of(forClause.targetName()),
+                                new JavaConditionalNode(
+                                    compileExpression(ifClause.condition(), context),
+                                    // TODO: represent fully qualified static method reference properly
+                                    new JavaCallNode(
+                                        new JavaReferenceNode("java.util.stream.Stream.of"),
+                                        List.of(
+                                            new JavaCastNode(
+                                                typeLevelValueToTypeExpression(ifClause.narrowedTargetType().get(), false, context),
+                                                new JavaReferenceNode(forClause.targetName())
+                                            )
+                                        )
+                                    ),
+                                    // TODO: add proper Java null node
+                                    new JavaReferenceNode("null")
+                                )
+                            )
                         )
-                    )
-                );
+                    );
+                } else {
+                    stream = new JavaCallNode(
+                        new JavaMemberAccessNode(stream, "filter"),
+                        List.of(
+                            new JavaLambdaExpressionNode(
+                                List.of(forClause.targetName()),
+                                compileExpression(ifClause.condition(), context)
+                            )
+                        )
+                    );
+                }
             }
 
             var isLast = i == node.forClauses().size() - 1;

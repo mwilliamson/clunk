@@ -514,17 +514,22 @@ public class TypeScriptCodeGenerator {
                 }
             }
 
-            // TODO: avoid identity map
-            var mapMethodName = i == node.forClauses().size() - 1 ? "map" : "flatMap";
-            result = new TypeScriptCallNode(
-                new TypeScriptPropertyAccessNode(iterable, mapMethodName),
-                List.of(
-                    new TypeScriptArrowFunctionExpressionNode(
-                        List.of(new TypeScriptParamNode(forClause.targetName(), Optional.empty())),
-                        result
+            var isLast = i == node.forClauses().size() - 1;
+
+            if (isLast && result instanceof TypeScriptReferenceNode resultRef && resultRef.name().equals(forClause.targetName())) {
+                result = iterable;
+            } else {
+                var mapMethodName = isLast ? "map" : "flatMap";
+                result = new TypeScriptCallNode(
+                    new TypeScriptPropertyAccessNode(iterable, mapMethodName),
+                    List.of(
+                        new TypeScriptArrowFunctionExpressionNode(
+                            List.of(new TypeScriptParamNode(forClause.targetName(), Optional.empty())),
+                            result
+                        )
                     )
-                )
-            );
+                );
+            }
         }
 
         return result;

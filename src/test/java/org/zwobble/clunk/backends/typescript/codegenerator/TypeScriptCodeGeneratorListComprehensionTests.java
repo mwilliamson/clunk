@@ -56,13 +56,39 @@ public class TypeScriptCodeGeneratorListComprehensionTests {
                     List.of()
                 )
             ),
+            Typed.intAdd(Typed.localReference("x", Types.STRING), Typed.intLiteral(1))
+        );
+
+        var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
+        assertThat(string, equalTo("xsss.flatMap((xss) => xss.flatMap((xs) => xs.map((x) => x + 1)))"));
+    }
+
+    @Test
+    public void whenFinalMapIsIdentityThenFinalMapIsSkipped() {
+        var node = Typed.listComprehension(
+            List.of(
+                Typed.comprehensionForClause(
+                    "xs",
+                    Types.list(Types.STRING),
+                    Typed.localReference("xss", Types.list(Types.list(Types.STRING))),
+                    List.of()
+                ),
+                Typed.comprehensionForClause(
+                    "x",
+                    Types.STRING,
+                    Typed.localReference("xs", Types.list(Types.STRING)),
+                    List.of()
+                )
+            ),
             Typed.localReference("x", Types.STRING)
         );
 
         var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
-        assertThat(string, equalTo("xsss.flatMap((xss) => xss.flatMap((xs) => xs.map((x) => x)))"));
+        assertThat(string, equalTo("xss.flatMap((xs) => xs)"));
     }
 
     @Test
@@ -93,7 +119,7 @@ public class TypeScriptCodeGeneratorListComprehensionTests {
         var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
-        assertThat(string, equalTo("xss.filter((xs) => a).filter((xs) => b).flatMap((xs) => xs.filter((x) => c).map((x) => x))"));
+        assertThat(string, equalTo("xss.filter((xs) => a).filter((xs) => b).flatMap((xs) => xs.filter((x) => c))"));
     }
 
     @Test
@@ -124,6 +150,6 @@ public class TypeScriptCodeGeneratorListComprehensionTests {
         var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
-        assertThat(string, equalTo("xs.flatMap((x) => x.type === \"Add\" ? [x] : []).map((x) => x)"));
+        assertThat(string, equalTo("xs.flatMap((x) => x.type === \"Add\" ? [x] : [])"));
     }
 }

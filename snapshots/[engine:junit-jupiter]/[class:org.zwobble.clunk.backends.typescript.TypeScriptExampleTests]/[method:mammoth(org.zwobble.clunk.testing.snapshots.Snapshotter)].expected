@@ -1117,7 +1117,7 @@ class HtmlText {
 }
 
 function stripEmpty(nodes: ReadonlyArray<HtmlNode>): ReadonlyArray<HtmlNode> {
-    return nodes.flatMap((node) => stripEmptyNode(node).map((child) => child));
+    return nodes.flatMap((node) => stripEmptyNode(node));
 }
 
 function stripEmptyNode(node: HtmlNode): ReadonlyArray<HtmlNode> {

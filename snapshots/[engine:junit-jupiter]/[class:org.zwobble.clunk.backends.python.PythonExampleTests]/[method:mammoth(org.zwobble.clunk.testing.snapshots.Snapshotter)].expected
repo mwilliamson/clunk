@@ -128,9 +128,10 @@ enum VerticalAlignment {
 
 Source path: src/mammoth/docx/styles.clunk
 import mammoth/xml.XmlElement;
+import mammoth/xml.XmlElementList;
 
 // TODO: deal with naming conflict with namespace class Styles
-record DocumentStyles() {
+record DocumentStyles(paragraphStyles: Map[String, Style]) {
     fun findParagraphStyleById(name: String) -> Option[Style] {
         return none();
     }
@@ -139,7 +140,12 @@ record DocumentStyles() {
 record Style(name: Option[String])
 
 fun readStylesXmlElement(element: XmlElement) -> DocumentStyles {
-    return DocumentStyles();
+    var styleElements = element.findChildren("w:style");
+    return DocumentStyles(readStyles(styleElements, "paragraph"));
+}
+
+fun readStyles(styleElements: XmlElementList, styleType: String) -> Map[String, Style] {
+    return #[];
 }
 
 
@@ -657,7 +663,20 @@ record XmlElement(
     name: String,
     attributes: Map[String, String],
     children: List[XmlNode],
-) <: XmlNode
+) <: XmlNode {
+    fun findChildren(name: String) -> XmlElementList {
+        return XmlElementList([
+            for child in children
+            if child instanceof XmlElement
+            if child.name == name
+            yield child
+        ]);
+    }
+}
+
+record XmlElementList(
+    elements: List[XmlElement],
+)
 
 record XmlTextNode(
     value: String,
@@ -851,8 +870,14 @@ class XmlElement:
     name: str
     attributes: Map[str, str]
     children: typing.List[XmlNode]
+    def find_children(self, name, /):
+        return XmlElementList([child for child in self.children if isinstance(child, XmlElement) if child.name == name])
     def accept(self, visitor, /):
         return visitor.visit_xml_element(self)
+
+@dataclasses.dataclass(frozen=True)
+class XmlElementList:
+    elements: typing.List[XmlElement]
 
 @dataclasses.dataclass(frozen=True)
 class XmlTextNode:
@@ -869,10 +894,12 @@ from __future__ import annotations
 import dataclasses
 import typing
 from mammoth.xml import XmlElement
+from mammoth.xml import XmlElementList
 
 # TODO: deal with naming conflict with namespace class Styles
 @dataclasses.dataclass(frozen=True)
 class DocumentStyles:
+    paragraph_styles: Map[str, Style]
     def find_paragraph_style_by_id(self, name, /):
         return None
 
@@ -881,7 +908,11 @@ class Style:
     name: typing.Optional[str]
 
 def read_styles_xml_element(element, /):
-    return DocumentStyles()
+    style_elements = element.find_children("w:style")
+    return DocumentStyles(read_styles(style_elements, "paragraph"))
+
+def read_styles(style_elements, style_type, /):
+    return {}
 
 
 ==============

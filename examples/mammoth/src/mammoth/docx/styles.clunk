@@ -1,7 +1,8 @@
 import mammoth/xml.XmlElement;
+import mammoth/xml.XmlElementList;
 
 // TODO: deal with naming conflict with namespace class Styles
-record DocumentStyles() {
+record DocumentStyles(paragraphStyles: Map[String, Style]) {
     fun findParagraphStyleById(name: String) -> Option[Style] {
         return none();
     }
@@ -10,5 +11,10 @@ record DocumentStyles() {
 record Style(name: Option[String])
 
 fun readStylesXmlElement(element: XmlElement) -> DocumentStyles {
-    return DocumentStyles();
+    var styleElements = element.findChildren("w:style");
+    return DocumentStyles(readStyles(styleElements, "paragraph"));
+}
+
+fun readStyles(styleElements: XmlElementList, styleType: String) -> Map[String, Style] {
+    return #[];
 }

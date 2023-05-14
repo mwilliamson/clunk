@@ -43,6 +43,14 @@ public class Java {
         return new JavaCastNode(typeVariableReference, expression);
     }
 
+    public static JavaConditionalNode conditional(
+        JavaReferenceNode condition,
+        JavaReferenceNode trueExpression,
+        JavaReferenceNode falseExpression
+    ) {
+        return new JavaConditionalNode(condition, trueExpression, falseExpression);
+    }
+
     public static JavaConditionalBranchNode conditionalBranch(
         JavaExpressionNode condition,
         List<JavaStatementNode> body

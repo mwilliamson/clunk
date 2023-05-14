@@ -174,6 +174,14 @@ public class JavaSerialiser {
         });
     }
 
+    private static void serialiseConditional(JavaConditionalNode node, CodeBuilder builder) {
+        serialiseExpression(node.condition(), builder, Optional.of(node));
+        builder.append(" ? ");
+        serialiseExpression(node.trueExpression(), builder, Optional.of(node));
+        builder.append(" : ");
+        serialiseExpression(node.falseExpression(), builder, Optional.of(node));
+    }
+
     private static void serialiseEnumDeclaration(JavaEnumDeclarationNode node, CodeBuilder builder) {
         builder.append("public enum ");
         builder.append(node.name());
@@ -238,6 +246,12 @@ public class JavaSerialiser {
             @Override
             public Void visit(JavaCastNode node) {
                 serialiseCast(node, builder);
+                return null;
+            }
+
+            @Override
+            public Void visit(JavaConditionalNode node) {
+                serialiseConditional(node, builder);
                 return null;
             }
 

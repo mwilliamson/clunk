@@ -20,5 +20,4 @@ public class TypeScriptSerialiserConditionalTests {
 
         assertThat(result, equalTo("a ? b : c"));
     }
-
 }

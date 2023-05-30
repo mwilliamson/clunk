@@ -230,7 +230,7 @@ public class TypeCheckListComprehensionTests {
     @Test
     public void whenConditionIsInstanceOfCheckOnTargetThenTypeOfTargetIsNarrowed() {
         var namespaceId = NamespaceId.source("example");
-        var interfaceType = Types.interfaceType(namespaceId, "Interface");
+        var interfaceType = Types.sealedInterfaceType(namespaceId, "Interface");
         var recordType = Types.recordType(namespaceId, "Record");
         var untypedNode = Untyped.listComprehension(
             List.of(
@@ -268,9 +268,9 @@ public class TypeCheckListComprehensionTests {
     @Test
     public void canNarrowTypeOfSuccessiveTargets() {
         var namespaceId = NamespaceId.source("example");
-        var interfaceTypeX = Types.interfaceType(namespaceId, "InterfaceX");
+        var interfaceTypeX = Types.sealedInterfaceType(namespaceId, "InterfaceX");
         var recordTypeX = Types.recordType(namespaceId, "RecordX");
-        var interfaceTypeY = Types.interfaceType(namespaceId, "InterfaceY");
+        var interfaceTypeY = Types.sealedInterfaceType(namespaceId, "InterfaceY");
         var recordTypeY = Types.recordType(namespaceId, "RecordY");
         var untypedNode = Untyped.listComprehension(
             List.of(
@@ -338,7 +338,7 @@ public class TypeCheckListComprehensionTests {
     @Test
     public void whenConditionIsInstanceOfCheckOnVariableOtherThanTargetThenTypeOfTargetIsNotNarrowed() {
         var namespaceId = NamespaceId.source("example");
-        var interfaceType = Types.interfaceType(namespaceId, "Interface");
+        var interfaceType = Types.sealedInterfaceType(namespaceId, "Interface");
         var recordType = Types.recordType(namespaceId, "Record");
         var untypedNode = Untyped.listComprehension(
             List.of(

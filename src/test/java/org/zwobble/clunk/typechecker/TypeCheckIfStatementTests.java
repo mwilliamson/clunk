@@ -149,7 +149,7 @@ public class TypeCheckIfStatementTests {
     @Test
     public void whenConditionIsInstanceOfCheckThenConditionalBodyHasNarrowedTypeForVariable() {
         var namespaceId = NamespaceId.source("example");
-        var interfaceType = Types.interfaceType(namespaceId, "Interface");
+        var interfaceType = Types.sealedInterfaceType(namespaceId, "Interface");
         var recordType = Types.recordType(namespaceId, "Record");
         var untypedNode = Untyped.ifStatement(
             List.of(
@@ -190,7 +190,7 @@ public class TypeCheckIfStatementTests {
     @Test
     public void whenConditionIsNegatedInstanceOfCheckThenFollowingBranchesHaveNarrowedTypeForVariable() {
         var namespaceId = NamespaceId.source("example");
-        var interfaceType = Types.interfaceType(namespaceId, "Interface");
+        var interfaceType = Types.sealedInterfaceType(namespaceId, "Interface");
         var recordType = Types.recordType(namespaceId, "Record");
         var untypedNode = Untyped.ifStatement(
             List.of(
@@ -242,7 +242,7 @@ public class TypeCheckIfStatementTests {
     @Test
     public void whenBodyIsEmptyThenNoTypeNarrowIsInserted() {
         var namespaceId = NamespaceId.source("example");
-        var interfaceType = Types.interfaceType(namespaceId, "Interface");
+        var interfaceType = Types.sealedInterfaceType(namespaceId, "Interface");
         var recordType = Types.recordType(namespaceId, "Record");
         var untypedNode = Untyped.ifStatement(
             List.of(
@@ -283,7 +283,7 @@ public class TypeCheckIfStatementTests {
     @Test
     public void whenConditionIsNegatedInstanceOfCheckWithNonReturningBodyThenFollowingStatementsHaveUnchangedTypeForVariable() {
         var namespaceId = NamespaceId.source("example");
-        var interfaceType = Types.interfaceType(namespaceId, "Interface");
+        var interfaceType = Types.sealedInterfaceType(namespaceId, "Interface");
         var recordType = Types.recordType(namespaceId, "Record");
         var untypedNode = Untyped.ifStatement(
             List.of(
@@ -323,7 +323,7 @@ public class TypeCheckIfStatementTests {
     @Test
     public void whenConditionIsNegatedInstanceOfCheckWithReturningBodyThenFollowingStatementsHaveNarrowedTypeForVariable() {
         var namespaceId = NamespaceId.source("example");
-        var interfaceType = Types.interfaceType(namespaceId, "Interface");
+        var interfaceType = Types.sealedInterfaceType(namespaceId, "Interface");
         var recordType = Types.recordType(namespaceId, "Record");
         var untypedNode = Untyped.ifStatement(
             List.of(

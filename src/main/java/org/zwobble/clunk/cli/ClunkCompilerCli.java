@@ -19,6 +19,7 @@ public class ClunkCompilerCli {
         } catch (SourceError error) {
             System.err.println(error.getSource().describe());
             System.err.println(error.getMessage());
+            System.exit(2);
         }
     }
 

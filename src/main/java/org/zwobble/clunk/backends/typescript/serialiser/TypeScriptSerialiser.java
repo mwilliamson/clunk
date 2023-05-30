@@ -361,6 +361,12 @@ public class TypeScriptSerialiser {
             }
 
             @Override
+            public Void visit(TypeScriptNullCoalesceNode node) {
+                serialiseNullCoalesce(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(TypeScriptNullLiteralNode node) {
                 serialiseNull(node, builder);
                 return null;
@@ -517,6 +523,10 @@ public class TypeScriptSerialiser {
 
     private static void serialiseNull(TypeScriptNullLiteralNode node, CodeBuilder builder) {
         builder.append("null");
+    }
+
+    private static void serialiseNullCoalesce(TypeScriptNullCoalesceNode node, CodeBuilder builder) {
+        serialiseBinaryOperation("??", node, builder);
     }
 
     private static void serialiseNumberLiteral(TypeScriptNumberLiteralNode node, CodeBuilder builder) {

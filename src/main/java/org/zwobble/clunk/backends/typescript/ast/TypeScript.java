@@ -161,6 +161,13 @@ public class TypeScript {
         return new TypeScriptNonNullAssertionNode(operand);
     }
 
+    public static TypeScriptNullCoalesceNode nullCoalesce(
+        TypeScriptExpressionNode left,
+        TypeScriptExpressionNode right
+    ) {
+        return new TypeScriptNullCoalesceNode(left, right);
+    }
+
     public static TypeScriptNullLiteralNode nullLiteral() {
         return new TypeScriptNullLiteralNode();
     }

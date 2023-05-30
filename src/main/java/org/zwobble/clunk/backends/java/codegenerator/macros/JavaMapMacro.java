@@ -43,6 +43,25 @@ public class JavaMapMacro implements JavaClassMacro  {
         String methodName,
         List<JavaExpressionNode> positionalArgs
     ) {
-        throw new UnsupportedOperationException("unexpected method: " + methodName);
+        switch (methodName) {
+            case "get" -> {
+                return new JavaCallNode(
+                    // TODO: generate this properly
+                    new JavaReferenceNode("java.util.Optional.ofNullable"),
+                    List.of(
+                        new JavaCallNode(
+                            new JavaMemberAccessNode(
+                                receiver,
+                                "get"
+                            ),
+                            positionalArgs
+                        )
+                    )
+                );
+            }
+            default -> {
+                throw new UnsupportedOperationException("unexpected method: " + methodName);
+            }
+        }
     }
 }

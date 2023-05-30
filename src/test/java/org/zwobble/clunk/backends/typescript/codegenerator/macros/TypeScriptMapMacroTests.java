@@ -29,6 +29,6 @@ public class TypeScriptMapMacroTests {
         var result = TypeScriptCodeGenerator.compileExpression(node, TypeScriptCodeGeneratorContext.stub());
 
         var string = serialiseToString(result, TypeScriptSerialiserTesting::serialiseExpression);
-        assertThat(string, equalTo("xs.get(key)"));
+        assertThat(string, equalTo("xs.get(key) ?? null"));
     }
 }

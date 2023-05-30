@@ -1,9 +1,6 @@
 package org.zwobble.clunk.backends.typescript.codegenerator.macros;
 
-import org.zwobble.clunk.backends.typescript.ast.TypeScriptCallNode;
-import org.zwobble.clunk.backends.typescript.ast.TypeScriptExpressionNode;
-import org.zwobble.clunk.backends.typescript.ast.TypeScriptPropertyAccessNode;
-import org.zwobble.clunk.backends.typescript.ast.TypeScriptReferenceNode;
+import org.zwobble.clunk.backends.typescript.ast.*;
 import org.zwobble.clunk.backends.typescript.codegenerator.TypeScriptClassMacro;
 import org.zwobble.clunk.backends.typescript.codegenerator.TypeScriptCodeGeneratorContext;
 import org.zwobble.clunk.types.Type;
@@ -50,12 +47,15 @@ public class TypeScriptMapMacro implements TypeScriptClassMacro {
     ) {
         switch (methodName) {
             case "get" -> {
-                return new TypeScriptCallNode(
-                    new TypeScriptPropertyAccessNode(
-                        receiver,
-                        "get"
+                return new TypeScriptNullCoalesceNode(
+                    new TypeScriptCallNode(
+                        new TypeScriptPropertyAccessNode(
+                            receiver,
+                            "get"
+                        ),
+                        positionalArgs
                     ),
-                    positionalArgs
+                    new TypeScriptNullLiteralNode()
                 );
             }
             default -> {

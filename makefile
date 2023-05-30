@@ -38,3 +38,8 @@ mammoth/py/_virtualenv:
 mammoth: mammoth/py/_virtualenv
 	java --enable-preview -jar target/clunk-1.0-SNAPSHOT.jar examples/mammoth --backend python --output mammoth/py/
 	cd mammoth/py && PYTHONPATH=. _virtualenv/bin/py.test mammoth
+
+.PHONY: package
+
+package:
+	mvn package -Dmaven.test.skip=true

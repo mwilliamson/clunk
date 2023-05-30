@@ -25,3 +25,16 @@ testing/python/_virtualenv:
 
 testing/typescript:
 	cd testing/typescript && npm install
+
+mammoth/py/_virtualenv:
+	python3 -m venv mammoth/py/_virtualenv
+	mammoth/py/_virtualenv/bin/pip install --upgrade pip
+	mammoth/py/_virtualenv/bin/pip install --upgrade setuptools
+	mammoth/py/_virtualenv/bin/pip install --upgrade wheel
+	mammoth/py/_virtualenv/bin/pip install -r mammoth/py/dev-requirements.txt
+
+.PHONY: mammoth
+
+mammoth: mammoth/py/_virtualenv
+	java --enable-preview -jar target/clunk-1.0-SNAPSHOT.jar examples/mammoth --backend python --output mammoth/py/
+	cd mammoth/py && PYTHONPATH=. _virtualenv/bin/py.test mammoth

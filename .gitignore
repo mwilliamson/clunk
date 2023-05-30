@@ -7,3 +7,5 @@
 /testing/python/_virtualenv
 /testing/typescript/node_modules
 /testing/typescript/src
+/mammoth/py/mammoth
+/mammoth/py/_virtualenv

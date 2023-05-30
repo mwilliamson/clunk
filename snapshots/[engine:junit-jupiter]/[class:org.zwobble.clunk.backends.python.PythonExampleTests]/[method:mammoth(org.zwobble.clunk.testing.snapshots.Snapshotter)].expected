@@ -672,6 +672,10 @@ record XmlElement(
             yield child
         ]);
     }
+
+    fun getAttribute(name: String) -> Option[String] {
+        return attributes.get(name);
+    }
 }
 
 record XmlElementList(
@@ -872,6 +876,9 @@ class XmlElement:
     children: typing.List[XmlNode]
     def find_children(self, name, /):
         return XmlElementList([child for child in self.children if isinstance(child, XmlElement) if child.name == name])
+
+    def get_attribute(self, name, /):
+        return self.attributes.get(name)
     def accept(self, visitor, /):
         return visitor.visit_xml_element(self)
 

@@ -22,6 +22,10 @@ record XmlElement(
             yield child
         ]);
     }
+
+    fun getAttribute(name: String) -> Option[String] {
+        return attributes.get(name);
+    }
 }
 
 record XmlElementList(

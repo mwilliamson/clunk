@@ -672,6 +672,10 @@ record XmlElement(
             yield child
         ]);
     }
+
+    fun getAttribute(name: String) -> Option[String] {
+        return attributes.get(name);
+    }
 }
 
 record XmlElementList(
@@ -959,6 +963,10 @@ class XmlElement {
     }
     findChildren(name: string): XmlElementList {
         return new XmlElementList(this.children.flatMap((child) => child.type === "XmlElement" ? [child] : []).filter((child) => child.name === name));
+    }
+
+    getAttribute(name: string): string | null {
+        return this.attributes.get(name) ?? null;
     }
 }
 

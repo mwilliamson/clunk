@@ -672,6 +672,10 @@ record XmlElement(
             yield child
         ]);
     }
+
+    fun getAttribute(name: String) -> Option[String] {
+        return attributes.get(name);
+    }
 }
 
 record XmlElementList(
@@ -985,6 +989,10 @@ import org.zwobble.mammoth.internal.mammoth.xml.XmlElementList;
 public record XmlElement(String name, java.util.Map<String, String> attributes, java.util.List<? extends XmlNode> children) implements org.zwobble.mammoth.internal.mammoth.xml.XmlNode {
     public XmlElementList findChildren(String name) {
         return new XmlElementList(children().stream().flatMap((child) -> child instanceof XmlElement ? java.util.stream.Stream.of((org.zwobble.mammoth.internal.mammoth.xml.XmlElement) child) : null).filter((child) -> child.name().equals(name)).toList());
+    }
+
+    public java.util.Optional<String> getAttribute(String name) {
+        return java.util.Optional.ofNullable(attributes().get(name));
     }
     public <T> T accept(org.zwobble.mammoth.internal.mammoth.xml.XmlNode.Visitor<T> visitor) {
         return visitor.visit(this);

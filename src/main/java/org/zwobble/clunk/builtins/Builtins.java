@@ -90,6 +90,14 @@ public class Builtins {
             Types.MUTABLE_LIST_CONSTRUCTOR.genericType()
         ));
 
+        context = context.addMemberTypes(Types.MAP_CONSTRUCTOR.genericType(), Map.ofEntries(
+            Map.entry("get", Types.methodType(
+                Types.MAP_CONSTRUCTOR,
+                List.of(Types.MAP_CONSTRUCTOR.param(0)),
+                Types.option(Types.MAP_CONSTRUCTOR.param(1))
+            ))
+        ));
+
         var mutableListTypeParam = Types.MUTABLE_LIST_CONSTRUCTOR.params().get(0);
         var mutableListListSupertype = Types.list(mutableListTypeParam);
         var mutableListMemberTypes = new HashMap<>(context.memberTypes(mutableListListSupertype));

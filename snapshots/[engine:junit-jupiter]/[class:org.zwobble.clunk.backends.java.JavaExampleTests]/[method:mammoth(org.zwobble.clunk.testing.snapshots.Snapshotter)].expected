@@ -137,7 +137,7 @@ record DocumentStyles(paragraphStyles: Map[String, Style]) {
     }
 }
 
-record Style(name: Option[String])
+record Style(styleId: String, name: Option[String])
 
 fun readStylesXmlElement(element: XmlElement) -> DocumentStyles {
     var styleElements = element.findChildren("w:style");
@@ -1054,7 +1054,7 @@ package org.zwobble.mammoth.internal.mammoth.docx.styles;
 import org.zwobble.mammoth.internal.mammoth.xml.XmlElement;
 import org.zwobble.mammoth.internal.mammoth.xml.XmlElementList;
 
-public record Style(java.util.Optional<String> name) {
+public record Style(String styleId, java.util.Optional<String> name) {
 }
 
 ==============

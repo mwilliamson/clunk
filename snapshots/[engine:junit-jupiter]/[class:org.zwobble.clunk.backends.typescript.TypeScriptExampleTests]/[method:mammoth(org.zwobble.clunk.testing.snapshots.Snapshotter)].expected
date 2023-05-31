@@ -137,7 +137,7 @@ record DocumentStyles(paragraphStyles: Map[String, Style]) {
     }
 }
 
-record Style(name: Option[String])
+record Style(styleId: String, name: Option[String])
 
 fun readStylesXmlElement(element: XmlElement) -> DocumentStyles {
     var styleElements = element.findChildren("w:style");
@@ -1008,9 +1008,11 @@ class DocumentStyles {
 }
 
 class Style {
+    readonly styleId: string;
     readonly name: string | null;
 
-    constructor(name: string | null) {
+    constructor(styleId: string, name: string | null) {
+        this.styleId = styleId;
         this.name = name;
     }
 }

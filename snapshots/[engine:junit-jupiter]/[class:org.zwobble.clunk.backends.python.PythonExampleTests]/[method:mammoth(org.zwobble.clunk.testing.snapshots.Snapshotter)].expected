@@ -137,7 +137,7 @@ record DocumentStyles(paragraphStyles: Map[String, Style]) {
     }
 }
 
-record Style(name: Option[String])
+record Style(styleId: String, name: Option[String])
 
 fun readStylesXmlElement(element: XmlElement) -> DocumentStyles {
     var styleElements = element.findChildren("w:style");
@@ -912,6 +912,7 @@ class DocumentStyles:
 
 @dataclasses.dataclass(frozen=True)
 class Style:
+    style_id: str
     name: typing.Optional[str]
 
 def read_styles_xml_element(element, /):

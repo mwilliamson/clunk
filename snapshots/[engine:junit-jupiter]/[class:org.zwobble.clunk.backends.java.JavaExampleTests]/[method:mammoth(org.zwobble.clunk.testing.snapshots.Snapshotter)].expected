@@ -685,6 +685,13 @@ record XmlElementList(
     elements: List[XmlElement],
 )
 
+record XmlEmpty() <: XmlElementOrEmpty {
+    fun getAttribute(name: String) -> Option[String] {
+        return none();
+    }
+}
+
+
 record XmlTextNode(
     value: String,
 ) <: XmlNode
@@ -1017,6 +1024,19 @@ Output path: org/zwobble/mammoth/internal/mammoth/xml/XmlElementList.java
 package org.zwobble.mammoth.internal.mammoth.xml;
 
 public record XmlElementList(java.util.List<XmlElement> elements) {
+}
+
+==============
+
+Output path: org/zwobble/mammoth/internal/mammoth/xml/XmlEmpty.java
+package org.zwobble.mammoth.internal.mammoth.xml;
+
+import java.util.Optional;
+
+public record XmlEmpty() implements org.zwobble.mammoth.internal.mammoth.xml.XmlElementOrEmpty {
+    public java.util.Optional<String> getAttribute(String name) {
+        return Optional.empty();
+    }
 }
 
 ==============

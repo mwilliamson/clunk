@@ -685,6 +685,13 @@ record XmlElementList(
     elements: List[XmlElement],
 )
 
+record XmlEmpty() <: XmlElementOrEmpty {
+    fun getAttribute(name: String) -> Option[String] {
+        return none();
+    }
+}
+
+
 record XmlTextNode(
     value: String,
 ) <: XmlNode
@@ -891,6 +898,12 @@ class XmlElement:
 @dataclasses.dataclass(frozen=True)
 class XmlElementList:
     elements: typing.List[XmlElement]
+
+@dataclasses.dataclass(frozen=True)
+class XmlEmpty:
+    def get_attribute(self, name, /):
+        return None
+
 
 @dataclasses.dataclass(frozen=True)
 class XmlTextNode:

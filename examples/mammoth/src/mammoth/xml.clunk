@@ -35,6 +35,13 @@ record XmlElementList(
     elements: List[XmlElement],
 )
 
+record XmlEmpty() <: XmlElementOrEmpty {
+    fun getAttribute(name: String) -> Option[String] {
+        return none();
+    }
+}
+
+
 record XmlTextNode(
     value: String,
 ) <: XmlNode

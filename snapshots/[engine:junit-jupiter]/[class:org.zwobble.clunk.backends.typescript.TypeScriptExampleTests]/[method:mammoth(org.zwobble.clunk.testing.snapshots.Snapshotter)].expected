@@ -685,6 +685,13 @@ record XmlElementList(
     elements: List[XmlElement],
 )
 
+record XmlEmpty() <: XmlElementOrEmpty {
+    fun getAttribute(name: String) -> Option[String] {
+        return none();
+    }
+}
+
+
 record XmlTextNode(
     value: String,
 ) <: XmlNode
@@ -984,6 +991,13 @@ class XmlElementList {
     }
 }
 
+class XmlEmpty {
+    getAttribute(name: string): string | null {
+        return null;
+    }
+}
+
+
 class XmlTextNode {
     readonly type: "XmlTextNode" = "XmlTextNode";
     readonly value: string;
@@ -992,7 +1006,7 @@ class XmlTextNode {
         this.value = value;
     }
 }
-export {XmlElement, XmlElementList, XmlElementOrEmpty, XmlNode, XmlTextNode, element};
+export {XmlElement, XmlElementList, XmlElementOrEmpty, XmlEmpty, XmlNode, XmlTextNode, element};
 
 
 ==============

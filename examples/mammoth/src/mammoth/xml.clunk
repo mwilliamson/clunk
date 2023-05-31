@@ -2,6 +2,9 @@ sealed interface XmlNode {
 }
 
 interface XmlElementOrEmpty {
+    fun findChildren(name: String) -> XmlElementList;
+    fun findChildOrEmpty(name: String) -> XmlElementOrEmpty;
+    fun getAttribute(name: String) -> Option[String];
 }
 
 fun element(

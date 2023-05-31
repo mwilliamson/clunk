@@ -30,6 +30,22 @@ public class JavaMacros {
                             args
                         );
                     }
+                }),
+                Map.entry("some", new JavaStaticFunctionMacro() {
+                    @Override
+                    public JavaExpressionNode compileCall(
+                        List<JavaExpressionNode> args,
+                        JavaCodeGeneratorContext context
+                    ) {
+                        context.addImportType("java.util.Optional");
+                        return new JavaCallNode(
+                            new JavaMemberAccessNode(
+                                new JavaReferenceNode("Optional"),
+                                "of"
+                            ),
+                            args
+                        );
+                    }
                 })
             )
         ),

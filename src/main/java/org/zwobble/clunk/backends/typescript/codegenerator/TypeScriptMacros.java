@@ -62,6 +62,15 @@ public class TypeScriptMacros {
                     ) {
                         return new TypeScriptNullLiteralNode();
                     }
+                }),
+                Map.entry("some", new TypeScriptStaticFunctionMacro() {
+                    @Override
+                    public TypeScriptExpressionNode compileCall(
+                        List<TypeScriptExpressionNode> args,
+                        TypeScriptCodeGeneratorContext context
+                    ) {
+                        return args.get(0);
+                    }
                 })
             )
         ),

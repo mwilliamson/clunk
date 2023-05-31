@@ -19,6 +19,12 @@ public class Builtins {
         "T"
     );
 
+    private static final TypeParameter SOME_TYPE_PARAM = TypeParameter.function(
+        Types.BUILTIN_NAMESPACE_ID,
+        "some",
+        "T"
+    );
+
     private static final Map<String, Type> ENVIRONMENT_TYPES = Map.ofEntries(
         Map.entry("Bool", metaType(Types.BOOL)),
         Map.entry("Int", metaType(Types.INT)),
@@ -37,6 +43,14 @@ public class Builtins {
             Optional.of(List.of(NONE_TYPE_PARAM)),
             ParamTypes.empty(),
             Types.option(NONE_TYPE_PARAM),
+            Visibility.PUBLIC
+        )),
+        Map.entry("some", new StaticFunctionType(
+            Types.BUILTIN_NAMESPACE_ID,
+            "some",
+            Optional.of(List.of(SOME_TYPE_PARAM)),
+            ParamTypes.of(List.of(SOME_TYPE_PARAM)),
+            Types.option(SOME_TYPE_PARAM),
             Visibility.PUBLIC
         ))
     );

@@ -39,6 +39,12 @@ public class PythonMacros {
                     public PythonExpressionNode compileCall(PythonArgsNode args, PythonCodeGeneratorContext context) {
                         return new PythonNoneLiteralNode();
                     }
+                }),
+                Map.entry("some", new PythonStaticFunctionMacro() {
+                    @Override
+                    public PythonExpressionNode compileCall(PythonArgsNode args, PythonCodeGeneratorContext context) {
+                        return args.positional().get(0);
+                    }
                 })
             )
         ),

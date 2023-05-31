@@ -702,6 +702,10 @@ record XmlEmpty() <: XmlElementOrEmpty {
         return XmlElementList([]);
     }
 
+    fun findChildOrEmpty(name: String) -> XmlElementOrEmpty {
+        return XmlEmpty();
+    }
+
     fun getAttribute(name: String) -> Option[String] {
         return none();
     }
@@ -1062,11 +1066,16 @@ Output path: org/zwobble/mammoth/internal/mammoth/xml/XmlEmpty.java
 package org.zwobble.mammoth.internal.mammoth.xml;
 
 import org.zwobble.mammoth.internal.mammoth.xml.XmlElementList;
+import org.zwobble.mammoth.internal.mammoth.xml.XmlEmpty;
 import java.util.Optional;
 
 public record XmlEmpty() implements org.zwobble.mammoth.internal.mammoth.xml.XmlElementOrEmpty {
     public XmlElementList findChildren(String name) {
         return new XmlElementList(java.util.List.of());
+    }
+
+    public XmlElementOrEmpty findChildOrEmpty(String name) {
+        return new XmlEmpty();
     }
 
     public java.util.Optional<String> getAttribute(String name) {

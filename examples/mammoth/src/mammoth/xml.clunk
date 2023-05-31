@@ -52,6 +52,10 @@ record XmlEmpty() <: XmlElementOrEmpty {
         return XmlElementList([]);
     }
 
+    fun findChildOrEmpty(name: String) -> XmlElementOrEmpty {
+        return XmlEmpty();
+    }
+
     fun getAttribute(name: String) -> Option[String] {
         return none();
     }

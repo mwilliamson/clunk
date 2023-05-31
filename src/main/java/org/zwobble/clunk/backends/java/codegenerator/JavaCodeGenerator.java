@@ -279,10 +279,20 @@ public class JavaCodeGenerator {
             List.of(),
             compileTypeLevelExpression(node.returnType(), context),
             node.name(),
-            Stream.concat(node.params().positional().stream(), node.params().named().stream())
-                .map(param -> compileParam(param, context))
-                .toList(),
+            compileParams(node.params(), context),
             compileBlock(node.body(), context)
+        );
+    }
+
+    private static JavaInterfaceMemberDeclarationNode compileFunctionSignature(
+        TypedFunctionSignatureNode node,
+        JavaCodeGeneratorContext context
+    ) {
+        return new JavaInterfaceMethodDeclarationNode(
+            List.of(),
+            compileTypeLevelExpression(node.returnType(), context),
+            node.name(),
+            compileParams(node.params(), context)
         );
     }
 
@@ -399,54 +409,59 @@ public class JavaCodeGenerator {
         TypedInterfaceNode node,
         JavaCodeGeneratorContext context
     ) {
-        if (node.type().isSealed()) {
-            return compiledInterfaceSealed(node, context);
-        } else {
-            return compileInterfaceUnsealed(node, context);
+        var permits = Optional.<List<? extends JavaTypeExpressionNode>>empty();
+        var body = new ArrayList<JavaInterfaceMemberDeclarationNode>();
+        
+        for (var bodyDeclaration : node.body()) {
+            body.add(compileInterfaceBodyDeclaration(bodyDeclaration, context));
         }
-    }
 
-    private static JavaOrdinaryCompilationUnitNode compiledInterfaceSealed(TypedInterfaceNode node, JavaCodeGeneratorContext context) {
-        var permits = context.sealedInterfaceCases(node.type()).stream()
-            .map(subtype -> new JavaTypeVariableReferenceNode(subtype.name()))
-            .toList();
+        if (node.type().isSealed()) {
+            permits = Optional.of(
+                context.sealedInterfaceCases(node.type()).stream()
+                    .map(subtype -> new JavaTypeVariableReferenceNode(subtype.name()))
+                    .toList()
+            );
 
-        var visitorMethods = context.sealedInterfaceCases(node.type()).stream()
-            .map(subtype -> new JavaInterfaceMethodDeclarationNode(
-                List.of(),
+            var visitorMethods = context.sealedInterfaceCases(node.type()).stream()
+                .map(subtype -> new JavaInterfaceMethodDeclarationNode(
+                    List.of(),
+                    new JavaTypeVariableReferenceNode("T"),
+                    "visit",
+                    List.of(
+                        new JavaParamNode(
+                            new JavaTypeVariableReferenceNode(subtype.name()),
+                            upperCamelCaseToLowerCamelCase(subtype.name())
+                        )
+                    )
+                ))
+                .toList();
+
+            var visitorDeclaration = new JavaInterfaceDeclarationNode(
+                List.of("T"),
+                "Visitor",
+                Optional.empty(),
+                visitorMethods
+            );
+
+            var acceptDeclaration = new JavaInterfaceMethodDeclarationNode(
+                List.of("T"),
                 new JavaTypeVariableReferenceNode("T"),
-                "visit",
+                "accept",
                 List.of(
                     new JavaParamNode(
-                        new JavaTypeVariableReferenceNode(subtype.name()),
-                        upperCamelCaseToLowerCamelCase(subtype.name())
+                        new JavaParameterizedType(
+                            new JavaTypeVariableReferenceNode(visitorDeclaration.name()),
+                            List.of(new JavaTypeVariableReferenceNode("T"))
+                        ),
+                        "visitor"
                     )
                 )
-            ))
-            .toList();
+            );
 
-        var visitorDeclaration = new JavaInterfaceDeclarationNode(
-            List.of("T"),
-            "Visitor",
-            Optional.empty(),
-            visitorMethods
-        );
-
-        var acceptDeclaration = new JavaInterfaceMethodDeclarationNode(
-            List.of("T"),
-            new JavaTypeVariableReferenceNode("T"),
-            "accept",
-            List.of(
-                new JavaParamNode(
-                    new JavaParameterizedType(
-                        new JavaTypeVariableReferenceNode(visitorDeclaration.name()),
-                        List.of(new JavaTypeVariableReferenceNode("T"))
-                    ),
-                    "visitor"
-                )
-            )
-        );
-
+            body.add(acceptDeclaration);
+            body.add(visitorDeclaration);
+        }
 
         return new JavaOrdinaryCompilationUnitNode(
             namespaceToPackage(node.type().namespaceId(), context),
@@ -454,23 +469,22 @@ public class JavaCodeGenerator {
             new JavaInterfaceDeclarationNode(
                 List.of(),
                 node.name(),
-                Optional.of(permits),
-                List.of(acceptDeclaration, visitorDeclaration)
+                permits,
+                body
             )
         );
     }
 
-    private static JavaOrdinaryCompilationUnitNode compileInterfaceUnsealed(TypedInterfaceNode node, JavaCodeGeneratorContext context) {
-        return new JavaOrdinaryCompilationUnitNode(
-            namespaceToPackage(node.type().namespaceId(), context),
-            context.generateImports(),
-            new JavaInterfaceDeclarationNode(
-                List.of(),
-                node.name(),
-                Optional.empty(),
-                List.of()
-            )
-        );
+    private static JavaInterfaceMemberDeclarationNode compileInterfaceBodyDeclaration(
+        TypedInterfaceBodyDeclarationNode node,
+        JavaCodeGeneratorContext context
+    ) {
+        return node.accept(new TypedInterfaceBodyDeclarationNode.Visitor<>() {
+            @Override
+            public JavaInterfaceMemberDeclarationNode visit(TypedFunctionSignatureNode node) {
+                return compileFunctionSignature(node, context);
+            }
+        });
     }
 
     private static JavaExpressionNode compileIntAdd(TypedIntAddNode node, JavaCodeGeneratorContext context) {
@@ -751,6 +765,12 @@ public class JavaCodeGenerator {
 
     private static JavaParamNode compileParam(TypedParamNode node, JavaCodeGeneratorContext context) {
         return new JavaParamNode(compileTypeLevelExpression(node.type(), context), node.name());
+    }
+
+    private static List<JavaParamNode> compileParams(TypedParamsNode node, JavaCodeGeneratorContext context) {
+        return Stream.concat(node.positional().stream(), node.named().stream())
+            .map(param -> compileParam(param, context))
+            .toList();
     }
 
     private static JavaClassBodyDeclarationNode compileProperty(

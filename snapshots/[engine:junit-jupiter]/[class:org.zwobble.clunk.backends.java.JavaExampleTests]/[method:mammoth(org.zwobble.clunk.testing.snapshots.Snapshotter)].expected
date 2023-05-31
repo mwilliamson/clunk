@@ -1018,6 +1018,9 @@ Output path: org/zwobble/mammoth/internal/mammoth/xml/XmlElementOrEmpty.java
 package org.zwobble.mammoth.internal.mammoth.xml;
 
 public interface XmlElementOrEmpty {
+    XmlElementList findChildren(String name);
+    XmlElementOrEmpty findChildOrEmpty(String name);
+    java.util.Optional<String> getAttribute(String name);
 }
 
 

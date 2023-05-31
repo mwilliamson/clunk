@@ -73,6 +73,10 @@ public class UntypedNodeMatchers {
         return new UntypedIndexNodeMatcher(P.vector());
     }
 
+    public static UntypedInterfaceNodeMatcher isUntypedInterfaceNode() {
+        return new UntypedInterfaceNodeMatcher(List.of());
+    }
+
     public static Matcher<UntypedExpressionNode> isUntypedIntLiteralNode(int value) {
         return instanceOf(
             UntypedIntLiteralNode.class,

@@ -136,15 +136,15 @@ public class Untyped {
     }
 
     public static UntypedInterfaceNode interface_(String name) {
-        return new UntypedInterfaceNode(name, false, NullSource.INSTANCE);
+        return new UntypedInterfaceNode(name, false, List.of(), NullSource.INSTANCE);
     }
 
     public static UntypedInterfaceNode interfaceSealed(String name) {
-        return new UntypedInterfaceNode(name, true, NullSource.INSTANCE);
+        return new UntypedInterfaceNode(name, true, List.of(), NullSource.INSTANCE);
     }
 
     public static UntypedInterfaceNode interfaceUnsealed(String name) {
-        return new UntypedInterfaceNode(name, false, NullSource.INSTANCE);
+        return new UntypedInterfaceNode(name, false, List.of(), NullSource.INSTANCE);
     }
 
     public static UntypedIntLiteralNode intLiteral() {

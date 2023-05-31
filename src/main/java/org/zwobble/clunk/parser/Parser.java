@@ -615,6 +615,20 @@ public class Parser {
 
     private UntypedFunctionNode parseFunction(TokenIterator<TokenType> tokens) {
         var source = tokens.peek().source();
+        var signature = parseFunctionSignature(tokens);
+        var body = parseBlock(tokens);
+
+        return new UntypedFunctionNode(
+            signature.name(),
+            signature.params(),
+            signature.returnType(),
+            body,
+            source
+        );
+    }
+
+    private UntypedFunctionSignatureNode parseFunctionSignature(TokenIterator<TokenType> tokens) {
+        var source = tokens.peek().source();
 
         tokens.skip(TokenType.KEYWORD_FUN);
         var name = tokens.nextValue(TokenType.IDENTIFIER);
@@ -623,9 +637,8 @@ public class Parser {
         tokens.skip(TokenType.SYMBOL_PAREN_CLOSE);
         tokens.skip(TokenType.SYMBOL_ARROW);
         var returnType = parseTypeLevelExpression(tokens);
-        var body = parseBlock(tokens);
 
-        return new UntypedFunctionNode(name, params, returnType, body, source);
+        return new UntypedFunctionSignatureNode(name, params, returnType, source);
     }
 
     private UntypedParamsNode parseParams(TokenIterator<TokenType> tokens) {
@@ -726,9 +739,23 @@ public class Parser {
         var name = tokens.nextValue(TokenType.IDENTIFIER);
 
         tokens.skip(TokenType.SYMBOL_BRACE_OPEN);
+
+        var body = parseMany(
+            () -> tokens.isNext(TokenType.SYMBOL_BRACE_CLOSE),
+            () -> parseInterfaceBodyDeclaration(tokens),
+            () -> true
+        );
+
         tokens.skip(TokenType.SYMBOL_BRACE_CLOSE);
 
-        return new UntypedInterfaceNode(name, isSealed, source);
+        return new UntypedInterfaceNode(name, isSealed, body, source);
+    }
+
+    private UntypedInterfaceBodyDeclarationNode parseInterfaceBodyDeclaration(TokenIterator<TokenType> tokens) {
+        var signature = parseFunctionSignature(tokens);
+        tokens.skip(TokenType.SYMBOL_SEMICOLON);
+
+        return signature;
     }
 
     public UntypedNamespaceStatementNode parseNamespaceStatement(TokenIterator<TokenType> tokens) {

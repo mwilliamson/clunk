@@ -676,6 +676,18 @@ record XmlElement(
         ]);
     }
 
+    fun findChildOrEmpty(name: String) -> XmlElementOrEmpty {
+        for (var child in children) {
+            if (child instanceof XmlElement) {
+                if (child.name == name) {
+                    return child;
+                }
+            }
+        }
+
+        return XmlEmpty();
+    }
+
     fun getAttribute(name: String) -> Option[String] {
         return attributes.get(name);
     }
@@ -980,6 +992,18 @@ class XmlElement {
     }
     findChildren(name: string): XmlElementList {
         return new XmlElementList(this.children.flatMap((child) => child.type === "XmlElement" ? [child] : []).filter((child) => child.name === name));
+    }
+
+    findChildOrEmpty(name: string): XmlElementOrEmpty {
+        for (let child of this.children) {
+            if (child.type === "XmlElement") {
+                if (child.name === name) {
+                    return child;
+                }
+            }
+        }
+
+        return new XmlEmpty();
     }
 
     getAttribute(name: string): string | null {

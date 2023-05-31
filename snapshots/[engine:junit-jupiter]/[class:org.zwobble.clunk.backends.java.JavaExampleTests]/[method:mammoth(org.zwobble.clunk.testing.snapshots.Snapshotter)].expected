@@ -676,6 +676,18 @@ record XmlElement(
         ]);
     }
 
+    fun findChildOrEmpty(name: String) -> XmlElementOrEmpty {
+        for (var child in children) {
+            if (child instanceof XmlElement) {
+                if (child.name == name) {
+                    return child;
+                }
+            }
+        }
+
+        return XmlEmpty();
+    }
+
     fun getAttribute(name: String) -> Option[String] {
         return attributes.get(name);
     }
@@ -1008,10 +1020,24 @@ Output path: org/zwobble/mammoth/internal/mammoth/xml/XmlElement.java
 package org.zwobble.mammoth.internal.mammoth.xml;
 
 import org.zwobble.mammoth.internal.mammoth.xml.XmlElementList;
+import org.zwobble.mammoth.internal.mammoth.xml.XmlEmpty;
 
 public record XmlElement(String name, java.util.Map<String, String> attributes, java.util.List<? extends XmlNode> children) implements org.zwobble.mammoth.internal.mammoth.xml.XmlNode, org.zwobble.mammoth.internal.mammoth.xml.XmlElementOrEmpty {
     public XmlElementList findChildren(String name) {
         return new XmlElementList(children().stream().flatMap((child) -> child instanceof XmlElement ? java.util.stream.Stream.of((org.zwobble.mammoth.internal.mammoth.xml.XmlElement) child) : null).filter((child) -> child.name().equals(name)).toList());
+    }
+
+    public XmlElementOrEmpty findChildOrEmpty(String name) {
+        for (var child : children()) {
+            if (child instanceof XmlElement) {
+                var child_XmlElement = (org.zwobble.mammoth.internal.mammoth.xml.XmlElement) child;
+                if (child_XmlElement.name().equals(name)) {
+                    return child_XmlElement;
+                }
+            }
+        }
+
+        return new XmlEmpty();
     }
 
     public java.util.Optional<String> getAttribute(String name) {

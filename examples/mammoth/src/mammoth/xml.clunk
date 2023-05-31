@@ -26,6 +26,18 @@ record XmlElement(
         ]);
     }
 
+    fun findChildOrEmpty(name: String) -> XmlElementOrEmpty {
+        for (var child in children) {
+            if (child instanceof XmlElement) {
+                if (child.name == name) {
+                    return child;
+                }
+            }
+        }
+
+        return XmlEmpty();
+    }
+
     fun getAttribute(name: String) -> Option[String] {
         return attributes.get(name);
     }

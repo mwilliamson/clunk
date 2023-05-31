@@ -676,6 +676,18 @@ record XmlElement(
         ]);
     }
 
+    fun findChildOrEmpty(name: String) -> XmlElementOrEmpty {
+        for (var child in children) {
+            if (child instanceof XmlElement) {
+                if (child.name == name) {
+                    return child;
+                }
+            }
+        }
+
+        return XmlEmpty();
+    }
+
     fun getAttribute(name: String) -> Option[String] {
         return attributes.get(name);
     }
@@ -893,6 +905,14 @@ class XmlElement:
     children: typing.List[XmlNode]
     def find_children(self, name, /):
         return XmlElementList([child for child in self.children if isinstance(child, XmlElement) if child.name == name])
+
+    def find_child_or_empty(self, name, /):
+        for child in self.children:
+            if isinstance(child, XmlElement):
+                if child.name == name:
+                    return child
+
+        return XmlEmpty()
 
     def get_attribute(self, name, /):
         return self.attributes.get(name)

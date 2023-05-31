@@ -248,6 +248,31 @@ public class TypeCheckRecordTests {
     }
 
     @Test
+    public void functionsAreAddedToMemberTypes() {
+        var untypedNode = UntypedRecordNode.builder("Example")
+            .addBodyDeclaration(UntypedFunctionNode.builder()
+                .name("x")
+                .returnType(Untyped.typeLevelReference("String"))
+                .addBodyStatement(Untyped.returnStatement(Untyped.string("hello")))
+                .build()
+            )
+            .build();
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceId.source("a", "b"));
+
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
+
+        var typedNode = (TypedRecordNode) result.typedNode();
+        assertThat(
+            result.context().memberType(typedNode.type(), "x"),
+            equalTo(Optional.of(Types.methodType(
+                NamespaceId.source("a", "b"),
+                List.of(),
+                Types.STRING
+            )))
+        );
+    }
+
+    @Test
     public void whenRecordHasTwoMembersWithTheSameNameThenAnErrorIsThrown() {
         var untypedNode = UntypedRecordNode.builder("User")
             .addField(Untyped.recordField("x", Untyped.typeLevelReference("Int")))

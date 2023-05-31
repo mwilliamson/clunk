@@ -12,6 +12,9 @@ import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.TypeLevelValueType;
 import org.zwobble.clunk.types.Types;
 
+import java.util.List;
+import java.util.Optional;
+
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedTypeLevelExpressionNode;
 import static org.zwobble.clunk.matchers.MapEntryMatcher.isMapEntry;
 import static org.zwobble.clunk.matchers.TypeMatchers.isMetaType;
@@ -122,5 +125,29 @@ public class TypeCheckInterfaceTests {
                 )
             )
         ));
+    }
+
+    @Test
+    public void functionsAreAddedToMemberTypes() {
+        var untypedNode = UntypedInterfaceNode.builder("Example")
+            .addBodyDeclaration(UntypedFunctionSignatureNode.builder()
+                .name("x")
+                .returnType(Untyped.typeLevelReference("String"))
+                .build()
+            )
+            .build();
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceId.source("a", "b"));
+
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
+
+        var typedNode = (TypedInterfaceNode) result.typedNode();
+        assertThat(
+            result.context().memberType(typedNode.type(), "x"),
+            equalTo(Optional.of(Types.methodType(
+                NamespaceId.source("a", "b"),
+                List.of(),
+                Types.STRING
+            )))
+        );
     }
 }

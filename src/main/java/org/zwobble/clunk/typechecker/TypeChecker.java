@@ -962,13 +962,30 @@ public class TypeChecker {
                         var interfaceType = new InterfaceType(context.namespaceId(), node.name(), node.isSealed());
                         interfaceTypeBox.set(interfaceType);
 
-                        var typedBodyDeclarations = node.body().stream()
+                        return context.addLocal(node.name(), metaType(interfaceType), node.source());
+                    }
+                ),
+
+                new PendingTypeCheck(
+                    TypeCheckerPhase.GENERATE_TYPE_INFO,
+                    context -> {
+                        var interfaceType = interfaceTypeBox.get();
+
+                        var typeCheckBodyDeclarationResults = node.body().stream()
                             .map(declaration -> typeCheckInterfaceBodyDeclaration(declaration, context))
                             .toList();
-
+                        var typedBodyDeclarations = typeCheckBodyDeclarationResults.stream()
+                            .map(result -> result.value())
+                            .toList();
                         typedBodyDeclarationsBox.set(typedBodyDeclarations);
 
-                        return context.addLocal(node.name(), metaType(interfaceType), node.source());
+                        var memberTypesBuilder = new MemberTypesBuilder();
+                        for (var typeCheckDeclarationResult : typeCheckBodyDeclarationResults) {
+                            memberTypesBuilder.addAll(typeCheckDeclarationResult.memberTypes(), typeCheckDeclarationResult.value().source());
+                        }
+
+                        var memberTypes = memberTypesBuilder.build();
+                        return context.addMemberTypes(interfaceType, memberTypes);
                     }
                 )
             ),
@@ -985,14 +1002,19 @@ public class TypeChecker {
         );
     }
 
-    private static TypedInterfaceBodyDeclarationNode typeCheckInterfaceBodyDeclaration(
+    private static TypeCheckInterfaceBodyDeclarationResult typeCheckInterfaceBodyDeclaration(
         UntypedInterfaceBodyDeclarationNode node,
         TypeCheckerContext context
     ) {
-        return node.accept(new UntypedInterfaceBodyDeclarationNode.Visitor<TypedInterfaceBodyDeclarationNode>() {
+        return node.accept(new UntypedInterfaceBodyDeclarationNode.Visitor<>() {
             @Override
-            public TypedInterfaceBodyDeclarationNode visit(UntypedFunctionSignatureNode node) {
-                return typeCheckFunctionSignature(node, context);
+            public TypeCheckInterfaceBodyDeclarationResult visit(UntypedFunctionSignatureNode node) {
+                var typedSignatureNode = typeCheckFunctionSignature(node, context);
+                var methodType = functionTypeToMethodType(typedSignatureNode.type(), context);
+                return new TypeCheckInterfaceBodyDeclarationResult(
+                    Map.ofEntries(Map.entry(node.name(), methodType)),
+                    typedSignatureNode
+                );
             }
         });
     }
@@ -1223,13 +1245,7 @@ public class TypeChecker {
         functionTypeChecker.defineFunctionType(context);
 
         var functionType = functionTypeChecker.type();
-        var type = new MethodType(
-            context.namespaceId(),
-            Optional.empty(),
-            functionType.params(),
-            functionType.returnType(),
-            Visibility.PUBLIC
-        );
+        var type = functionTypeToMethodType(functionType, context);
 
         return new TypeCheckRecordBodyDeclarationResult(
             Map.ofEntries(Map.entry(node.name(), type)),
@@ -1238,6 +1254,16 @@ public class TypeChecker {
                 return functionTypeChecker.typedNode();
             },
             node.source()
+        );
+    }
+
+    private static MethodType functionTypeToMethodType(FunctionType functionType, TypeCheckerContext context) {
+        return new MethodType(
+            context.namespaceId(),
+            Optional.empty(),
+            functionType.params(),
+            functionType.returnType(),
+            Visibility.PUBLIC
         );
     }
 

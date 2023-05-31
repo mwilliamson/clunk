@@ -331,6 +331,12 @@ public class TypeScriptSerialiser {
             }
 
             @Override
+            public Void visit(TypeScriptFunctionTypeNode node) {
+                serialiseFunctionType(node, builder);
+                return null;
+            }
+
+            @Override
             public Void visit(TypeScriptIndexNode node) {
                 serialiseIndex(node, builder);
                 return null;
@@ -471,6 +477,14 @@ public class TypeScriptSerialiser {
         serialiseParams(node.params(), builder);
         builder.append(")");
         serialiseBlock(node.body(), builder);
+    }
+
+    private static void serialiseFunctionType(TypeScriptFunctionTypeNode node, CodeBuilder builder) {
+        // TODO: check precedence behaves correctly
+        builder.append("(");
+        serialiseParams(node.params(), builder);
+        builder.append(") => ");
+        serialiseExpression(node.returnType(), builder, Optional.of(node));
     }
 
     private static void serialiseGetter(TypeScriptGetterNode node, CodeBuilder builder) {

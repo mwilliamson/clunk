@@ -8,7 +8,7 @@ import java.util.List;
 public record TypedInterfaceNode(
     String name,
     InterfaceType type,
-    List<TypedInterfaceBodyDeclarationNode> body,
+    List<? extends TypedInterfaceBodyDeclarationNode> body,
     Source source
 ) implements TypedNamespaceStatementNode {
     @Override

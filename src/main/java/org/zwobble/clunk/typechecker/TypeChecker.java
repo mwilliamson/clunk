@@ -571,13 +571,68 @@ public class TypeChecker {
     }
 
     private static class FunctionTypeChecker {
+        private final Box<List<TypedFunctionStatementNode>> typedBodyBox = new Box<>();
+        private final UntypedFunctionNode node;
+        private final FunctionSignatureTypeChecker signatureTypeChecker;
+
+        public FunctionTypeChecker(UntypedFunctionNode node) {
+            this.node = node;
+            this.signatureTypeChecker = new FunctionSignatureTypeChecker(new UntypedFunctionSignatureNode(
+                node.name(),
+                node.params(),
+                node.returnType(),
+                node.source()
+            ));
+        }
+
+        public void defineFunctionType(TypeCheckerContext context) {
+            signatureTypeChecker.defineFunctionType(context);
+        }
+
+        public void typeCheckBody(TypeCheckerContext context) {
+            var functionType = signatureTypeChecker.type();
+            var typedParamsNode = signatureTypeChecker.typedParamsNodeBox.get();
+
+            var bodyContext = context.enterFunction(functionType.returnType());
+            for (var typedParamNode : typedParamsNode.all()) {
+                bodyContext = bodyContext.addLocal(
+                    typedParamNode.name(),
+                    typedTypeLevelExpressionToType(typedParamNode.type()),
+                    typedParamNode.source()
+                );
+            }
+
+            var typeCheckStatementsResult = typeCheckFunctionBody(
+                node.body(),
+                node.source(),
+                bodyContext
+            );
+            typedBodyBox.set(typeCheckStatementsResult.value());
+        }
+
+        public FunctionType type() {
+            return signatureTypeChecker.type();
+        }
+
+        public TypedFunctionNode typedNode() {
+            var typedSignatureNode = signatureTypeChecker.typedNode();
+            return new TypedFunctionNode(
+                typedSignatureNode.name(),
+                typedSignatureNode.params(),
+                typedSignatureNode.returnType(),
+                typedBodyBox.get(),
+                typedSignatureNode.source()
+            );
+        }
+    }
+
+    private static class FunctionSignatureTypeChecker {
         private final Box<FunctionType> functionTypeBox = new Box<>();
         private final Box<TypedParamsNode> typedParamsNodeBox = new Box<>();
         private final Box<TypedTypeLevelExpressionNode> typedReturnTypeNodeBox = new Box<>();
-        private final Box<List<TypedFunctionStatementNode>> typedBodyBox = new Box<>();
-        private final UntypedFunctionNode node;
+        private final UntypedFunctionSignatureNode node;
 
-        public FunctionTypeChecker(UntypedFunctionNode node) {
+        public FunctionSignatureTypeChecker(UntypedFunctionSignatureNode node) {
             this.node = node;
         }
 
@@ -615,37 +670,15 @@ public class TypeChecker {
             functionTypeBox.set(new FunctionType(paramTypes, returnType));
         }
 
-        public void typeCheckBody(TypeCheckerContext context) {
-            var functionType = functionTypeBox.get();
-            var typedParamsNode = typedParamsNodeBox.get();
-
-            var bodyContext = context.enterFunction(functionType.returnType());
-            for (var typedParamNode : typedParamsNode.all()) {
-                bodyContext = bodyContext.addLocal(
-                    typedParamNode.name(),
-                    typedTypeLevelExpressionToType(typedParamNode.type()),
-                    typedParamNode.source()
-                );
-            }
-
-            var typeCheckStatementsResult = typeCheckFunctionBody(
-                node.body(),
-                node.source(),
-                bodyContext
-            );
-            typedBodyBox.set(typeCheckStatementsResult.value());
-        }
-
         public FunctionType type() {
             return functionTypeBox.get();
         }
 
-        public TypedFunctionNode typedNode() {
-            return new TypedFunctionNode(
+        public TypedFunctionSignatureNode typedNode() {
+            return new TypedFunctionSignatureNode(
                 node.name(),
                 typedParamsNodeBox.get(),
                 typedReturnTypeNodeBox.get(),
-                typedBodyBox.get(),
                 node.source()
             );
         }
@@ -707,6 +740,15 @@ public class TypeChecker {
             throw new MissingReturnError(source);
         }
         return typeCheckStatementsResult;
+    }
+
+    private static TypedFunctionSignatureNode typeCheckFunctionSignature(
+        UntypedFunctionSignatureNode node,
+        TypeCheckerContext context
+    ) {
+        var signatureTypeChecker = new FunctionSignatureTypeChecker(node);
+        signatureTypeChecker.defineFunctionType(context);
+        return signatureTypeChecker.typedNode();
     }
 
     public static TypeCheckFunctionStatementResult<List<TypedFunctionStatementNode>> typeCheckFunctionStatement(
@@ -933,6 +975,7 @@ public class TypeChecker {
 
     private static TypeCheckNamespaceStatementResult typeCheckInterface(UntypedInterfaceNode node) {
         var interfaceTypeBox = new Box<InterfaceType>();
+        var typedBodyDeclarationsBox = new Box<List<? extends TypedInterfaceBodyDeclarationNode>>();
 
         return new TypeCheckNamespaceStatementResult(
             List.of(
@@ -941,16 +984,40 @@ public class TypeChecker {
                     context -> {
                         var interfaceType = new InterfaceType(context.namespaceId(), node.name(), node.isSealed());
                         interfaceTypeBox.set(interfaceType);
+
+                        var typedBodyDeclarations = node.body().stream()
+                            .map(declaration -> typeCheckInterfaceBodyDeclaration(declaration, context))
+                            .toList();
+
+                        typedBodyDeclarationsBox.set(typedBodyDeclarations);
+
                         return context.addLocal(node.name(), metaType(interfaceType), node.source());
                     }
                 )
             ),
-            () -> new TypedInterfaceNode(node.name(), interfaceTypeBox.get(), List.of(), node.source()),
+            () -> new TypedInterfaceNode(
+                node.name(),
+                interfaceTypeBox.get(),
+                typedBodyDeclarationsBox.get(),
+                node.source()
+            ),
             () -> Optional.of(Map.entry(
                 node.name(),
                 Types.metaType(interfaceTypeBox.get())
             ))
         );
+    }
+
+    private static TypedInterfaceBodyDeclarationNode typeCheckInterfaceBodyDeclaration(
+        UntypedInterfaceBodyDeclarationNode node,
+        TypeCheckerContext context
+    ) {
+        return node.accept(new UntypedInterfaceBodyDeclarationNode.Visitor<TypedInterfaceBodyDeclarationNode>() {
+            @Override
+            public TypedInterfaceBodyDeclarationNode visit(UntypedFunctionSignatureNode node) {
+                return typeCheckFunctionSignature(node, context);
+            }
+        });
     }
 
     private static TypedExpressionNode typeCheckIntLiteral(UntypedIntLiteralNode node) {

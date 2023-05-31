@@ -1,17 +1,22 @@
 package org.zwobble.clunk.typechecker;
 
 import org.junit.jupiter.api.Test;
+import org.zwobble.clunk.ast.typed.TypedFunctionSignatureNode;
 import org.zwobble.clunk.ast.typed.TypedInterfaceNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
+import org.zwobble.clunk.ast.untyped.UntypedFunctionSignatureNode;
+import org.zwobble.clunk.ast.untyped.UntypedInterfaceNode;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.types.InterfaceType;
 import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.TypeLevelValueType;
+import org.zwobble.clunk.types.Types;
 
-import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedTypeLevelExpressionNode;
 import static org.zwobble.clunk.matchers.MapEntryMatcher.isMapEntry;
 import static org.zwobble.clunk.matchers.TypeMatchers.isMetaType;
 import static org.zwobble.clunk.typechecker.TypeCheckNamespaceStatementTesting.typeCheckNamespaceStatementAllPhases;
+import static org.zwobble.precisely.AssertThat.assertThat;
 import static org.zwobble.precisely.Matchers.*;
 
 public class TypeCheckInterfaceTests {
@@ -90,5 +95,32 @@ public class TypeCheckInterfaceTests {
                 ))
             ))
         );
+    }
+
+    @Test
+    public void functionsAreIncludedInTypedNode() {
+        var untypedNode = UntypedInterfaceNode.builder("Example")
+            .addBodyDeclaration(UntypedFunctionSignatureNode.builder()
+                .name("x")
+                .returnType(Untyped.typeLevelReference("String"))
+                .build()
+            )
+            .build();
+        var context = TypeCheckerContext.stub().enterNamespace(NamespaceId.source("a", "b"));
+
+        var result = typeCheckNamespaceStatementAllPhases(untypedNode, context);
+
+        var typedNode = (TypedInterfaceNode) result.typedNode();
+        assertThat(typedNode.body(), isSequence(
+            instanceOf(
+                TypedFunctionSignatureNode.class,
+                has("name", TypedFunctionSignatureNode::name, equalTo("x")),
+                has(
+                    "returnType",
+                    TypedFunctionSignatureNode::returnType,
+                    isTypedTypeLevelExpressionNode(Types.STRING)
+                )
+            )
+        ));
     }
 }

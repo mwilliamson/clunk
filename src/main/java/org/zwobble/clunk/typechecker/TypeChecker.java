@@ -1471,6 +1471,7 @@ public class TypeChecker {
                                 return typedSupertypeNode;
                             })
                             .toList();
+                        // TODO: check compatibility with supertypes
                         typedSupertypeNodesBox.set(typedSupertypeNodes);
 
                         var typeCheckBodyDeclarationResults = node.body().stream()

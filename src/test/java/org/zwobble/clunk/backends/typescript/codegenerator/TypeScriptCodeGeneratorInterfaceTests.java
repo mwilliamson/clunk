@@ -1,7 +1,7 @@
 package org.zwobble.clunk.backends.typescript.codegenerator;
 
 import org.junit.jupiter.api.Test;
-import org.zwobble.clunk.ast.typed.Typed;
+import org.zwobble.clunk.ast.typed.*;
 import org.zwobble.clunk.backends.typescript.serialiser.TypeScriptSerialiser;
 import org.zwobble.clunk.types.NamespaceId;
 import org.zwobble.clunk.types.SubtypeRelations;
@@ -52,6 +52,29 @@ public class TypeScriptCodeGeneratorInterfaceTests {
             interface X {
             }
             """
+        ));
+    }
+
+    @Test
+    public void functionsOnUnsealedInterfacesAreCompiledToMethods() {
+        var node = TypedInterfaceNode.builder(NamespaceId.source("example", "project"), "Example")
+            .addMethod(TypedFunctionSignatureNode.builder()
+                .name("fullName")
+                .returnType(Typed.typeLevelString())
+                .build()
+            )
+            .build();
+        var context = TypeScriptCodeGeneratorContext.stub();
+
+        var result = TypeScriptCodeGenerator.compileNamespaceStatement(node, context);
+
+        var string = serialiseToString(result, TypeScriptSerialiser::serialiseStatement);
+        assertThat(string, equalTo(
+            """
+                interface Example {
+                    readonly fullName: () => string;
+                }
+                """
         ));
     }
 }

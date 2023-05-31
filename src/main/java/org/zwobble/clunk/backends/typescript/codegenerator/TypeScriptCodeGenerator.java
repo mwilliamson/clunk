@@ -263,11 +263,19 @@ public class TypeScriptCodeGenerator {
     private static TypeScriptFunctionDeclarationNode compileFunction(TypedFunctionNode node, TypeScriptCodeGeneratorContext context) {
         return new TypeScriptFunctionDeclarationNode(
             node.name(),
-            Stream.concat(node.params().positional().stream(), node.params().named().stream())
-                .map(param -> compileParam(param))
-                .toList(),
+            compileParams(node.params()),
             compileTypeLevelExpression(node.returnType()),
             compileFunctionStatements(node.body(), context)
+        );
+    }
+
+    private static TypeScriptFunctionTypeNode compileFunctionSignature(
+        TypedFunctionSignatureNode node,
+        TypeScriptCodeGeneratorContext context
+    ) {
+        return new TypeScriptFunctionTypeNode(
+            compileParams(node.params()),
+            compileTypeLevelExpression(node.returnType())
         );
     }
 
@@ -442,10 +450,26 @@ public class TypeScriptCodeGenerator {
     }
 
     private static TypeScriptStatementNode compileInterfaceUnsealed(TypedInterfaceNode node, TypeScriptCodeGeneratorContext context) {
+        var body = node.body().stream()
+            .map(bodyDeclaration -> compileInterfaceBodyDeclaration(bodyDeclaration, context))
+            .toList();
+        
         return new TypeScriptInterfaceDeclarationNode(
             node.name(),
-            List.of()
+            body
         );
+    }
+
+    private static TypeScriptInterfaceFieldNode compileInterfaceBodyDeclaration(
+        TypedInterfaceBodyDeclarationNode node,
+        TypeScriptCodeGeneratorContext context
+    ) {
+        return node.accept(new TypedInterfaceBodyDeclarationNode.Visitor<>() {
+            @Override
+            public TypeScriptInterfaceFieldNode visit(TypedFunctionSignatureNode node) {
+                return new TypeScriptInterfaceFieldNode(node.name(), compileFunctionSignature(node, context));
+            }
+        });
     }
 
     private static TypeScriptExpressionNode compileIntAdd(TypedIntAddNode node, TypeScriptCodeGeneratorContext context) {
@@ -688,6 +712,12 @@ public class TypeScriptCodeGenerator {
 
     private static TypeScriptParamNode compileParam(TypedParamNode node) {
         return new TypeScriptParamNode(node.name(), Optional.of(compileTypeLevelExpression(node.type())));
+    }
+
+    private static List<TypeScriptParamNode> compileParams(TypedParamsNode params) {
+        return Stream.concat(params.positional().stream(), params.named().stream())
+            .map(param -> compileParam(param))
+            .toList();
     }
 
     private static TypeScriptClassBodyDeclarationNode compileProperty(

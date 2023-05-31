@@ -980,6 +980,9 @@ Output path: mammoth/xml.ts
 type XmlNode = XmlElement | XmlTextNode;
 
 interface XmlElementOrEmpty {
+    readonly findChildren: (name: string) => XmlElementList;
+    readonly findChildOrEmpty: (name: string) => XmlElementOrEmpty;
+    readonly getAttribute: (name: string) => string | null;
 }
 
 function element(name: string, attributes: Map<string, string>, children: ReadonlyArray<XmlNode>): XmlElement {

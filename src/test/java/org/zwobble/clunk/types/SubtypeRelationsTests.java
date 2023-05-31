@@ -37,6 +37,37 @@ public class SubtypeRelationsTests {
     }
 
     @Test
+    public void whenGenericSealedInterfaceHasCasesThenSealedInterfaceCasesReturnsThoseCases() {
+        var genericInterfaceTypeConstructor = new TypeConstructor(
+            List.of(TypeParameter.covariant(NAMESPACE_ID, "Option", "T")),
+            Types.sealedInterfaceType(NAMESPACE_ID, "Option")
+        );
+        var genericRecordTypeConstructorOne = new TypeConstructor(
+            List.of(TypeParameter.covariant(NAMESPACE_ID, "Some", "T")),
+            Types.recordType(NAMESPACE_ID, "Some")
+        );
+        var genericRecordTypeTwo = Types.recordType(NAMESPACE_ID, "None");
+        var relations = SubtypeRelations.EMPTY
+            .addSealedInterfaceCase(
+                genericInterfaceTypeConstructor.genericType(),
+                Types.construct(genericRecordTypeConstructorOne, List.of(genericInterfaceTypeConstructor.param(0)))
+            )
+            .addSealedInterfaceCase(
+                genericInterfaceTypeConstructor.genericType(),
+                genericRecordTypeTwo
+            );
+
+        var result = relations.sealedInterfaceCases(
+            Types.construct(genericInterfaceTypeConstructor, List.of(Types.STRING))
+        );
+
+        assertThat(result, containsExactly(
+            equalTo(Types.construct(genericRecordTypeConstructorOne, List.of(Types.STRING))),
+            equalTo(genericRecordTypeTwo)
+        ));
+    }
+
+    @Test
     public void whenRecordExtendsNoTypesThenExtendedTypesReturnsEmptyList() {
         var relations = SubtypeRelations.EMPTY
             .addExtendedType(recordTypeOne, sealedInterfaceTypeOne);

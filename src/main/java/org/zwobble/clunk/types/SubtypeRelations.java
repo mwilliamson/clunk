@@ -4,25 +4,34 @@ import org.pcollections.PMap;
 import org.pcollections.PVector;
 import org.zwobble.clunk.typechecker.TypeConstraintSolver;
 import org.zwobble.clunk.util.P;
+import org.zwobble.clunk.util.PCollectors;
 
 import java.util.List;
 
 public class SubtypeRelations {
     public static final SubtypeRelations EMPTY = new SubtypeRelations(P.map(), P.map());
 
-    private final PMap<InterfaceType, PVector<RecordType>> sealedInterfaceToCases;
+    private final PMap<StructuredType, PVector<StructuredType>> sealedInterfaceToCases;
     private final PMap<Type, PVector<StructuredType>> typeToExtendedTypes;
 
     private SubtypeRelations(
-        PMap<InterfaceType, PVector<RecordType>> sealedInterfaceCases,
+        PMap<StructuredType, PVector<StructuredType>> sealedInterfaceCases,
         PMap<Type, PVector<StructuredType>> typeToExtendedTypes
     ) {
         this.sealedInterfaceToCases = sealedInterfaceCases;
         this.typeToExtendedTypes = typeToExtendedTypes;
     }
 
-    public PVector<RecordType> sealedInterfaceCases(InterfaceType sealedInterfaceType) {
-        return sealedInterfaceToCases.getOrDefault(sealedInterfaceType, P.vector());
+    public PVector<StructuredType> sealedInterfaceCases(StructuredType sealedType) {
+        if (sealedType instanceof ConstructedType sealedConstructedType) {
+            var genericType = sealedConstructedType.constructor().genericType();
+            var typeMap = sealedConstructedType.typeMap();
+            return sealedInterfaceCases(genericType).stream()
+                .map(caseType -> caseType.replace(typeMap))
+                .collect(PCollectors.toVector());
+        }
+
+        return sealedInterfaceToCases.getOrDefault(sealedType, P.vector());
     }
 
     public PVector<StructuredType> extendedTypes(Type subtype) {
@@ -50,7 +59,7 @@ public class SubtypeRelations {
         return new SubtypeRelations(sealedInterfaceToCases, subtypeToSupertypes);
     }
 
-    public SubtypeRelations addSealedInterfaceCase(InterfaceType sealedInterfaceType, RecordType caseType) {
+    public SubtypeRelations addSealedInterfaceCase(StructuredType sealedInterfaceType, StructuredType caseType) {
         var sealedInterfaceCases = this.sealedInterfaceToCases.plus(
             sealedInterfaceType,
             sealedInterfaceCases(sealedInterfaceType).plus(caseType)

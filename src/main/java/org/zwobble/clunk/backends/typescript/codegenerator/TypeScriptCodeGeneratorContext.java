@@ -3,7 +3,7 @@ package org.zwobble.clunk.backends.typescript.codegenerator;
 import org.zwobble.clunk.backends.typescript.ast.TypeScriptImportNamedMemberNode;
 import org.zwobble.clunk.backends.typescript.ast.TypeScriptImportNamedNode;
 import org.zwobble.clunk.types.InterfaceType;
-import org.zwobble.clunk.types.RecordType;
+import org.zwobble.clunk.types.StructuredType;
 import org.zwobble.clunk.types.SubtypeRelations;
 
 import java.util.LinkedHashSet;
@@ -43,7 +43,7 @@ public class TypeScriptCodeGeneratorContext {
             .toList();
     }
 
-    public List<RecordType> sealedInterfaceCases(InterfaceType supertype) {
+    public List<StructuredType> sealedInterfaceCases(InterfaceType supertype) {
         return subtypeRelations.sealedInterfaceCases(supertype);
     }
 }

@@ -83,7 +83,7 @@ public class JavaCodeGeneratorContext {
         return config.packagePrefix();
     }
 
-    public List<RecordType> sealedInterfaceCases(InterfaceType sealedInterfaceType) {
+    public List<StructuredType> sealedInterfaceCases(InterfaceType sealedInterfaceType) {
         return subtypeRelations.sealedInterfaceCases(sealedInterfaceType);
     }
 

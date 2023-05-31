@@ -571,27 +571,27 @@ public class TypeChecker {
     }
 
     private static class FunctionTypeChecker {
+        private final Box<TypedFunctionSignatureNode> typedSignatureBox = new Box<>();
         private final Box<List<TypedFunctionStatementNode>> typedBodyBox = new Box<>();
         private final UntypedFunctionNode node;
-        private final FunctionSignatureTypeChecker signatureTypeChecker;
 
         public FunctionTypeChecker(UntypedFunctionNode node) {
             this.node = node;
-            this.signatureTypeChecker = new FunctionSignatureTypeChecker(new UntypedFunctionSignatureNode(
+        }
+
+        public void defineFunctionType(TypeCheckerContext context) {
+            var signature = new UntypedFunctionSignatureNode(
                 node.name(),
                 node.params(),
                 node.returnType(),
                 node.source()
-            ));
-        }
-
-        public void defineFunctionType(TypeCheckerContext context) {
-            signatureTypeChecker.defineFunctionType(context);
+            );
+            typedSignatureBox.set(typeCheckFunctionSignature(signature, context));
         }
 
         public void typeCheckBody(TypeCheckerContext context) {
-            var functionType = signatureTypeChecker.type();
-            var typedParamsNode = signatureTypeChecker.typedParamsNodeBox.get();
+            var functionType = typedSignatureBox.get().type();
+            var typedParamsNode = typedSignatureBox.get().params();
 
             var bodyContext = context.enterFunction(functionType.returnType());
             for (var typedParamNode : typedParamsNode.all()) {
@@ -611,75 +611,17 @@ public class TypeChecker {
         }
 
         public FunctionType type() {
-            return signatureTypeChecker.type();
+            return typedSignatureBox.get().type();
         }
 
         public TypedFunctionNode typedNode() {
-            var typedSignatureNode = signatureTypeChecker.typedNode();
+            var typedSignatureNode = typedSignatureBox.get();
             return new TypedFunctionNode(
                 typedSignatureNode.name(),
                 typedSignatureNode.params(),
                 typedSignatureNode.returnType(),
                 typedBodyBox.get(),
                 typedSignatureNode.source()
-            );
-        }
-    }
-
-    private static class FunctionSignatureTypeChecker {
-        private final Box<FunctionType> functionTypeBox = new Box<>();
-        private final Box<TypedParamsNode> typedParamsNodeBox = new Box<>();
-        private final Box<TypedTypeLevelExpressionNode> typedReturnTypeNodeBox = new Box<>();
-        private final UntypedFunctionSignatureNode node;
-
-        public FunctionSignatureTypeChecker(UntypedFunctionSignatureNode node) {
-            this.node = node;
-        }
-
-        public void defineFunctionType(TypeCheckerContext context) {
-            var typedPositionalParamNodes = node.params().positional().stream()
-                .map(param -> typeCheckParam(param, context))
-                .toList();
-            var positionalParamTypes = typedPositionalParamNodes.stream()
-                .map(param -> typedTypeLevelExpressionToType(param.type()))
-                .toList();
-
-            var typedNamedParamNodes = node.params().named().stream()
-                .map(param -> typeCheckParam(param, context))
-                .toList();
-            var namedParamTypes = typedNamedParamNodes.stream()
-                .map(param -> Types.namedParam(param.name(), typedTypeLevelExpressionToType(param.type())))
-                .toList();
-            for (var namedParamPair : slidingPairs(node.params().named())) {
-                if (namedParamPair.first().name().compareTo(namedParamPair.second().name()) > 0) {
-                    throw new NamedParamsNotInLexicographicalOrderError(namedParamPair.second().source());
-                }
-            }
-
-            typedParamsNodeBox.set(new TypedParamsNode(
-                typedPositionalParamNodes,
-                typedNamedParamNodes,
-                node.params().source()
-            ));
-            var paramTypes = new ParamTypes(positionalParamTypes, namedParamTypes);
-
-            var typedReturnTypeNode = typeCheckTypeLevelExpressionNode(node.returnType(), context);
-            typedReturnTypeNodeBox.set(typedReturnTypeNode);
-            var returnType = typedTypeLevelExpressionToType(typedReturnTypeNode);
-
-            functionTypeBox.set(new FunctionType(paramTypes, returnType));
-        }
-
-        public FunctionType type() {
-            return functionTypeBox.get();
-        }
-
-        public TypedFunctionSignatureNode typedNode() {
-            return new TypedFunctionSignatureNode(
-                node.name(),
-                typedParamsNodeBox.get(),
-                typedReturnTypeNodeBox.get(),
-                node.source()
             );
         }
     }
@@ -746,9 +688,44 @@ public class TypeChecker {
         UntypedFunctionSignatureNode node,
         TypeCheckerContext context
     ) {
-        var signatureTypeChecker = new FunctionSignatureTypeChecker(node);
-        signatureTypeChecker.defineFunctionType(context);
-        return signatureTypeChecker.typedNode();
+        var typedPositionalParamNodes = node.params().positional().stream()
+            .map(param -> typeCheckParam(param, context))
+            .toList();
+        var positionalParamTypes = typedPositionalParamNodes.stream()
+            .map(param -> typedTypeLevelExpressionToType(param.type()))
+            .toList();
+
+        var typedNamedParamNodes = node.params().named().stream()
+            .map(param -> typeCheckParam(param, context))
+            .toList();
+        var namedParamTypes = typedNamedParamNodes.stream()
+            .map(param -> Types.namedParam(param.name(), typedTypeLevelExpressionToType(param.type())))
+            .toList();
+        for (var namedParamPair : slidingPairs(node.params().named())) {
+            if (namedParamPair.first().name().compareTo(namedParamPair.second().name()) > 0) {
+                throw new NamedParamsNotInLexicographicalOrderError(namedParamPair.second().source());
+            }
+        }
+
+        var typedParamsNode = new TypedParamsNode(
+            typedPositionalParamNodes,
+            typedNamedParamNodes,
+            node.params().source()
+        );
+        var paramTypes = new ParamTypes(positionalParamTypes, namedParamTypes);
+
+        var typedReturnTypeNode = typeCheckTypeLevelExpressionNode(node.returnType(), context);
+        var returnType = typedTypeLevelExpressionToType(typedReturnTypeNode);
+
+        var functionType = new FunctionType(paramTypes, returnType);
+
+        return new TypedFunctionSignatureNode(
+            node.name(),
+            typedParamsNode,
+            typedReturnTypeNode,
+            functionType,
+            node.source()
+        );
     }
 
     public static TypeCheckFunctionStatementResult<List<TypedFunctionStatementNode>> typeCheckFunctionStatement(

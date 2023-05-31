@@ -651,6 +651,9 @@ Source path: src/mammoth/xml.clunk
 sealed interface XmlNode {
 }
 
+interface XmlElementOrEmpty {
+}
+
 fun element(
     name: String,
     attributes: Map[String, String],
@@ -663,7 +666,7 @@ record XmlElement(
     name: String,
     attributes: Map[String, String],
     children: List[XmlNode],
-) <: XmlNode {
+) <: XmlNode, XmlElementOrEmpty {
     fun findChildren(name: String) -> XmlElementList {
         return XmlElementList([
             for child in children
@@ -864,6 +867,9 @@ from __future__ import annotations
 import dataclasses
 import typing
 class XmlNode:
+    pass
+
+class XmlElementOrEmpty:
     pass
 
 def element(name, attributes, children, /):

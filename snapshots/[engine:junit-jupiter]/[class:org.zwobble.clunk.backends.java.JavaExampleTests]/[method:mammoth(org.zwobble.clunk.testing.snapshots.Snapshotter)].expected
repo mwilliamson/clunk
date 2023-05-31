@@ -651,6 +651,9 @@ Source path: src/mammoth/xml.clunk
 sealed interface XmlNode {
 }
 
+interface XmlElementOrEmpty {
+}
+
 fun element(
     name: String,
     attributes: Map[String, String],
@@ -663,7 +666,7 @@ record XmlElement(
     name: String,
     attributes: Map[String, String],
     children: List[XmlNode],
-) <: XmlNode {
+) <: XmlNode, XmlElementOrEmpty {
     fun findChildren(name: String) -> XmlElementList {
         return XmlElementList([
             for child in children
@@ -981,12 +984,21 @@ public sealed interface XmlNode permits XmlElement, XmlTextNode {
 
 ==============
 
+Output path: org/zwobble/mammoth/internal/mammoth/xml/XmlElementOrEmpty.java
+package org.zwobble.mammoth.internal.mammoth.xml;
+
+public interface XmlElementOrEmpty {
+}
+
+
+==============
+
 Output path: org/zwobble/mammoth/internal/mammoth/xml/XmlElement.java
 package org.zwobble.mammoth.internal.mammoth.xml;
 
 import org.zwobble.mammoth.internal.mammoth.xml.XmlElementList;
 
-public record XmlElement(String name, java.util.Map<String, String> attributes, java.util.List<? extends XmlNode> children) implements org.zwobble.mammoth.internal.mammoth.xml.XmlNode {
+public record XmlElement(String name, java.util.Map<String, String> attributes, java.util.List<? extends XmlNode> children) implements org.zwobble.mammoth.internal.mammoth.xml.XmlNode, org.zwobble.mammoth.internal.mammoth.xml.XmlElementOrEmpty {
     public XmlElementList findChildren(String name) {
         return new XmlElementList(children().stream().flatMap((child) -> child instanceof XmlElement ? java.util.stream.Stream.of((org.zwobble.mammoth.internal.mammoth.xml.XmlElement) child) : null).filter((child) -> child.name().equals(name)).toList());
     }

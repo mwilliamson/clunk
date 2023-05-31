@@ -1,6 +1,9 @@
 sealed interface XmlNode {
 }
 
+interface XmlElementOrEmpty {
+}
+
 fun element(
     name: String,
     attributes: Map[String, String],
@@ -13,7 +16,7 @@ record XmlElement(
     name: String,
     attributes: Map[String, String],
     children: List[XmlNode],
-) <: XmlNode {
+) <: XmlNode, XmlElementOrEmpty {
     fun findChildren(name: String) -> XmlElementList {
         return XmlElementList([
             for child in children

@@ -183,11 +183,11 @@ public class Typed {
     }
 
     public static TypedInterfaceNode interface_(InterfaceType type) {
-        return new TypedInterfaceNode(type.name(), type, NullSource.INSTANCE);
+        return new TypedInterfaceNode(type.name(), type, List.of(), NullSource.INSTANCE);
     }
 
     public static TypedInterfaceNode interface_(String name, InterfaceType type) {
-        return new TypedInterfaceNode(name, type, NullSource.INSTANCE);
+        return new TypedInterfaceNode(name, type, List.of(), NullSource.INSTANCE);
     }
 
     public static TypedIntAddNode intAdd(TypedExpressionNode left, TypedExpressionNode right) {

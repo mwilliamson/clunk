@@ -579,7 +579,7 @@ public class TypeChecker {
             this.node = node;
         }
 
-        public void defineFunctionType(TypeCheckerContext context) {
+        public void typeCheckSignature(TypeCheckerContext context) {
             var signature = new UntypedFunctionSignatureNode(
                 node.name(),
                 node.params(),
@@ -637,7 +637,7 @@ public class TypeChecker {
                 new PendingTypeCheck(
                     TypeCheckerPhase.DEFINE_FUNCTIONS,
                     context -> {
-                        functionTypeChecker.defineFunctionType(context);
+                        functionTypeChecker.typeCheckSignature(context);
                         var functionType = functionTypeChecker.signature();
                         var type = new StaticFunctionType(
                             context.namespaceId(),
@@ -1242,7 +1242,7 @@ public class TypeChecker {
         TypeCheckerContext context
     ) {
         var functionTypeChecker = new FunctionTypeChecker(node);
-        functionTypeChecker.defineFunctionType(context);
+        functionTypeChecker.typeCheckSignature(context);
 
         var functionType = functionTypeChecker.signature();
         var type = functionSignatureToMethodType(functionType, context);

@@ -318,7 +318,15 @@ public class Types {
     }
 
     public static boolean isSealedInterfaceType(Type type) {
-        return type instanceof InterfaceType interfaceType && interfaceType.isSealed();
+        return toSealedInterfaceType(type).isPresent();
+    }
+
+    public static Optional<StructuredType> toSealedInterfaceType(Type type) {
+        if (type instanceof InterfaceType interfaceType && interfaceType.isSealed()) {
+            return Optional.of(interfaceType);
+        } else {
+            return Optional.empty();
+        }
     }
 
     public static StructuredType construct(TypeConstructor constructor, List<? extends Type> args) {

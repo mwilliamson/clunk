@@ -1858,14 +1858,11 @@ public class TypeChecker {
     }
 
     private static StructuredType verifyIsSealedInterfaceType(TypedExpressionNode typedExpressionNode) {
-        if (Types.isSealedInterfaceType(typedExpressionNode.type())) {
-            return (StructuredType) typedExpressionNode.type();
-        } else {
-            throw new UnexpectedTypeError(
-                SealedInterfaceTypeSet.INSTANCE,
-                typedExpressionNode.type(),
-                typedExpressionNode.source()
-            );
-        }
+        var type = Types.toSealedInterfaceType(typedExpressionNode.type());
+        return type.orElseThrow(() -> new UnexpectedTypeError(
+            SealedInterfaceTypeSet.INSTANCE,
+            typedExpressionNode.type(),
+            typedExpressionNode.source()
+        ));
     }
 }

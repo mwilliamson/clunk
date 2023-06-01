@@ -230,7 +230,7 @@ public record TypeCheckerContext(
         return Optional.ofNullable(typeMembers.get(memberName));
     }
 
-    public List<StructuredType> sealedInterfaceCases(InterfaceType sealedInterfaceType) {
+    public List<StructuredType> sealedInterfaceCases(StructuredType sealedInterfaceType) {
         return subtypeRelations.sealedInterfaceCases(sealedInterfaceType);
     }
 

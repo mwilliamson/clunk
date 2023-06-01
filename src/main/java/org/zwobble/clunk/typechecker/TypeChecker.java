@@ -1857,9 +1857,9 @@ public class TypeChecker {
         }
     }
 
-    private static InterfaceType verifyIsSealedInterfaceType(TypedExpressionNode typedExpressionNode) {
+    private static StructuredType verifyIsSealedInterfaceType(TypedExpressionNode typedExpressionNode) {
         if (Types.isSealedInterfaceType(typedExpressionNode.type())) {
-            return (InterfaceType) typedExpressionNode.type();
+            return (StructuredType) typedExpressionNode.type();
         } else {
             throw new UnexpectedTypeError(
                 SealedInterfaceTypeSet.INSTANCE,

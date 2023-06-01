@@ -1,6 +1,6 @@
 package org.zwobble.clunk.types;
 
-public record FunctionType(
+public record FunctionValueType(
     ParamTypes params,
     Type returnType
 ) implements Type {
@@ -13,7 +13,7 @@ public record FunctionType(
 
     @Override
     public Type replace(TypeMap typeMap) {
-        return new FunctionType(
+        return new FunctionValueType(
             params.replace(typeMap),
             returnType.replace(typeMap)
         );

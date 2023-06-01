@@ -3,7 +3,7 @@ package org.zwobble.clunk.ast.typed;
 import org.pcollections.PVector;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.sources.Source;
-import org.zwobble.clunk.types.FunctionType;
+import org.zwobble.clunk.types.FunctionValueType;
 import org.zwobble.clunk.types.Types;
 import org.zwobble.clunk.util.P;
 
@@ -13,7 +13,7 @@ public record TypedFunctionSignatureNode(
     String name,
     TypedParamsNode params,
     TypedTypeLevelExpressionNode returnType,
-    FunctionType type,
+    FunctionValueType type,
     Source source
 ) implements TypedInterfaceBodyDeclarationNode {
     @Override
@@ -36,7 +36,7 @@ public record TypedFunctionSignatureNode(
         PVector<TypedParamNode> positionalParams,
         PVector<TypedParamNode> namedParams,
         TypedTypeLevelExpressionNode returnType,
-        FunctionType type
+        FunctionValueType type
     ) {
         public TypedFunctionSignatureNode build() {
             return new TypedFunctionSignatureNode(

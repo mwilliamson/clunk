@@ -511,8 +511,8 @@ public class TypeChecker {
             }
         });
 
-        if (expected instanceof FunctionType && typed.type() instanceof StaticFunctionType staticFunctionType) {
-            var functionType = new FunctionType(
+        if (expected instanceof FunctionValueType && typed.type() instanceof StaticFunctionType staticFunctionType) {
+            var functionType = new FunctionValueType(
                 staticFunctionType.params(),
                 staticFunctionType.returnType()
             );
@@ -610,7 +610,7 @@ public class TypeChecker {
             typedBodyBox.set(typeCheckStatementsResult.value());
         }
 
-        public FunctionType type() {
+        public FunctionValueType type() {
             return typedSignatureBox.get().type();
         }
 
@@ -717,7 +717,7 @@ public class TypeChecker {
         var typedReturnTypeNode = typeCheckTypeLevelExpressionNode(node.returnType(), context);
         var returnType = typedTypeLevelExpressionToType(typedReturnTypeNode);
 
-        var functionType = new FunctionType(paramTypes, returnType);
+        var functionType = new FunctionValueType(paramTypes, returnType);
 
         return new TypedFunctionSignatureNode(
             node.name(),
@@ -1257,7 +1257,7 @@ public class TypeChecker {
         );
     }
 
-    private static MethodType functionTypeToMethodType(FunctionType functionType, TypeCheckerContext context) {
+    private static MethodType functionTypeToMethodType(FunctionValueType functionType, TypeCheckerContext context) {
         return new MethodType(
             context.namespaceId(),
             Optional.empty(),

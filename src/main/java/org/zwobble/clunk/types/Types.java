@@ -101,8 +101,8 @@ public class Types {
         return new EnumType(namespaceId, name, members);
     }
 
-    public static FunctionType functionType(List<Type> positionalParams, Type returnType) {
-        return new FunctionType(new ParamTypes(positionalParams, List.of()), returnType);
+    public static FunctionValueType functionType(List<Type> positionalParams, Type returnType) {
+        return new FunctionValueType(new ParamTypes(positionalParams, List.of()), returnType);
     }
 
     public static InterfaceType interfaceType(NamespaceId namespaceId, String name) {

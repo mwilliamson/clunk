@@ -65,8 +65,8 @@ public class TypeConstraintSolver {
         }
 
         if (
-            subtype instanceof FunctionType subtypeFunction &&
-            supertype instanceof FunctionType supertypeFunction
+            subtype instanceof FunctionValueType subtypeFunction &&
+            supertype instanceof FunctionValueType supertypeFunction
         ) {
             // TODO: handle named params
             if (subtypeFunction.params().positional().size() != supertypeFunction.params().positional().size()) {

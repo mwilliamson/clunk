@@ -8,7 +8,7 @@ import java.util.Map;
 import static org.zwobble.precisely.AssertThat.assertThat;
 import static org.zwobble.precisely.Matchers.equalTo;
 
-public class FunctionTypeTests {
+public class FunctionValueTypeTests {
     @Test
     public void describeIncludesArgsAndReturnType() {
         var type = Types.functionType(

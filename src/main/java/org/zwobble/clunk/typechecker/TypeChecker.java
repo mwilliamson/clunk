@@ -590,10 +590,10 @@ public class TypeChecker {
         }
 
         public void typeCheckBody(TypeCheckerContext context) {
-            var functionType = typedSignatureBox.get().type();
+            var signature = typedSignatureBox.get().signature();
             var typedParamsNode = typedSignatureBox.get().params();
 
-            var bodyContext = context.enterFunction(functionType.returnType());
+            var bodyContext = context.enterFunction(signature.returnType());
             for (var typedParamNode : typedParamsNode.all()) {
                 bodyContext = bodyContext.addLocal(
                     typedParamNode.name(),
@@ -610,8 +610,8 @@ public class TypeChecker {
             typedBodyBox.set(typeCheckStatementsResult.value());
         }
 
-        public FunctionValueType type() {
-            return typedSignatureBox.get().type();
+        public FunctionSignature signature() {
+            return typedSignatureBox.get().signature();
         }
 
         public TypedFunctionNode typedNode() {
@@ -638,7 +638,7 @@ public class TypeChecker {
                     TypeCheckerPhase.DEFINE_FUNCTIONS,
                     context -> {
                         functionTypeChecker.defineFunctionType(context);
-                        var functionType = functionTypeChecker.type();
+                        var functionType = functionTypeChecker.signature();
                         var type = new StaticFunctionType(
                             context.namespaceId(),
                             node.name(),
@@ -717,13 +717,13 @@ public class TypeChecker {
         var typedReturnTypeNode = typeCheckTypeLevelExpressionNode(node.returnType(), context);
         var returnType = typedTypeLevelExpressionToType(typedReturnTypeNode);
 
-        var functionType = new FunctionValueType(paramTypes, returnType);
+        var signature = new FunctionSignature(paramTypes, returnType);
 
         return new TypedFunctionSignatureNode(
             node.name(),
             typedParamsNode,
             typedReturnTypeNode,
-            functionType,
+            signature,
             node.source()
         );
     }
@@ -1010,7 +1010,7 @@ public class TypeChecker {
             @Override
             public TypeCheckInterfaceBodyDeclarationResult visit(UntypedFunctionSignatureNode node) {
                 var typedSignatureNode = typeCheckFunctionSignature(node, context);
-                var methodType = functionTypeToMethodType(typedSignatureNode.type(), context);
+                var methodType = functionSignatureToMethodType(typedSignatureNode.signature(), context);
                 return new TypeCheckInterfaceBodyDeclarationResult(
                     Map.ofEntries(Map.entry(node.name(), methodType)),
                     typedSignatureNode
@@ -1244,8 +1244,8 @@ public class TypeChecker {
         var functionTypeChecker = new FunctionTypeChecker(node);
         functionTypeChecker.defineFunctionType(context);
 
-        var functionType = functionTypeChecker.type();
-        var type = functionTypeToMethodType(functionType, context);
+        var functionType = functionTypeChecker.signature();
+        var type = functionSignatureToMethodType(functionType, context);
 
         return new TypeCheckRecordBodyDeclarationResult(
             Map.ofEntries(Map.entry(node.name(), type)),
@@ -1257,12 +1257,12 @@ public class TypeChecker {
         );
     }
 
-    private static MethodType functionTypeToMethodType(FunctionValueType functionType, TypeCheckerContext context) {
+    private static MethodType functionSignatureToMethodType(FunctionSignature signature, TypeCheckerContext context) {
         return new MethodType(
             context.namespaceId(),
             Optional.empty(),
-            functionType.params(),
-            functionType.returnType(),
+            signature.params(),
+            signature.returnType(),
             Visibility.PUBLIC
         );
     }

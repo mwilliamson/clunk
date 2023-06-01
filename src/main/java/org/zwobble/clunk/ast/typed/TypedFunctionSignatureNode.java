@@ -3,17 +3,16 @@ package org.zwobble.clunk.ast.typed;
 import org.pcollections.PVector;
 import org.zwobble.clunk.sources.NullSource;
 import org.zwobble.clunk.sources.Source;
-import org.zwobble.clunk.types.FunctionValueType;
+import org.zwobble.clunk.types.FunctionSignature;
+import org.zwobble.clunk.types.ParamTypes;
 import org.zwobble.clunk.types.Types;
 import org.zwobble.clunk.util.P;
-
-import java.util.List;
 
 public record TypedFunctionSignatureNode(
     String name,
     TypedParamsNode params,
     TypedTypeLevelExpressionNode returnType,
-    FunctionValueType type,
+    FunctionSignature signature,
     Source source
 ) implements TypedInterfaceBodyDeclarationNode {
     @Override
@@ -27,7 +26,7 @@ public record TypedFunctionSignatureNode(
             P.vector(),
             P.vector(),
             Typed.typeLevelReference("Int", Types.INT),
-            Types.functionType(List.of(), Types.INT)
+            new FunctionSignature(ParamTypes.empty(), Types.INT)
         );
     }
 
@@ -36,32 +35,32 @@ public record TypedFunctionSignatureNode(
         PVector<TypedParamNode> positionalParams,
         PVector<TypedParamNode> namedParams,
         TypedTypeLevelExpressionNode returnType,
-        FunctionValueType type
+        FunctionSignature signature
     ) {
         public TypedFunctionSignatureNode build() {
             return new TypedFunctionSignatureNode(
                 name,
                 new TypedParamsNode(positionalParams, namedParams, NullSource.INSTANCE),
                 returnType,
-                type,
+                signature,
                 NullSource.INSTANCE
             );
         }
 
         public Builder addPositionalParam(TypedParamNode param) {
-            return new Builder(name, positionalParams.plus(param), namedParams, returnType, type);
+            return new Builder(name, positionalParams.plus(param), namedParams, returnType, signature);
         }
 
         public Builder addNamedParam(TypedParamNode param) {
-            return new Builder(name, positionalParams, namedParams.plus(param), returnType, type);
+            return new Builder(name, positionalParams, namedParams.plus(param), returnType, signature);
         }
 
         public Builder name(String name) {
-            return new Builder(name, positionalParams, namedParams, returnType, type);
+            return new Builder(name, positionalParams, namedParams, returnType, signature);
         }
 
         public Builder returnType(TypedTypeLevelExpressionNode returnType) {
-            return new Builder(name, positionalParams, namedParams, returnType, type);
+            return new Builder(name, positionalParams, namedParams, returnType, signature);
         }
     }
 }

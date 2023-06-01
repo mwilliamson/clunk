@@ -3,6 +3,7 @@ package org.zwobble.clunk.types;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.zwobble.precisely.AssertThat.assertThat;
 import static org.zwobble.precisely.Matchers.equalTo;
@@ -323,5 +324,60 @@ public class TypesTests {
         );
 
         assertThat(result, equalTo(true));
+    }
+
+    @Test
+    public void sealedInterfaceTypeIsSealedInterface() {
+        var type = Types.sealedInterfaceType(NamespaceId.source("example"), "Example");
+
+        var result = Types.toSealedInterfaceType(type);
+
+        assertThat(result, equalTo(Optional.of(type)));
+    }
+
+    @Test
+    public void unsealedInterfaceTypeIsNotSealedInterface() {
+        var type = Types.unsealedInterfaceType(NamespaceId.source("example"), "Example");
+
+        var result = Types.toSealedInterfaceType(type);
+
+        assertThat(result, equalTo(Optional.empty()));
+    }
+
+    @Test
+    public void recordTypeIsNotSealedInterface() {
+        var type = Types.recordType(NamespaceId.source("example"), "Example");
+
+        var result = Types.toSealedInterfaceType(type);
+
+        assertThat(result, equalTo(Optional.empty()));
+    }
+
+    @Test
+    public void whenGenericTypeIsSealedInterfaceThenConstructedTypeIsSealedInterface() {
+        var genericType = Types.sealedInterfaceType(NamespaceId.source("example"), "Example");
+        var typeConstructor = new TypeConstructor(
+            List.of(TypeParameter.covariant(NamespaceId.source("example"), "Example", "T")),
+            genericType
+        );
+        var type = Types.construct(typeConstructor, List.of(Types.STRING));
+
+        var result = Types.toSealedInterfaceType(type);
+
+        assertThat(result, equalTo(Optional.of(type)));
+    }
+
+    @Test
+    public void whenGenericTypeIsNotSealedInterfaceThenConstructedTypeIsNotSealedInterface() {
+        var genericType = Types.unsealedInterfaceType(NamespaceId.source("example"), "Example");
+        var typeConstructor = new TypeConstructor(
+            List.of(TypeParameter.covariant(NamespaceId.source("example"), "Example", "T")),
+            genericType
+        );
+        var type = Types.construct(typeConstructor, List.of(Types.STRING));
+
+        var result = Types.toSealedInterfaceType(type);
+
+        assertThat(result, equalTo(Optional.empty()));
     }
 }

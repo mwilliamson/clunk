@@ -322,7 +322,9 @@ public class Types {
     }
 
     public static Optional<StructuredType> toSealedInterfaceType(Type type) {
-        if (type instanceof InterfaceType interfaceType && interfaceType.isSealed()) {
+        if (type instanceof ConstructedType constructedType && isSealedInterfaceType(constructedType.constructor().genericType())) {
+            return Optional.of(constructedType);
+        } else if (type instanceof InterfaceType interfaceType && interfaceType.isSealed()) {
             return Optional.of(interfaceType);
         } else {
             return Optional.empty();

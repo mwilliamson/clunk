@@ -242,7 +242,7 @@ public class TypeScriptCodeGenerator {
 
             @Override
             public TypeScriptExpressionNode visit(TypedStructuredNotEqualNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileStructuredNotEqual(node, context);
             }
         });
     }
@@ -819,7 +819,8 @@ public class TypeScriptCodeGenerator {
     }
 
     private static TypeScriptExpressionNode compileStructuredEquals(
-        TypedStructuredEqualsNode node,
+        TypedExpressionNode left,
+        TypedExpressionNode right,
         TypeScriptCodeGeneratorContext context
     ) {
         context.addImport("lodash", "isEqual", "lodash_isEqual");
@@ -827,9 +828,25 @@ public class TypeScriptCodeGenerator {
         return new TypeScriptCallNode(
             new TypeScriptReferenceNode("lodash_isEqual"),
             List.of(
-                compileExpression(node.left(), context),
-                compileExpression(node.right(), context)
+                compileExpression(left, context),
+                compileExpression(right, context)
             )
+        );
+    }
+
+    private static TypeScriptExpressionNode compileStructuredEquals(
+        TypedStructuredEqualsNode node,
+        TypeScriptCodeGeneratorContext context
+    ) {
+        return compileStructuredEquals(node.left(), node.right(), context);
+    }
+
+    private static TypeScriptExpressionNode compileStructuredNotEqual(
+        TypedStructuredNotEqualNode node,
+        TypeScriptCodeGeneratorContext context
+    ) {
+        return new TypeScriptLogicalNotNode(
+            compileStructuredEquals(node.left(), node.right(), context)
         );
     }
 

@@ -277,7 +277,7 @@ public class PythonCodeGenerator {
         PythonCodeGeneratorContext context
     ) {
         return new PythonForEachNode(
-            node.targetName(),
+            pythonizeName(node.targetName()),
             compileExpression(node.iterable(), context),
             compileFunctionStatements(node.body(), context)
         );

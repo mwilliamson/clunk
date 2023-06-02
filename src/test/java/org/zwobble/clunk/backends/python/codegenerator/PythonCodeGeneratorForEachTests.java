@@ -32,4 +32,23 @@ public class PythonCodeGeneratorForEachTests {
                 "hello"
             """));
     }
+
+    @Test
+    public void targetIsConvertedToSnakeCase() {
+        var node = Typed.forEach(
+            "currentElement",
+            Types.INT,
+            Typed.localReference("xs", Types.list(Types.INT)),
+            List.of()
+        );
+
+        var result = PythonCodeGenerator.compileFunctionStatement(node, PythonCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, PythonSerialiser::serialiseStatements);
+        assertThat(string, equalTo(
+            """
+            for current_element in xs:
+                pass
+            """));
+    }
 }

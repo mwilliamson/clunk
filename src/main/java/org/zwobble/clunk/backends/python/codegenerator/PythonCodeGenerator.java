@@ -24,7 +24,7 @@ public class PythonCodeGenerator {
 
         var keyword = args.named().stream()
             .map(arg -> new PythonKeywordArgumentNode(
-                arg.name(),
+                pythonizeName(arg.name()),
                 compileExpression(arg.expression(), context)
             ))
             .toList();

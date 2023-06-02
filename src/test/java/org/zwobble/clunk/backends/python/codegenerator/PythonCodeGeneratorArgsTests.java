@@ -41,6 +41,21 @@ public class PythonCodeGeneratorArgsTests {
     }
 
     @Test
+    public void namedArgsAreConvertedToSnakeCase() {
+        var node = Typed.args(
+            List.of(),
+            List.of(
+                Typed.namedArg("styleType", Typed.string(""))
+            )
+        );
+
+        var result = PythonCodeGenerator.compileArgs(node, PythonCodeGeneratorContext.stub());
+
+        var string = serialiseToString(result, PythonSerialiser::serialiseArgs);
+        assertThat(string, equalTo("style_type=\"\""));
+    }
+
+    @Test
     public void namedArgsFollowPositionalArgs() {
         var node = Typed.args(
             List.of(Typed.intLiteral(123)),

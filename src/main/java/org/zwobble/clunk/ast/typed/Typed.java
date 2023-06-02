@@ -323,8 +323,18 @@ public class Typed {
         return new TypedStringNotEqualNode(left, right, NullSource.INSTANCE);
     }
 
-    public static TypedStructuredEqualsNode structuredEquals(TypedLocalReferenceNode left, TypedLocalReferenceNode right) {
+    public static TypedStructuredEqualsNode structuredEquals(
+        TypedExpressionNode left,
+        TypedExpressionNode right
+    ) {
         return new TypedStructuredEqualsNode(left, right, NullSource.INSTANCE);
+    }
+
+    public static TypedStructuredNotEqualNode structuredNotEqual(
+        TypedExpressionNode left,
+        TypedExpressionNode right
+    ) {
+        return new TypedStructuredNotEqualNode(left, right, NullSource.INSTANCE);
     }
 
     public static TypedSwitchCaseNode switchCase(

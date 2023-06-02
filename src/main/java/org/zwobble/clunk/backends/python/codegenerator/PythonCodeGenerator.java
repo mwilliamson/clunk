@@ -262,6 +262,11 @@ public class PythonCodeGenerator {
             public PythonExpressionNode visit(TypedStructuredEqualsNode node) {
                 return compileStructuredEquals(node, context);
             }
+
+            @Override
+            public PythonExpressionNode visit(TypedStructuredNotEqualNode node) {
+                throw new UnsupportedOperationException("TODO");
+            }
         });
     }
 

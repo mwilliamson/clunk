@@ -392,21 +392,20 @@ public class TypeChecker {
             return new TypedIntEqualsNode(left, right, node.source());
         }
 
-        // TODO: generalise structured equality
-        if (left.type().equals(Types.map(Types.STRING, Types.STRING))) {
-            expectExpressionType(right, Types.map(Types.STRING, Types.STRING));
-            return new TypedStructuredEqualsNode(left, right, node.source());
+        if (left.type().equals(Types.STRING)) {
+            expectExpressionType(right, Types.STRING);
+            return new TypedStringEqualsNode(left, right, node.source());
         }
 
-        // TODO: don't assume strings if not ints
-        expectExpressionType(left, Types.STRING);
-        expectExpressionType(right, Types.STRING);
+        if (!(left.type() instanceof StructuredType)) {
+            throw new UnexpectedTypeError(StructuredTypeSet.INSTANCE, left.type(), node.left().source());
+        }
 
-        return new TypedStringEqualsNode(
-            left,
-            right,
-            node.source()
-        );
+        if (!(right.type() instanceof StructuredType)) {
+            throw new UnexpectedTypeError(StructuredTypeSet.INSTANCE, right.type(), node.right().source());
+        }
+
+        return new TypedStructuredEqualsNode(left, right, node.source());
     }
 
     public static TypedExpressionNode typeCheckExpression(
@@ -1390,15 +1389,20 @@ public class TypeChecker {
             return new TypedIntNotEqualNode(left, right, node.source());
         }
 
-        // TODO: don't assume strings if not ints
-        expectExpressionType(left, Types.STRING);
-        expectExpressionType(right, Types.STRING);
+        if (left.type().equals(Types.STRING)) {
+            expectExpressionType(right, Types.STRING);
+            return new TypedStringNotEqualNode(left, right, node.source());
+        }
 
-        return new TypedStringNotEqualNode(
-            left,
-            right,
-            node.source()
-        );
+        if (!(left.type() instanceof StructuredType)) {
+            throw new UnexpectedTypeError(StructuredTypeSet.INSTANCE, left.type(), node.left().source());
+        }
+
+        if (!(right.type() instanceof StructuredType)) {
+            throw new UnexpectedTypeError(StructuredTypeSet.INSTANCE, right.type(), node.right().source());
+        }
+
+        return new TypedStructuredNotEqualNode(left, right, node.source());
     }
 
     private static TypeCheckRecordBodyDeclarationResult typeCheckProperty(

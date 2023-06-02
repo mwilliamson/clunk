@@ -6,14 +6,14 @@ import org.zwobble.clunk.ast.typed.TypedStringEqualsNode;
 import org.zwobble.clunk.ast.typed.TypedStructuredEqualsNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
 import org.zwobble.clunk.sources.NullSource;
+import org.zwobble.clunk.types.StructuredTypeSet;
 import org.zwobble.clunk.types.Types;
 
-import static org.zwobble.precisely.AssertThat.assertThat;
-import static org.zwobble.precisely.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.*;
-import static org.zwobble.precisely.Matchers.instanceOf;
-import static org.zwobble.precisely.Matchers.has;
+import static org.zwobble.clunk.ast.typed.TypedNodeMatchers.isTypedReferenceNode;
+import static org.zwobble.precisely.AssertThat.assertThat;
+import static org.zwobble.precisely.Matchers.*;
 
 public class TypeCheckEqualsTests {
     @Test
@@ -31,6 +31,20 @@ public class TypeCheckEqualsTests {
     }
 
     @Test
+    public void givenLeftOperandIsIntWhenRightOperandIsNotIntThenErrorIsThrown() {
+        var untypedNode = Untyped.equals(Untyped.intLiteral(), Untyped.boolFalse());
+        var context = TypeCheckerContext.stub();
+
+        var result = assertThrows(
+            UnexpectedTypeError.class,
+            () -> TypeChecker.typeCheckExpression(untypedNode, context)
+        );
+
+        assertThat(result.getExpected(), equalTo(Types.INT));
+        assertThat(result.getActual(), equalTo(Types.BOOL));
+    }
+
+    @Test
     public void whenOperandsAreStringsThenExpressionIsTypedAsStringEquals() {
         var untypedNode = Untyped.equals(Untyped.string("a"), Untyped.string("b"));
         var context = TypeCheckerContext.stub();
@@ -45,7 +59,21 @@ public class TypeCheckEqualsTests {
     }
 
     @Test
-    public void whenOperandsAreStringMapsThenExpressionIsTypedAsStructuredEquals() {
+    public void givenLeftOperandIsStringWhenRightOperandIsNotStringThenErrorIsThrown() {
+        var untypedNode = Untyped.equals(Untyped.string(), Untyped.boolFalse());
+        var context = TypeCheckerContext.stub();
+
+        var result = assertThrows(
+            UnexpectedTypeError.class,
+            () -> TypeChecker.typeCheckExpression(untypedNode, context)
+        );
+
+        assertThat(result.getExpected(), equalTo(Types.STRING));
+        assertThat(result.getActual(), equalTo(Types.BOOL));
+    }
+
+    @Test
+    public void whenOperandsAreStructuredTypesThenExpressionIsTypedAsStructuredEquals() {
         var untypedNode = Untyped.equals(Untyped.reference("a"), Untyped.reference("b"));
         var context = TypeCheckerContext.stub()
             .addLocal("a", Types.map(Types.STRING, Types.STRING), NullSource.INSTANCE)
@@ -61,30 +89,17 @@ public class TypeCheckEqualsTests {
     }
 
     @Test
-    public void whenLeftOperandIsNotStringThenErrorIsThrown() {
-        var untypedNode = Untyped.equals(Untyped.boolFalse(), Untyped.string());
-        var context = TypeCheckerContext.stub();
+    public void givenLeftOperandIsStructuredTypeWhenRightOperandIsNotStructuredTypeThenErrorIsThrown() {
+        var untypedNode = Untyped.equals(Untyped.reference("a"), Untyped.boolFalse());
+        var context = TypeCheckerContext.stub()
+            .addLocal("a", Types.map(Types.STRING, Types.STRING), NullSource.INSTANCE);
 
         var result = assertThrows(
             UnexpectedTypeError.class,
             () -> TypeChecker.typeCheckExpression(untypedNode, context)
         );
 
-        assertThat(result.getExpected(), equalTo(Types.STRING));
-        assertThat(result.getActual(), equalTo(Types.BOOL));
-    }
-
-    @Test
-    public void givenLeftOperandIsStringWhenRightOperandIsNotStringThenErrorIsThrown() {
-        var untypedNode = Untyped.equals(Untyped.string(), Untyped.boolFalse());
-        var context = TypeCheckerContext.stub();
-
-        var result = assertThrows(
-            UnexpectedTypeError.class,
-            () -> TypeChecker.typeCheckExpression(untypedNode, context)
-        );
-
-        assertThat(result.getExpected(), equalTo(Types.STRING));
+        assertThat(result.getExpected(), equalTo(StructuredTypeSet.INSTANCE));
         assertThat(result.getActual(), equalTo(Types.BOOL));
     }
 }

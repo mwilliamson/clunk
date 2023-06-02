@@ -177,7 +177,7 @@ public record TypeCheckerContext(
         return new TypeCheckerContext(stack, namespaceTypes, constructorTypes, memberTypes, subtypeRelations);
     }
 
-    public TypeCheckerContext addSealedInterfaceCase(InterfaceType sealedInterfaceType, RecordType caseType) {
+    public TypeCheckerContext addSealedInterfaceCase(StructuredType sealedInterfaceType, StructuredType caseType) {
         var subtypeRelations = this.subtypeRelations.addSealedInterfaceCase(sealedInterfaceType, caseType);
         return new TypeCheckerContext(stack, namespaceTypes, constructorTypes, memberTypes, subtypeRelations);
     }

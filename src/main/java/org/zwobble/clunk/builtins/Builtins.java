@@ -33,6 +33,8 @@ public class Builtins {
         Map.entry(Types.MEMBER_CONSTRUCTOR.name(), Types.typeConstructorType(Types.MEMBER_CONSTRUCTOR)),
         Map.entry(Types.MUTABLE_LIST_CONSTRUCTOR.name(), Types.typeConstructorType(Types.MUTABLE_LIST_CONSTRUCTOR)),
         Map.entry(Types.OPTION_CONSTRUCTOR.name(), Types.typeConstructorType(Types.OPTION_CONSTRUCTOR)),
+        Map.entry(Types.OPTION_SOME_CONSTRUCTOR.name(), Types.typeConstructorType(Types.OPTION_SOME_CONSTRUCTOR)),
+        Map.entry(Types.OPTION_NONE.name(), Types.OPTION_NONE),
         Map.entry("String", metaType(Types.STRING)),
         Map.entry("StringBuilder", Types.metaType(Types.STRING_BUILDER)),
         Map.entry("Unit", metaType(Types.UNIT)),
@@ -73,6 +75,18 @@ public class Builtins {
         context = context.updateNamespaceType(BuiltinsMatchers.NAMESPACE_TYPE);
 
         context = context.withBuiltins(Builtins.ENVIRONMENT);
+
+        context = context.addSealedInterfaceCase(
+            Types.OPTION_CONSTRUCTOR.genericType(),
+            Types.construct(Types.OPTION_SOME_CONSTRUCTOR, List.of(Types.OPTION_CONSTRUCTOR.param(0)))
+        );
+
+        context = context.addMemberTypes(
+            Types.OPTION_SOME_CONSTRUCTOR.genericType(),
+            Map.ofEntries(
+                Map.entry("value", Types.OPTION_SOME_CONSTRUCTOR.param(0))
+            )
+        );
 
         context = context.addMemberTypes(Types.LIST_CONSTRUCTOR.genericType(), Map.ofEntries(
             Map.entry("contains", Types.methodType(

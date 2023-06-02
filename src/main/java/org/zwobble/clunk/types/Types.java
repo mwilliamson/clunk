@@ -46,8 +46,15 @@ public class Types {
 
     public static final TypeConstructor OPTION_CONSTRUCTOR = new TypeConstructor(
         List.of(TypeParameter.covariant(BUILTIN_NAMESPACE_ID, "Option", "T")),
-        Types.recordType(BUILTIN_NAMESPACE_ID, "Option")
+        Types.sealedInterfaceType(BUILTIN_NAMESPACE_ID, "Option")
     );
+
+    public static final TypeConstructor OPTION_SOME_CONSTRUCTOR = new TypeConstructor(
+        List.of(TypeParameter.covariant(BUILTIN_NAMESPACE_ID, "Some", "T")),
+        Types.sealedInterfaceType(BUILTIN_NAMESPACE_ID, "Some")
+    );
+
+    public static final StructuredType OPTION_NONE = new RecordType(BUILTIN_NAMESPACE_ID, "None");
 
     public static StructuredType list(Type elementType) {
         return construct(LIST_CONSTRUCTOR, List.of(elementType));

@@ -265,7 +265,7 @@ public class PythonCodeGenerator {
 
             @Override
             public PythonExpressionNode visit(TypedStructuredNotEqualNode node) {
-                throw new UnsupportedOperationException("TODO");
+                return compileStructuredNotEqual(node, context);
             }
         });
     }
@@ -768,6 +768,16 @@ public class PythonCodeGenerator {
         PythonCodeGeneratorContext context
     ) {
         return new PythonEqualsNode(
+            compileExpression(node.left(), context),
+            compileExpression(node.right(), context)
+        );
+    }
+
+    private static PythonExpressionNode compileStructuredNotEqual(
+        TypedStructuredNotEqualNode node,
+        PythonCodeGeneratorContext context
+    ) {
+        return new PythonNotEqualNode(
             compileExpression(node.left(), context),
             compileExpression(node.right(), context)
         );

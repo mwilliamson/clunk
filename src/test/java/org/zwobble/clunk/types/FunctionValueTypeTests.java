@@ -23,7 +23,7 @@ public class FunctionValueTypeTests {
 
     @Test
     public void replaceReplacesPositionalParamTypes() {
-        var typeParameter = TypeParameter.covariant(NamespaceId.source(), "X", "T");
+        var typeParameter = TypeParam.covariant(NamespaceId.source(), "X", "T");
         var type = Types.functionType(
             List.of(typeParameter),
             Types.INT
@@ -42,7 +42,7 @@ public class FunctionValueTypeTests {
 
     @Test
     public void replaceReplacesReturnType() {
-        var typeParameter = TypeParameter.covariant(NamespaceId.source(), "X", "T");
+        var typeParameter = TypeParam.covariant(NamespaceId.source(), "X", "T");
         var type = Types.functionType(
             List.of(Types.INT),
             typeParameter

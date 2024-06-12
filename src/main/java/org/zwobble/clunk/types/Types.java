@@ -19,38 +19,38 @@ public class Types {
     public static final Type UNIT = UnitType.INSTANCE;
 
     public static final TypeConstructor LIST_CONSTRUCTOR = new TypeConstructor(
-        List.of(TypeParameter.covariant(BUILTIN_NAMESPACE_ID, "List", "T")),
+        List.of(TypeParam.covariant(BUILTIN_NAMESPACE_ID, "List", "T")),
         Types.interfaceType(BUILTIN_NAMESPACE_ID, "List")
     );
 
     public static final TypeConstructor MAP_CONSTRUCTOR = new TypeConstructor(
         List.of(
-            TypeParameter.covariant(NamespaceId.source(), "Map", "K"),
-            TypeParameter.covariant(NamespaceId.source(), "Map", "V")
+            TypeParam.covariant(NamespaceId.source(), "Map", "K"),
+            TypeParam.covariant(NamespaceId.source(), "Map", "V")
         ),
         Types.interfaceType(BUILTIN_NAMESPACE_ID, "Map")
     );
 
     public static final TypeConstructor MEMBER_CONSTRUCTOR = new TypeConstructor(
         List.of(
-            TypeParameter.contravariant(BUILTIN_NAMESPACE_ID, "Member", "T"),
-            TypeParameter.covariant(BUILTIN_NAMESPACE_ID, "Member", "R")
+            TypeParam.contravariant(BUILTIN_NAMESPACE_ID, "Member", "T"),
+            TypeParam.covariant(BUILTIN_NAMESPACE_ID, "Member", "R")
         ),
         Types.recordType(BUILTIN_NAMESPACE_ID, "Member")
     );
 
     public static final TypeConstructor MUTABLE_LIST_CONSTRUCTOR = new TypeConstructor(
-        List.of(TypeParameter.invariant(BUILTIN_NAMESPACE_ID, "MutableList", "T")),
+        List.of(TypeParam.invariant(BUILTIN_NAMESPACE_ID, "MutableList", "T")),
         Types.recordType(BUILTIN_NAMESPACE_ID, "MutableList")
     );
 
     public static final TypeConstructor OPTION_CONSTRUCTOR = new TypeConstructor(
-        List.of(TypeParameter.covariant(BUILTIN_NAMESPACE_ID, "Option", "T")),
+        List.of(TypeParam.covariant(BUILTIN_NAMESPACE_ID, "Option", "T")),
         Types.sealedInterfaceType(BUILTIN_NAMESPACE_ID, "Option")
     );
 
     public static final TypeConstructor OPTION_SOME_CONSTRUCTOR = new TypeConstructor(
-        List.of(TypeParameter.covariant(BUILTIN_NAMESPACE_ID, "Some", "T")),
+        List.of(TypeParam.covariant(BUILTIN_NAMESPACE_ID, "Some", "T")),
         Types.sealedInterfaceType(BUILTIN_NAMESPACE_ID, "Some")
     );
 
@@ -121,7 +121,7 @@ public class Types {
     }
 
     public static ConstructorType constructorType(
-        List<TypeParameter> typeLevelParams,
+        List<TypeParam> typeLevelParams,
         List<Type> positionalParams,
         StructuredType returnType
     ) {
@@ -135,7 +135,7 @@ public class Types {
     }
 
     public static ConstructorType constructorType(
-        List<TypeParameter> typeLevelParams,
+        List<TypeParam> typeLevelParams,
         List<Type> positionalParams,
         StructuredType returnType,
         Visibility visibility
@@ -176,7 +176,7 @@ public class Types {
         );
     }
 
-    public static MethodType methodType(NamespaceId namespaceId, List<TypeParameter> typeLevelParams, List<Type> positionalParams, Type returnType) {
+    public static MethodType methodType(NamespaceId namespaceId, List<TypeParam> typeLevelParams, List<Type> positionalParams, Type returnType) {
         return methodType(
             namespaceId,
             typeLevelParams,
@@ -188,7 +188,7 @@ public class Types {
 
     public static MethodType methodType(
         NamespaceId namespaceId,
-        List<TypeParameter> typeLevelParams,
+        List<TypeParam> typeLevelParams,
         List<Type> positionalParams,
         List<NamedParamType> namedParams,
         Type returnType
@@ -202,11 +202,11 @@ public class Types {
         );
     }
 
-    public static MethodType methodType(StructuredType type, List<TypeParameter> typeLevelParams, List<Type> positionalParams, Type returnType) {
+    public static MethodType methodType(StructuredType type, List<TypeParam> typeLevelParams, List<Type> positionalParams, Type returnType) {
         return methodType(type.namespaceId(), typeLevelParams, positionalParams, returnType);
     }
 
-    public static MethodType methodType(TypeConstructor typeConstructor, List<TypeParameter> typeLevelParams, List<Type> positionalParams, Type returnType) {
+    public static MethodType methodType(TypeConstructor typeConstructor, List<TypeParam> typeLevelParams, List<Type> positionalParams, Type returnType) {
         return methodType(typeConstructor.genericType(), typeLevelParams, positionalParams, returnType);
     }
 
@@ -235,7 +235,7 @@ public class Types {
     public static StaticFunctionType staticFunctionType(
         NamespaceId namespaceId,
         String functionName,
-        List<TypeParameter> typeLevelParams,
+        List<TypeParam> typeLevelParams,
         ParamTypes paramTypes,
         Type returnType
     ) {

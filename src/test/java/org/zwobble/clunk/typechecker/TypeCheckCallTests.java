@@ -73,7 +73,7 @@ public class TypeCheckCallTests {
         );
         var namespaceId = NamespaceId.source("example");
         var recordType = Types.recordType(namespaceId, "X");
-        var typeParameter = TypeParameter.method(namespaceId, "X", "f", "T");
+        var typeParameter = TypeParam.method(namespaceId, "X", "f", "T");
         var methodType = Types.methodType(namespaceId, List.of(typeParameter), List.of(typeParameter), typeParameter);
         var context = TypeCheckerContext.stub()
             .addLocal("x", recordType, NullSource.INSTANCE)
@@ -140,7 +140,7 @@ public class TypeCheckCallTests {
         );
         var namespaceId = NamespaceId.source("example");
         var recordType = Types.recordType(namespaceId, "Id");
-        var typeParameter = TypeParameter.invariant(namespaceId, "Id", "T");
+        var typeParameter = TypeParam.invariant(namespaceId, "Id", "T");
         var typeConstructor = new TypeConstructor(List.of(typeParameter), recordType);
         var context = TypeCheckerContext.stub()
             .addLocal("Id", Types.typeConstructorType(typeConstructor), NullSource.INSTANCE)
@@ -413,7 +413,7 @@ public class TypeCheckCallTests {
             .build();
         var namespaceId = NamespaceId.source("example");
         var recordType = Types.recordType(namespaceId, "X");
-        var typeParameter = TypeParameter.method(namespaceId, "X", "f", "T");
+        var typeParameter = TypeParam.method(namespaceId, "X", "f", "T");
         var methodType = Types.methodType(namespaceId, List.of(typeParameter), List.of(typeParameter), typeParameter);
         var context = TypeCheckerContext.stub()
             .addLocal("x", recordType, NullSource.INSTANCE)
@@ -437,7 +437,7 @@ public class TypeCheckCallTests {
             .build();
         var namespaceId = NamespaceId.source("example");
         var recordType = Types.recordType(namespaceId, "X");
-        var typeParameter = TypeParameter.method(namespaceId, "X", "f", "T");
+        var typeParameter = TypeParam.method(namespaceId, "X", "f", "T");
         var methodType = Types.methodType(
             namespaceId,
             List.of(typeParameter),
@@ -468,7 +468,7 @@ public class TypeCheckCallTests {
             .build();
         var namespaceId = NamespaceId.source("example");
         var recordType = Types.recordType(namespaceId, "X");
-        var typeParameter = TypeParameter.method(namespaceId, "X", "f", "T");
+        var typeParameter = TypeParam.method(namespaceId, "X", "f", "T");
         var methodType = Types.methodType(
             namespaceId,
             List.of(typeParameter),
@@ -502,7 +502,7 @@ public class TypeCheckCallTests {
             .build();
         var namespaceId = NamespaceId.source("example");
         var recordType = Types.recordType(namespaceId, "X");
-        var typeParameter = TypeParameter.method(namespaceId, "X", "f", "T");
+        var typeParameter = TypeParam.method(namespaceId, "X", "f", "T");
         var methodType = Types.methodType(
             namespaceId,
             List.of(typeParameter),
@@ -535,7 +535,7 @@ public class TypeCheckCallTests {
             .build();
         var namespaceId = NamespaceId.source("example");
         var recordType = Types.recordType(namespaceId, "X");
-        var typeParameter = TypeParameter.method(namespaceId, "X", "f", "T");
+        var typeParameter = TypeParam.method(namespaceId, "X", "f", "T");
         var methodType = Types.methodType(namespaceId, List.of(typeParameter), List.of(Types.list(typeParameter)), typeParameter);
         var context = TypeCheckerContext.stub()
             .addLocal("x", recordType, NullSource.INSTANCE)
@@ -552,11 +552,11 @@ public class TypeCheckCallTests {
     public void whenTypeParamIsContravariantSubPartOfParamTypeThenTypeParamCanBeInferred() {
         var namespaceId = NamespaceId.source("example");
 
-        var consumerTypeParam = TypeParameter.contravariant(namespaceId, "Consumer", "T");
+        var consumerTypeParam = TypeParam.contravariant(namespaceId, "Consumer", "T");
         var consumerTypeConstructor = new TypeConstructor(List.of(consumerTypeParam), Types.interfaceType(namespaceId, "Consumer"));
 
         var recordType = Types.recordType(namespaceId, "X");
-        var typeParameter = TypeParameter.method(namespaceId, "X", "f", "T");
+        var typeParameter = TypeParam.method(namespaceId, "X", "f", "T");
         var methodType = Types.methodType(
             namespaceId,
             List.of(typeParameter),
@@ -591,11 +591,11 @@ public class TypeCheckCallTests {
     public void whenTypeParamIsInvariantSubPartOfParamTypeThenTypeParamCanBeInferred() {
         var namespaceId = NamespaceId.source("example");
 
-        var boxTypeParam = TypeParameter.invariant(namespaceId, "MutableBox", "T");
+        var boxTypeParam = TypeParam.invariant(namespaceId, "MutableBox", "T");
         var boxTypeConstructor = new TypeConstructor(List.of(boxTypeParam), Types.interfaceType(namespaceId, "MutableBox"));
 
         var recordType = Types.recordType(namespaceId, "X");
-        var typeParameter = TypeParameter.method(namespaceId, "X", "f", "T");
+        var typeParameter = TypeParam.method(namespaceId, "X", "f", "T");
         var methodType = Types.methodType(
             namespaceId,
             List.of(typeParameter),
@@ -628,11 +628,11 @@ public class TypeCheckCallTests {
     public void whenTypeParamIsExplicitlyBoundedFromAboveByObjectThenTypeParamIsInferredAsObject() {
         var namespaceId = NamespaceId.source("example");
 
-        var consumerTypeParam = TypeParameter.contravariant(namespaceId, "Consumer", "T");
+        var consumerTypeParam = TypeParam.contravariant(namespaceId, "Consumer", "T");
         var consumerTypeConstructor = new TypeConstructor(List.of(consumerTypeParam), Types.interfaceType(namespaceId, "Consumer"));
 
         var recordType = Types.recordType(namespaceId, "X");
-        var typeParameter = TypeParameter.method(namespaceId, "X", "f", "T");
+        var typeParameter = TypeParam.method(namespaceId, "X", "f", "T");
         var methodType = Types.methodType(
             namespaceId,
             List.of(typeParameter),
@@ -665,11 +665,11 @@ public class TypeCheckCallTests {
     public void whenUpperAndLowerTypeBoundsConflictThenErrorIsThrown() {
         var namespaceId = NamespaceId.source("example");
 
-        var consumerTypeParam = TypeParameter.contravariant(namespaceId, "Consumer", "T");
+        var consumerTypeParam = TypeParam.contravariant(namespaceId, "Consumer", "T");
         var consumerTypeConstructor = new TypeConstructor(List.of(consumerTypeParam), Types.interfaceType(namespaceId, "Consumer"));
 
         var recordType = Types.recordType(namespaceId, "X");
-        var typeParameter = TypeParameter.method(namespaceId, "X", "f", "T");
+        var typeParameter = TypeParam.method(namespaceId, "X", "f", "T");
         var methodType = Types.methodType(
             namespaceId,
             List.of(typeParameter),
@@ -710,7 +710,7 @@ public class TypeCheckCallTests {
             .build();
         var namespaceId = NamespaceId.source("example");
         var recordType = Types.recordType(namespaceId, "X");
-        var typeParameter = TypeParameter.method(namespaceId, "X", "f", "T");
+        var typeParameter = TypeParam.method(namespaceId, "X", "f", "T");
         var methodType = Types.methodType(namespaceId, List.of(typeParameter), List.of(), typeParameter);
         var context = TypeCheckerContext.stub()
             .addLocal("x", recordType, NullSource.INSTANCE)
@@ -733,7 +733,7 @@ public class TypeCheckCallTests {
             .build();
         var namespaceId = NamespaceId.source("example");
         var recordType = Types.recordType(namespaceId, "X");
-        var typeParameter = TypeParameter.method(namespaceId, "X", "f", "T");
+        var typeParameter = TypeParam.method(namespaceId, "X", "f", "T");
         var methodType = Types.methodType(namespaceId, List.of(typeParameter), List.of(), Types.UNIT);
         var context = TypeCheckerContext.stub()
             .addLocal("x", recordType, NullSource.INSTANCE)
@@ -757,8 +757,8 @@ public class TypeCheckCallTests {
         );
         var namespaceId = NamespaceId.source("example");
         var recordType = Types.recordType(namespaceId, "X");
-        var typeParameter1 = TypeParameter.method(namespaceId, "X", "f", "T1");
-        var typeParameter2 = TypeParameter.method(namespaceId, "X", "f", "T2");
+        var typeParameter1 = TypeParam.method(namespaceId, "X", "f", "T1");
+        var typeParameter2 = TypeParam.method(namespaceId, "X", "f", "T2");
         var methodType = Types.methodType(
             namespaceId,
             List.of(typeParameter1, typeParameter2),
@@ -790,7 +790,7 @@ public class TypeCheckCallTests {
         );
         var namespaceId = NamespaceId.source("example");
         var recordType = Types.recordType(namespaceId, "X");
-        var typeParameter = TypeParameter.method(namespaceId, "X", "f", "T");
+        var typeParameter = TypeParam.method(namespaceId, "X", "f", "T");
         var methodType = Types.methodType(namespaceId, List.of(typeParameter), List.of(typeParameter), typeParameter);
         var context = TypeCheckerContext.stub()
             .addLocal("x", recordType, NullSource.INSTANCE)

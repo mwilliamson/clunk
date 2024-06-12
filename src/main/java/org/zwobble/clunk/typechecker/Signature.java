@@ -29,7 +29,7 @@ sealed interface Signature permits SignatureNonGeneric, SignatureGeneric {
 }
 
 record SignatureGeneric(CallableType type) implements Signature {
-    public List<TypeParameter> typeParams() {
+    public List<TypeParam> typeParams() {
         return type.typeLevelParams().orElseThrow();
     }
 

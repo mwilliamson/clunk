@@ -3,7 +3,7 @@ package org.zwobble.clunk.types;
 import java.util.List;
 
 public record TypeConstructor(
-    List<TypeParameter> params,
+    List<TypeParam> params,
     StructuredType genericType
 ) implements TypeLevelValue {
     public NamespaceId namespaceId() {
@@ -19,7 +19,7 @@ public record TypeConstructor(
         return name();
     }
 
-    public TypeParameter param(int index) {
+    public TypeParam param(int index) {
         return params.get(index);
     }
 }

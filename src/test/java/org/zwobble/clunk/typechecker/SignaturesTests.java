@@ -45,7 +45,7 @@ public class SignaturesTests {
     @Test
     public void genericCallableHasGenericSignature() {
         var namespaceId = NamespaceId.source("example");
-        var typeParameter = TypeParameter.method(namespaceId, "X", "f", "A");
+        var typeParameter = TypeParam.method(namespaceId, "X", "f", "A");
         var methodType = Types.methodType(
             namespaceId,
             List.of(typeParameter),
@@ -137,7 +137,7 @@ public class SignaturesTests {
     @Test
     public void genericRecordConstructorHasPositionalParamsMatchingFieldsAndReturnsSelf() {
         var namespaceId = NamespaceId.source("example");
-        var typeParameter = TypeParameter.invariant(namespaceId, "Id", "T");
+        var typeParameter = TypeParam.invariant(namespaceId, "Id", "T");
         var recordType = Types.recordType(namespaceId, "Id");
         var constructorType = Types.constructorType(List.of(typeParameter), recordType, Visibility.PUBLIC);
         var typeConstructor = new TypeConstructor(List.of(typeParameter), recordType);

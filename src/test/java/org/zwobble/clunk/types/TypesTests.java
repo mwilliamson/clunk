@@ -10,22 +10,22 @@ import static org.zwobble.precisely.Matchers.equalTo;
 
 public class TypesTests {
     private static final TypeConstructor TYPE_CONSTRUCTOR_COVARIANT = new TypeConstructor(
-        List.of(TypeParameter.covariant(NamespaceId.source(), "TypeConstructorCovariant", "T")),
+        List.of(TypeParam.covariant(NamespaceId.source(), "TypeConstructorCovariant", "T")),
         Types.recordType(NamespaceId.source(), "TypeConstructorCovariant")
     );
 
     private static final TypeConstructor TYPE_CONSTRUCTOR_COVARIANT_OTHER = new TypeConstructor(
-        List.of(TypeParameter.covariant(NamespaceId.source(), "TypeConstructorCovariantOther", "T")),
+        List.of(TypeParam.covariant(NamespaceId.source(), "TypeConstructorCovariantOther", "T")),
         Types.recordType(NamespaceId.source(), "TypeConstructorCovariantOther")
     );
 
     private static final TypeConstructor TYPE_CONSTRUCTOR_CONTRAVARIANT = new TypeConstructor(
-        List.of(TypeParameter.contravariant(NamespaceId.source(), "TypeConstructorContravariant", "T")),
+        List.of(TypeParam.contravariant(NamespaceId.source(), "TypeConstructorContravariant", "T")),
         Types.recordType(NamespaceId.source(), "TypeConstructorContravariant")
     );
 
     private static final TypeConstructor TYPE_CONSTRUCTOR_INVARIANT = new TypeConstructor(
-        List.of(TypeParameter.invariant(NamespaceId.source(), "TypeConstructorInvariant", "T")),
+        List.of(TypeParam.invariant(NamespaceId.source(), "TypeConstructorInvariant", "T")),
         Types.recordType(NamespaceId.source(), "TypeConstructorInvariant")
     );
 
@@ -357,7 +357,7 @@ public class TypesTests {
     public void whenGenericTypeIsSealedInterfaceThenConstructedTypeIsSealedInterface() {
         var genericType = Types.sealedInterfaceType(NamespaceId.source("example"), "Example");
         var typeConstructor = new TypeConstructor(
-            List.of(TypeParameter.covariant(NamespaceId.source("example"), "Example", "T")),
+            List.of(TypeParam.covariant(NamespaceId.source("example"), "Example", "T")),
             genericType
         );
         var type = Types.construct(typeConstructor, List.of(Types.STRING));
@@ -371,7 +371,7 @@ public class TypesTests {
     public void whenGenericTypeIsNotSealedInterfaceThenConstructedTypeIsNotSealedInterface() {
         var genericType = Types.unsealedInterfaceType(NamespaceId.source("example"), "Example");
         var typeConstructor = new TypeConstructor(
-            List.of(TypeParameter.covariant(NamespaceId.source("example"), "Example", "T")),
+            List.of(TypeParam.covariant(NamespaceId.source("example"), "Example", "T")),
             genericType
         );
         var type = Types.construct(typeConstructor, List.of(Types.STRING));

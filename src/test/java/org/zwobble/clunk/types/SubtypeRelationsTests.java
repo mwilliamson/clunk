@@ -39,11 +39,11 @@ public class SubtypeRelationsTests {
     @Test
     public void whenGenericSealedInterfaceHasCasesThenSealedInterfaceCasesReturnsThoseCases() {
         var genericInterfaceTypeConstructor = new TypeConstructor(
-            List.of(TypeParameter.covariant(NAMESPACE_ID, "Option", "T")),
+            List.of(TypeParam.covariant(NAMESPACE_ID, "Option", "T")),
             Types.sealedInterfaceType(NAMESPACE_ID, "Option")
         );
         var genericRecordTypeConstructorOne = new TypeConstructor(
-            List.of(TypeParameter.covariant(NAMESPACE_ID, "Some", "T")),
+            List.of(TypeParam.covariant(NAMESPACE_ID, "Some", "T")),
             Types.recordType(NAMESPACE_ID, "Some")
         );
         var genericRecordTypeTwo = Types.recordType(NAMESPACE_ID, "None");
@@ -92,7 +92,7 @@ public class SubtypeRelationsTests {
     public void whenExtendedTypesHaveNoTypeParametersThenCanFindExtendedTypesOfConstructedType() {
         var recordTypeGeneric = Types.recordType(NAMESPACE_ID, "Record");
         var recordTypeConstructor = new TypeConstructor(
-            List.of(TypeParameter.invariant(NAMESPACE_ID, "Record", "T")),
+            List.of(TypeParam.invariant(NAMESPACE_ID, "Record", "T")),
             recordTypeGeneric
         );
         var relations = SubtypeRelations.EMPTY
@@ -106,14 +106,14 @@ public class SubtypeRelationsTests {
     @Test
     public void whenExtendedTypesHaveTypeParametersThenCanFindExtendedTypesOfConstructedType() {
         var recordTypeGeneric = Types.recordType(NAMESPACE_ID, "Record");
-        var recordTypeParameter = TypeParameter.invariant(NAMESPACE_ID, "Record", "T");
+        var recordTypeParameter = TypeParam.invariant(NAMESPACE_ID, "Record", "T");
         var recordTypeConstructor = new TypeConstructor(
             List.of(recordTypeParameter),
             recordTypeGeneric
         );
         var interfaceTypeGeneric = Types.interfaceType(NAMESPACE_ID, "Interface");
         var interfaceTypeConstructor = new TypeConstructor(
-            List.of(TypeParameter.invariant(NAMESPACE_ID, "Interface", "U")),
+            List.of(TypeParam.invariant(NAMESPACE_ID, "Interface", "U")),
             interfaceTypeGeneric
         );
         var relations = SubtypeRelations.EMPTY

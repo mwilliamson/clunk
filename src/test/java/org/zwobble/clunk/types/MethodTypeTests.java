@@ -27,8 +27,8 @@ public class MethodTypeTests {
         var type = Types.methodType(
             NamespaceId.source(),
             List.of(
-                TypeParameter.method(NamespaceId.source(), "T", "f", "A"),
-                TypeParameter.method(NamespaceId.source(), "T", "f", "B")
+                TypeParam.method(NamespaceId.source(), "T", "f", "A"),
+                TypeParam.method(NamespaceId.source(), "T", "f", "B")
             ),
             List.of(),
             Types.INT
@@ -41,7 +41,7 @@ public class MethodTypeTests {
 
     @Test
     public void replaceReplacesPositionalParamTypes() {
-        var typeParameter = TypeParameter.covariant(NamespaceId.source(), "X", "T");
+        var typeParameter = TypeParam.covariant(NamespaceId.source(), "X", "T");
         var type = Types.methodType(
             NamespaceId.source(),
             List.of(typeParameter),
@@ -62,7 +62,7 @@ public class MethodTypeTests {
 
     @Test
     public void replaceReplacesReturnType() {
-        var typeParameter = TypeParameter.covariant(NamespaceId.source(), "X", "T");
+        var typeParameter = TypeParam.covariant(NamespaceId.source(), "X", "T");
         var type = Types.methodType(
             NamespaceId.source(),
             List.of(Types.INT),

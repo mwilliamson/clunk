@@ -13,7 +13,7 @@ public class ConstructedTypeTests {
     public void describeIncludesConstructorAndArgs() {
         var namespaceId = NamespaceId.source();
         var constructor = new TypeConstructor(
-            List.of(TypeParameter.invariant(namespaceId, "Map", "K"), TypeParameter.invariant(namespaceId, "Map", "V")),
+            List.of(TypeParam.invariant(namespaceId, "Map", "K"), TypeParam.invariant(namespaceId, "Map", "V")),
             Types.recordType(namespaceId, "Map")
         );
         var type = Types.construct(constructor, List.of(Types.STRING, Types.INT));
@@ -27,10 +27,10 @@ public class ConstructedTypeTests {
     public void replaceReplacesArgs() {
         var namespaceId = NamespaceId.source();
         var constructor = new TypeConstructor(
-            List.of(TypeParameter.invariant(namespaceId, "Map", "K"), TypeParameter.invariant(namespaceId, "Map", "V")),
+            List.of(TypeParam.invariant(namespaceId, "Map", "K"), TypeParam.invariant(namespaceId, "Map", "V")),
             Types.recordType(namespaceId, "Map")
         );
-        var typeParameter = TypeParameter.invariant(namespaceId, "Example", "T");
+        var typeParameter = TypeParam.invariant(namespaceId, "Example", "T");
         var type = Types.construct(constructor, List.of(typeParameter));
         var typeMap = new TypeMap(Map.ofEntries(Map.entry(typeParameter, Types.STRING)));
 

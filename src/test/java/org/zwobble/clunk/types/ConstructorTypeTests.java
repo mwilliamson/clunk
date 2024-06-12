@@ -25,8 +25,8 @@ public class ConstructorTypeTests {
     public void describeIncludesTypeLevelArgs() {
         var type = Types.constructorType(
             List.of(
-                TypeParameter.method(NamespaceId.source(), "T", "f", "A"),
-                TypeParameter.method(NamespaceId.source(), "T", "f", "B")
+                TypeParam.method(NamespaceId.source(), "T", "f", "A"),
+                TypeParam.method(NamespaceId.source(), "T", "f", "B")
             ),
             List.of(),
             Types.recordType(NamespaceId.source(), "X")
@@ -39,7 +39,7 @@ public class ConstructorTypeTests {
 
     @Test
     public void replaceReplacesPositionalParamTypes() {
-        var typeParameter = TypeParameter.covariant(NamespaceId.source(), "X", "T");
+        var typeParameter = TypeParam.covariant(NamespaceId.source(), "X", "T");
         var type = Types.constructorType(
             List.of(typeParameter),
             Types.recordType(NamespaceId.source(), "X")
@@ -58,7 +58,7 @@ public class ConstructorTypeTests {
 
     @Test
     public void replaceReplacesReturnType() {
-        var typeParameter = TypeParameter.covariant(NamespaceId.source(), "X", "T");
+        var typeParameter = TypeParam.covariant(NamespaceId.source(), "X", "T");
         var type = Types.constructorType(
             List.of(Types.INT),
             Types.recordType(NamespaceId.source(), "X")

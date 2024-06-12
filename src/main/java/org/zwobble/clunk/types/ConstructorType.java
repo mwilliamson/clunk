@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 public record ConstructorType(
     NamespaceId namespaceId,
-    Optional<List<TypeParameter>> typeLevelParams,
+    Optional<List<TypeParam>> typeLevelParams,
     ParamTypes params,
     StructuredType returnType,
     Visibility visibility
@@ -50,7 +50,7 @@ public record ConstructorType(
         }
     }
 
-    public ConstructorType withTypeParams(List<TypeParameter> typeParams) {
+    public ConstructorType withTypeParams(List<TypeParam> typeParams) {
         return new ConstructorType(
             namespaceId,
             Optional.of(typeParams),

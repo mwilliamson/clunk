@@ -13,7 +13,7 @@ public class BuiltinsMatchers {
     static final NamespaceId NAMESPACE_ID = NamespaceId.source("stdlib", "matchers");
 
     private static final TypeConstructor MATCHER_CONSTRUCTOR = new TypeConstructor(
-        List.of(TypeParameter.contravariant(NamespaceId.source("stdlib", "matchers"), "Matcher", "T")),
+        List.of(TypeParam.contravariant(NamespaceId.source("stdlib", "matchers"), "Matcher", "T")),
         Types.recordType(NamespaceId.source("stdlib", "matchers"), "Matcher")
     );
 
@@ -37,13 +37,13 @@ public class BuiltinsMatchers {
         Visibility.PUBLIC
     );
 
-    private static final TypeParameter HAS_MEMBER_TYPE_PARAM_RECEIVER = TypeParameter.function(
+    private static final TypeParam HAS_MEMBER_TYPE_PARAM_RECEIVER = TypeParam.function(
         NAMESPACE_ID,
         "hasMember",
         "T"
     );
 
-    private static final TypeParameter HAS_MEMBER_TYPE_PARAM_MEMBER = TypeParameter.function(
+    private static final TypeParam HAS_MEMBER_TYPE_PARAM_MEMBER = TypeParam.function(
         NAMESPACE_ID,
         "hasMember",
         "R"
@@ -73,7 +73,7 @@ public class BuiltinsMatchers {
         Visibility.PUBLIC
     );
 
-    private static final TypeParameter IS_SOME_TYPE_PARAM = TypeParameter.function(
+    private static final TypeParam IS_SOME_TYPE_PARAM = TypeParam.function(
         NAMESPACE_ID,
         "isSome",
         "T"

@@ -13,7 +13,7 @@ public class BuiltinsAssertions {
     private BuiltinsAssertions() {
     }
 
-    private static final TypeParameter ASSERT_THAT_TYPE_PARAM = TypeParameter.function(
+    private static final TypeParam ASSERT_THAT_TYPE_PARAM = TypeParam.function(
         NAMESPACE_ID,
         "assertThat",
         "T"

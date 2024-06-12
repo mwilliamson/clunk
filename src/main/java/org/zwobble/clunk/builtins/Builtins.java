@@ -13,13 +13,13 @@ import java.util.stream.Collectors;
 import static org.zwobble.clunk.types.Types.metaType;
 
 public class Builtins {
-    private static final TypeParameter NONE_TYPE_PARAM = TypeParameter.function(
+    private static final TypeParam NONE_TYPE_PARAM = TypeParam.function(
         Types.BUILTIN_NAMESPACE_ID,
         "none",
         "T"
     );
 
-    private static final TypeParameter SOME_TYPE_PARAM = TypeParameter.function(
+    private static final TypeParam SOME_TYPE_PARAM = TypeParam.function(
         Types.BUILTIN_NAMESPACE_ID,
         "some",
         "T"
@@ -152,7 +152,7 @@ public class Builtins {
     }
 
     private static MethodType listFlatMapType() {
-        var typeParameterResult = TypeParameter.method(
+        var typeParameterResult = TypeParam.method(
             Types.LIST_CONSTRUCTOR,
             "flatMap",
             "R"

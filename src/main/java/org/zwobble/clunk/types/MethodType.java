@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 public record MethodType(
     NamespaceId namespaceId,
-    Optional<List<TypeParameter>> typeLevelParams,
+    Optional<List<TypeParam>> typeLevelParams,
     ParamTypes params,
     Type returnType,
     Visibility visibility

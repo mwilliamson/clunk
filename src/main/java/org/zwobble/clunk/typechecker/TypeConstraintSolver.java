@@ -10,22 +10,22 @@ import java.util.List;
 import java.util.Optional;
 
 public class TypeConstraintSolver {
-    private record Constraint(TypeParameter typeParam, Optional<Type> subtype, Optional<Type> supertype) {
-        public static Constraint subtype(TypeParameter typeParam, Type supertype) {
+    private record Constraint(TypeParam typeParam, Optional<Type> subtype, Optional<Type> supertype) {
+        public static Constraint subtype(TypeParam typeParam, Type supertype) {
             return new Constraint(typeParam, Optional.empty(), Optional.of(supertype));
         }
 
-        public static Constraint supertype(TypeParameter typeParam, Type subtype) {
+        public static Constraint supertype(TypeParam typeParam, Type subtype) {
             return new Constraint(typeParam, Optional.of(subtype), Optional.empty());
         }
     }
 
-    private final List<TypeParameter> typeParams;
+    private final List<TypeParam> typeParams;
     private final SubtypeRelations subtypeRelations;
     private final List<Constraint> constraints;
 
     public TypeConstraintSolver(
-        List<TypeParameter> typeParams,
+        List<TypeParam> typeParams,
         SubtypeRelations subtypeRelations
     ) {
         this.typeParams = typeParams;
@@ -35,12 +35,12 @@ public class TypeConstraintSolver {
 
     public boolean addSubtypeConstraint(Type subtype, Type supertype) {
         // TODO: resolve the tension between statefulness and backtracking
-        if (supertype instanceof TypeParameter supertypeTypeParam && typeParams.contains(supertypeTypeParam)) {
+        if (supertype instanceof TypeParam supertypeTypeParam && typeParams.contains(supertypeTypeParam)) {
             constraints.add(Constraint.supertype(supertypeTypeParam, subtype));
             return true;
         }
 
-        if (subtype instanceof TypeParameter subtypeTypeParam && typeParams.contains(subtypeTypeParam)) {
+        if (subtype instanceof TypeParam subtypeTypeParam && typeParams.contains(subtypeTypeParam)) {
             constraints.add(Constraint.subtype(subtypeTypeParam, supertype));
             return true;
         }
@@ -123,7 +123,7 @@ public class TypeConstraintSolver {
     }
 
     public List<Type> solve(Source source) {
-        var typeParamBounds = new HashMap<TypeParameter, Pair<Optional<Type>, Optional<Type>>>();
+        var typeParamBounds = new HashMap<TypeParam, Pair<Optional<Type>, Optional<Type>>>();
         for (var typeParam : typeParams) {
             typeParamBounds.put(typeParam, Pair.of(Optional.empty(), Optional.empty()));
         }

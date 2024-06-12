@@ -29,8 +29,8 @@ public class StaticFunctionTypeTests {
             NamespaceId.source("A", "B"),
             "f",
             List.of(
-                TypeParameter.function(NamespaceId.source(), "f", "T"),
-                TypeParameter.function(NamespaceId.source(), "f", "U")
+                TypeParam.function(NamespaceId.source(), "f", "T"),
+                TypeParam.function(NamespaceId.source(), "f", "U")
             ),
             ParamTypes.empty(),
             Types.INT
@@ -43,7 +43,7 @@ public class StaticFunctionTypeTests {
 
     @Test
     public void replaceReplacesPositionalParamTypes() {
-        var typeParameter = TypeParameter.covariant(NamespaceId.source(), "X", "T");
+        var typeParameter = TypeParam.covariant(NamespaceId.source(), "X", "T");
         var type = Types.staticFunctionType(
             NamespaceId.source(),
             "f",
@@ -68,7 +68,7 @@ public class StaticFunctionTypeTests {
 
     @Test
     public void replaceReplacesReturnType() {
-        var typeParameter = TypeParameter.covariant(NamespaceId.source(), "X", "T");
+        var typeParameter = TypeParam.covariant(NamespaceId.source(), "X", "T");
         var type = Types.staticFunctionType(
             NamespaceId.source(),
             "f",

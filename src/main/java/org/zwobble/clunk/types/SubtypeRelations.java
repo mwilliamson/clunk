@@ -6,7 +6,7 @@ import org.zwobble.clunk.typechecker.TypeConstraintSolver;
 import org.zwobble.clunk.util.P;
 import org.zwobble.clunk.util.PCollectors;
 
-import java.util.List;
+import static org.zwobble.clunk.typechecker.TypeConstraintSolver.addSubtypeConstraint;
 
 public class SubtypeRelations {
     public static final SubtypeRelations EMPTY = new SubtypeRelations(P.map(), P.map());
@@ -47,8 +47,8 @@ public class SubtypeRelations {
     }
 
     public boolean isSubType(Type subtype, Type supertype) {
-        var typeConstraintSolver = new TypeConstraintSolver(List.of(), this);
-        return typeConstraintSolver.addSubtypeConstraint(subtype, supertype);
+        var typeConstraintSolver = TypeConstraintSolver.create(this);
+        return addSubtypeConstraint(typeConstraintSolver, subtype, supertype).isPresent();
     }
 
     public SubtypeRelations addExtendedType(StructuredType subtype, StructuredType supertype) {

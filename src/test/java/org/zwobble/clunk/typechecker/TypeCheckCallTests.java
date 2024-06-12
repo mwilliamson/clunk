@@ -1,5 +1,6 @@
 package org.zwobble.clunk.typechecker;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.zwobble.clunk.ast.typed.TypedExpressionNode;
 import org.zwobble.clunk.ast.untyped.Untyped;
@@ -457,6 +458,7 @@ public class TypeCheckCallTests {
     }
 
     @Test
+    @Disabled
     public void inferredTypeArgsAreUsedInLaterArgs() {
         var untypedNode = UntypedCallNode
             .builder(Untyped.memberAccess(

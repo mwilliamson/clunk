@@ -1,66 +1,123 @@
 package org.zwobble.clunk.typechecker;
 
+import org.pcollections.OrderedPMap;
+import org.pcollections.PVector;
 import org.zwobble.clunk.sources.Source;
 import org.zwobble.clunk.types.*;
-import org.zwobble.clunk.util.Pair;
+import org.zwobble.clunk.util.P;
+import org.zwobble.clunk.util.PCollectors;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 public class TypeConstraintSolver {
-    private record Constraint(TypeParam typeParam, Optional<Type> subtype, Optional<Type> supertype) {
-        public static Constraint subtype(TypeParam typeParam, Type supertype) {
-            return new Constraint(typeParam, Optional.empty(), Optional.of(supertype));
-        }
-
-        public static Constraint supertype(TypeParam typeParam, Type subtype) {
-            return new Constraint(typeParam, Optional.of(subtype), Optional.empty());
-        }
-    }
-
-    private final List<TypeParam> typeParams;
-    private final SubtypeRelations subtypeRelations;
-    private final List<Constraint> constraints;
-
-    public TypeConstraintSolver(
-        List<TypeParam> typeParams,
+    public static TypeConstraintSolver create(
+        List<TypeArg> typeArgs,
         SubtypeRelations subtypeRelations
     ) {
-        this.typeParams = typeParams;
-        this.subtypeRelations = subtypeRelations;
-        this.constraints = new ArrayList<>();
+        return new TypeConstraintSolver(
+            typeArgs.stream()
+                .map(typeArg -> Map.entry(typeArg, TypeBounds.EMPTY))
+                .collect(PCollectors.toOrderedPMap()),
+            subtypeRelations
+        );
+    }
+    public static TypeConstraintSolver create(
+        SubtypeRelations subtypeRelations
+    ) {
+        return new TypeConstraintSolver(
+            OrderedPMap.empty(),
+            subtypeRelations
+        );
     }
 
-    public boolean addSubtypeConstraint(Type subtype, Type supertype) {
-        // TODO: resolve the tension between statefulness and backtracking
-        if (supertype instanceof TypeParam supertypeTypeParam && typeParams.contains(supertypeTypeParam)) {
-            constraints.add(Constraint.supertype(supertypeTypeParam, subtype));
-            return true;
+    record TypeBounds(PVector<Type> lower, PVector<Type> upper) {
+        private static final TypeBounds EMPTY = new TypeBounds(P.vector(), P.vector());
+
+        public TypeBounds addLowerBound(Type lowerBound) {
+            return new TypeBounds(
+                this.lower.plus(lowerBound),
+                this.upper
+            );
         }
 
-        if (subtype instanceof TypeParam subtypeTypeParam && typeParams.contains(subtypeTypeParam)) {
-            constraints.add(Constraint.subtype(subtypeTypeParam, supertype));
-            return true;
+        public TypeBounds addUpperBound(Type upperBound) {
+            return new TypeBounds(
+                this.lower,
+                this.upper.plus(upperBound)
+            );
+        }
+    }
+
+    private final OrderedPMap<TypeArg, TypeBounds> typeBounds;
+    private final SubtypeRelations subtypeRelations;
+
+    private TypeConstraintSolver(
+        OrderedPMap<TypeArg, TypeBounds> typeBounds,
+        SubtypeRelations subtypeRelations
+    ) {
+        this.typeBounds = typeBounds;
+        this.subtypeRelations = subtypeRelations;
+    }
+
+    public TypeConstraintSolver addLowerTypeBound(TypeArg typeArg, Type lowerBound) {
+        return updateTypeBounds(typeArg, bounds -> bounds.addLowerBound(lowerBound));
+    }
+
+    public TypeConstraintSolver addUpperTypeBound(TypeArg typeArg, Type upperBound) {
+        return updateTypeBounds(typeArg, bounds -> bounds.addUpperBound(upperBound));
+    }
+
+    private TypeConstraintSolver updateTypeBounds(
+        TypeArg typeArg,
+        Function<TypeBounds, TypeBounds> update
+    ) {
+        var bounds = update.apply(this.typeBounds.get(typeArg));
+        return new TypeConstraintSolver(
+            this.typeBounds.plus(typeArg, bounds),
+            this.subtypeRelations
+        );
+    }
+
+    private boolean isBoundTypeArg(TypeArg typeArg) {
+        return this.typeBounds.containsKey(typeArg);
+    }
+
+    public static Optional<TypeConstraintSolver> addSubtypeConstraint(
+        TypeConstraintSolver solver,
+        Type subtype,
+        Type supertype
+    ) {
+        if (supertype instanceof TypeArg supertypeTypeArg && solver.isBoundTypeArg(supertypeTypeArg)) {
+            solver = solver.addLowerTypeBound(supertypeTypeArg, subtype);
+            return Optional.of(solver);
+        }
+
+        if (subtype instanceof TypeArg subtypeTypeArg && solver.isBoundTypeArg(subtypeTypeArg)) {
+            solver = solver.addUpperTypeBound(subtypeTypeArg, supertype);
+            return Optional.of(solver);
         }
 
         if (supertype.equals(Types.OBJECT)) {
-            return true;
+            return Optional.of(solver);
         }
 
         if (subtype.equals(Types.NOTHING)) {
-            return true;
+            return Optional.of(solver);
         }
 
         if (subtype.equals(supertype)) {
-            return true;
+            return Optional.of(solver);
         }
 
-        var extendedTypes = subtypeRelations.extendedTypes(subtype);
+        var extendedTypes = solver.subtypeRelations.extendedTypes(subtype);
         for (var extendedType : extendedTypes) {
-            if (addSubtypeConstraint(extendedType, supertype)) {
-                return true;
+            var result = addSubtypeConstraint(solver, extendedType, supertype);
+            if (result.isPresent()) {
+                return result;
             }
         }
 
@@ -70,22 +127,21 @@ public class TypeConstraintSolver {
         ) {
             // TODO: handle named params
             if (subtypeFunction.params().positional().size() != supertypeFunction.params().positional().size()) {
-                return false;
+                return Optional.empty();
             }
 
             for (var i = 0; i < subtypeFunction.params().positional().size(); i++) {
                 var subtypeParam = subtypeFunction.params().positional().get(i);
                 var supertypeParam = supertypeFunction.params().positional().get(i);
-                if (!addSubtypeConstraint(supertypeParam, subtypeParam)) {
-                    return false;
+                var result = addSubtypeConstraint(solver, supertypeParam, subtypeParam);
+                if (result.isEmpty()) {
+                    return Optional.empty();
+                } else {
+                    solver = result.get();
                 }
             }
 
-            if (!addSubtypeConstraint(subtypeFunction.returnType(), supertypeFunction.returnType())) {
-                return false;
-            }
-
-            return true;
+            return addSubtypeConstraint(solver, subtypeFunction.returnType(), supertypeFunction.returnType());
         }
 
         if (
@@ -100,80 +156,74 @@ public class TypeConstraintSolver {
 
                 switch (param.variance()) {
                     case COVARIANT -> {
-                        if (!addSubtypeConstraint(argSubtype, argSupertype)) {
-                            return false;
+                        var result = addSubtypeConstraint(solver, argSubtype, argSupertype);
+                        if (result.isEmpty()) {
+                            return Optional.empty();
+                        } else {
+                            solver = result.get();
                         }
                     }
                     case CONTRAVARIANT -> {
-                        if (!addSubtypeConstraint(argSupertype, argSubtype)) {
-                            return false;
+                        var result = addSubtypeConstraint(solver, argSupertype, argSubtype);
+                        if (result.isEmpty()) {
+                            return Optional.empty();
+                        } else {
+                            solver = result.get();
                         }
                     }
                     case INVARIANT -> {
-                        if (!addSubtypeConstraint(argSubtype, argSupertype) || !addSubtypeConstraint(argSupertype, argSubtype)) {
-                            return false;
+                        var resultCovariant = addSubtypeConstraint(solver, argSubtype, argSupertype);
+                        if (resultCovariant.isEmpty()) {
+                            return Optional.empty();
                         }
+                        solver = resultCovariant.get();
+
+                        var resultContravariant = addSubtypeConstraint(solver, argSupertype, argSubtype);
+                        if (resultContravariant.isEmpty()) {
+                            return Optional.empty();
+                        }
+                        solver = resultContravariant.get();
                     }
                 }
             }
-            return true;
+            return Optional.of(solver);
         }
 
-        return false;
+        return Optional.empty();
     }
 
     public List<Type> solve(Source source) {
-        var typeParamBounds = new HashMap<TypeParam, Pair<Optional<Type>, Optional<Type>>>();
-        for (var typeParam : typeParams) {
-            typeParamBounds.put(typeParam, Pair.of(Optional.empty(), Optional.empty()));
+        var result = new ArrayList<Type>();
+
+        for (var typeBounds : this.typeBounds.values()) {
+            var inferredType = solveTypeBounds(typeBounds, source);
+            result.add(inferredType);
         }
 
-        var constraints = new ArrayList<>(this.constraints);
+        return result;
+    }
 
-        while (!constraints.isEmpty()) {
-            var constraintIterator = constraints.listIterator();
-            while (constraintIterator.hasNext()) {
-                var constraint = constraintIterator.next();
-                var currentBounds = typeParamBounds.get(constraint.typeParam());
-                // TODO: check for type parameter as constraining type
-                var upperBound = currentBounds.first();
-                var lowerBound = currentBounds.second();
-                if (constraint.subtype().isPresent()) {
-                    if (lowerBound.isPresent()) {
-                        lowerBound = Optional.of(Types.commonSupertype(lowerBound.get(), constraint.subtype().get()));
-                    } else {
-                        lowerBound = constraint.subtype();
-                    }
-
-                }
-                if (constraint.supertype().isPresent()) {
-                    if (upperBound.isPresent()) {
-                        upperBound = Optional.of(Types.commonSubtype(upperBound.get(), constraint.supertype().get()));
-                    } else {
-                        upperBound = constraint.supertype();
-                    }
-                }
-                if (lowerBound.isPresent() && upperBound.isPresent() && !subtypeRelations.isSubType(lowerBound.get(), upperBound.get())) {
-                    throw new MissingTypeLevelArgsError(source);
-                }
-                typeParamBounds.put(constraint.typeParam(), Pair.of(upperBound, lowerBound));
-                constraintIterator.remove();
-            }
+    private Type solveTypeBounds(TypeBounds typeParamBounds, Source source) {
+        if (typeParamBounds.lower.isEmpty() && typeParamBounds.upper.isEmpty()) {
+            throw new MissingTypeLevelArgsError(source);
         }
 
-        return typeParams.stream()
-            .map(typeParam -> {
-                var bounds = typeParamBounds.get(typeParam);
-                var upperBound = bounds.first();
-                var lowerBound = bounds.second();
-                if (lowerBound.isEmpty() && upperBound.isEmpty()) {
-                    throw new MissingTypeLevelArgsError(source);
-                } else if (lowerBound.isEmpty()) {
-                    return upperBound.get();
-                } else {
-                    return lowerBound.get();
-                }
-            })
-            .toList();
+        var lowerBound = Types.NOTHING;
+        for (var lower : typeParamBounds.lower) {
+            lowerBound = Types.commonSupertype(lowerBound, lower);
+        }
+
+        var upperBound = Types.OBJECT;
+        for (var upper : typeParamBounds.upper) {
+            upperBound = Types.commonSubtype(upperBound, upper);
+        }
+
+        if (!subtypeRelations.isSubType(lowerBound, upperBound)) {
+            throw new MissingTypeLevelArgsError(source);
+        }
+
+        return typeParamBounds.lower.isEmpty() && !typeParamBounds.upper.isEmpty()
+            ? upperBound
+            : lowerBound;
     }
 }

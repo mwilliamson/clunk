@@ -33,7 +33,7 @@ record SignatureGeneric(CallableType type) implements Signature {
         return type.typeLevelParams().orElseThrow();
     }
 
-    public SignatureNonGeneric typeArgs(List<Type> typeArgs) {
+    public SignatureNonGeneric typeArgs(List<? extends Type> typeArgs) {
         // TODO: check args? In practice, this has already been done, but
         // there's no guarantee we won't accidentally call this in other cases.
         var typeMap = TypeMap.from(type.typeLevelParams().orElseThrow(), typeArgs);

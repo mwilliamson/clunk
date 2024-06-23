@@ -1,3 +1,4 @@
+*.actual
 *.pyc
 /.idea
 /target

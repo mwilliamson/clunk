@@ -5,20 +5,12 @@
 ```
 record User(name: String)
 
-test "text from text element is read" {
-    val element = textElement("Hello!");
-    
-    val result = readElement(element);
-    
-    assertThat(result, equalTo(documents.text("Hello!")));
-}
-
-test "" {
+test "user slug is derived from user name" {
     val user = User(.name = "Bob");
 
-    val result = user.name;
+    val result = user.slug();
 
-    assertThat(result, equalTo("Bob"));
+    assertThat(result, equalTo("bob"));
 }
 ```
 
